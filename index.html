@@ -22,7 +22,14 @@
                 side_navigation
             </button>
             <button class="icon-button hide-on-mobile" translate="no" title="New file" onclick="createFile();">
-                draft
+                add_box
+            </button>
+            <hr class="hide-on-mobile">
+            <button class="icon-button hide-on-mobile" translate="no" onclick="editor.undo()" title="Un-do">
+                undo
+            </button>
+            <button class="icon-button hide-on-mobile" translate="no" onclick="editor.redo()" title="Re-do">
+                redo
             </button>
         </div>
         <div class="header-center">
@@ -46,7 +53,7 @@
                     <hr>
                     <button class="text-button">Settings <kbd>Ctrl+,</kbd></button>
                     <hr>
-                    <button class="text-button" onclick="window.open('reader.html?path=tutorial.md')">Tutorial</button>
+                    <button class="text-button" onclick="window.open('read.html?path=tutorial.md')">Tutorial</button>
                     <button class="text-button">Keyboard shortcuts <kbd>Ctrl+?</kbd></button>
                     <button class="text-button">About Cohesion <kbd>F1</kbd></button>
                 </div>
@@ -62,6 +69,7 @@
     <script src="script/edittools.js"></script>
     <script src="script/menus.js"></script>
     <script src="script/file.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
     <script>
         loadFilesFromStorage();
 
