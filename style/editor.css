@@ -1,0 +1,206 @@
+.preview {
+    height: calc(100vh - 48px - 30px);
+    max-width: 900px;
+    padding: 15px;
+    margin: 0 auto;
+    color: var(--text-color);
+    background-color: transparent;
+    display: none;
+    overflow: scroll;
+    font-family: var(--font-text);
+}
+
+.preview::before {
+    padding-bottom: 100vh;
+}
+
+.preview.on {
+    display: block;
+}
+
+/* titles */
+
+.preview h1, .preview h2, .preview h3, .preview h4, .preview h5, .preview h6 {
+    width: 100%;
+    font-weight: 100;
+    font-family: var(--font-title);
+    color: var(--title-color);
+    padding-bottom: 15px;
+}
+
+.preview h1, .preview h2 {
+    border-bottom: 1px solid var(--border-light-color);
+}
+
+/* rules */
+.preview hr {
+    border: 0;
+    border-bottom: 1px solid var(--border-light-color);
+    width: 75%;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+/* text effects */
+
+.preview del:hover {
+    text-decoration: none;
+}
+
+/* quotes */
+
+.preview blockquote {
+    border-left: 2px solid var(--border-light-color);
+    padding-left: 15px;
+}
+
+.preview code,
+.preview pre {
+    font-size: large;
+    background-color: var(--background-color-2);
+    padding: 10px;
+    border-radius: 10px;
+    overflow-x: scroll;
+}
+
+.preview code {
+    padding: 1px 10px 1px 10px;
+}
+
+.preview pre code {
+    background-color: transparent;
+}
+
+/* images */
+
+.preview img {
+    border-radius: 10px;
+    max-width: 900px;
+}
+
+/* links */
+
+.preview a {
+    color: var(--link-color);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+}
+
+.preview a:hover {
+    text-decoration: underline;
+}
+
+.preview a img.favicon {
+    border: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+    margin: 0px;
+}
+
+/* checklists */
+
+.preview input[type="checkbox"] {
+    font-family: "Material Symbols Outlined";
+    appearance: none;
+    min-width: 18px;
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--border-light-color);
+    border-radius: 5px;
+    background-color: transparent;
+    display: inline-block;
+    position: relative;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.preview input[type="checkbox"]:checked {
+    background-color: var(--highlight-color);
+    border-color: var(--highlight-color);
+}
+
+.preview input[type="checkbox"]:checked::after {
+    content: "check";
+    color: var(--text-color);
+    font-size: 18px;
+    font-weight: 900;
+    position: absolute;
+    top: -2px;
+    left: -1px;
+}
+
+.preview .task-list-item-complete {
+    text-decoration: line-through;
+    color: var(--highlight-color);
+}
+
+/* tables */
+
+.preview table {
+    width: 100%;
+    margin: 20px 0;
+    font-size: 1rem;
+    overflow: hidden;
+}
+
+.preview th,
+.preview td {
+    padding: 12px 15px;
+    text-align: left;
+    background-color: var(--background-color-2);
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.preview thead th {
+    background-color: var(--background-color-3);
+    color: var(--text-color);
+    font-weight: 400;
+}
+
+.preview thead th:first-child {
+    border-top-left-radius: 10px;
+}
+.preview thead th:last-child {
+    border-top-right-radius: 10px;
+}
+.preview tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+.preview tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+}
+
+.preview tr:hover td {
+    background-color: var(--background-color-3);
+}
+
+/* html stuff */
+
+.preview iframe {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.preview button {
+    height: 30px;
+    border-radius: 15px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border: 1px solid var(--border-light-color);
+    background-color: var(--background-color-3);
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+.preview embed {
+    width: 100%;
+    height: 600px;
+    border-radius: 10px;
+}
+
+.preview {
+    margin-bottom: 0;
+}

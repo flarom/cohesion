@@ -1,0 +1,26 @@
+:root {
+    --background-color:     #282828;
+    --background-color-2:   #303030;
+    --background-color-3:   #454545;
+
+    --border-dark-color:    #050505;
+    --border-light-color:   #6e6e6e;
+
+    --hover-color:          #3f3f3f;
+
+    --title-color:          #ffffff;
+    --text-color:           #ffffff;
+
+    --highlight-color:      #3584e4;
+    --selection-color:      #3584e433;
+    --link-color:           #99c1f1;
+
+    --danger:               #ff8881;
+    --danger-bg:            #ff888133;
+
+    --font-editor:          "Ubuntu Mono", monospace;
+    --font-title:           "Ubuntu", sans-serif;
+    --font-text:            "Ubuntu", sans-serif;
+
+    --shadow:               0px 0px 10px #00000033;
+}

@@ -1,0 +1,242 @@
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0');
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+
+body {
+    background-color: var(--background-color);
+    margin: 0px;
+    font-family: "ubuntu", sans-serif;
+}
+
+header.window-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--background-color-2);
+    border-bottom: 1px solid var(--border-dark-color);
+    padding: 10px 20px;
+    box-sizing: border-box;
+    color: var(--text-color);
+    height: 48px;
+    z-index: 999;
+}
+
+.header-left,
+.header-center,
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-center {
+    width: 100%;
+    justify-content: center;
+}
+
+header hr {
+    border: 0;
+    border-left: 1px solid var(--border-light-color);
+    height: 20px;
+}
+
+header.window-title .icon-button {
+    font-size: x-large;
+}
+
+header.window-title input[type=text] {
+    background-color: transparent;
+    border: none;
+    color: var(--text-color);
+    font-size: large;
+    height: 24px;
+    border-radius: 12px;
+    min-width: 10px;
+    width: 50%;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+header.window-title input[type=text]:hover {
+    background-color: var(--hover-color);
+}
+
+header.window-title input[type=text]:focus {
+    outline: 2px solid var(--highlight-color);
+    background-color: var(--hover-color);
+}
+
+.icon-button,
+.text-button {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 5px;
+    height: 30px;
+}
+
+.icon-button.danger {
+    color: var(--danger);
+}
+
+.icon-button:hover,
+.text-button:hover {
+    background-color: var(--hover-color);
+}
+
+.icon-button.danger:hover {
+    background-color: var(--danger-bg);
+}
+
+.icon-button {
+    font-size: large;
+    font-family: "Material Symbols Outlined";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.text-button {
+    font-weight: bold;
+    padding: 0px 10px 0px 10px;
+}
+
+.button-on {
+    background-color: var(--background-color-3);
+}
+
+@media screen and (max-width: 700px){
+    .hide-on-mobile {
+        display: none;
+    }
+
+    .left-on-mobile {
+        justify-content: left;
+    }
+
+    header.window-title input[type=text] {
+        width: 90%;
+    }
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--background-color-2);
+    border-radius: 10px;
+    min-width: 150px;
+    z-index: 1000;
+    white-space: nowrap;
+    overflow: hidden;
+    right: 0;
+    transform: translateX(0);
+    padding: 10px 0px 10px 0px;
+    box-shadow: var(--shadow);
+}
+
+.dropdown-content.align-left {
+    right: auto;
+    left: 0;
+}
+
+.dropdown-content .text-button {
+    margin: 0 auto;
+    color: var(--text-color);
+    display: flex;
+    width: 95%;
+    border-radius: 5px;
+    padding: 15px 16px;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    align-items: center;
+    gap: 10px;
+    transition: none;
+}
+
+.dropdown-content .text-button:hover {
+    background-color: var(--hover-color);
+}
+
+.dropdown.show .dropdown-content {
+    display: block;
+}
+
+.dropdown-content .text-button kbd {
+    margin-left: auto;
+    opacity: 0.6;
+    font-size: 12px;
+    font-family: var(--font-text);
+    font-weight: 500;
+}
+
+.dropdown hr {
+    border: 0;
+    border-bottom: 1px solid var(--border-light-color);
+    height: 1px;
+    width: 90%;
+}
+
+@media screen and (max-width: 800px) {
+    .dropdown-content .text-button{
+        margin-top: 7px;
+        margin-bottom: 7px;
+    }
+}
+
+.sidebar {
+    display: none;
+    height: calc(100vh - 48px);
+    max-width: 300px;
+    width: 100%;
+    background-color: var(--background-color-2);
+    position: absolute;
+    z-index: 998;
+    padding: 5px;
+    border-right: 1px solid var(--border-dark-color);
+    overflow: scroll;
+}
+
+.sidebar.show {
+    display: block;
+}
+
+.sidebar .file {
+    background-color: var(--background-color-2);
+    border-radius: 15px;
+    padding: 10px;
+    margin-bottom: 5px;
+    text-decoration: none;
+    color: var(--text-color);
+    text-align: left;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    line-break: anywhere;
+}
+
+.sidebar .file:hover {
+    background-color: var(--background-color-3);
+}
+
+.sidebar .file h3, .sidebar .file p {
+    margin: 0;
+}
+
+.sidebar .file p {
+    color: var(--border-light-color);
+}

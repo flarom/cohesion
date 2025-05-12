@@ -1,0 +1,75 @@
+.prompt-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(2px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+}
+
+.prompt-dialog {
+    background-color: var(--card-color);
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    width: 300px;
+}
+
+.prompt-title {
+    margin-bottom: 15px;
+}
+
+.prompt-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.prompt-input {
+    background: var(--field-color);
+    color: var(--text-color);
+    width: calc(100% - 40px);
+    height: 30px;
+    padding: 0px 20px;
+    margin-bottom: 15px;
+    border: 1px solid var(--border-color);
+    outline: none;
+    border-radius: 15px;
+}
+
+.prompt-select {
+    width: 100%;
+    height: 35px;
+    border-radius: 15px;
+    border: 1px solid var(--border-color);
+    background: var(--field-color);
+    color: var(--text-color);
+    margin-bottom: 15px;
+    padding: 0px 10px;
+    outline: none;
+}
+
+.prompt-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.prompt-button {
+    padding: 5px 30px;
+    border-radius: 15px;
+    cursor: pointer;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    background-color: transparent;
+}
+
+.prompt-button.submit {
+    border-color: var(--highlight-color);
+    background-color: var(--highlight-back);
+}

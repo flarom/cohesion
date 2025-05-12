@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style/palette.css">
+    <link rel="stylesheet" href="style/share.css">
+    <link rel="stylesheet" href="style/editor.css">
+    <link rel="stylesheet" href="codemirror/lib/codemirror.css" />
+    <script src="codemirror/lib/codemirror.js"></script>
+    <script src="codemirror/mode/markdown/markdown.js"></script>
+    <script src="codemirror/addon/edit/closebrackets.js"></script>
+    <script src="codemirror/addon/edit/continuelist.js"></script>
+</head>
+
+<body>
+    <header class="window-title">
+        <div class="header-left">
+            <button class="icon-button" translate="no" onclick="toggleSidebar('files')" title="Documents">
+                side_navigation
+            </button>
+            <button class="icon-button hide-on-mobile" translate="no" title="New file" onclick="createFile(); saveFilesToStorage(); renderFiles('files');">
+                draft
+            </button>
+        </div>
+        <div class="header-center">
+            <p id="filename">titulo</p>
+        </div>
+        <div class="header-right">
+            <button class="icon-button" translate="no" title="Search">
+                search
+            </button>
+            <button class="icon-button" translate="no" onclick="switchPreview()" title="Read" id="readbtn">
+                import_contacts
+            </button>
+            <div class="dropdown">
+                <button class="icon-button" translate="no" onclick="toggleDropdown('more-menu')" title="More options">
+                    more_vert
+                </button>
+                <div class="dropdown-content menu" id="more-menu">
+                    <button class="text-button" onclick="createFile();">New <kbd>Ctrl+N</kbd></button>
+                    <button class="text-button" onclick="importFile();">Open <kbd>Ctrl+O</kbd></button>
+                    <button class="text-button" onclick="exportFile(index);">Save <kbd>Ctrl+S</kbd></button>
+                    <hr>
+                    <button class="text-button">Settings <kbd>Ctrl+,</kbd></button>
+                    <hr>
+                    <button class="text-button" onclick="window.open('index.html?file=tutorial.md&readonly=true')">Tutorial</button>
+                    <button class="text-button">Keyboard shortcuts <kbd>Ctrl+?</kbd></button>
+                    <button class="text-button">About Cohesion <kbd>F1</kbd></button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div id="files" class="sidebar"></div>
+    <textarea id="editor"></textarea>
+    <div id="preview" class="preview"></div>
+
+    <script src="script/showdown.js"></script>
+    <script src="script/edittools.js"></script>
+    <script src="script/menus.js"></script>
+    <script src="script/file.js"></script>
+    <script>
+        let index = new URLSearchParams(location.search).get("index");
+        index = index !== null ? parseInt(index) : 0;
+
+        loadFilesFromStorage();
+
+        const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+            mode: "markdown",
+            lineNumbers: false,
+            theme: "default",
+            lineWrapping: true,
+            autoCloseBrackets: true,
+            extraKeys: {
+                "Enter": "newlineAndIndentContinueMarkdownList"
+            }
+        });
+
+        const converter = new showdown.Converter();
+        const preview = document.getElementById("preview");
+
+        function renderEditor() {
+            if (!files[index]) files[index] = "";
+            editor.setValue(files[index]);
+            document.getElementById("filename").innerText = getFileTitle(index) || "Untitled";
+            document.title = getFileTitle(index) || "Untitled";
+        }
+
+        renderEditor();
+        renderFiles("files");
+
+        editor.on("change", instance => {
+            updateFile(instance.getValue(), index);
+            saveFilesToStorage();
+            renderFiles("files");
+            document.getElementById("filename").innerText = getFileTitle(index) || "Untitled";
+            if (preview.classList.contains("on")) updateMarkdown(instance.getValue());
+        });
+
+        function switchPreview() {
+            const isOn = preview.classList.contains('on');
+            const readBtn = document.getElementById('readbtn');
+
+            if (isOn) {
+                preview.classList.remove('on');
+                editor.getWrapperElement().style.display = "block";
+                editor.focus();
+                readBtn.innerText = "import_contacts";
+                readBtn.title = "Read";
+                readBtn.classList.remove("button-on");
+            } else {
+                updateMarkdown(editor.getValue());
+
+                const cursorLine = editor.getCursor().line;
+                const totalLines = editor.lineCount();
+                const scrollRatio = cursorLine / totalLines;
+
+                preview.classList.add('on');
+                editor.getWrapperElement().style.display = "none";
+                readBtn.innerText = "edit";
+                readBtn.title = "Write";
+                readBtn.classList.add("button-on");
+
+                requestAnimationFrame(() => {
+                    preview.scrollTop = scrollRatio * (preview.scrollHeight - preview.clientHeight);
+                });
+
+                document.querySelectorAll("#preview a").forEach(link => {
+                    const href = link.getAttribute("href") || "";
+                    if (!href.startsWith("http") || href.startsWith("http:")) return;
+                    const url = new URL(href);
+                    const img = document.createElement("img");
+                    img.className = "favicon";
+                    img.alt = "Favicon";
+                    img.src = `https://www.google.com/s2/favicons?sz=64&domain_url=${url.origin}`;
+                    link.prepend(img);
+                });
+            }
+        }
+
+        function updateMarkdown(markdown) {
+            let codeBlocks = [];
+            const placeholder = "￼";
+            markdown = markdown.replace(/(```[\s\S]*?```|`[^`\n]+`)/g, match => {
+                codeBlocks.push(match);
+                return placeholder;
+            });
+            let i = 0;
+            markdown = markdown.replace(/\uFFFC/g, () => codeBlocks[i++]);
+            preview.innerHTML = converter.makeHtml(markdown);
+        }
+
+        document.addEventListener("keydown", function (event) {
+            if (event.ctrlKey && event.key === "p") {
+                event.preventDefault();
+                switchPreview();
+            }
+
+            else if (event.ctrlKey && event.key === "b") {
+                event.preventDefault();
+                if (hasSelection()) {
+                    wrapSelection("**", "**");
+                } else {
+                    insertAt("**Bold text**", 2, 11)
+                }
+            }
+
+            else if (event.ctrlKey && event.key === "i") {
+                event.preventDefault();
+                if (hasSelection()) {
+                    wrapSelection("*", "*");
+                } else {
+                    insertAt("*Italic text*", 1, 12)
+                }
+            }
+
+            else if (event.ctrlKey && event.key === "u") {
+                event.preventDefault();
+                toggleLineStart("- ", true, ["- ", "* ", "+ "]);
+            }
+
+            else if (event.ctrlKey && event.key >= "1" && event.key <= "6") {
+                event.preventDefault();
+                const level = parseInt(event.key, 10);
+                toggleLineStart("#".repeat(level) + " ", true, Array.from({ length: 6 }, (_, i) => "#".repeat(i + 1) + " "));
+            }
+
+            else if (event.ctrlKey && event.key === "r") {
+                event.preventDefault();
+                insertAt("\n\n***\n\n", 7, 7)
+            }
+        });
+    </script>
+</body>
+
+</html>
