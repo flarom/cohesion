@@ -279,4 +279,4 @@ For more complex expressions, you can combine elements. For instance, the Pythag
 | Sub and Superscript|`<msubsup>`|`<msubsup><mi></mi><mn>1</mn><mn>2</mn></msubsup>`|
 | Text           | `<mtext>` | `<mtext>Hello</mtext>`                       |
 | Parentheses (auto sized)|`<mo stretchy="true">`|`<mo>(</mo>x+1<mo>)</mo>` |
-| Matrix | &lt;mtable&gt;, &lt;mtr&gt;, &lt;mtd&gt; | <br>        &lt;mtable&gt;<br>        &nbsp;&nbsp;&lt;mtr&gt;&lt;mtd&gt;1&lt;/mtd&gt;&lt;mtd&gt;2&lt;/mtd&gt;&lt;/mtr&gt;<br>        &nbsp;&nbsp;&lt;mtr&gt;&lt;mtd&gt;3&lt;/mtd&gt;&lt;mtd&gt;4&lt;/mtd&gt;&lt;/mtr&gt;<br>        &lt;/mtable&gt;<br>       |
+| Matrix | `<mtable>`, `<mtr>`, `<mtd>` | `<mtable>`<br>`<mtr><mtd>1</mtd><mtd>2</mtd></mtr>`<br>`<mtr><mtd>3</mtd><mtd>4</mtd></mtr>`<br>`</mtable>`|

@@ -21,7 +21,7 @@
             <button class="icon-button" translate="no" onclick="toggleSidebar('files')" title="Documents">
                 side_navigation
             </button>
-            <button class="icon-button hide-on-mobile" translate="no" title="New file" onclick="createFile(); saveFilesToStorage(); renderFiles('files');">
+            <button class="icon-button hide-on-mobile" translate="no" title="New file" onclick="createFile();">
                 draft
             </button>
         </div>
@@ -63,10 +63,9 @@
     <script src="script/menus.js"></script>
     <script src="script/file.js"></script>
     <script>
-        let index = new URLSearchParams(location.search).get("index");
-        index = index !== null ? parseInt(index) : 0;
-
         loadFilesFromStorage();
+
+        let index = files.length -1;
 
         const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
             mode: "markdown",
@@ -167,6 +166,11 @@
             }
 
             // FILE
+            else if (event.ctrlKey && event.key === "n") { // new - ctrl+n
+                event.preventDefault();
+                createFile();
+            }
+
             else if (event.ctrlKey && event.key === "s") { // download - ctrl+s
                 event.preventDefault();
                 exportFile(index);

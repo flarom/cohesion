@@ -66,6 +66,10 @@ header.window-title input[type=text]:focus {
     background-color: var(--hover-color);
 }
 
+span.icon {
+    font-family: "Material Symbols Outlined";
+}
+
 .icon-button,
 .text-button {
     background: none;
@@ -229,8 +233,19 @@ header.window-title input[type=text]:focus {
     line-break: anywhere;
 }
 
+.sidebar .file.selected {
+    background-color: var(--background-color-3);
+    /* border-left: 2px solid var(--highlight-color); */
+    /* border-radius: 0px 15px 15px 0px; */
+}
+
+.sidebar .file.selected:hover {
+    /* border-left: 15px solid var(--highlight-color); */
+}
+
 .sidebar .file:hover {
     background-color: var(--background-color-3);
+    border-radius: 15px;
 }
 
 .sidebar .file h3, .sidebar .file p {
@@ -238,5 +253,8 @@ header.window-title input[type=text]:focus {
 }
 
 .sidebar .file p {
+    display: flex;
+    align-items: center;
+    gap: 3px;
     color: var(--border-light-color);
 }

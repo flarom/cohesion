@@ -12,12 +12,11 @@ function loadFilesFromStorage() {
 }
 
 function createFile() {
+    index = files.length; 
     files.push("");
     saveFilesToStorage();
     renderFiles("files");
-    index = files.lenght -1;
-    renderEditor();
-    editor.focus();
+    renderEditor()
 }
 
 function updateFile(value, index) {
@@ -84,7 +83,7 @@ function getFileText(index) {
 
 function getFileAverageReadingTime(index) {
     const text = getFileText(index);
-    if (!text) return "0 s";
+    if (!text) return "0s";
 
     const words = text.trim().split(/\s+/).length;
     const totalSeconds = Math.ceil((words / 200) * 60);
@@ -94,9 +93,9 @@ function getFileAverageReadingTime(index) {
     const seconds = totalSeconds % 60;
 
     let result = "";
-    if (hours > 0) result += `${hours} h `;
-    if (minutes > 0) result += `${minutes} min `;
-    if (hours === 0 && seconds > 0) result += `${seconds} s`;
+    if (hours > 0) result += `${hours}h `;
+    if (minutes > 0) result += `${minutes}min `;
+    if (hours === 0 && seconds > 0) result += `${seconds}s`;
 
     return result.trim();
 }
@@ -149,13 +148,16 @@ function renderFiles(containerId) {
     files.forEach((_, i) => {
         const fileButton = document.createElement("button");
         fileButton.className = "file";
+        if (i === index) {
+            fileButton.classList.add("selected");
+        }
 
         const infoDiv = document.createElement("div");
-        infoDiv.style.width = "90%"
+        infoDiv.style.width = "90%";
         const h3 = document.createElement("h3");
         h3.textContent = getFileTitle(i) || "New document";
         const p = document.createElement("p");
-        p.textContent = getFileAverageReadingTime(i);
+        p.innerHTML = `<span class=icon>schedule</span>${getFileAverageReadingTime(i)} to read`;
         infoDiv.appendChild(h3);
         infoDiv.appendChild(p);
 
@@ -179,14 +181,28 @@ function renderFiles(containerId) {
         const downloadBtn = document.createElement("button");
         downloadBtn.className = "text-button";
         downloadBtn.textContent = "Download";
-        downloadBtn.onclick = () => exportFile(i);
+        downloadBtn.onclick = (event) => {
+            event.stopPropagation();
+            exportFile(i);
+        };
 
         const hr = document.createElement("hr");
 
         const deleteBtn = document.createElement("button");
         deleteBtn.className = "text-button";
         deleteBtn.textContent = "Delete";
-        deleteBtn.onclick = () => {deleteFile(i); saveFilesToStorage(); renderFiles(containerId);};
+        deleteBtn.onclick = (event) => {
+            event.stopPropagation();
+            deleteFile(i);
+            saveFilesToStorage();
+            if (files.length === 0) {
+                createFile();
+            }
+            index = files.length - 1;
+            renderFiles(containerId);
+            renderEditor();
+            editor.focus();
+        };
 
         dropdownContent.appendChild(downloadBtn);
         dropdownContent.appendChild(hr);
@@ -200,6 +216,7 @@ function renderFiles(containerId) {
 
         fileButton.onclick = () => {
             index = i;
+            renderFiles(containerId);
             renderEditor();
             editor.focus();
         };
@@ -207,4 +224,5 @@ function renderFiles(containerId) {
         container.appendChild(fileButton);
     });
 }
+
 
