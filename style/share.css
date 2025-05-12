@@ -196,7 +196,7 @@ header.window-title input[type=text]:focus {
 
 .sidebar {
     display: none;
-    height: calc(100vh - 48px);
+    height: calc(100vh - 48px - 10px);
     max-width: 300px;
     width: 100%;
     background-color: var(--background-color-2);

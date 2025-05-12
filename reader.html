@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style/palette.css">
+    <link rel="stylesheet" href="style/share.css">
+    <link rel="stylesheet" href="style/editor.css">
+</head>
+<body>
+    <header class="window-title">
+        <div class="header-left">
+            <button class="icon-button" translate="no" onclick="window.close()" title="Go back">
+                arrow_back
+            </button>
+        </div>
+    </header>
+
+    <div id="preview" class="preview on"></div>
+
+    <script src="script/showdown.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const filePath = urlParams.get("path");
+
+        if (filePath) {
+            try {
+                const response = await fetch(filePath);
+                if (!response.ok) throw new Error("File not found");
+
+                const markdownText = await response.text();
+                const converter = new showdown.Converter();
+                const html = converter.makeHtml(markdownText);
+
+                document.getElementById("preview").innerHTML = html;
+            } catch (error) {
+                document.getElementById("preview").innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        } else {
+            document.getElementById("preview").innerHTML = "<p>Nothing to read</p>";
+        }
+    });
+    </script>
+</body>
+</html>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>New document</title>
     <link rel="stylesheet" href="style/palette.css">
     <link rel="stylesheet" href="style/share.css">
     <link rel="stylesheet" href="style/editor.css">
@@ -32,7 +32,7 @@
             <button class="icon-button" translate="no" title="Search">
                 search
             </button>
-            <button class="icon-button" translate="no" onclick="switchPreview()" title="Read" id="readbtn">
+            <button class="icon-button" translate="no" onclick="togglePreview()" title="Read" id="readbtn">
                 import_contacts
             </button>
             <div class="dropdown">
@@ -46,7 +46,7 @@
                     <hr>
                     <button class="text-button">Settings <kbd>Ctrl+,</kbd></button>
                     <hr>
-                    <button class="text-button" onclick="window.open('index.html?file=tutorial.md&readonly=true')">Tutorial</button>
+                    <button class="text-button" onclick="window.open('reader.html?path=tutorial.md')">Tutorial</button>
                     <button class="text-button">Keyboard shortcuts <kbd>Ctrl+?</kbd></button>
                     <button class="text-button">About Cohesion <kbd>F1</kbd></button>
                 </div>
@@ -85,22 +85,23 @@
         function renderEditor() {
             if (!files[index]) files[index] = "";
             editor.setValue(files[index]);
-            document.getElementById("filename").innerText = getFileTitle(index) || "Untitled";
-            document.title = getFileTitle(index) || "Untitled";
+            document.getElementById("filename").innerText = getFileTitle(index) || "New document";
+            document.title = getFileTitle(index) || "New document";
         }
 
         renderEditor();
         renderFiles("files");
+        editor.focus();
 
         editor.on("change", instance => {
             updateFile(instance.getValue(), index);
             saveFilesToStorage();
             renderFiles("files");
-            document.getElementById("filename").innerText = getFileTitle(index) || "Untitled";
+            document.getElementById("filename").innerText = getFileTitle(index) || "New document";
             if (preview.classList.contains("on")) updateMarkdown(instance.getValue());
         });
 
-        function switchPreview() {
+        function togglePreview() {
             const isOn = preview.classList.contains('on');
             const readBtn = document.getElementById('readbtn');
 
@@ -154,12 +155,30 @@
         }
 
         document.addEventListener("keydown", function (event) {
-            if (event.ctrlKey && event.key === "p") {
+            // NAVIGATION
+            if (event.ctrlKey && event.key === "p") { // toggle preview - ctrl+p
                 event.preventDefault();
-                switchPreview();
+                togglePreview();
             }
 
-            else if (event.ctrlKey && event.key === "b") {
+            else if (event.key === "F9") { // toggle sidepane - f9
+                event.preventDefault();
+                toggleSidebar('files');
+            }
+
+            // FILE
+            else if (event.ctrlKey && event.key === "s") { // download - ctrl+s
+                event.preventDefault();
+                exportFile(index);
+            }
+
+            else if (event.ctrlKey && event.key === "o") { // open - ctrl+o
+                event.preventDefault();
+                importFile();
+            }
+
+            // EDIT
+            else if (event.ctrlKey && event.key === "b") { // bold - ctrl+b
                 event.preventDefault();
                 if (hasSelection()) {
                     wrapSelection("**", "**");
@@ -168,7 +187,7 @@
                 }
             }
 
-            else if (event.ctrlKey && event.key === "i") {
+            else if (event.ctrlKey && event.key === "i") { // italic - ctrl+i
                 event.preventDefault();
                 if (hasSelection()) {
                     wrapSelection("*", "*");
@@ -177,18 +196,18 @@
                 }
             }
 
-            else if (event.ctrlKey && event.key === "u") {
+            else if (event.ctrlKey && event.key === "u") { // unordered list - ctrl+u
                 event.preventDefault();
                 toggleLineStart("- ", true, ["- ", "* ", "+ "]);
             }
 
-            else if (event.ctrlKey && event.key >= "1" && event.key <= "6") {
+            else if (event.ctrlKey && event.key >= "1" && event.key <= "6") { // titles - ctrl+1/6
                 event.preventDefault();
                 const level = parseInt(event.key, 10);
                 toggleLineStart("#".repeat(level) + " ", true, Array.from({ length: 6 }, (_, i) => "#".repeat(i + 1) + " "));
             }
 
-            else if (event.ctrlKey && event.key === "r") {
+            else if (event.ctrlKey && event.key === "r") { // horizontal rule - ctrl+r
                 event.preventDefault();
                 insertAt("\n\n***\n\n", 7, 7)
             }

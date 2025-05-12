@@ -69,6 +69,7 @@
 
 .preview pre code {
     background-color: transparent;
+    padding: 0px;
 }
 
 /* images */
@@ -201,6 +202,10 @@
     border-radius: 10px;
 }
 
-.preview {
-    margin-bottom: 0;
+.preview math {
+    display: block;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: var(--background-color-2);
+    font-size: large;
 }

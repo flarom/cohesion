@@ -15,6 +15,9 @@ function createFile() {
     files.push("");
     saveFilesToStorage();
     renderFiles("files");
+    index = files.lenght -1;
+    renderEditor();
+    editor.focus();
 }
 
 function updateFile(value, index) {
@@ -52,6 +55,9 @@ function importFile() {
             files.push(reader.result);
             saveFilesToStorage();
             renderFiles("files");
+            index = files.lenght -1;
+            renderEditor();
+            editor.focus();
         };
         reader.readAsText(file);
     };
@@ -147,7 +153,7 @@ function renderFiles(containerId) {
         const infoDiv = document.createElement("div");
         infoDiv.style.width = "90%"
         const h3 = document.createElement("h3");
-        h3.textContent = getFileTitle(i) || "Untitled";
+        h3.textContent = getFileTitle(i) || "New document";
         const p = document.createElement("p");
         p.textContent = getFileAverageReadingTime(i);
         infoDiv.appendChild(h3);
@@ -195,6 +201,7 @@ function renderFiles(containerId) {
         fileButton.onclick = () => {
             index = i;
             renderEditor();
+            editor.focus();
         };
 
         container.appendChild(fileButton);
