@@ -2,9 +2,7 @@
 
 ![App screen shot](resources/scrshot.png)
 
-<center>
 [Launch Cohesion](https://flarom.github.io/cohesion/)
-</center>
 
 ***
 
