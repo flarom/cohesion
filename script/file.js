@@ -229,6 +229,7 @@ function renderFiles(containerId) {
             renderFiles(containerId);
             renderEditor();
             editor.focus();
+            if(isMobile()) { hideAllSidebars(); }
         };
 
         container.appendChild(fileButton);

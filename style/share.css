@@ -132,6 +132,12 @@ button {
     }
 }
 
+@media screen and (min-width: 501px) {
+    .hide-on-pc {
+        display: none;
+    }
+}
+
 .dropdown {
     position: relative;
     display: inline-block;
@@ -221,7 +227,7 @@ button {
 }
 
 .sidebar.show+.main-wrapper {
-    margin-left: 250px;
+    margin-left: 310px;
 }
 
 #editor,
@@ -235,6 +241,8 @@ button {
     overflow: hidden;
     flex-shrink: 0;
     display: block;
+
+    overflow-y: scroll;
 
     height: calc(100vh - 48px - 10px);
     background-color: var(--background-color-2);
@@ -307,7 +315,7 @@ button {
     border-radius: 300px;
     padding: 0px 20px 0px 20px;
     position: fixed;
-    z-index: 1;
+    z-index: 1000;
     left: 50%;
     top: 30px;
     display: flex;

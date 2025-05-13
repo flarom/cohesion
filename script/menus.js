@@ -1,3 +1,11 @@
+function isMobile() {
+    return window.innerWidth <= 800;
+}
+
+function isPc() {
+    return !isMobile();
+}
+
 function toggleDropdown(menuId) {
     const menu = document.getElementById(menuId);
     const dropdown = menu.parentElement;

@@ -20,7 +20,7 @@
 <body>
     <header class="window-title">
         <div class="header-left">
-            <button class="icon-button" translate="no" onclick="toggleSidebar('files')" title="Documents">
+            <button class="icon-button" translate="no" onclick="toggleSidebar('files-bar')" title="Documents">
                 side_navigation
             </button>
             <button class="icon-button hide-on-mobile" translate="no" title="New file" onclick="createFile();">
@@ -45,7 +45,7 @@
             </div>
         </div>
         <div class="header-center hide-on-tablet">
-            <p id="filename">titulo</p>
+            <p id="filename">title</p>
         </div>
         <div class="header-right">
             <button class="icon-button" translate="no" title="Search">
@@ -67,13 +67,16 @@
                     <hr>
                     <button class="text-button" onclick="window.open('read.html?path=tutorial.md'); hideAllMenus()">Tutorial</button>
                     <button class="text-button">Keyboard shortcuts <kbd>Ctrl+?</kbd></button>
-                    <button class="text-button">About Cohesion <kbd>F1</kbd></button>
+                    <button class="text-button" onclick="promptMessageFromFile('about.html'); hideAllMenus();">About Cohesion <kbd>F1</kbd></button>
                 </div>
             </div>
         </div>
     </header>
 
-    <div id="files" class="sidebar"></div>
+    <div id="files-bar" class="sidebar">
+        <button class="text-button hide-on-pc" style="width: 100%; margin-top: 20px; margin-bottom: 20px;" onclick="createFile();">Create new document</button>
+        <div id="files"></div>
+    </div>
 
     <div class="main-wrapper">
         <textarea id="editor"></textarea>
@@ -209,9 +212,14 @@
                 togglePreview();
             }
 
+            else if (event.key === "F1") { // about - f1
+                event.preventDefault();
+                promptMessageFromFile('about.html');
+            }
+
             else if (event.key === "F9") { // toggle sidepane - f9
                 event.preventDefault();
-                toggleSidebar('files');
+                toggleSidebar('files-bar');
             }
 
             // FILE
