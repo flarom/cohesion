@@ -5,22 +5,10 @@ function toggleDropdown(menuId) {
     document.querySelectorAll('.dropdown').forEach(d => {
         if (d !== dropdown) {
             d.classList.remove('show');
-            d.querySelector('.dropdown-content').classList.remove('align-left');
         }
     });
 
     dropdown.classList.toggle('show');
-
-    if (dropdown.classList.contains('show')) {
-        const menuRect = menu.getBoundingClientRect();
-        const viewportWidth = window.innerWidth;
-
-        if (menuRect.right > viewportWidth) {
-            menu.classList.add('align-left');
-        } else {
-            menu.classList.remove('align-left');
-        }
-    }
 
     document.addEventListener('click', closeDropdownOnClickOutside);
 }
@@ -30,7 +18,6 @@ function closeDropdownOnClickOutside(event) {
     dropdowns.forEach(dropdown => {
         if (!dropdown.contains(event.target)) {
             dropdown.classList.remove('show');
-            dropdown.querySelector('.dropdown-content').classList.remove('align-left');
         }
     });
     document.removeEventListener('click', closeDropdownOnClickOutside);
@@ -46,6 +33,33 @@ function toggleSidebar(sidebarId) {
     });
 
     sidebar.classList.toggle('show');
+}
+
+function showToast(message, icon = "") {
+    const snackbar = document.createElement("div");
+    snackbar.className = "toast show";
+    snackbar.innerHTML = `<span class='icon' style='font-size:x-large'>${icon}</span><p>${message}</p>`;
+
+    document.body.appendChild(snackbar);
+
+    setTimeout(() => {
+        snackbar.classList.remove("show");
+        setTimeout(() => {
+            snackbar.remove();
+        }, 400);
+    }, 3000);
+}
+
+function hideAllMenus() {
+    document.querySelectorAll('.dropdown').forEach(dropdown => {
+        dropdown.classList.remove('show');
+    });
+}
+
+function hideAllSidebars() {
+    document.querySelectorAll('.sidebar').forEach(sidebar => {
+        sidebar.classList.remove('show');
+    });
 }
 
 function promptString(title, defaultText = "") {
@@ -266,5 +280,98 @@ function promptConfirm(message) {
         });
 
         yesButton.focus();
+    });
+}
+
+function promptTableSelector() {
+    return new Promise((resolve) => {
+        const overlay = document.createElement("div");
+        overlay.className = "prompt-overlay";
+
+        const dialog = document.createElement("div");
+        dialog.className = "prompt-dialog";
+
+        const tableContainer = document.createElement("div");
+        tableContainer.className = "table-selector-dialog";
+        dialog.appendChild(tableContainer);
+
+        const rows = 4;
+        const cols = 6;
+        const buttons = [];
+
+        for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+                const btn = document.createElement("div");
+                btn.className = "table-item-ex";
+                btn.dataset.row = row + 1;
+                btn.dataset.col = col + 1;
+                tableContainer.appendChild(btn);
+                buttons.push(btn);
+            }
+        }
+
+        const info = document.createElement("p");
+        info.textContent = "0 x 0";
+        info.style.textAlign = "center";
+        info.style.marginTop = "8px";
+        dialog.appendChild(info);
+
+        const buttonContainer = document.createElement('div');
+        buttonContainer.className = 'prompt-buttons';
+
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = 'Cancel';
+        cancelButton.className = 'prompt-button cancel';
+        buttonContainer.appendChild(cancelButton);
+
+        dialog.appendChild(buttonContainer);
+        overlay.appendChild(dialog);
+        document.body.appendChild(overlay);
+
+        tableContainer.addEventListener("mouseover", (e) => {
+            if (!e.target.classList.contains("table-item-ex")) return;
+
+            const targetRow = parseInt(e.target.dataset.row);
+            const targetCol = parseInt(e.target.dataset.col);
+
+            buttons.forEach((btn) => {
+                const r = parseInt(btn.dataset.row);
+                const c = parseInt(btn.dataset.col);
+                btn.classList.toggle(
+                    "highlighted",
+                    r <= targetRow && c <= targetCol
+                );
+            });
+
+            info.textContent = `${targetRow} x ${targetCol}`;
+        });
+
+        cancelButton.addEventListener('click', () => {document.body.removeChild(overlay);resolve(null);});
+        tableContainer.addEventListener("click", (e) => {
+            if (!e.target.classList.contains("table-item-ex")) return;
+
+            const rowCount = parseInt(e.target.dataset.row);
+            const colCount = parseInt(e.target.dataset.col);
+
+            document.body.removeChild(overlay);
+
+            let md = "";
+            const headerRow = Array(colCount).fill("          ").join("|");
+            const separator = Array(colCount).fill(":--------:").join("|");
+            md += `|${headerRow}|\n`;
+            md += `|${separator}|\n`;
+            for (let i = 0; i < rowCount - 1; i++) {
+                md += `|${Array(colCount).fill("          ").join("|")}|\n`;
+            }
+
+            resolve(md);
+        });
+
+        overlay.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                document.body.removeChild(overlay);
+                resolve(null);
+            }
+        });
     });
 }

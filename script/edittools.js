@@ -42,6 +42,24 @@ function toggleLineStart(prefix, toggle = false, prefixesToRemove = []) {
     });
 }
 
+function insertBlock(text) {
+    const doc = editor.getDoc();
+    const selection = doc.listSelections()[0];
+
+    const from = selection.anchor;
+    const to = selection.head;
+
+    const start = doc.indexFromPos(from);
+    const end = doc.indexFromPos(to);
+
+    const block = `\n${text}\n`;
+    doc.replaceRange(block, from, to);
+
+    const newIndex = start + block.length;
+    const newPos = doc.posFromIndex(newIndex);
+    doc.setCursor(newPos);
+}
+
 function insertAt(text, selectFrom, selectTo) {
     const doc = editor.getDoc();
     const cursor = doc.getCursor();

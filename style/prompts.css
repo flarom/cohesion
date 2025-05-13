@@ -1,0 +1,107 @@
+.prompt-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+}
+
+.prompt-dialog {
+    color: var(--text-color);
+    background-color: var(--background-color);
+    padding: 20px;
+    border: 1px solid var(--border-light-color);
+    border-radius: 15px;
+    width: 300px;
+}
+
+.prompt-title {
+    margin-bottom: 15px;
+}
+
+.prompt-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.prompt-input {
+    background: var(--background-color-2);
+    color: var(--text-color);
+    width: calc(100% - 40px);
+    height: 30px;
+    padding: 0px 20px;
+    margin-bottom: 15px;
+    border: 1px solid var(--border-light-color);
+    outline: none;
+    border-radius: 15px;
+}
+
+.prompt-select {
+    width: 100%;
+    height: 35px;
+    border-radius: 15px;
+    border: 1px solid var(--border-light-color-color);
+    background: var(--background-color-2);
+    color: var(--text-color);
+    margin-bottom: 15px;
+    padding: 0px 10px;
+    outline: none;
+}
+
+.prompt-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.prompt-button {
+    padding: 5px 30px;
+    border-radius: 15px;
+    cursor: pointer;
+    color: var(--text-color);
+    border: 1px solid var(--border-light-color);
+    background-color: transparent;
+}
+
+.prompt-button.submit {
+    background-color: var(--highlight-color);
+}
+
+.table-selector-dialog {
+    display: grid;
+    grid-template-columns: repeat(6, 30px);
+    grid-template-rows: repeat(4, 30px);
+    gap: 4px;
+    padding: 10px;
+    justify-content: center;
+}
+
+.table-item-ex {
+    background: var(--background-color-2);
+    cursor: pointer;
+    border-radius: 3px;
+    transition: 0.3s;
+}
+
+.table-item-ex.highlighted {
+    background: var(--highlight-color);
+}
+
+.table-selector-dialog > .table-item-ex:first-child {
+  border-top-left-radius: 10px;
+}
+.table-selector-dialog > .table-item-ex:nth-child(6) {
+  border-top-right-radius: 10px;
+}
+.table-selector-dialog > .table-item-ex:nth-child(19) {
+  border-bottom-left-radius: 10px;
+}
+.table-selector-dialog > .table-item-ex:nth-child(24) {
+  border-bottom-right-radius: 10px;
+}

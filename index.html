@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="style/palette.css">
     <link rel="stylesheet" href="style/share.css">
     <link rel="stylesheet" href="style/editor.css">
+    <link rel="stylesheet" href="style/prompts.css">
     <link rel="stylesheet" href="codemirror/lib/codemirror.css" />
     <script src="codemirror/lib/codemirror.js"></script>
     <script src="codemirror/mode/markdown/markdown.js"></script>
@@ -22,7 +23,7 @@
                 side_navigation
             </button>
             <button class="icon-button hide-on-mobile" translate="no" title="New file" onclick="createFile();">
-                add_box
+                edit_square
             </button>
             <hr class="hide-on-mobile">
             <button class="icon-button hide-on-mobile" translate="no" onclick="editor.undo()" title="Un-do">
@@ -31,8 +32,18 @@
             <button class="icon-button hide-on-mobile" translate="no" onclick="editor.redo()" title="Re-do">
                 redo
             </button>
+            <hr>
+            <div class="dropdown">
+                <button class="icon-button" translate="no" onclick="toggleDropdown('insert-menu')" title="Insert">
+                    attach_filearrow_drop_down
+                </button>
+                <div class="dropdown-content menu align-left" id="insert-menu">
+                    <button class="text-button" onclick="insertBlock(getSummary(editor.getValue())); hideAllMenus()">Summary</button>
+                    <button class="text-button" onclick="promptTableSelector().then((markdown) => {if (markdown) {insertBlock(markdown);}}); hideAllMenus()">Table</button>
+                </div>
+            </div>
         </div>
-        <div class="header-center">
+        <div class="header-center hide-on-mobile">
             <p id="filename">titulo</p>
         </div>
         <div class="header-right">
@@ -47,13 +58,13 @@
                     more_vert
                 </button>
                 <div class="dropdown-content menu" id="more-menu">
-                    <button class="text-button" onclick="createFile();">New <kbd>Ctrl+N</kbd></button>
-                    <button class="text-button" onclick="importFile();">Open <kbd>Ctrl+O</kbd></button>
-                    <button class="text-button" onclick="exportFile(index);">Save <kbd>Ctrl+S</kbd></button>
+                    <button class="text-button" onclick="createFile(); hideAllMenus()">New <kbd>Ctrl+N</kbd></button>
+                    <button class="text-button" onclick="importFile(); hideAllMenus()">Open <kbd>Ctrl+O</kbd></button>
+                    <button class="text-button" onclick="exportFile(index); hideAllMenus()">Save <kbd>Ctrl+S</kbd></button>
                     <hr>
                     <button class="text-button">Settings <kbd>Ctrl+,</kbd></button>
                     <hr>
-                    <button class="text-button" onclick="window.open('read.html?path=tutorial.md')">Tutorial</button>
+                    <button class="text-button" onclick="window.open('read.html?path=tutorial.md'); hideAllMenus()">Tutorial</button>
                     <button class="text-button">Keyboard shortcuts <kbd>Ctrl+?</kbd></button>
                     <button class="text-button">About Cohesion <kbd>F1</kbd></button>
                 </div>
@@ -73,7 +84,7 @@
     <script>
         loadFilesFromStorage();
 
-        let index = files.length -1;
+        let index = files.length - 1;
 
         const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
             mode: "markdown",
@@ -96,6 +107,7 @@
             document.title = getFileTitle(index) || "New document";
         }
 
+        if (files.length == 0) createFile();
         renderEditor();
         renderFiles("files");
         editor.focus();
@@ -161,7 +173,32 @@
             preview.innerHTML = converter.makeHtml(markdown);
         }
 
-        document.addEventListener("keydown", function (event) {
+        function getSummary(markdown) {
+            const lines = markdown.split('\n');
+            const titles = [];
+
+            for (const line of lines) {
+                const match = line.match(/^(#{1,6})\s+(.+)$/);
+                if (match) {
+                    const level = match[1].length;
+                    const text = match[2].trim();
+                    const id = text
+                        .toLowerCase()
+                        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                        .replace(/[^\w\s-]/g, '')
+                        .replace(/\s+/g, '-');
+
+                    titles.push({ level, text, id });
+                }
+            }
+
+            return titles.map(title => {
+                const indent = '    '.repeat(title.level - 1);
+                return `${indent}- [${title.text}](#${title.id})`;
+            }).join('\n');
+        }
+
+        document.addEventListener("keydown", async function (event) {
             // NAVIGATION
             if (event.ctrlKey && event.key === "p") { // toggle preview - ctrl+p
                 event.preventDefault();
@@ -187,6 +224,22 @@
             else if (event.ctrlKey && event.key === "o") { // open - ctrl+o
                 event.preventDefault();
                 importFile();
+            }
+
+            else if (event.ctrlKey && event.key === "Delete") { // delete - ctrl+delete
+                event.preventDefault();
+                if(! await promptConfirm("Delete this document?")) return;
+
+                deleteFile(index);
+                saveFilesToStorage();
+                if (files.length === 0) {
+                    createFile();
+                }
+                index = files.length - 1;
+                renderFiles("files");
+                renderEditor();
+                editor.focus();
+                showToast('Deleted', 'delete')
             }
 
             // EDIT

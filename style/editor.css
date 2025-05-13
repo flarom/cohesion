@@ -181,8 +181,11 @@
 /* html stuff */
 
 .preview iframe {
-    width: 100%;
+    width: 99%;
+    justify-self: center;
     border-radius: 10px;
+    min-height: 500px;
+    border: 1px solid var(--border-light-color);
 }
 
 .preview button {

@@ -210,6 +210,7 @@ function renderFiles(containerId) {
             renderFiles(containerId);
             renderEditor();
             editor.focus();
+            showToast('Deleted', 'delete')
         };
 
         dropdownContent.appendChild(shareBtn);
@@ -242,9 +243,9 @@ function generateCompressedLink(id) {
     console.log(link);
 
     navigator.clipboard.writeText(link).then(() => {
-        alert("copied");
+        showToast("copied", "content_copy");
     }).catch(err => {
         console.error(err);
-        alert("failed copying");
+        showToast("failed copying", "error");
     });
 }

@@ -3,20 +3,23 @@
 This is a complete and friendly guide to creating Markdown documents, both outside and inside Cohesion! Whether you're writing notes, documentation, blog posts or cute lists of things you love, Markdown makes everything simpler and more readable.
 
 ## Index
-- [Markdown cheat sheet](#markdown-cheat-sheet)
-- [Headings](#headings)
-- [Paragraphs](#paragraphs)
-- [Block quotations](#block-quotations)
-- [Code](#code)
-- [Lists](#lists)
-	- [Bullet list](#bullet-list)
-	- [Nested lists](#nested-lists)
-	- [Numbered lists](#numbered-lists)
-- [Links](#links)
-	- [Inline links](#inline-links)
-- [Images](#images)
-- [Math](#math)
-	- [MathML cheat sheet](#mathml-cheat-sheet)
+- [Markdown tutorial for Cohesion](#markdown-tutorial-for-cohesion)
+    - [Index](#index)
+    - [Markdown cheat sheet](#markdown-cheat-sheet)
+    - [Headings](#headings)
+    - [Paragraphs](#paragraphs)
+    - [Block quotations](#block-quotations)
+    - [Code](#code)
+    - [Lists](#lists)
+        - [Bullet List:](#bullet-list)
+        - [Nested Lists:](#nested-lists)
+        - [Numbered Lists:](#numbered-lists)
+    - [Links](#links)
+        - [Inline links](#inline-links)
+    - [Images](#images)
+    - [Math](#math)
+        - [MathML cheat sheet](#mathml-cheat-sheet)
+
 
 ## Markdown cheat sheet
 | Element			| Markdown syntax						| Keyboard shortcut	|
