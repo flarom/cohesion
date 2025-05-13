@@ -139,8 +139,12 @@
 
 /* tables */
 
-.preview table {
+.preview .table-container {
     width: 100%;
+    overflow-x: scroll;
+}
+
+.preview table {
     margin: 20px 0;
     font-size: 1rem;
     overflow: hidden;
