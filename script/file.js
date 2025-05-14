@@ -192,7 +192,7 @@ function renderFiles(containerId) {
         const hr = document.createElement("hr");
 
         const deleteBtn = document.createElement("button");
-        deleteBtn.className = "text-button";
+        deleteBtn.className = "text-button danger";
         deleteBtn.textContent = "Delete";
         deleteBtn.onclick = (event) => {
             event.stopPropagation();

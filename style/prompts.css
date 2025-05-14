@@ -63,24 +63,24 @@
     margin-bottom: 15px;
 }
 
-.prompt-input {
-    background: var(--background-color-2);
+.prompt-dialog input {
+    background: var(--field-color);
     color: var(--text-color);
     width: calc(100% - 40px);
-    height: 30px;
+    height: 35px;
     padding: 0px 20px;
     margin-bottom: 15px;
-    border: 1px solid var(--border-light-color);
+    border: 1px solid var(--border-field-color);
     outline: none;
     border-radius: 15px;
 }
 
-.prompt-select {
+.prompt-dialog select {
     width: 100%;
     height: 35px;
     border-radius: 15px;
-    border: 1px solid var(--border-light-color-color);
-    background: var(--background-color-2);
+    border: 1px solid var(--border-field-color);
+    background: var(--field-color);
     color: var(--text-color);
     margin-bottom: 15px;
     padding: 0px 10px;
@@ -103,6 +103,8 @@
 
 .prompt-button.submit {
     background-color: var(--highlight-color);
+    border-color: var(--highlight-color);
+    color: var(--button-color-2);
 }
 
 .table-selector-dialog {
@@ -115,14 +117,16 @@
 }
 
 .table-item-ex {
-    background: var(--background-color-2);
+    background: var(--field-color);
     cursor: pointer;
     border-radius: 3px;
     transition: 0.3s;
+    border: 1px solid var(--border-field-color);
 }
 
 .table-item-ex.highlighted {
     background: var(--highlight-color);
+    border: 0;
 }
 
 .table-selector-dialog > .table-item-ex:first-child {

@@ -583,6 +583,7 @@ span.CodeMirror-selectedtext {
     padding-left: 0;
     margin-left: -2ch;
     font-weight: bold;
+    color: var(--title-color) !important;
 }
 
 .cm-header-1 {

@@ -1,5 +1,5 @@
 .preview {
-    height: calc(100vh - 48px - 30px);
+    max-height: calc(100vh - 48px - 30px);
     max-width: 900px;
     padding: 15px;
     margin: 0 auto;
@@ -21,7 +21,7 @@
 /* titles */
 
 .preview h1, .preview h2, .preview h3, .preview h4, .preview h5, .preview h6 {
-    width: 100%;
+    width: calc(100% - 20px);
     font-weight: 100;
     font-family: var(--font-title);
     color: var(--title-color);
@@ -60,6 +60,7 @@
     background-color: var(--background-color-2);
     padding: 10px;
     border-radius: 10px;
+    max-width: calc(100% - 20px);
     overflow-x: scroll;
 }
 
@@ -76,7 +77,7 @@
 
 .preview img {
     border-radius: 10px;
-    max-width: 900px;
+    max-width: calc(100% - 20px);
 }
 
 /* links */
@@ -140,7 +141,7 @@
 /* tables */
 
 .preview .table-container {
-    width: 100%;
+    width: calc(100% - 20px);
     overflow-x: scroll;
 }
 
@@ -185,11 +186,11 @@
 /* html stuff */
 
 .preview iframe {
-    width: 99%;
+    width: calc(100% - 20px);
     justify-self: center;
     border-radius: 10px;
     min-height: 500px;
-    border: 1px solid var(--border-light-color);
+    border: 0;
 }
 
 .preview button {
@@ -211,6 +212,7 @@
 
 .preview math {
     display: block;
+    max-width: calc(100% - 20px);
     padding: 10px;
     border-radius: 10px;
     background-color: var(--background-color-2);

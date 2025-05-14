@@ -16,7 +16,7 @@ header.window-title {
     border-bottom: 1px solid var(--border-dark-color);
     padding: 10px 20px;
     box-sizing: border-box;
-    color: var(--text-color);
+    color: var(--title-color);
     height: 48px;
     z-index: 999;
 }
@@ -47,7 +47,7 @@ header.window-title .icon-button {
 header.window-title input[type=text] {
     background-color: transparent;
     border: none;
-    color: var(--text-color);
+    color: var(--title-color);
     font-size: large;
     height: 24px;
     border-radius: 12px;
@@ -78,7 +78,7 @@ button {
 .text-button {
     background: none;
     border: none;
-    color: var(--text-color);
+    color: var(--button-color);
     font-size: 16px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -86,8 +86,8 @@ button {
     height: 30px;
 }
 
-.icon-button.danger {
-    color: var(--danger);
+button.danger {
+    color: var(--danger) !important;
 }
 
 .icon-button:hover,
@@ -95,8 +95,8 @@ button {
     background-color: var(--hover-color);
 }
 
-.icon-button.danger:hover {
-    background-color: var(--danger-bg);
+button.danger:hover {
+    background-color: var(--danger-bg) !important;
 }
 
 .icon-button {

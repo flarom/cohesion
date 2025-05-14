@@ -1,15 +1,20 @@
-:root {
+.theme-dark {
     --background-color:     #282828;
     --background-color-2:   #303030;
     --background-color-3:   #454545;
 
+    --field-color:          #444444;
+
     --border-dark-color:    #050505;
     --border-light-color:   #6e6e6e;
+    --border-field-color:   transparent;
 
     --hover-color:          #3f3f3f;
 
     --title-color:          #ffffff;
-    --text-color:           #ffffff;
+    --button-color:         #ffffff;
+    --button-color-2:       #ffffff;
+    --text-color:           #dddddd;
 
     --highlight-color:      #3584e4;
     --selection-color:      #3584e433;
@@ -23,4 +28,36 @@
     --font-text:            "Ubuntu", sans-serif;
 
     --shadow:               0px 0px 10px #00000055;
+}
+
+.theme-light {
+    --background-color:     #f5f5f5;
+    --background-color-2:   #ffffff;
+    --background-color-3:   #f5f5f5;
+
+    --field-color:          #ebebeb;
+
+    --border-dark-color:    #e5e5e5;
+    --border-light-color:   #e5e5e5;
+    --border-field-color:   #d6d6d6;
+
+    --hover-color:          #ebebeb;
+
+    --title-color:          #2e3436;
+    --button-color:         #2e3436;
+    --button-color-2:       #ffffff;
+    --text-color:           #3c3c3c;
+
+    --highlight-color:      #3584e4;
+    --selection-color:      #3584e433;
+    --link-color:           #0d71de;
+
+    --danger:               #ca2121;
+    --danger-bg:            #ca212133;
+
+    --font-editor:          "Ubuntu Mono", monospace;
+    --font-title:           "Ubuntu", sans-serif;
+    --font-text:            "Ubuntu", sans-serif;
+
+    --shadow:               0px 0px 8px #00000022;
 }
