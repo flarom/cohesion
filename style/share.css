@@ -357,3 +357,26 @@ button.danger:hover {
         opacity: 0;
     }
 }
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background: transparent;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--border-light-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--highlight-back);
+}
+
+* {
+    scrollbar-color: var(--border-light-color) transparent;
+}
