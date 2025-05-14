@@ -24,14 +24,7 @@
                 side_navigation
             </button>
             <button class="icon-button hide-on-mobile" translate="no" title="New file" onclick="createFile();">
-                edit_square
-            </button>
-            <hr class="hide-on-mobile">
-            <button class="icon-button hide-on-mobile" translate="no" onclick="editor.undo()" title="Un-do">
-                undo
-            </button>
-            <button class="icon-button hide-on-mobile" translate="no" onclick="editor.redo()" title="Re-do">
-                redo
+                add_box
             </button>
             <hr>
             <div class="dropdown">
@@ -41,7 +34,8 @@
                 <div class="dropdown-content menu align-left" id="insert-menu">
                     <button class="text-button" onclick="insertBlock(getSummary(editor.getValue())); hideAllMenus()">Summary</button>
                     <button class="text-button" onclick="promptTableSelector().then((markdown) => {if (markdown) {insertBlock(markdown);}}); hideAllMenus()">Table</button>
-                    <button class="text-button" onclick=""></button>
+                    <hr>
+                    <button class="text-button" onclick="">YouTube Iframe</button>
                 </div>
             </div>
         </div>
