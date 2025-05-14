@@ -87,23 +87,52 @@ function getFileText(index) {
     return files[index] || null;
 }
 
-function getFileAverageReadingTime(index) {
+function getFileStats(index) {
     const text = getFileText(index);
-    if (!text) return "0s";
+    if (!text) {
+        return {
+            readTime: "0s",
+            paragraphs: 0,
+            sentences: 0,
+            words: 0,
+            characters: 0,
+            size: "0 B"
+        };
+    }
 
-    const words = text.trim().split(/\s+/).length;
+    const trimmedText = text.trim();
+
+    const paragraphs = trimmedText.split(/\n\s*\n/).filter(p => p.trim().length > 0).length;
+    const sentences = trimmedText.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+    const words = trimmedText.split(/\s+/).filter(w => w.trim().length > 0).length;
+    const characters = trimmedText.length;
+
+    const byteSize = new TextEncoder().encode(text).length;
+
+    function formatSize(bytes) {
+        if (bytes < 1024) return `${bytes} B`;
+        else if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+        else return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+    }
+
     const totalSeconds = Math.ceil((words / 200) * 60);
-
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
 
-    let result = "";
-    if (hours > 0) result += `${hours}h `;
-    if (minutes > 0) result += `${minutes}min `;
-    if (hours === 0 && seconds > 0) result += `${seconds}s`;
+    let readTime = "";
+    if (hours > 0) readTime += `${hours}h `;
+    if (minutes > 0) readTime += `${minutes}min `;
+    if (hours === 0 && seconds > 0) readTime += `${seconds}s`;
 
-    return result.trim();
+    return {
+        readTime: readTime.trim(),
+        paragraphs,
+        sentences,
+        words,
+        characters,
+        size: formatSize(byteSize)
+    };
 }
 
 function getFileTitle(index) {
@@ -152,7 +181,8 @@ function renderFiles(containerId) {
         const h3 = document.createElement("h3");
         h3.textContent = getFileTitle(i) || "New document";
         const p = document.createElement("p");
-        p.innerHTML = `<span class=icon>schedule</span>${getFileAverageReadingTime(i)} to read`;
+        p.innerHTML = `<span class=icon>schedule</span>${getFileStats(i).readTime} to read`;
+        p.title = `${getFileStats(i).paragraphs} Paragraphs`
         infoDiv.appendChild(h3);
         infoDiv.appendChild(p);
 

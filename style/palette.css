@@ -61,3 +61,35 @@
 
     --shadow:               0px 0px 8px #00000022;
 }
+
+.theme-creamy {
+    --background-color:     #fdf6e3;
+    --background-color-2:   #fffaf0;
+    --background-color-3:   #f5eacb;
+
+    --field-color:          #f0e6d2;
+
+    --border-dark-color:    #d6c9ab;
+    --border-light-color:   #e8ddc0;
+    --border-field-color:   #d0c7a7;
+
+    --hover-color:          #efe2c5;
+
+    --title-color:          #3c2f1c;
+    --button-color:         #3c2f1c;
+    --button-color-2:       #fff8e1;
+    --text-color:           #4b3a25;
+
+    --highlight-color:      #b58900;
+    --selection-color:      #b5890033;
+    --link-color:           #a06a00;
+
+    --danger:               #a83232;
+    --danger-bg:            #a8323233;
+
+    --font-editor:          "Ubuntu Mono", monospace;
+    --font-title:           "Ubuntu", serif;
+    --font-text:            "Ubuntu", serif;
+
+    --shadow:               0px 0px 6px #00000015;
+}
