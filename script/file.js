@@ -41,6 +41,12 @@ function deleteAllFiles(){
     renderFiles("files");
 }
 
+function deleteEmptyFiles() {
+    files = files.filter(file => file.trim() !== "");
+    saveFilesToStorage();
+    renderFiles("files");
+}
+
 function importFile() {
     const input = document.createElement("input");
     input.type = "file";
@@ -106,37 +112,26 @@ function getFileTitle(index) {
 
     const lines = text.split(/\r?\n/);
 
-    for (let line of lines) {
-        if (line.startsWith("# ")) {
-            let title = line.substring(2).trim();
-            if (title.length > 32) {
-                title = title.substring(0, 31) + '…';
+    for (let i = 1; i <= 6; i++) {
+        const prefix = '#'.repeat(i) + ' ';
+        for (let line of lines) {
+            if (line.startsWith(prefix)) {
+                return formatTitle(line.replace(/^#+/, '').trim());
             }
-            return title;
-        }
-    }
-
-    for (let line of lines) {
-        if (line.startsWith("#")) {
-            let title = line.replace(/^#+/, "").trim();
-            if (title.length > 32) {
-                title = title.substring(0, 31) + '…';
-            }
-            return title;
         }
     }
 
     for (let line of lines) {
         if (line.trim()) {
-            let title = line.trim();
-            if (title.length > 32) {
-                title = title.substring(0, 31) + '…';
-            }
-            return title;
+            return formatTitle(line.trim());
         }
     }
 
     return null;
+}
+
+function formatTitle(title) {
+    return title.length > 32 ? title.substring(0, 31) + '…' : title;
 }
 
 function renderFiles(containerId) {

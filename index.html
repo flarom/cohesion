@@ -41,6 +41,7 @@
                 <div class="dropdown-content menu align-left" id="insert-menu">
                     <button class="text-button" onclick="insertBlock(getSummary(editor.getValue())); hideAllMenus()">Summary</button>
                     <button class="text-button" onclick="promptTableSelector().then((markdown) => {if (markdown) {insertBlock(markdown);}}); hideAllMenus()">Table</button>
+                    <button class="text-button" onclick=""></button>
                 </div>
             </div>
         </div>
@@ -68,6 +69,8 @@
                     <button class="text-button" onclick="window.open('read.html?path=tutorial.md'); hideAllMenus()">Tutorial</button>
                     <button class="text-button">Keyboard shortcuts <kbd>Ctrl+?</kbd></button>
                     <button class="text-button" onclick="promptMessageFromFile('about.html'); hideAllMenus();">About Cohesion <kbd>F1</kbd></button>
+                    <hr>
+                    <button class="text-button" onclick="deleteEmptyFiles(); hideAllMenus()">Delete empty files</button>
                 </div>
             </div>
         </div>
