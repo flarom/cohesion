@@ -449,7 +449,7 @@ function promptIframe(){
 
             switch (plataformCbx.value) {
                 case 'pYouTube':
-                    resolve(insertYTVideo(contentField.value));
+                    resolve(insertYouTubeVideo(contentField.value));
                     break;
             }
         }

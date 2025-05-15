@@ -1,3 +1,9 @@
+:root {
+    --font-editor:          "Ubuntu Mono", monospace;
+    --font-title:           "Ubuntu", sans-serif;
+    --font-text:            "Ubuntu", sans-serif;
+}
+
 .theme-dark {
     --background-color:     #282828;
     --background-color-2:   #303030;
@@ -22,10 +28,6 @@
 
     --danger:               #ff8881;
     --danger-bg:            #ff888133;
-
-    --font-editor:          "Ubuntu Mono", monospace;
-    --font-title:           "Ubuntu", sans-serif;
-    --font-text:            "Ubuntu", sans-serif;
 
     --shadow:               0px 0px 10px #00000055;
 }
@@ -55,10 +57,6 @@
     --danger:               #ca2121;
     --danger-bg:            #ca212133;
 
-    --font-editor:          "Ubuntu Mono", monospace;
-    --font-title:           "Ubuntu", sans-serif;
-    --font-text:            "Ubuntu", sans-serif;
-
     --shadow:               0px 0px 8px #00000022;
 }
 
@@ -86,10 +84,6 @@
 
     --danger:               #a83232;
     --danger-bg:            #a8323233;
-
-    --font-editor:          "Ubuntu Mono", monospace;
-    --font-title:           "Ubuntu", serif;
-    --font-text:            "Ubuntu", serif;
 
     --shadow:               0px 0px 6px #00000015;
 }

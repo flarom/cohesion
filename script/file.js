@@ -12,8 +12,8 @@ function loadFilesFromStorage() {
 }
 
 function createFile() {
-    index = files.length; 
-    files.push("");
+    index = 0; 
+    files.unshift("");
     saveFilesToStorage();
     renderFiles("files");
     renderEditor()
@@ -43,6 +43,7 @@ function deleteAllFiles(){
 
 function deleteEmptyFiles() {
     files = files.filter(file => file.trim() !== "");
+    if (files.length == 0) createFile();
     saveFilesToStorage();
     renderFiles("files");
 }
@@ -172,6 +173,9 @@ function renderFiles(containerId) {
     files.forEach((_, i) => {
         const fileButton = document.createElement("button");
         fileButton.className = "file";
+        fileButton.setAttribute("draggable", "true");
+        fileButton.dataset.index = i;
+
         if (i === index) {
             fileButton.classList.add("selected");
         }
@@ -182,7 +186,7 @@ function renderFiles(containerId) {
         h3.textContent = getFileTitle(i) || "New document";
         const p = document.createElement("p");
         p.innerHTML = `<span class=icon>schedule</span>${getFileStats(i).readTime} to read`;
-        p.title = `${getFileStats(i).paragraphs} Paragraphs`
+        p.title = `${getFileStats(i).paragraphs} Paragraphs`;
         infoDiv.appendChild(h3);
         infoDiv.appendChild(p);
 
@@ -209,7 +213,7 @@ function renderFiles(containerId) {
         shareBtn.onclick = (event) => {
             event.stopPropagation();
             generateCompressedLink(i);
-        }
+        };
 
         const downloadBtn = document.createElement("button");
         downloadBtn.className = "text-button";
@@ -231,11 +235,11 @@ function renderFiles(containerId) {
             if (files.length === 0) {
                 createFile();
             }
-            index = files.length - 1;
+            index = 0;
             renderFiles(containerId);
             renderEditor();
             editor.focus();
-            showToast('Deleted', 'delete')
+            showToast('Deleted', 'delete');
         };
 
         dropdownContent.appendChild(shareBtn);
@@ -254,9 +258,39 @@ function renderFiles(containerId) {
             renderFiles(containerId);
             renderEditor();
             editor.focus();
-            if(isMobile()) { hideAllSidebars(); }
+            if (isMobile()) { hideAllSidebars(); }
         };
 
+        fileButton.ondragstart = (e) => {
+            e.dataTransfer.setData("text/plain", i);
+            e.dataTransfer.effectAllowed = "move";
+        };
+
+        fileButton.ondragover = (e) => {
+            e.preventDefault();
+            fileButton.classList.add("drag-over");
+        };
+
+        fileButton.ondragleave = () => {
+            fileButton.classList.remove("drag-over");
+        };
+
+        fileButton.ondrop = (e) => {
+            e.preventDefault();
+            const fromIndex = parseInt(e.dataTransfer.getData("text/plain"));
+            const toIndex = i;
+            if (fromIndex !== toIndex) {
+                const [movedFile] = files.splice(fromIndex, 1);
+                files.splice(toIndex, 0, movedFile);
+                saveFilesToStorage();
+                renderFiles(containerId);
+                if (index === fromIndex) index = toIndex;
+                else if (index > fromIndex && index <= toIndex) index--; 
+                else if (index < fromIndex && index >= toIndex) index++;
+                renderEditor();
+            }
+        };
+        
         container.appendChild(fileButton);
     });
 }

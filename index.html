@@ -20,7 +20,7 @@
 <body class="theme-dark">
     <header class="window-title">
         <div class="header-left">
-            <button class="icon-button" translate="no" onclick="toggleSidebar('files-bar')" title="Documents">
+            <button class="icon-button" translate="no" onclick="toggleSidebar('files-bar')" ondragenter="toggleSidebar('files-bar')" title="Documents">
                 side_navigation
             </button>
             <button class="icon-button hide-on-mobile" translate="no" title="New file" onclick="createFile();">
@@ -100,7 +100,7 @@
     <script>
         loadFilesFromStorage();
 
-        let index = files.length - 1;
+        let index = 0;
 
         const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
             mode: "markdown",
@@ -167,16 +167,16 @@
                     preview.scrollTop = scrollRatio * (preview.scrollHeight - preview.clientHeight);
                 });
 
-                document.querySelectorAll("#preview a").forEach(link => {
-                    const href = link.getAttribute("href") || "";
-                    if (!href.startsWith("http") || href.startsWith("http:")) return;
-                    const url = new URL(href);
-                    const img = document.createElement("img");
-                    img.className = "favicon";
-                    img.alt = "Favicon";
-                    img.src = `https://www.google.com/s2/favicons?sz=64&domain_url=${url.origin}`;
-                    link.prepend(img);
-                });
+                // document.querySelectorAll("#preview a").forEach(link => {
+                //     const href = link.getAttribute("href") || "";
+                //     if (!href.startsWith("http") || href.startsWith("http:")) return;
+                //     const url = new URL(href);
+                //     const img = document.createElement("img");
+                //     img.className = "favicon";
+                //     img.alt = "Favicon";
+                //     img.src = `https://www.google.com/s2/favicons?sz=64&domain_url=${url.origin}`;
+                //     link.prepend(img);
+                // });
             }
         }
 

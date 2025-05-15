@@ -80,6 +80,24 @@
     max-width: calc(100% - 20px);
 }
 
+.preview .image-container p {
+    text-align: center;
+    display: none;
+    margin: 5px;
+    opacity: 50%;
+    align-items: center;
+    gap: 5px;
+}
+
+.preview .image-container p::before {
+    content: "info";
+    font-family: 'Material Symbols Rounded';
+}
+
+.preview .image-container:hover p {
+    display: inline-flex;
+}
+
 /* links */
 
 .preview a {

@@ -3576,7 +3576,6 @@
         }
 
         function writeImageTag(wholeMatch, altText, linkId, url, width, height, m5, title) {
-
             var gUrls = globals.gUrls,
                 gTitles = globals.gTitles,
                 gDims = globals.gDimensions;
@@ -3586,13 +3585,11 @@
             if (!title) {
                 title = '';
             }
-            // Special case for explicit empty url
+
             if (wholeMatch.search(/\(<?\s*>? ?(['"].*['"])?\)$/m) > -1) {
                 url = '';
-
             } else if (url === '' || url === null) {
                 if (linkId === '' || linkId === null) {
-                    // lower-case and turn embedded newlines into spaces
                     linkId = altText.toLowerCase().replace(/ ?\n/g, ' ');
                 }
                 url = '#' + linkId;
@@ -3613,32 +3610,36 @@
 
             altText = altText
                 .replace(/"/g, '&quot;')
-                //altText = showdown.helper.escapeCharacters(altText, '*_', false);
                 .replace(showdown.helper.regexes.asteriskDashTildeAndColon, showdown.helper.escapeCharactersCallback);
-            //url = showdown.helper.escapeCharacters(url, '*_', false);
             url = url.replace(showdown.helper.regexes.asteriskDashTildeAndColon, showdown.helper.escapeCharactersCallback);
-            var result = '<img src="' + url + '" alt="' + altText + '"';
+
+            let imgTag = '<img src="' + url + '" alt="' + altText + '"';
 
             if (title && showdown.helper.isString(title)) {
                 title = title
                     .replace(/"/g, '&quot;')
-                    //title = showdown.helper.escapeCharacters(title, '*_', false);
                     .replace(showdown.helper.regexes.asteriskDashTildeAndColon, showdown.helper.escapeCharactersCallback);
-                result += ' title="' + title + '"';
+                imgTag += ' title="' + title + '"';
             }
 
             if (width && height) {
                 width = (width === '*') ? 'auto' : width;
                 height = (height === '*') ? 'auto' : height;
 
-                result += ' width="' + width + '"';
-                result += ' height="' + height + '"';
+                imgTag += ' width="' + width + '"';
+                imgTag += ' height="' + height + '"';
             }
 
-            result += ' />';
+            imgTag += ' />';
 
-            return result;
+            return '<div class="image-container">' +
+                '<a href="' + url + '" target="_blank">' +
+                imgTag +
+                '</a>' +
+                '<p>' + altText + '</p>' +
+                '</div>';
         }
+
 
         // First, handle reference-style labeled images: ![alt text][id]
         text = text.replace(referenceRegExp, writeImageTag);
@@ -4751,12 +4752,12 @@
         function buildTable(headers, cells) {
             var tb = '<div class="table-container">\n<table>\n<thead>\n<tr>\n',
                 tblLgn = headers.length;
-        
+
             for (var i = 0; i < tblLgn; ++i) {
                 tb += headers[i];
             }
             tb += '</tr>\n</thead>\n<tbody>\n';
-        
+
             for (i = 0; i < cells.length; ++i) {
                 tb += '<tr>\n';
                 for (var ii = 0; ii < tblLgn; ++ii) {
