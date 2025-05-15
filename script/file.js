@@ -12,7 +12,7 @@ function loadFilesFromStorage() {
 }
 
 function createFile() {
-    index = 0; 
+    index = 0;
     files.unshift("");
     saveFilesToStorage();
     renderFiles("files");
@@ -35,7 +35,7 @@ function deleteFile(index) {
     }
 }
 
-function deleteAllFiles(){
+function deleteAllFiles() {
     files = [];
     saveFilesToStorage();
     renderFiles("files");
@@ -61,7 +61,7 @@ function importFile() {
             files.push(reader.result);
             saveFilesToStorage();
             renderFiles("files");
-            index = files.lenght -1;
+            index = files.lenght - 1;
             renderEditor();
             editor.focus();
         };
@@ -269,6 +269,12 @@ function renderFiles(containerId) {
         fileButton.ondragover = (e) => {
             e.preventDefault();
             fileButton.classList.add("drag-over");
+
+            index = i;
+            renderFiles(containerId);
+            renderEditor();
+            editor.focus();
+            if (isMobile()) { hideAllSidebars(); }
         };
 
         fileButton.ondragleave = () => {
@@ -285,12 +291,18 @@ function renderFiles(containerId) {
                 saveFilesToStorage();
                 renderFiles(containerId);
                 if (index === fromIndex) index = toIndex;
-                else if (index > fromIndex && index <= toIndex) index--; 
+                else if (index > fromIndex && index <= toIndex) index--;
                 else if (index < fromIndex && index >= toIndex) index++;
                 renderEditor();
+
+                index = i;
+                renderFiles(containerId);
+                renderEditor();
+                editor.focus();
+                if (isMobile()) { hideAllSidebars(); }
             }
         };
-        
+
         container.appendChild(fileButton);
     });
 }
