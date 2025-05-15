@@ -2,6 +2,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
 
+* {
+    transition: 0.3s background-color, 0.3s color;
+}
+
 body {
     background-color: var(--background-color);
     margin: 0px;
@@ -110,6 +114,20 @@ button.danger:hover {
 .text-button {
     font-weight: bold;
     padding: 0px 10px 0px 10px;
+}
+
+.icon-button.dialog-window-control {
+    background-color: var(--field-color);
+    width: 32px;
+    height: 32px;
+    border-radius: 100%;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.icon-button.dialog-window-control:focus {
+    outline: none;
 }
 
 .button-on {
@@ -379,4 +397,29 @@ button.danger:hover {
 
 * {
     scrollbar-color: var(--border-light-color) transparent;
+}
+
+details {
+    background: var(--background-color);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    margin-bottom: 10px;
+}
+
+summary {
+    cursor: pointer;
+    list-style: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    height: 30px;
+    border-radius: 15px;
+    padding-left: 15px;
+    margin-bottom: 10px;
+    width: 90%;
+}
+
+summary:focus,
+summary:hover {
+    background-color: var(--hover-color);
 }

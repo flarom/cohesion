@@ -200,6 +200,14 @@ function promptMessageFromFile(filePath, showCloseButton = true) {
                 dialog.style.width = '100%';
                 dialog.style.maxWidth = '500px';
 
+                const okButton = document.createElement('button');
+                okButton.textContent = 'close';
+                okButton.className = 'icon-button dialog-window-control';
+
+                if (showCloseButton) {
+                    dialog.appendChild(okButton);
+                }
+
                 const content = document.createElement('div');
                 content.innerHTML = htmlContent;
                 content.style.marginBottom = '15px';
@@ -216,13 +224,6 @@ function promptMessageFromFile(filePath, showCloseButton = true) {
                     document.head.appendChild(newScript);
                 });
 
-                const okButton = document.createElement('button');
-                okButton.textContent = 'Ok';
-                okButton.className = 'prompt-button submit';
-
-                if (showCloseButton) {
-                    dialog.appendChild(okButton);
-                }
                 overlay.appendChild(dialog);
                 document.body.appendChild(overlay);
 
@@ -234,7 +235,7 @@ function promptMessageFromFile(filePath, showCloseButton = true) {
                 okButton.addEventListener('click', closePrompt);
 
                 overlay.addEventListener('keydown', (event) => {
-                    if (event.key === 'Enter' || event.key === 'Escape') {
+                    if (event.key === 'Escape') {
                         closePrompt();
                     }
                 });
