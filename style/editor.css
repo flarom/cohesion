@@ -59,18 +59,41 @@
     font-size: large;
     background-color: var(--background-color-2);
     padding: 10px;
-    border-radius: 10px;
+    border-radius: 5px 5px 10px 10px;
     max-width: calc(100% - 20px);
     overflow-x: scroll;
+    margin-top: 2px;
 }
 
 .preview code {
     padding: 1px 10px 1px 10px;
+    border-radius: 10px;
 }
 
 .preview pre code {
     background-color: transparent;
     padding: 0px;
+}
+
+.preview .code-head {
+    background-color: var(--background-color-2);
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 10px 10px 5px 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-editor);
+    justify-content: space-between;
+}
+
+.preview .code-head button {
+    border: 0;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 100px;
 }
 
 /* images */

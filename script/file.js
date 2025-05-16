@@ -1,9 +1,15 @@
 let files = [];
 
+/**
+ * Saves the current files array to localStorage
+ */
 function saveFilesToStorage() {
     localStorage.setItem("markdownFiles", JSON.stringify(files));
 }
 
+/**
+ * Gets the value on the localStorage to files
+ */
 function loadFilesFromStorage() {
     const saved = localStorage.getItem("markdownFiles");
     if (saved) {
@@ -11,6 +17,9 @@ function loadFilesFromStorage() {
     }
 }
 
+/**
+ * Creates a empty file to files
+ */
 function createFile() {
     index = 0;
     files.unshift("");
@@ -19,6 +28,11 @@ function createFile() {
     renderEditor()
 }
 
+/**
+ * Updates the value of a certain file
+ * @param {The new value of the file} value 
+ * @param {The file to be updated} index 
+ */
 function updateFile(value, index) {
     if (files[index] !== undefined) {
         files[index] = value;
@@ -27,6 +41,10 @@ function updateFile(value, index) {
     }
 }
 
+/**
+ * Deletes a file
+ * @param {The file to be deleted} index 
+ */
 function deleteFile(index) {
     if (files[index] !== undefined) {
         files.splice(index, 1);
@@ -35,12 +53,18 @@ function deleteFile(index) {
     }
 }
 
+/**
+ * Deletes all files
+ */
 function deleteAllFiles() {
     files = [];
     saveFilesToStorage();
     renderFiles("files");
 }
 
+/**
+ * Deletes all files without any text
+ */
 function deleteEmptyFiles() {
     files = files.filter(file => file.trim() !== "");
     if (files.length == 0) createFile();
@@ -48,6 +72,9 @@ function deleteEmptyFiles() {
     renderFiles("files");
 }
 
+/**
+ * Shows a open file dialog, adds the context of a file into the fileList
+ */
 function importFile() {
     const input = document.createElement("input");
     input.type = "file";
@@ -58,7 +85,7 @@ function importFile() {
 
         const reader = new FileReader();
         reader.onload = () => {
-            files.push(reader.result);
+            files.unshift(reader.result);
             saveFilesToStorage();
             renderFiles("files");
             index = files.lenght - 1;
@@ -70,6 +97,11 @@ function importFile() {
     input.click();
 }
 
+/**
+ * Exports a file as a .md markdown document
+ * @param {The file to be exported} index 
+ * @returns null if the file doesn't exists
+ */
 function exportFile(index) {
     if (files[index] === undefined) return;
 
@@ -84,10 +116,20 @@ function exportFile(index) {
     URL.revokeObjectURL(url);
 }
 
+/**
+ * Gets the text of a file
+ * @param {The file to be returned} index 
+ * @returns The text content of a file || null if id doesn't exists
+ */
 function getFileText(index) {
     return files[index] || null;
 }
 
+/**
+ * Gets statistics of a file
+ * @param {The file to be returned} index 
+ * @returns Object containing: read time string, paragraphs qtd, sentences qtd, words qtd, characters qtd, aprox. file size string
+ */
 function getFileStats(index) {
     const text = getFileText(index);
     if (!text) {
@@ -136,6 +178,11 @@ function getFileStats(index) {
     };
 }
 
+/**
+ * Gets an adequate title to a file
+ * @param {The file to be returned} index 
+ * @returns a title
+ */
 function getFileTitle(index) {
     const text = getFileText(index);
     if (!text) return null;
@@ -160,8 +207,19 @@ function getFileTitle(index) {
     return null;
 }
 
+
 function formatTitle(title) {
     return title.length > 32 ? title.substring(0, 31) + '…' : title;
+}
+
+/**
+ * Gets a tiny text snippet of a file
+ * @param {The file to be returned} index 
+ * @param {lenght of returned text} lenght
+ * @returns file snippet
+ */
+function getFileSnippet(index, lenght) {
+    return files[index].substring(0, lenght) || null;
 }
 
 function renderFiles(containerId) {

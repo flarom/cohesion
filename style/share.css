@@ -99,6 +99,7 @@ button.danger {
     background-color: var(--hover-color);
 }
 
+button.danger:focus,
 button.danger:hover {
     background-color: var(--danger-bg) !important;
 }
@@ -120,10 +121,14 @@ button.danger:hover {
     background-color: var(--field-color);
     width: 32px;
     height: 32px;
-    border-radius: 100%;
+    border-radius: 50%;
     position: absolute;
     top: 10px;
     right: 10px;
+}
+
+.icon-button.dialog-window-control:hover {
+    border-radius: 25%;
 }
 
 .icon-button.dialog-window-control:focus {
@@ -301,23 +306,19 @@ button.danger:hover {
     line-break: anywhere;
 }
 
-.sidebar .file.selected {
-    background-color: var(--background-color-3);
-}
-
+.sidebar .file.selected,
 .sidebar .file:hover {
     background-color: var(--background-color-3);
-    border-radius: 15px;
 }
 
 .sidebar .file h3, .sidebar .file p {
     margin: 0;
-}
-
-.sidebar .file p {
     display: flex;
     align-items: center;
     gap: 3px;
+}
+
+.sidebar .file p {
     opacity: 75%;
 }
 

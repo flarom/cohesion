@@ -94,7 +94,7 @@
     <script src="script/showdown.js"></script>
     <script src="script/edittools.js"></script>
     <script src="script/insert.js"></script>
-    <script src="script/menus.js"></script>
+    <script src="script/prompts.js"></script>
     <script src="script/file.js"></script>
     <script src="script/settings.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
@@ -272,6 +272,17 @@
                 editor.focus();
             }
 
+            else if (event.ctrlKey && event.key === 'e') {
+                event.preventDefault();
+                let fileNames = [];
+
+                files.forEach((_, i) => {
+                    fileNames.push(getFileTitle(i));
+                });
+
+                await promptStringSelector('Search', fileNames).then((newIndex) => {if (newIndex != null) { index = newIndex; renderEditor(); editor.focus(); }});
+            }
+
             // FILE
             else if (event.altKey && event.key === "n") { // new - ctrl+n
                 event.preventDefault();
@@ -288,9 +299,9 @@
                 importFile();
             }
 
-            else if (event.ctrlKey && event.key === "Delete") { // delete - ctrl+delete
+            else if (event.shiftKey && event.ctrlKey && event.key === "Delete") { // delete - ctrl+shift+delete
                 event.preventDefault();
-                if (! await promptConfirm("Delete this document?")) return;
+                if (! await promptConfirm("Delete this document?", true)) return;
 
                 deleteFile(index);
                 saveFilesToStorage();

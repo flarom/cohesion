@@ -3139,43 +3139,48 @@
     showdown.subParser('makehtml.githubCodeBlocks', function (text, options, globals) {
         'use strict';
 
-        // early exit if option is not enabled
         if (!options.ghCodeBlocks) {
             return text;
         }
 
         text = globals.converter._dispatch('makehtml.githubCodeBlocks.before', text, options, globals).getText();
-
         text += '¨0';
 
         text = text.replace(/(?:^|\n) {0,3}(```+|~~~+) *([^\n\t`~]*)\n([\s\S]*?)\n {0,3}\1/g, function (wholeMatch, delim, language, codeblock) {
             var end = (options.omitExtraWLInCodeBlocks) ? '' : '\n';
 
-            // if the language has spaces followed by some other chars, according to the spec we should just ignore everything
-            // after the first space
-            language = language.trim().split(' ')[0];
+            language = language.trim().split(' ')[0].toLowerCase();
 
-            // First parse the github code block
             codeblock = showdown.subParser('makehtml.encodeCode')(codeblock, options, globals);
             codeblock = showdown.subParser('makehtml.detab')(codeblock, options, globals);
             codeblock = codeblock.replace(/^\n+/g, ''); // trim leading newlines
             codeblock = codeblock.replace(/\n+$/g, ''); // trim trailing whitespace
 
-            codeblock = '<pre><code' + (language ? ' class="' + language + ' language-' + language + '"' : '') + '>' + codeblock + end + '</code></pre>';
+            let runButton = '';
+            if (language === 'js' || language === 'javascript') {
+                runButton = `<button class="icon-button" onclick="try{eval(this.closest('.code-head').nextElementSibling.querySelector('code').innerText)}catch(e){showToast(e, 'error')}">rocket_launch</button>`;
+            }
+
+            codeblock = `
+    <div class="code-head">
+        ${language}
+        <div>
+            <button class="icon-button" onclick="navigator.clipboard.writeText(this.closest('.code-head').nextElementSibling.querySelector('code').innerText)">content_copy</button>
+            ${runButton}
+        </div>
+    </div>
+    <pre><code${language ? ' class="' + language + ' language-' + language + '"' : ''}>${codeblock + end}</code></pre>
+            `;
 
             codeblock = showdown.subParser('makehtml.hashBlock')(codeblock, options, globals);
 
-            // Since GHCodeblocks can be false positives, we need to
-            // store the primitive text and the parsed text in a global var,
-            // and then return a token
             return '\n\n¨G' + (globals.ghCodeBlocks.push({ text: wholeMatch, codeblock: codeblock }) - 1) + 'G\n\n';
         });
 
-        // attacklab: strip sentinel
         text = text.replace(/¨0/, '');
-
         return globals.converter._dispatch('makehtml.githubCodeBlocks.after', text, options, globals).getText();
     });
+
 
     showdown.subParser('makehtml.hashBlock', function (text, options, globals) {
         'use strict';

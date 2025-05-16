@@ -30,6 +30,7 @@
     width: 300px;
     animation: showdialog 0.5s ease-in-out forwards;
     box-shadow: var(--shadow);
+    margin: 10px;
 }
 
 @keyframes showdialog {
@@ -93,6 +94,11 @@
     color: var(--text-color);
     border: 1px solid var(--border-light-color);
     background-color: transparent;
+    outline: none;
+}
+
+.prompt-button:focus {
+    border: 2px solid var(--highlight-color);
 }
 
 .prompt-button.submit {
@@ -180,4 +186,25 @@
 
 .prompt-dialog a:hover {
     text-decoration: underline;
+}
+
+.prompt-preview-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+    background: var(--background-color);
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.prompt-preview-list li {
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: 500px;
+}
+
+.prompt-preview-list li.selected-option {
+    background-color: var(--field-color);
+    color: var(--text-color);
 }
