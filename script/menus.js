@@ -342,8 +342,8 @@ function promptTableSelector() {
         buttonContainer.className = 'prompt-buttons';
 
         const cancelButton = document.createElement('button');
-        cancelButton.textContent = 'Cancel';
-        cancelButton.className = 'prompt-button cancel';
+        cancelButton.textContent = 'close';
+        cancelButton.className = 'icon-button dialog-window-control';
         buttonContainer.appendChild(cancelButton);
 
         dialog.appendChild(buttonContainer);

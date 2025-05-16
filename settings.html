@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings</title>
     <style>
-        button.theme-ball {
+        button.ball {
             width: 64px;
             height: 64px;
             border-radius: 100%;
@@ -15,35 +16,33 @@
         }
     </style>
 </head>
+
 <body>
-    <details name="setting" open>
-        <summary>
-            <h3>Theme</h3>
-        </summary>
-        <div style="display: flex; gap: 10px; align-items: center;">
-            <button class="theme-ball" style="background-color: #ffffff;" onclick="setSetting('theme', 'theme-light');loadSettings()"></button>
-            <button class="theme-ball" style="background-color: #fdf6e3;" onclick="setSetting('theme', 'theme-cream');loadSettings()"></button>
-            <button class="theme-ball" style="background-color: #303030;" onclick="setSetting('theme', 'theme-dark');loadSettings()"></button>
-        </div>
-    </details>
-    <details name="setting">
-        <summary>
-            <h3>Fonts</h3>
-        </summary>
+    <h3>Theme</h3>
+
+    <div style="display: flex; gap: 10px; align-items: center;">
+        <button class="ball" style="background-color: #ffffff;" onclick="setSetting('theme', 'theme-light');loadSettings()"></button>
+        <button class="ball" style="background-color: #f5eacb;" onclick="setSetting('theme', 'theme-cream');loadSettings()"></button>
+        <button class="ball" style="background-color: #303030;" onclick="setSetting('theme', 'theme-dark');loadSettings()"></button>
+    </div>
+
+    <h3>Fonts</h3>
+
+    <div>
         <div>
-            <div>
-                <label>Editor font</label>
-                <input type="text" placeholder='Ubuntu Mono' id="field-font-editor" oninput="setSetting('editorFont', this.value); loadSettings();">
-            </div>
-            <div>
-                <label>Paragraph font</label>
-                <input type="text" placeholder="Ubuntu" id="field-font-paragraph" oninput="setSetting('paragraphFont', this.value); loadSettings();">
-            </div>
-            <div>
-                <label>Title font</label>
-                <input type="text" placeholder="Ubuntu" id="field-font-title" oninput="setSetting('titleFont', this.value); loadSettings();"> 
-            </div>
+            <label>Editor font</label>
+            <input type="text" placeholder='Ubuntu Mono' id="field-font-editor" oninput="setSetting('editorFont', this.value); loadSettings();">
         </div>
-    </details>
+        <div>
+            <label>Paragraph font</label>
+            <input type="text" placeholder="Ubuntu" id="field-font-paragraph" oninput="setSetting('paragraphFont', this.value); loadSettings();">
+        </div>
+        <div>
+            <label>Title font</label>
+            <input type="text" placeholder="Ubuntu" id="field-font-title" oninput="setSetting('titleFont', this.value); loadSettings();">
+        </div>
+    </div>
+
 </body>
+
 </html>

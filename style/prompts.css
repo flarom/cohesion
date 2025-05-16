@@ -15,19 +15,10 @@
     0% {
         background-color: rgba(0, 0, 0, 0);
     }
-    100% {
-        background-color: rgba(0, 0, 0, 0.5);
-    }
-}
 
-.prompt-dialog {
-    color: var(--text-color);
-    background-color: var(--background-color);
-    padding: 20px;
-    border: 1px solid var(--border-light-color);
-    border-radius: 15px;
-    width: 300px;
-    animation: showdialog 0.8s forwards;
+    100% {
+        background-color: rgba(0, 0, 0, 0.3);
+    }
 }
 
 .prompt-dialog {
@@ -38,15 +29,18 @@
     border-radius: 15px;
     width: 300px;
     animation: showdialog 0.5s ease-in-out forwards;
+    box-shadow: var(--shadow);
 }
 
 @keyframes showdialog {
     0% {
         transform: scale(0);
     }
+
     60% {
         transform: scale(1.2);
     }
+
     100% {
         transform: scale(1);
     }
@@ -114,6 +108,7 @@
     gap: 4px;
     padding: 10px;
     justify-content: center;
+    perspective: 800px;
 }
 
 .table-item-ex {
@@ -122,24 +117,45 @@
     border-radius: 3px;
     transition: 0.3s;
     border: 1px solid var(--border-field-color);
+    transition: border 0s, background 0s 0.2s, transform 0.5s, border-radius 0.5s;
 }
 
 .table-item-ex.highlighted {
     background: var(--highlight-color);
     border: 0;
+    transform: rotateY(180deg);
 }
 
-.table-selector-dialog > .table-item-ex:first-child {
-  border-top-left-radius: 10px;
+.table-selector-dialog>.table-item-ex:first-child {
+    border-top-left-radius: 10px;
 }
-.table-selector-dialog > .table-item-ex:nth-child(6) {
-  border-top-right-radius: 10px;
+.table-selector-dialog>.table-item-ex.highlighted:first-child {
+    border-top-left-radius: 3px;
+    border-top-right-radius: 10px;
 }
-.table-selector-dialog > .table-item-ex:nth-child(19) {
-  border-bottom-left-radius: 10px;
+
+.table-selector-dialog>.table-item-ex:nth-child(6) {
+    border-top-right-radius: 10px;
 }
-.table-selector-dialog > .table-item-ex:nth-child(24) {
-  border-bottom-right-radius: 10px;
+.table-selector-dialog>.table-item-ex.highlighted:nth-child(6) {
+    border-top-right-radius: 3px;
+    border-top-left-radius: 10px;
+}
+
+.table-selector-dialog>.table-item-ex:nth-child(19) {
+    border-bottom-left-radius: 10px;
+}
+.table-selector-dialog>.table-item-ex.highlighted:nth-child(19) {
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 10px;
+}
+
+.table-selector-dialog>.table-item-ex:nth-child(24) {
+    border-bottom-right-radius: 10px;
+}
+.table-selector-dialog>.table-item-ex.highlighted:nth-child(24) {
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 10px;
 }
 
 .prompt-dialog div.center {
