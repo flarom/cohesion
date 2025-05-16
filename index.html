@@ -266,7 +266,7 @@
             else if (event.altKey && /^[0-9]$/.test(event.key)) {
                 event.preventDefault();
                 const newIndex = (event.key === "0") ? 9 : parseInt(event.key) - 1;
-                if (newIndex > files.length -1) return;
+                if (newIndex > files.length - 1) return;
                 index = newIndex;
                 renderEditor();
                 editor.focus();
@@ -280,7 +280,7 @@
                     fileNames.push(getFileTitle(i));
                 });
 
-                await promptStringSelector('Search', fileNames).then((newIndex) => {if (newIndex != null) { index = newIndex; renderEditor(); editor.focus(); }});
+                await promptStringSelector('Search', fileNames).then((newIndex) => { if (newIndex != null) { index = newIndex; renderEditor(); editor.focus(); } });
             }
 
             // FILE
@@ -348,6 +348,36 @@
             else if (event.ctrlKey && event.key === "r") { // horizontal rule - ctrl+r
                 event.preventDefault();
                 insertAt("\n\n***\n\n", 7, 7)
+            }
+
+            //SEACRH
+            else if (event.ctrlKey && event.key === "g") {
+                event.preventDefault();
+                search();
+
+                async function search(warn = false) {
+                    const totalLines = editor.lineCount();
+                    const currentLine = editor.getCursor().line + 1;
+
+                    const message = `Type a number between 1 and ${totalLines} to navigate to:`;
+                    const lineStr = await promptString(message, currentLine, warn);
+                    if (!lineStr) return;
+
+                    const match = /^\s*(\d+)\s*$/.exec(lineStr);
+                    if (match) {
+                        const line = parseInt(match[1], 10) - 1;
+                        if (line >= 0 && line < editor.lineCount()) {
+                            editor.setCursor({ line, ch: 0 });
+                            editor.focus();
+                        } else {
+                            showToast("Cant navigate to this line", "warning");
+                            search(true);
+                        }
+                    } else {
+                        showToast("Cant navigate to this line", "warning");
+                        search(true);
+                    }
+                }
             }
         });
     </script>

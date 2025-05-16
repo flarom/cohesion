@@ -73,7 +73,7 @@ function closeAllDialogs () {
 document.querySelectorAll('.prompt-overlay').forEach(el => el.remove());
 }
 
-function promptString(title, defaultText = "") {
+function promptString(title, defaultText = "", warn = false) {
     return new Promise((resolve) => {
         // overlay
         const overlay = document.createElement('div');
@@ -82,6 +82,7 @@ function promptString(title, defaultText = "") {
         // dialog
         const dialog = document.createElement('div');
         dialog.className = 'prompt-dialog';
+        if (warn) dialog.classList.add('warn')
 
         // title
         const titleElement = document.createElement('p');
@@ -128,6 +129,7 @@ function promptString(title, defaultText = "") {
 
         overlay.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
+                event.preventDefault();
                 closePrompt(input.value);
             } else if (event.key === 'Escape') {
                 closePrompt(null);

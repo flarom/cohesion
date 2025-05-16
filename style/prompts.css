@@ -28,9 +28,13 @@
     border: 1px solid var(--border-light-color);
     border-radius: 15px;
     width: 300px;
-    animation: showdialog 0.5s ease-in-out forwards;
     box-shadow: var(--shadow);
     margin: 10px;
+    animation: showdialog 0.5s ease-in-out forwards;
+}
+
+.prompt-dialog.warn {
+    animation: showdialogWarn 0.5s ease-in-out forwards !important;
 }
 
 @keyframes showdialog {
@@ -44,6 +48,24 @@
 
     100% {
         transform: scale(1);
+    }
+}
+
+@keyframes showdialogWarn {
+    0% {
+        transform: translateX(10px);
+    }
+    25% {
+        transform: translateX(-10px);
+    }
+    50% {
+        transform: translateX(10px);
+    }
+    75% {
+        transform: translateX(-10px);
+    }
+    100% {
+        transform: translateX(0px);
     }
 }
 
