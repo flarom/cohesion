@@ -1,5 +1,13 @@
+/* Example of a file
+{
+    content: "# Markdown here",
+    tags: ["example document", "markdown"]
+}
+*/
+
 let files = [];
 
+//#region local storage
 /**
  * Saves the current files array to localStorage
  */
@@ -16,17 +24,19 @@ function loadFilesFromStorage() {
         files = JSON.parse(saved);
     }
 }
+//#endregion
 
+//#region file cud
 /**
  * Creates a empty file to files
  */
 function createFile() {
     index = 0;
     localStorage.setItem('lastIndex', index);
-    files.unshift("");
+    files.unshift({ content: "", tags: [] });
     saveFilesToStorage();
     renderFiles("files");
-    renderEditor()
+    renderEditor();
 }
 
 /**
@@ -36,7 +46,7 @@ function createFile() {
  */
 function updateFile(value, index) {
     if (files[index] !== undefined) {
-        files[index] = value;
+        files[index].content = value;
         saveFilesToStorage();
         renderFiles("files");
     }
@@ -67,12 +77,14 @@ function deleteAllFiles() {
  * Deletes all files without any text
  */
 function deleteEmptyFiles() {
-    files = files.filter(file => file.trim() !== "");
-    if (files.length == 0) createFile();
+    files = files.filter(file => file.content.trim() !== "");
+    if (files.length === 0) createFile();
     saveFilesToStorage();
     renderFiles("files");
 }
+//#endregion
 
+//#region downloading/uploading files
 /**
  * Shows a open file dialog, adds the context of a file into the fileList
  */
@@ -86,10 +98,10 @@ function importFile() {
 
         const reader = new FileReader();
         reader.onload = () => {
-            files.unshift(reader.result);
+            files.unshift({ content: reader.result, tags: [] });
             saveFilesToStorage();
             renderFiles("files");
-            index = files.lenght - 1;
+            index = files.length - 1;
             localStorage.setItem('lastIndex', index);
             renderEditor();
             editor.focus();
@@ -107,7 +119,7 @@ function importFile() {
 function exportFile(index, fileName = getFileTitle(index)) {
     if (files[index] === undefined) return;
 
-    const blob = new Blob([files[index]], { type: "text/markdown" });
+    const blob = new Blob([files[index].content], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
 
     const a = document.createElement("a");
@@ -117,14 +129,16 @@ function exportFile(index, fileName = getFileTitle(index)) {
 
     URL.revokeObjectURL(url);
 }
+//#endregion
 
+//#region file getters
 /**
  * Gets the text of a file
  * @param {The file to be returned} index 
  * @returns The text content of a file || null if id doesn't exists
  */
 function getFileText(index) {
-    return files[index] || null;
+    return files[index]?.content || null;
 }
 
 /**
@@ -221,8 +235,10 @@ function formatTitle(title) {
  * @returns file snippet
  */
 function getFileSnippet(index, lenght) {
-    return files[index].substring(0, lenght) || null;
+    return files[index]?.content.substring(0, length) || null;
 }
+
+//#endregion
 
 function renderFiles(containerId) {
     const container = document.getElementById(containerId);
@@ -230,7 +246,7 @@ function renderFiles(containerId) {
 
     container.innerHTML = "";
 
-    files.forEach((_, i) => {
+    files.forEach((file, i) => {
         const fileButton = document.createElement("button");
         fileButton.className = "file";
         fileButton.setAttribute("draggable", "true");
@@ -242,11 +258,15 @@ function renderFiles(containerId) {
 
         const infoDiv = document.createElement("div");
         infoDiv.style.width = "90%";
+
         const h3 = document.createElement("h3");
         h3.textContent = getFileTitle(i) || "New document";
+
         const p = document.createElement("p");
-        p.innerHTML = `<span class=icon>schedule</span>${getFileStats(i).readTime} to read`;
-        p.title = `${getFileStats(i).paragraphs} Paragraphs`;
+        const stats = getFileStats(i);
+        p.innerHTML = `<span class=icon>schedule</span>${stats.readTime} to read`;
+        p.title = `${stats.paragraphs} Paragraphs`;
+
         infoDiv.appendChild(h3);
         infoDiv.appendChild(p);
 

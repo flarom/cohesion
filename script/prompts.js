@@ -582,7 +582,7 @@ function promptSaveFile(fileId) {
     const fileNameField = document.createElement('input');
     fileNameField.type = 'text';
     fileNameField.className = 'prompt-input';
-    fileNameField.value = `${getFileTitle(fileId)}`;
+    fileNameField.value = `${getFileTitle(fileId) || "New document"}`;
     dialog.appendChild(fileNameField);
 
     const fileFormatField = document.createElement('select');

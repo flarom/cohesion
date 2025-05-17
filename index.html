@@ -5,16 +5,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>New document</title>
+    <link rel="shortcut icon" href="resources/favicon.png" type="image/x-icon">
+
+    <meta content="website" property="og:type">
+    <meta content="Flarom" name="author">
+
+    <meta content="Cohesion Markdown Text Editor" name="title">
+    <meta content="Cohesion Markdown Text Editor" property="og:title">
+    <meta content="Cohesion is a free and opensource online markdown text editor" name="description">
+    <meta content="Cohesion is a free and opensource online markdown text editor" property="og:description">
+
+    <meta content="Cohesion, markdown, text, editor, free, opensource" name="keywords">
+    <meta content="https://flarom.github.io/cohesion/resources/scrshot.png" property="og:image">
+    <meta content="https://flarom.github.io/cohesion" property="og:url">
+    <meta content="index, follow" name="robots">
+
+    <meta content="#303030" name="theme-color">
+
     <link rel="stylesheet" href="style/palette.css">
     <link rel="stylesheet" href="style/share.css">
     <link rel="stylesheet" href="style/editor.css">
     <link rel="stylesheet" href="style/prompts.css">
     <link rel="stylesheet" href="codemirror/lib/codemirror.css" />
+
     <script src="codemirror/lib/codemirror.js"></script>
     <script src="codemirror/mode/markdown/markdown.js"></script>
     <script src="codemirror/addon/edit/closebrackets.js"></script>
     <script src="codemirror/addon/edit/continuelist.js"></script>
-    <link rel="shortcut icon" href="resources/favicon.png" type="image/x-icon">
 </head>
 
 <body class="theme-dark">
@@ -24,7 +41,7 @@
                 ondragenter="toggleSidebar('files-bar')" title="Documents">
                 side_navigation
             </button>
-            <button class="icon-button hide-on-mobile" translate="no" title="New file" onclick="createFile();">
+            <button class="icon-button hide-on-mobile" translate="no" title="New document" onclick="createFile();">
                 add_box
             </button>
             <hr>
@@ -99,6 +116,12 @@
     <script src="script/settings.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
     <script>
+        window.addEventListener("storage", (event) => {
+            if (event.key === "markdownFiles") {
+                location.reload();
+            }
+        });
+
         loadFilesFromStorage();
 
         let index = localStorage.getItem('lastIndex') || 0;
@@ -118,8 +141,8 @@
         const preview = document.getElementById("preview");
 
         function renderEditor() {
-            if (!files[index]) files[index] = "";
-            editor.setValue(files[index]);
+            if (!files[index].content) files[index].content = "";
+            editor.setValue(files[index]?.content);
             document.getElementById("filename").innerText = getFileTitle(index) || "New document";
             document.title = getFileTitle(index) || "New document - Cohesion";
         }
@@ -229,18 +252,18 @@
             const paragraphFont = getSetting('paragraphFont');
             const titleFont = getSetting('titleFont');
 
-            if (editorFont) {
-                root.style.setProperty('--font-editor', editorFont);
-            }
+            if (editorFont) root.style.setProperty('--font-editor', editorFont);
+            if (paragraphFont) root.style.setProperty('--font-text', paragraphFont);
+            if (titleFont) root.style.setProperty('--font-title', titleFont);
 
-            if (paragraphFont) {
-                root.style.setProperty('--font-text', paragraphFont);
-            }
+            const metaTag = document.querySelector('meta[name="theme-color"]');
+            const colorValue = getComputedStyle(document.body).getPropertyValue('--background-color-2').trim();
 
-            if (titleFont) {
-                root.style.setProperty('--font-title', titleFont);
+            if (colorValue) {
+                metaTag.setAttribute("content", colorValue);
             }
         }
+
 
         document.addEventListener("keydown", async function (event) {
             // NAVIGATION
@@ -278,10 +301,11 @@
                 let fileNames = [];
 
                 files.forEach((_, i) => {
-                    fileNames.push(getFileTitle(i));
+                    fileNames.push(getFileTitle(i) || "New document");
+
                 });
 
-                await promptStringSelector('Search', fileNames).then((newIndex) => { if (newIndex != null) { index = newIndex; renderEditor(); editor.focus(); } });
+                await promptStringSelector('Open document', fileNames).then((newIndex) => { if (newIndex != null) { index = newIndex; renderEditor(); editor.focus(); } });
             }
 
             // FILE
