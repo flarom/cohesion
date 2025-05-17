@@ -61,7 +61,7 @@
                 <div class="dropdown-content menu" id="more-menu">
                     <button class="text-button" onclick="createFile(); hideAllMenus()">New <kbd>Ctrl+N</kbd></button>
                     <button class="text-button" onclick="importFile(); hideAllMenus()">Open <kbd>Ctrl+O</kbd></button>
-                    <button class="text-button" onclick="exportFile(index); hideAllMenus()">Save
+                    <button class="text-button" onclick="promptSaveFile(index); hideAllMenus()">Save
                         <kbd>Ctrl+S</kbd></button>
                     <hr>
                     <button class="text-button"
@@ -101,7 +101,7 @@
     <script>
         loadFilesFromStorage();
 
-        let index = 0;
+        let index = localStorage.getItem('lastIndex') || 0;
 
         const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
             mode: "markdown",
@@ -121,7 +121,7 @@
             if (!files[index]) files[index] = "";
             editor.setValue(files[index]);
             document.getElementById("filename").innerText = getFileTitle(index) || "New document";
-            document.title = getFileTitle(index) || "New document";
+            document.title = getFileTitle(index) || "New document - Cohesion";
         }
 
         if (files.length == 0) createFile();
@@ -137,6 +137,7 @@
             saveFilesToStorage();
             renderFiles("files");
             document.getElementById("filename").innerText = getFileTitle(index) || "New document";
+            document.title = getFileTitle(index) || "New document - Cohesion";
             if (preview.classList.contains("on")) updateMarkdown(instance.getValue());
         });
 
@@ -291,7 +292,8 @@
 
             else if (event.ctrlKey && event.key === "s") { // download - ctrl+s
                 event.preventDefault();
-                exportFile(index);
+                // exportFile(index);
+                promptSaveFile(index);
             }
 
             else if (event.ctrlKey && event.key === "o") { // open - ctrl+o

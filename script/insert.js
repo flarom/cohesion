@@ -16,3 +16,19 @@ function insertYouTubeVideo(url) {
         }
     }
 }
+
+function insertAudio(url) {
+    let prefix = `<!-- Audio Player -->\n<audio controls><source src=`;
+    let value = url;
+    let suffix = '></audio>';
+
+    return (prefix + value + suffix);
+}
+
+function insertVideo(url) {
+    let prefix = `<!-- Video Player -->\n<video controls><source src=`;
+    let value = url;
+    let suffix = '></video>';
+
+    return (prefix + value + suffix);
+}

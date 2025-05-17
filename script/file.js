@@ -22,6 +22,7 @@ function loadFilesFromStorage() {
  */
 function createFile() {
     index = 0;
+    localStorage.setItem('lastIndex', index);
     files.unshift("");
     saveFilesToStorage();
     renderFiles("files");
@@ -89,6 +90,7 @@ function importFile() {
             saveFilesToStorage();
             renderFiles("files");
             index = files.lenght - 1;
+            localStorage.setItem('lastIndex', index);
             renderEditor();
             editor.focus();
         };
@@ -102,7 +104,7 @@ function importFile() {
  * @param {The file to be exported} index 
  * @returns null if the file doesn't exists
  */
-function exportFile(index) {
+function exportFile(index, fileName = getFileTitle(index)) {
     if (files[index] === undefined) return;
 
     const blob = new Blob([files[index]], { type: "text/markdown" });
@@ -110,7 +112,7 @@ function exportFile(index) {
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${getFileTitle(index)}.md`;
+    a.download = `${fileName}.md`;
     a.click();
 
     URL.revokeObjectURL(url);
@@ -278,7 +280,8 @@ function renderFiles(containerId) {
         downloadBtn.textContent = "Download";
         downloadBtn.onclick = (event) => {
             event.stopPropagation();
-            exportFile(i);
+            hideAllMenus();
+            promptSaveFile(i);
         };
 
         const hr = document.createElement("hr");
@@ -294,6 +297,7 @@ function renderFiles(containerId) {
                 createFile();
             }
             index = 0;
+            localStorage.setItem('lastIndex', index);
             renderFiles(containerId);
             renderEditor();
             editor.focus();
@@ -313,6 +317,7 @@ function renderFiles(containerId) {
 
         fileButton.onclick = () => {
             index = i;
+            localStorage.setItem('lastIndex', index);
             renderFiles(containerId);
             renderEditor();
             editor.focus();
@@ -329,6 +334,7 @@ function renderFiles(containerId) {
             fileButton.classList.add("drag-over");
 
             index = i;
+            localStorage.setItem('lastIndex', index);
             renderFiles(containerId);
             renderEditor();
             editor.focus();
@@ -354,6 +360,7 @@ function renderFiles(containerId) {
                 renderEditor();
 
                 index = i;
+                localStorage.setItem('lastIndex', index);
                 renderFiles(containerId);
                 renderEditor();
                 editor.focus();

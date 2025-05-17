@@ -259,3 +259,8 @@
     background-color: var(--background-color-2);
     font-size: large;
 }
+
+.preview video {
+    width: 100%;
+    border-radius: 15px;
+}

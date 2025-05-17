@@ -69,8 +69,8 @@ function hideAllSidebars() {
         sidebar.classList.remove('show');
     });
 }
-function closeAllDialogs () {
-document.querySelectorAll('.prompt-overlay').forEach(el => el.remove());
+function closeAllDialogs() {
+    document.querySelectorAll('.prompt-overlay').forEach(el => el.remove());
 }
 
 function promptString(title, defaultText = "", warn = false) {
@@ -274,8 +274,8 @@ function promptConfirm(message, dangerous = false) {
 
         const yesButton = document.createElement('button');
         yesButton.textContent = 'Yes';
-        if (dangerous) {yesButton.className = 'prompt-button danger';}
-        else { yesButton.className = 'prompt-button submit';}
+        if (dangerous) { yesButton.className = 'prompt-button danger'; }
+        else { yesButton.className = 'prompt-button submit'; }
 
         const noButton = document.createElement('button');
         noButton.textContent = 'No';
@@ -302,7 +302,7 @@ function promptConfirm(message, dangerous = false) {
             }
         });
 
-        if(!dangerous) yesButton.focus();
+        if (!dangerous) yesButton.focus();
         else noButton.focus();
     });
 }
@@ -370,7 +370,7 @@ function promptTableSelector() {
             info.textContent = `${targetRow} x ${targetCol}`;
         });
 
-        cancelButton.addEventListener('click', () => {document.body.removeChild(overlay);resolve(null);});
+        cancelButton.addEventListener('click', () => { document.body.removeChild(overlay); resolve(null); });
         tableContainer.addEventListener("click", (e) => {
             if (!e.target.classList.contains("table-item-ex")) return;
 
@@ -400,7 +400,7 @@ function promptTableSelector() {
     });
 }
 
-function promptIframe(){
+function promptIframe() {
     return new Promise((resolve) => {
         const overlay = document.createElement("div");
         overlay.className = "prompt-overlay";
@@ -410,10 +410,9 @@ function promptIframe(){
 
         const plataformCbx = document.createElement("select");
         plataformCbx.innerHTML = `
+            <option value='pVideo'>HTML Video</option>
+            <option value='pAudio'>HTML Audio</option>
             <option value='pYouTube'>YouTube Video</option>
-            <option value=''>Place holder</option>
-            <option value=''>Place holder</option>
-            <option value=''>Place holder</option>
         `;
         dialog.appendChild(plataformCbx);
 
@@ -430,16 +429,16 @@ function promptIframe(){
         insertButton.textContent = 'Insert';
         insertButton.className = 'prompt-button submit';
         buttonContainer.appendChild(insertButton);
-        
+
         const cancelButton = document.createElement('button');
         cancelButton.textContent = 'Cancel';
         cancelButton.className = 'prompt-button cancel';
         buttonContainer.appendChild(cancelButton);
         dialog.appendChild(buttonContainer);
-        
+
         overlay.appendChild(dialog);
         document.body.appendChild(overlay);
-        
+
         insertButton.addEventListener('click', () => closePrompt(false));
         cancelButton.addEventListener('click', () => closePrompt(true));
 
@@ -452,6 +451,12 @@ function promptIframe(){
             switch (plataformCbx.value) {
                 case 'pYouTube':
                     resolve(insertYouTubeVideo(contentField.value));
+                    break;
+                case 'pVideo':
+                    resolve(insertVideo(contentField.value));
+                    break;
+                case 'pAudio':
+                    resolve(insertAudio(contentField.value));
                     break;
             }
         }
@@ -561,4 +566,109 @@ function promptStringSelector(title, options, defaultText = "") {
             }
         });
     });
+}
+
+function promptSaveFile(fileId) {
+    const overlay = document.createElement('div');
+    overlay.className = 'prompt-overlay';
+
+    const dialog = document.createElement('div');
+    dialog.className = 'prompt-dialog';
+
+    const fileNameLabel = document.createElement('label');
+    fileNameLabel.textContent = "File name:"
+    dialog.appendChild(fileNameLabel);
+
+    const fileNameField = document.createElement('input');
+    fileNameField.type = 'text';
+    fileNameField.className = 'prompt-input';
+    fileNameField.value = `${getFileTitle(fileId)}`;
+    dialog.appendChild(fileNameField);
+
+    const fileFormatField = document.createElement('select');
+    fileFormatField.innerHTML = `
+            <option value='md'>Markdown Document (*.md)</option>
+            <option value='pdf'>Portable Document File (*.pdf)</option>
+            <option value='html'>HTML Page (*.html)</option>
+        `;
+    dialog.appendChild(fileFormatField);
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'prompt-buttons';
+
+    const saveButton = document.createElement('button');
+    saveButton.textContent = 'Save';
+    saveButton.className = 'prompt-button submit';
+    buttonContainer.appendChild(saveButton);
+
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = 'Cancel';
+    cancelButton.className = 'prompt-button cancel';
+    buttonContainer.appendChild(cancelButton);
+    dialog.appendChild(buttonContainer);
+
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
+
+    saveButton.addEventListener('click', () => closePrompt(false));
+    cancelButton.addEventListener('click', () => closePrompt(true));
+
+    function closePrompt(returnNull) {
+        document.body.removeChild(overlay);
+
+        if (returnNull) return;
+        if (fileNameField.value.length == 0) return;
+
+        switch (fileFormatField.value) {
+            case 'md':
+                exportFile(fileId, fileNameField.value);
+                break;
+            case 'pdf':
+                showToast("Can't export PDF yet!!!!", "sentiment_frustrated")
+                break;
+            case 'html':
+                const htmlContainer = document.createElement('html');
+                htmlContainer.lang = "en";
+                htmlContainer.innerHTML = `
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>${fileNameField.value}</title>
+                        <style>
+                            body {
+                                max-width: 900px;
+                                margin: 0 auto;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        ${converter.makeHtml(getFileText(fileId))}
+                    </body>
+                `;
+
+                const blob = new Blob(
+                    ['<!DOCTYPE html>\n' + htmlContainer.outerHTML],
+                    { type: 'text/html' }
+                );
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileNameField.value + '.html';
+                a.click();
+                URL.revokeObjectURL(url);
+                break;
+        }
+    }
+
+    overlay.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            closePrompt(true);
+        } else if (event.key === "Enter") {
+            closePrompt(false);
+        }
+    });
+
+    fileNameField.focus();
+    fileNameField.selectionStart = 0;
+    fileNameField.selectionEnd = fileNameField.value.length;
 }
