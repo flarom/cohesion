@@ -264,3 +264,7 @@
     width: 100%;
     border-radius: 15px;
 }
+
+.preview icon {
+    font-family: "Material Symbols Rounded";
+}
