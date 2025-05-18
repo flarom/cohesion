@@ -24,7 +24,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta content="#303030" name="theme-color">
     <link rel="manifest" href="/manifest.json">
-    
+
     <link rel="stylesheet" href="style/palette.css">
     <link rel="stylesheet" href="style/share.css">
     <link rel="stylesheet" href="style/editor.css">
@@ -57,6 +57,15 @@
                         onclick="insertBlock(getSummary(editor.getValue())); hideAllMenus()">Summary</button>
                     <button class="text-button"
                         onclick="promptTableSelector().then((markdown) => {if (markdown) {insertBlock(markdown);}}); hideAllMenus()">Table</button>
+                    <hr>
+                    <button class="text-button" onclick="insertAtTop(
+                        `«««\n`+
+                        `title: ${getFileTitle(index) || 'New document'}\n`+
+                        `authors: *\n`+
+                        `tags: *\n`+
+                        `description: *\n`+
+                        `color: #ffffff\n`+
+                        `»»»`); hideAllMenus();">Document meta</button>
                     <hr>
                     <button class="text-button"
                         onclick="promptIframe().then((markdown) => {if (markdown) {insertBlock(markdown);}}); hideAllMenus()">Web
@@ -144,8 +153,8 @@
         const preview = document.getElementById("preview");
 
         function renderEditor() {
-            if (!files[index].content) files[index].content = "";
-            editor.setValue(files[index]?.content);
+            if (!files[index]) files[index] = "";
+            editor.setValue(files[index]);
             document.getElementById("filename").innerText = getFileTitle(index) || "New document";
             document.title = getFileTitle(index) || "New document - Cohesion";
         }
@@ -301,14 +310,13 @@
 
             else if (event.ctrlKey && event.key === 'e') {
                 event.preventDefault();
-                let fileNames = [];
 
-                files.forEach((_, i) => {
-                    fileNames.push(getFileTitle(i) || "New document");
-
-                });
-
-                await promptStringSelector('Open document', fileNames).then((newIndex) => { if (newIndex != null) { index = newIndex; renderEditor(); editor.focus(); } });
+                const newIndex = await promptFileSearch();
+                if (newIndex != null) {
+                    index = newIndex;
+                    renderEditor();
+                    editor.focus();
+                }
             }
 
             // FILE

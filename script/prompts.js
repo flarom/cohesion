@@ -473,7 +473,7 @@ function promptIframe() {
     });
 }
 
-function promptStringSelector(title, options, defaultText = "") {
+async function promptFileSearch() {
     return new Promise((resolve) => {
         const overlay = document.createElement('div');
         overlay.className = 'prompt-overlay';
@@ -481,14 +481,14 @@ function promptStringSelector(title, options, defaultText = "") {
         const dialog = document.createElement('div');
         dialog.className = 'prompt-dialog';
 
-        const titleElement = document.createElement('p');
-        titleElement.textContent = title;
-        titleElement.className = 'prompt-title';
-        dialog.appendChild(titleElement);
+        const title = document.createElement('p');
+        title.textContent = 'Search files...';
+        title.className = 'prompt-title';
+        dialog.appendChild(title);
 
         const input = document.createElement('input');
         input.type = 'text';
-        input.value = defaultText;
+        input.placeholder = 'Search for Title, @author, #tags or "text"'
         dialog.appendChild(input);
 
         const previewList = document.createElement('ul');
@@ -499,37 +499,61 @@ function promptStringSelector(title, options, defaultText = "") {
         overlay.appendChild(dialog);
         document.body.appendChild(overlay);
         input.focus();
-        input.selectionStart = 0;
-        input.selectionEnd = input.value.length;
 
         let filtered = [];
         let selectedIndex = 0;
 
+        function matchFile(query, index) {
+            const text = getFileText(index);
+            if (!text) return false;
+
+            const title = getFileTitle(index)?.toLowerCase() || "";
+            const conv = new showdown.Converter({ metadata: true });
+            conv.makeHtml(text);
+            const metadata = conv.getMetadata();
+
+            const lowerQuery = query.toLowerCase();
+
+            if (query.startsWith('#')) {
+                const tags = (metadata.tags || "").toLowerCase().split(',').map(t => t.trim());
+                return tags.includes(lowerQuery.slice(1));
+            }
+
+            if (query.startsWith('@')) {
+                const authors = (metadata.authors || "").toLowerCase().split(',').map(a => a.trim());
+                return authors.includes(lowerQuery.slice(1));
+            }
+
+            if (query.startsWith('"') && query.endsWith('"')) {
+                const contentQuery = query.slice(1, -1).toLowerCase();
+                return text.toLowerCase().includes(contentQuery);
+            }
+
+            return title.includes(lowerQuery);
+        }
+
         function updatePreview() {
-            const query = input.value.toLowerCase();
-            filtered = options
-                .map((text, index) => ({
-                    index,
-                    text,
-                    score: text.toLowerCase().includes(query) ? 0 : 1,
-                    distance: text.toLowerCase().indexOf(query),
-                }))
-                .sort((a, b) => {
-                    if (a.score !== b.score) return a.score - b.score;
-                    return a.distance - b.distance;
-                })
-                .slice(0, 5);
+            const query = input.value.trim();
+            filtered = [];
+
+            if (query) {
+                filtered = files
+                    .map((_, i) => ({
+                        index: i,
+                        title: getFileTitle(i) || `New document`,
+                    }))
+                    .filter(file => matchFile(query, file.index))
+                    .slice(0, 5);
+            }
 
             previewList.innerHTML = '';
             filtered.forEach((item, i) => {
                 const li = document.createElement('li');
-                li.textContent = item.text;
+                li.textContent = item.title;
                 li.className = i === selectedIndex ? 'selected-option' : '';
                 previewList.appendChild(li);
             });
         }
-
-        updatePreview();
 
         function closePrompt(result) {
             document.body.removeChild(overlay);
@@ -565,6 +589,8 @@ function promptStringSelector(title, options, defaultText = "") {
                 closePrompt(null);
             }
         });
+
+        updatePreview();
     });
 }
 

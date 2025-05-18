@@ -1,13 +1,5 @@
-/* Example of a file
-{
-    content: "# Markdown here",
-    tags: ["example document", "markdown"]
-}
-*/
-
 let files = [];
 
-//#region local storage
 /**
  * Saves the current files array to localStorage
  */
@@ -24,19 +16,17 @@ function loadFilesFromStorage() {
         files = JSON.parse(saved);
     }
 }
-//#endregion
 
-//#region file cud
 /**
  * Creates a empty file to files
  */
 function createFile() {
     index = 0;
     localStorage.setItem('lastIndex', index);
-    files.unshift({ content: "", tags: [] });
+    files.unshift("");
     saveFilesToStorage();
     renderFiles("files");
-    renderEditor();
+    renderEditor()
 }
 
 /**
@@ -46,7 +36,7 @@ function createFile() {
  */
 function updateFile(value, index) {
     if (files[index] !== undefined) {
-        files[index].content = value;
+        files[index] = value;
         saveFilesToStorage();
         renderFiles("files");
     }
@@ -77,14 +67,12 @@ function deleteAllFiles() {
  * Deletes all files without any text
  */
 function deleteEmptyFiles() {
-    files = files.filter(file => file.content.trim() !== "");
-    if (files.length === 0) createFile();
+    files = files.filter(file => file.trim() !== "");
+    if (files.length == 0) createFile();
     saveFilesToStorage();
     renderFiles("files");
 }
-//#endregion
 
-//#region downloading/uploading files
 /**
  * Shows a open file dialog, adds the context of a file into the fileList
  */
@@ -98,10 +86,10 @@ function importFile() {
 
         const reader = new FileReader();
         reader.onload = () => {
-            files.unshift({ content: reader.result, tags: [] });
+            files.unshift(reader.result);
             saveFilesToStorage();
             renderFiles("files");
-            index = files.length - 1;
+            index = files.lenght - 1;
             localStorage.setItem('lastIndex', index);
             renderEditor();
             editor.focus();
@@ -119,7 +107,7 @@ function importFile() {
 function exportFile(index, fileName = getFileTitle(index)) {
     if (files[index] === undefined) return;
 
-    const blob = new Blob([files[index].content], { type: "text/markdown" });
+    const blob = new Blob([files[index]], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
 
     const a = document.createElement("a");
@@ -129,16 +117,14 @@ function exportFile(index, fileName = getFileTitle(index)) {
 
     URL.revokeObjectURL(url);
 }
-//#endregion
 
-//#region file getters
 /**
  * Gets the text of a file
  * @param {The file to be returned} index 
  * @returns The text content of a file || null if id doesn't exists
  */
 function getFileText(index) {
-    return files[index]?.content || null;
+    return files[index] || null;
 }
 
 /**
@@ -203,6 +189,11 @@ function getFileTitle(index) {
     const text = getFileText(index);
     if (!text) return null;
 
+    const conv = new showdown.Converter({metadata: true});
+    const html = conv.makeHtml(text);
+    const metadata = conv.getMetadata();
+    if (metadata.title) return metadata.title;
+
     const lines = text.split(/\r?\n/);
 
     for (let i = 1; i <= 6; i++) {
@@ -235,10 +226,27 @@ function formatTitle(title) {
  * @returns file snippet
  */
 function getFileSnippet(index, lenght) {
-    return files[index]?.content.substring(0, length) || null;
+    return files[index].substring(0, lenght) || null;
 }
 
-//#endregion
+/**
+ * Gets all tags from a file
+ * @param {The file to have tags returned} index 
+ * @returns Array of strings with all tags
+ */
+function getFileTags(index) {
+    const text = getFileText(index);
+    if (!text) return [];
+
+    const conv = new showdown.Converter({ metadata: true });
+    conv.makeHtml(text);
+    const metadata = conv.getMetadata();
+
+    if (!metadata.tags) return [];
+
+    return metadata.tags.split(', ').map(tag => tag.trim()).filter(Boolean);
+}
+
 
 function renderFiles(containerId) {
     const container = document.getElementById(containerId);
@@ -246,7 +254,15 @@ function renderFiles(containerId) {
 
     container.innerHTML = "";
 
-    files.forEach((file, i) => {
+    files.forEach((_, i) => {
+        const text = getFileText(i);
+        let metadata = {};
+        if (text) {
+            const conv = new showdown.Converter({ metadata: true });
+            conv.makeHtml(text);
+            metadata = conv.getMetadata();
+        }
+
         const fileButton = document.createElement("button");
         fileButton.className = "file";
         fileButton.setAttribute("draggable", "true");
@@ -258,17 +274,25 @@ function renderFiles(containerId) {
 
         const infoDiv = document.createElement("div");
         infoDiv.style.width = "90%";
-
         const h3 = document.createElement("h3");
         h3.textContent = getFileTitle(i) || "New document";
-
+        h3.style.color = metadata.color || 'white';
         const p = document.createElement("p");
-        const stats = getFileStats(i);
-        p.innerHTML = `<span class=icon>schedule</span>${stats.readTime} to read`;
-        p.title = `${stats.paragraphs} Paragraphs`;
-
+        p.innerHTML = `<span class=icon>schedule</span>${getFileStats(i).readTime} to read`;
+        p.title = `${getFileStats(i).paragraphs} Paragraphs`;
+        const authors = document.createElement("p");
+        authors.innerHTML = `<span class=icon>group</span>${metadata.authors}`;
+        const tags = document.createElement("p");
+        tags.innerHTML = `<span class=icon>sell</span>${metadata.tags}`
+        const description = document.createElement("p");
+        description.innerText = metadata.description || "";
+        description.style.marginTop = "5px";
+        description.style.opacity = "100%";
         infoDiv.appendChild(h3);
         infoDiv.appendChild(p);
+        if(metadata.authors) infoDiv.appendChild(authors);
+        if(metadata.tags) infoDiv.appendChild(tags);
+        if(metadata.description) infoDiv.appendChild(description);
 
         const dropdownDiv = document.createElement("div");
         dropdownDiv.className = "dropdown";

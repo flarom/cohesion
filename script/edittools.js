@@ -72,3 +72,10 @@ function insertAt(text, selectFrom, selectTo) {
 
     doc.setSelection(from, to);
 }
+
+function insertAtTop(text) {
+    const doc = editor.getDoc();
+    const block = `${text}\n\n`;
+    const startPos = { line: 0, ch: 0 };
+    doc.replaceRange(block, startPos);
+}
