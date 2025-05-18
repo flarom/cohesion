@@ -365,7 +365,7 @@ function renderFiles(containerId) {
         fileButton.appendChild(infoDiv);
         fileButton.appendChild(dropdownDiv);
 
-        fileButton.onmouseup = () => {
+        fileButton.onclick = () => {
             index = i;
             localStorage.setItem('lastIndex', index);
             renderFiles(containerId);

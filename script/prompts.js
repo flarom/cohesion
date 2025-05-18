@@ -70,6 +70,17 @@ function toggleSidebar(sidebarId) {
     });
 
     sidebar.classList.toggle('show');
+
+    if (sidebar.classList.contains('show')) {
+        const buttons = sidebar.querySelectorAll('.file');
+        if (buttons.length > 0) {
+            buttons[0].focus();
+        }
+
+        sidebar.addEventListener('keydown', handleArrowNavigation);
+    } else {
+        sidebar.removeEventListener('keydown', handleArrowNavigation);
+    }
 }
 
 function showToast(message, icon = "") {

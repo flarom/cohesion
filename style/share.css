@@ -94,6 +94,7 @@ button.danger {
     color: var(--danger) !important;
 }
 
+.icon-button:focus,
 .icon-button:hover,
 .text-button:hover {
     background-color: var(--hover-color);
@@ -110,6 +111,7 @@ button.danger:hover {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    outline: none;
 }
 
 .text-button {
@@ -306,9 +308,11 @@ button.danger:hover {
     align-items: center;
     justify-content: space-between;
     line-break: anywhere;
+    outline: none;
 }
 
 .sidebar .file.selected,
+.sidebar .file:focus,
 .sidebar .file:hover {
     background-color: var(--hover-color);
 }
