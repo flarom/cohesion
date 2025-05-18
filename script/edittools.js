@@ -79,3 +79,19 @@ function insertAtTop(text) {
     const startPos = { line: 0, ch: 0 };
     doc.replaceRange(block, startPos);
 }
+
+function getMeta(){
+    const date = new Date();
+    return (
+        `«««\n`+
+        `title: ${getFileTitle(index) || 'New document'}\n`+
+        `authors: *\n`+
+        `date: ${date.getFullYear()}-${date.getMonth()}-${date.getDate()}\n`+
+        `tags: *\n`+
+        `description: *\n`+
+        `color: *\n`+
+        `***\n`+
+        `editor: Cohesion\n`+
+        `»»»`
+    );
+}

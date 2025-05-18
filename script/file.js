@@ -276,22 +276,27 @@ function renderFiles(containerId) {
         infoDiv.style.width = "90%";
         const h3 = document.createElement("h3");
         h3.textContent = getFileTitle(i) || "New document";
-        h3.style.color = metadata.color || 'white';
+        h3.style.color = metadata.color || 'var(--title-color)';
         const p = document.createElement("p");
         p.innerHTML = `<span class=icon>schedule</span>${getFileStats(i).readTime} to read`;
         p.title = `${getFileStats(i).paragraphs} Paragraphs`;
         const authors = document.createElement("p");
         authors.innerHTML = `<span class=icon>group</span>${metadata.authors}`;
+        authors.title = "Authors";
         const tags = document.createElement("p");
         tags.innerHTML = `<span class=icon>sell</span>${metadata.tags}`
+        tags.title = "Tags";
+        const date = document.createElement("p");
+        date.innerHTML = `<span class=icon>calendar_month</span>${metadata.date}`;
         const description = document.createElement("p");
-        description.innerText = metadata.description || "";
+        description.innerText =  metadata.description || "";
         description.style.marginTop = "5px";
         description.style.opacity = "100%";
         infoDiv.appendChild(h3);
         infoDiv.appendChild(p);
         if(metadata.authors) infoDiv.appendChild(authors);
         if(metadata.tags) infoDiv.appendChild(tags);
+        if(metadata.date) infoDiv.appendChild(date);
         if(metadata.description) infoDiv.appendChild(description);
 
         const dropdownDiv = document.createElement("div");

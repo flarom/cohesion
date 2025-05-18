@@ -517,7 +517,7 @@ async function promptFileSearch() {
 
         const input = document.createElement('input');
         input.type = 'text';
-        input.placeholder = 'Search for Title, @author, #tags or "text"'
+        input.placeholder = 'Search title, ~author, @date, #tag or "text"';
         dialog.appendChild(input);
 
         const previewList = document.createElement('ul');
@@ -536,26 +536,37 @@ async function promptFileSearch() {
             const text = getFileText(index);
             if (!text) return false;
 
-            const title = getFileTitle(index)?.toLowerCase() || "";
             const conv = new showdown.Converter({ metadata: true });
             conv.makeHtml(text);
             const metadata = conv.getMetadata();
 
+            const title = (getFileTitle(index) || "").toLowerCase();
+            const authors = (metadata.authors || "").toLowerCase().split(',').map(a => a.trim());
+            const tags = (metadata.tags || "").toLowerCase().split(',').map(t => t.trim());
+            const date = (metadata.date || "").toLowerCase();
+            const description = (metadata.description || "").toLowerCase();
+            const body = text.toLowerCase();
+
             const lowerQuery = query.toLowerCase();
 
-            if (query.startsWith('#')) {
-                const tags = (metadata.tags || "").toLowerCase().split(',').map(t => t.trim());
-                return tags.includes(lowerQuery.slice(1));
+            if (lowerQuery.startsWith('#')) {
+                const tagQuery = lowerQuery.slice(1);
+                return tags.some(t => t.includes(tagQuery));
             }
 
-            if (query.startsWith('@')) {
-                const authors = (metadata.authors || "").toLowerCase().split(',').map(a => a.trim());
-                return authors.includes(lowerQuery.slice(1));
+            if (lowerQuery.startsWith('~')) {
+                const authorQuery = lowerQuery.slice(1);
+                return authors.some(a => a.includes(authorQuery));
             }
 
-            if (query.startsWith('"') && query.endsWith('"')) {
-                const contentQuery = query.slice(1, -1).toLowerCase();
-                return text.toLowerCase().includes(contentQuery);
+            if (lowerQuery.startsWith('@')) {
+                const dateQuery = lowerQuery.slice(1);
+                return date.includes(dateQuery);
+            }
+
+            if (lowerQuery.startsWith('"') && lowerQuery.endsWith('"')) {
+                const textQuery = lowerQuery.slice(1, -1);
+                return body.includes(textQuery);
             }
 
             return title.includes(lowerQuery);
@@ -572,7 +583,7 @@ async function promptFileSearch() {
                         title: getFileTitle(i) || `New document`,
                     }))
                     .filter(file => matchFile(query, file.index))
-                    .slice(0, 5);
+                    .slice(0, 10);
             }
 
             previewList.innerHTML = '';

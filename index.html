@@ -58,14 +58,7 @@
                     <button class="text-button"
                         onclick="promptTableSelector().then((markdown) => {if (markdown) {insertBlock(markdown);}}); hideAllMenus()">Table</button>
                     <hr>
-                    <button class="text-button" onclick="insertAtTop(
-                        `«««\n`+
-                        `title: ${getFileTitle(index) || 'New document'}\n`+
-                        `authors: *\n`+
-                        `tags: *\n`+
-                        `description: *\n`+
-                        `color: #ffffff\n`+
-                        `»»»`); hideAllMenus();">Document meta</button>
+                    <button class="text-button" onclick="insertAtTop(getMeta()); hideAllMenus();">Document meta</button>
                     <hr>
                     <button class="text-button"
                         onclick="promptIframe().then((markdown) => {if (markdown) {insertBlock(markdown);}}); hideAllMenus()">Web
@@ -167,13 +160,20 @@
             loadSettings();
         });
 
+        let debounceTimer;
+
         editor.on("change", instance => {
-            updateFile(instance.getValue(), index);
-            saveFilesToStorage();
-            renderFiles("files");
-            document.getElementById("filename").innerText = getFileTitle(index) || "New document";
-            document.title = getFileTitle(index) || "New document - Cohesion";
-            if (preview.classList.contains("on")) updateMarkdown(instance.getValue());
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                updateFile(instance.getValue(), index);
+                saveFilesToStorage();
+                renderFiles("files");
+                document.getElementById("filename").innerText = getFileTitle(index) || "New document";
+                document.title = getFileTitle(index) || "New document - Cohesion";
+                if (preview.classList.contains("on")) {
+                    updateMarkdown(instance.getValue());
+                }
+            }, 500);
         });
 
         function togglePreview() {

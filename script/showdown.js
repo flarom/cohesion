@@ -114,7 +114,7 @@
                 type: 'boolean'
             },
             ghMentions: {
-                defaultValue: true,
+                defaultValue: false,
                 describe: 'Enables github @mentions',
                 type: 'boolean'
             },
