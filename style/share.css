@@ -310,7 +310,7 @@ button.danger:hover {
 
 .sidebar .file.selected,
 .sidebar .file:hover {
-    background-color: var(--background-color-3);
+    background-color: var(--hover-color);
 }
 
 .sidebar .file h3, .sidebar .file p {

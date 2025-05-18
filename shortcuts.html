@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shortcuts</title>
+    <style>
+        .page {
+            opacity: 0;
+            transform: translateX(50%);
+            pointer-events: none;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        .page.active {
+            opacity: 1;
+            transform: translateX(0%);
+            pointer-events: all;
+            position: relative;
+        }
+
+        .page-switcher {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 20px;
+        }
+
+        .page-button {
+            background-color: var(--field-color);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 0;
+            color: var(--text-color);
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .page-button:hover {
+            border-radius: 25%;
+        }
+
+        kbd {
+            padding: 5px;
+            padding-left: 10px;
+            padding-right: 10px;
+            margin: 3px;
+            margin-left: 5px;
+            margin-right: 5px;
+            background-color: var(--background-color-2);
+            font-family: var(--fond-text);
+            border-radius: 5px;
+            box-shadow: var(--shadow);
+        }
+
+        tr {
+            height: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="book-container">
+        <div class="page-container">
+            <div class="page active" id="1">
+                <table>
+                    <tr>
+                        <td>
+                            <h3>Undo and redo</h3>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <kbd>Ctrl</kbd>+<kbd>Z</kbd>
+                                    </td>
+                                    <td>Un-does last command</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <kbd>Ctrl</kbd>+<kbd>Y</kbd>
+                                    </td>
+                                    <td>Re-does last command</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>
+                            <h3>Copying and Pasting</h3>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <kbd>Ctrl</kbd>+<kbd>C</kbd>
+                                    </td>
+                                    <td>Copy</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <kbd>Ctrl</kbd>+<kbd>X</kbd>
+                                    </td>
+                                    <td>Cut</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <kbd>Ctrl</kbd>+<kbd>V</kbd>
+                                    </td>
+                                    <td>Paste</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h3>Markdown</h3>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <kbd>Ctrl</kbd>+<kbd>R</kbd>
+                                    </td>
+                                    <td>Horizontal rule</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <kbd>Ctrl</kbd>+<kbd>1</kbd>-<kbd>6</kbd>
+                                    </td>
+                                    <td>Header</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <kbd>Ctrl</kbd>+<kbd>U</kbd>
+                                    </td>
+                                    <td>List item</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <kbd>Ctrl</kbd>+<kbd>I</kbd>
+                                    </td>
+                                    <td>Italic</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <kbd>Ctrl</kbd>+<kbd>B</kbd>
+                                    </td>
+                                    <td>Bold</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>
+                            <h3>Selection</h3>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <kbd>Ctrl</kbd>+<kbd>A</kbd>
+                                    </td>
+                                    <td>Select all</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <kbd>Alt</kbd>+<kbd>Mouse</kbd>
+                                    </td>
+                                    <td>Aria selecton</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="page" id="2">
+                <table>
+                    <tr>
+                        <td>
+                            <h3>General</h3>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <kbd>Alt</kbd>+<kbd>N</kbd>
+                                    </td>
+                                    <td>
+                                        New
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <kbd>Ctrl</kbd>+<kbd>O</kbd>
+                                    </td>
+                                    <td>
+                                        Open
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <kbd>Ctrl</kbd>+<kbd>S</kbd>
+                                    </td>
+                                    <td>
+                                        Save
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Del</kbd>
+                                    </td>
+                                    <td>
+                                        Delete file
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <kbd>Ctrl</kbd>+<kbd>,</kbd>
+                                    </td>
+                                    <td>
+                                        Settings
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <kbd>Ctrl</kbd>+<kbd>?</kbd>
+                                    </td>
+                                    <td>
+                                        Shortcuts
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <kbd>F1</kbd>
+                                    </td>
+                                    <td>
+                                        About
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <kbd>Ctrl</kbd>+<kbd>W</kbd>
+                                    </td>
+                                    <td>
+                                        Quit Cohesion
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>
+                            <h3>Modes</h3>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <kbd>Ctrl</kbd>+<kbd>P</kbd>
+                                    </td>
+                                    <td>Preview mode</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <kbd>F11</kbd>
+                                    </td>
+                                    <td>Full screen</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h3>Navigation</h3>
+                            <table>
+                                <tr>
+                                    <td><kbd>F9</kbd></td>
+                                    <td>Files</td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>Alt</kbd>+<kbd>1</kbd>-<kbd>9</kbd></td>
+                                    <td>Load file</td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>Ctrl</kbd>+<kbd>E</kbd></td>
+                                    <td>Search file</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>
+                            <h3>Searching</h3>
+                            <table>
+                                <tr>
+                                    <td><kbd>Ctrl</kbd>+<kbd>G</kbd></td>
+                                    <td>Go to line</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="page-switcher">
+            <button class="page-button" data-page="1">1</button>
+            <button class="page-button" data-page="2">2</button>
+        </div>
+    </div>
+
+    <script>
+        (() => {
+            const buttons = document.querySelectorAll('.page-button');
+            const pages = document.querySelectorAll('.page');
+
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const pageId = button.getAttribute('data-page');
+                    pages.forEach(page => page.classList.remove('active'));
+                    document.getElementById(pageId).classList.add('active');
+                });
+            });
+        })();
+    </script>
+
+</body>
+
+</html>

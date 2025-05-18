@@ -213,70 +213,73 @@ function promptMessage(htmlContent, showCloseButton = true) {
     });
 }
 
-function promptMessageFromFile(filePath, showCloseButton = true) {
-    return new Promise((resolve, reject) => {
-        fetch(filePath)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Failed loading file: ${response.statusText}`);
-                }
-                return response.text();
-            })
-            .then(htmlContent => {
-                const overlay = document.createElement('div');
-                overlay.className = 'prompt-overlay';
+function showMessageFromFile(filePath, showCloseButton = true) {
+    fetch(filePath)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Failed loading file: ${response.statusText}`);
+            }
+            return response.text();
+        })
+        .then(htmlContent => {
+            const overlay = document.createElement('div');
+            overlay.className = 'prompt-overlay';
 
-                const dialog = document.createElement('div');
-                dialog.className = 'prompt-dialog';
-                dialog.style.width = '100%';
-                dialog.style.maxWidth = '500px';
+            const dialog = document.createElement('div');
+            dialog.className = 'prompt-dialog';
+            dialog.style.width = '100%';
+            dialog.style.maxWidth = '500px';
 
-                const okButton = document.createElement('button');
-                okButton.textContent = 'close';
-                okButton.className = 'icon-button dialog-window-control';
+            const okButton = document.createElement('button');
+            okButton.textContent = 'close';
+            okButton.className = 'icon-button dialog-window-control';
 
-                if (showCloseButton) {
-                    dialog.appendChild(okButton);
-                }
+            const content = document.createElement('div');
 
-                const content = document.createElement('div');
-                content.innerHTML = htmlContent;
-                content.style.marginBottom = '15px';
-                dialog.appendChild(content);
+            const template = document.createElement('template');
+            template.innerHTML = htmlContent.trim();
 
-                const scripts = content.querySelectorAll('script');
-                scripts.forEach(script => {
-                    const newScript = document.createElement('script');
-                    if (script.src) {
-                        newScript.src = script.src;
-                    } else {
-                        newScript.textContent = script.textContent;
-                    }
-                    document.head.appendChild(newScript);
-                });
-
-                overlay.appendChild(dialog);
-                document.body.appendChild(overlay);
-
-                function closePrompt() {
-                    document.body.removeChild(overlay);
-                    resolve();
-                }
-
-                okButton.addEventListener('click', closePrompt);
-
-                overlay.addEventListener('keydown', (event) => {
-                    if (event.key === 'Escape') {
-                        closePrompt();
-                    }
-                });
-
-                okButton.focus();
-            })
-            .catch(error => {
-                reject(error);
+            Array.from(template.content.childNodes).forEach(node => {
+                content.appendChild(node);
             });
-    });
+
+            dialog.appendChild(content);
+            if (showCloseButton) {
+                dialog.appendChild(okButton);
+            }
+
+            overlay.appendChild(dialog);
+            document.body.appendChild(overlay);
+
+            const scripts = content.querySelectorAll('script');
+            scripts.forEach(oldScript => {
+                const newScript = document.createElement('script');
+                if (oldScript.src) {
+                    newScript.src = oldScript.src;
+                } else {
+                    newScript.textContent = oldScript.textContent;
+                }
+                Array.from(oldScript.attributes).forEach(attr =>
+                    newScript.setAttribute(attr.name, attr.value)
+                );
+                oldScript.replaceWith(newScript);
+            });
+
+            okButton.addEventListener('click', () => {
+                document.body.removeChild(overlay);
+            });
+
+            overlay.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    document.body.removeChild(overlay);
+                }
+            });
+
+            okButton.focus();
+        })
+        .catch(error => {
+            console.error(error);
+        });
 }
 
 function promptConfirm(message, dangerous = false) {

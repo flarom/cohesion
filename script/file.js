@@ -20,10 +20,10 @@ function loadFilesFromStorage() {
 /**
  * Creates a empty file to files
  */
-function createFile() {
+function createFile(text = "") {
     index = 0;
     localStorage.setItem('lastIndex', index);
-    files.unshift("");
+    files.unshift(text);
     saveFilesToStorage();
     renderFiles("files");
     renderEditor()
@@ -71,6 +71,7 @@ function deleteEmptyFiles() {
     if (files.length == 0) createFile();
     saveFilesToStorage();
     renderFiles("files");
+    renderEditor();
 }
 
 /**
@@ -364,7 +365,7 @@ function renderFiles(containerId) {
         fileButton.appendChild(infoDiv);
         fileButton.appendChild(dropdownDiv);
 
-        fileButton.onclick = () => {
+        fileButton.onmouseup = () => {
             index = i;
             localStorage.setItem('lastIndex', index);
             renderFiles(containerId);

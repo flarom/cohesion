@@ -80,18 +80,31 @@ function insertAtTop(text) {
     doc.replaceRange(block, startPos);
 }
 
-function getMeta(){
+function getMeta() {
     const date = new Date();
+    let baseTitle = getFileTitle(index) || 'New document';
+    let title = baseTitle;
+    let suffix = 1;
+
+    const existingTitles = files.map((_, i) => {
+        if (i === index) return null;
+        return getFileTitle(i);
+    }).filter(Boolean);
+
+    while (existingTitles.includes(title)) {
+        title = `${baseTitle} (${suffix++})`;
+    }
+
     return (
-        `«««\n`+
-        `title: ${getFileTitle(index) || 'New document'}\n`+
-        `authors: *\n`+
-        `date: ${date.getFullYear()}-${date.getMonth()}-${date.getDate()}\n`+
-        `tags: misc\n`+
-        `description: *\n`+
-        `color: *\n`+
-        `***\n`+
-        `editor: Cohesion\n`+
+        `«««\n` +
+        `title: ${title}\n` +
+        `authors: *\n` +
+        `date: ${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}\n` +
+        `tags: misc\n` +
+        `description: *\n` +
+        `color: *\n` +
+        `***\n` +
+        `editor: Cohesion\n` +
         `»»»`
     );
 }
