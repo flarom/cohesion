@@ -87,7 +87,7 @@ function getMeta(){
         `title: ${getFileTitle(index) || 'New document'}\n`+
         `authors: *\n`+
         `date: ${date.getFullYear()}-${date.getMonth()}-${date.getDate()}\n`+
-        `tags: *\n`+
+        `tags: misc\n`+
         `description: *\n`+
         `color: *\n`+
         `***\n`+
