@@ -202,8 +202,10 @@ button.danger:hover {
     align-items: center;
     gap: 10px;
     transition: none;
+    outline: none;
 }
 
+.dropdown-content .text-button:focus,
 .dropdown-content .text-button:hover {
     background-color: var(--hover-color);
 }

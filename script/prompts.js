@@ -18,7 +18,36 @@ function toggleDropdown(menuId) {
 
     dropdown.classList.toggle('show');
 
+    if (dropdown.classList.contains('show')) {
+        const buttons = menu.querySelectorAll('button');
+        if (buttons.length > 0) {
+            buttons[0].focus();
+        }
+
+        menu.addEventListener('keydown', handleArrowNavigation);
+    } else {
+        menu.removeEventListener('keydown', handleArrowNavigation);
+    }
+
     document.addEventListener('click', closeDropdownOnClickOutside);
+}
+
+function handleArrowNavigation(e) {
+    const buttons = Array.from(e.currentTarget.querySelectorAll('button'));
+    const currentIndex = buttons.findIndex(btn => btn === document.activeElement);
+
+    if (['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft'].includes(e.key)) {
+        e.preventDefault();
+        let nextIndex;
+
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+            nextIndex = (currentIndex + 1) % buttons.length;
+        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+            nextIndex = (currentIndex - 1 + buttons.length) % buttons.length;
+        }
+
+        buttons[nextIndex]?.focus();
+    }
 }
 
 function closeDropdownOnClickOutside(event) {
