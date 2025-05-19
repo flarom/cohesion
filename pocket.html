@@ -9,8 +9,8 @@
     <style>
         .fs-file-container {
             min-height: 200px;
-            max-height: 75vh;
-            overflow-y: scroll;
+            max-height: 300px;
+            overflow: scroll;
         }
 
         .fsfile {
@@ -34,7 +34,7 @@
     <h2>Cohesion Pocket</h2>
     <p>Connect files from your device for usage inside of Cohesion. The CFS runs and stores data locally, it's used to
         link document resources.</p>
-    <div id="fs-file-container">
+    <div id="fs-file-container" class="fs-file-container">
         <p style="text-align: center;">Files will appear here</p>
     </div>
     <button class="text-button" onclick="uploadFSFile().then(renderFSFiles());">Add file</button>
@@ -48,12 +48,15 @@
 
             container.innerHTML = "";
 
-            files.forEach((file, index) => {
+            for (let index = 0; index < files.length; index++) {
+                const file = files[index];
+                const icon = await getIcon(file.name);
+
                 const div = document.createElement("div");
                 div.className = "fsfile";
                 div.innerHTML = `
-            <div style='display:flex;align-items:center';gap:10px;>
-                <span class="icon">draft</span>
+            <div style='display:flex;align-items:center;gap:10px;'>
+                <span class="icon">${icon}</span>
                 <h3>${file.name}</h3>
             </div>
             <div class="dropdown">
@@ -63,27 +66,63 @@
                 <div class="dropdown-content menu" id="file${index}">
                     <button class="text-button" onmouseup="copyPath('${file.name}'); hideAllMenus()">Copy path</button>
                     <hr>
+                    <button class="text-button" onmouseup="handleRenameFSFile(${index}); hideAllMenus()">Rename</button>
                     <button class="text-button" onmouseup="downloadFSFile('${file.name}'); hideAllMenus()">Download</button>
+                    <hr>
                     <button class="text-button danger" onmouseup="deleteFSFile('${file.name}'); hideAllMenus(); renderFSFiles()">Delete</button>
                 </div>
             </div>
         `;
                 container.appendChild(div);
-            });
+            }
+        }
+
+
+        async function handleRenameFSFile(index) {
+            const files = await getFSFiles();
+            const current = files[index];
+            if (!current) return;
+
+            const newName = await promptString("Rename file", current.name);
+            if (!newName || newName === current.name) return;
+
+            try {
+                await renameFSFile(index, newName);
+                await renderFSFiles();
+            } catch (err) {
+                console.error(err);
+                showToast("Failed to rename file", "error");
+            }
+        }
+
+        async function getIcon(fileName) {
+            const ext = fileName.split('.').pop().toLowerCase();
+            
+            let icon = "draft";
+
+            if (["apng", "gif", "ico", "cur", "jpg", "jpeg", "jfif", "pjpeg", "pjp", "png", "svg", "webp"].includes(ext)) {
+                icon = "image";
+            } else if (["mp4", "webm", "ogg"].includes(ext)) {
+                icon = "movie";
+            } else if (["mp3", "wav", "aac", "flac"].includes(ext)) {
+                icon = "album";
+            }
+
+            return icon;
         }
 
         function copyPath(name) {
             const ext = name.split('.').pop().toLowerCase();
             let filecontent = "";
 
-            if (["png", "jpg", "jpeg", "gif", "webp", "bmp", "svg"].includes(ext)) {
+            if (["apng", "gif", "ico", "cur", "jpg", "jpeg", "jfif", "pjpeg", "pjp", "png", "svg", "webp"].includes(ext)) {
                 filecontent = `![${name}](pocket/${name})`;
             } else if (["mp4", "webm", "ogg"].includes(ext)) {
                 filecontent = `<video controls src="pocket/${name}"></video>`;
             } else if (["mp3", "wav", "aac", "flac"].includes(ext)) {
                 filecontent = `<audio controls src="pocket/${name}"></audio>`;
             } else if (ext === "pdf") {
-                filecontent = `[${name}](pocket/${name})`;
+                filecontent = `<iframe src="pocket/${name}"></iframe>`;
             } else {
                 filecontent = `pocket/${name}`;
             }

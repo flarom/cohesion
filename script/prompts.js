@@ -6,7 +6,7 @@ function isPc() {
     return !isMobile();
 }
 
-function toggleDropdown(menuId) {
+function toggleDropdown(menuId) {    
     const menu = document.getElementById(menuId);
     const dropdown = menu.parentElement;
 
