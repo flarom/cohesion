@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cohesion Pocket</title>
+
+    <style>
+        .fs-file-container {
+            min-height: 200px;
+            max-height: 75vh;
+            overflow-y: scroll;
+        }
+
+        .fsfile {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-left: 10px;
+            padding-right: 10px;
+            border-radius: 15px;
+            background-color: var(--background-color-2);
+            margin-bottom: 10px;
+        }
+
+        .fsfile .icon {
+            font-size: x-large;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Cohesion Pocket</h2>
+    <p>Connect files from your device for usage inside of Cohesion. The CFS runs and stores data locally, it's used to
+        link document resources.</p>
+    <div id="fs-file-container">
+        <p style="text-align: center;">Files will appear here</p>
+    </div>
+    <button class="text-button" onclick="uploadFSFile().then(renderFSFiles());">Add file</button>
+    <button class="text-button" onclick="renderFSFiles();">Refresh</button>
+    <button class="text-button danger" onclick="deleteAllFS().then(renderFSFiles());">Delete all data</button>
+
+    <script>
+        async function renderFSFiles() {
+            const container = document.getElementById('fs-file-container');
+            const files = await getFSFiles();
+
+            container.innerHTML = "";
+
+            files.forEach((file, index) => {
+                const div = document.createElement("div");
+                div.className = "fsfile";
+                div.innerHTML = `
+            <div style='display:flex;align-items:center';gap:10px;>
+                <span class="icon">draft</span>
+                <h3>${file.name}</h3>
+            </div>
+            <div class="dropdown">
+                <button class="icon-button" translate="no" onmousedown="toggleDropdown('file${index}')">
+                    more_vert
+                </button>
+                <div class="dropdown-content menu" id="file${index}">
+                    <button class="text-button" onmouseup="copyPath('${file.name}'); hideAllMenus()">Copy path</button>
+                    <hr>
+                    <button class="text-button" onmouseup="downloadFSFile('${file.name}'); hideAllMenus()">Download</button>
+                    <button class="text-button danger" onmouseup="deleteFSFile('${file.name}'); hideAllMenus(); renderFSFiles()">Delete</button>
+                </div>
+            </div>
+        `;
+                container.appendChild(div);
+            });
+        }
+
+        function copyPath(name) {
+            const ext = name.split('.').pop().toLowerCase();
+            let filecontent = "";
+
+            if (["png", "jpg", "jpeg", "gif", "webp", "bmp", "svg"].includes(ext)) {
+                filecontent = `![${name}](pocket/${name})`;
+            } else if (["mp4", "webm", "ogg"].includes(ext)) {
+                filecontent = `<video controls src="pocket/${name}"></video>`;
+            } else if (["mp3", "wav", "aac", "flac"].includes(ext)) {
+                filecontent = `<audio controls src="pocket/${name}"></audio>`;
+            } else if (ext === "pdf") {
+                filecontent = `[${name}](pocket/${name})`;
+            } else {
+                filecontent = `pocket/${name}`;
+            }
+
+            navigator.clipboard.writeText(filecontent).then(() => {
+                showToast("Copied to the clipboard", 'content_copy');
+            });
+        }
+
+
+        async function downloadFSFile(name) {
+            const content = await resolveFSItem(name);
+            if (!content) return;
+
+            const a = document.createElement("a");
+            a.href = content;
+            a.download = name;
+            a.click();
+        }
+
+        async function deleteFSFile(name) {
+            const db = await openFSDB();
+            const tx = db.transaction("files", "readwrite");
+            tx.objectStore("files").delete(name);
+            await tx.done;
+        }
+
+        renderFSFiles();
+    </script>
+
+</body>
+
+</html>

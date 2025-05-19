@@ -65,7 +65,12 @@
                     <button class="text-button"
                         onmouseup="promptTableSelector().then((markdown) => {if (markdown) {insertBlock(markdown);}}); hideAllMenus()">Table</button>
                     <hr>
-                    <button class="text-button" onmouseup="insertAtTop(getMeta()); hideAllMenus();">Document meta</button>
+                    <button class="text-button" onmouseup="insertAtTop(getMeta()); hideAllMenus();">Document
+                        meta</button>
+                    <hr>
+                    <button class="text-button" onmouseup="handleInsertImage(); hideAllMenus(); editor.focus();">Image</button>
+                    <button class="text-button" onmouseup="handleInsertAudio(); hideAllMenus(); editor.focus();">Audio</button>
+                    <button class="text-button" onmouseup="handleInsertVideo(); hideAllMenus(); editor.focus();">Video</button>
                     <hr>
                     <button class="text-button"
                         onmouseup="promptIframe().then((markdown) => {if (markdown) {insertBlock(markdown);}}); hideAllMenus()">Web
@@ -84,7 +89,8 @@
                 import_contacts
             </button>
             <div class="dropdown">
-                <button class="icon-button" translate="no" onmousedown="toggleDropdown('more-menu')" title="More options">
+                <button class="icon-button" translate="no" onmousedown="toggleDropdown('more-menu')"
+                    title="More options">
                     more_vert
                 </button>
                 <div class="dropdown-content menu" id="more-menu">
@@ -94,16 +100,21 @@
                         <kbd>Ctrl+S</kbd></button>
                     <hr>
                     <button class="text-button"
+                        onmouseup="showMessageFromFile('pocket.html'); hideAllMenus()">Pocket <kbd>Alt+T</kbd></button>
+                    <button class="text-button"
                         onmouseup="showMessageFromFile('settings.html'); hideAllMenus()">Settings
                         <kbd>Ctrl+,</kbd></button>
                     <hr>
                     <button class="text-button"
                         onmouseup="window.open('read.html?path=tutorial.md'); hideAllMenus()">Tutorial</button>
-                    <button class="text-button" onmouseup="showMessageFromFile('shortcuts.html'); hideAllMenus();">Keyboard shortcuts <kbd>Ctrl+?</kbd></button>
+                    <button class="text-button"
+                        onmouseup="showMessageFromFile('shortcuts.html'); hideAllMenus();">Keyboard shortcuts
+                        <kbd>Ctrl+?</kbd></button>
                     <button class="text-button" onmouseup="showMessageFromFile('about.html'); hideAllMenus();">About
                         Cohesion <kbd>F1</kbd></button>
                     <hr>
-                    <button class="text-button" onmouseup="deleteEmptyFiles(); hideAllMenus()">Clear empty files</button>
+                    <button class="text-button" onmouseup="deleteEmptyFiles(); hideAllMenus()">Clear empty
+                        files</button>
                 </div>
             </div>
         </div>
@@ -120,6 +131,7 @@
         <div id="preview" class="preview"></div>
     </div>
 
+    <script src="script/fileSystem.js"></script>
     <script src="script/internalLinkExtension.js"></script>
     <script src="script/showdown.js"></script>
     <script src="script/edittools.js"></script>
@@ -217,16 +229,36 @@
             }
         }
 
-        function updateMarkdown(markdown) {
+        function teste() {
+            insertFile('![](', ')', 'image/*').then(markdown => {
+                console.log("✨ Markdown gerado:", markdown);
+            });
+        }
+
+        async function updateMarkdown(markdown) {
             let codeBlocks = [];
             const placeholder = "￼";
             markdown = markdown.replace(/(```[\s\S]*?```|`[^`\n]+`)/g, match => {
                 codeBlocks.push(match);
                 return placeholder;
             });
+
             let i = 0;
             markdown = markdown.replace(/\uFFFC/g, () => codeBlocks[i++]);
             preview.innerHTML = converter.makeHtml(markdown);
+
+            const selectors = ["img", "audio", "video", "iframe"];
+            for (const tag of selectors) {
+                const elements = preview.querySelectorAll(tag);
+                for (const el of elements) {
+                    const src = el.getAttribute("src");
+                    if (src && src.startsWith("pocket/")) {
+                        const fileName = src.slice(7);
+                        const dataUrl = await resolveFSItem(fileName);
+                        if (dataUrl) el.src = dataUrl;
+                    }
+                }
+            }
 
             document.addEventListener('click', function (e) {
                 if (e.target.classList.contains('internal-link')) {
@@ -252,7 +284,6 @@
                     }
                 }
             });
-
         }
 
         function getSummary(markdown) {
@@ -321,12 +352,20 @@
             }
 
             else if (event.ctrlKey && event.key === ',') {
+                event.preventDefault();
                 showMessageFromFile('settings.html');
                 hideAllMenus();
             }
 
             else if (event.ctrlKey && event.key === '?') {
+                event.preventDefault();
                 showMessageFromFile('shortcuts.html');
+                hideAllMenus();
+            }
+
+            else if (event.altKey && event.key === 't') {
+                event.preventDefault();
+                showMessageFromFile('pocket.html');
                 hideAllMenus();
             }
 

@@ -17,18 +17,40 @@ function insertYouTubeVideo(url) {
     }
 }
 
-function insertAudio(url) {
-    let prefix = `<!-- Audio Player -->\n<audio controls><source src=`;
-    let value = url;
-    let suffix = '></audio>';
-
-    return (prefix + value + suffix);
+async function handleInsertImage() {
+    try {
+        const text = await insertFile('![ALT TEXT](', '")', '.apng, .gif, .ico, .cur, .jpg, .jpeg, .jfif, .pjpeg, .pjp, .png, .svg, .webp');
+        insertAt(text, 2, 10);
+    } catch (e) {
+        showToast("No file selected.");
+        console.error(e);
+    }
 }
 
-function insertVideo(url) {
-    let prefix = `<!-- Video Player -->\n<video controls><source src=`;
-    let value = url;
-    let suffix = '></video>';
+async function handleInsertAudio() {
+    try {
+        const text = await insertFile('<audio controls src="', '"></audio>', '.mp4, .wav, .ogg');
+        insertAt(text, 0, 0);
+    } catch (e) {
+        showToast("No file selected.");
+        console.error(e);
+    }
+}
 
-    return (prefix + value + suffix);
+async function handleInsertVideo() {
+    try {
+        const text = await insertFile('<video controls src="', '"></video>', '.mp4, .webm, .ogg');
+        insertAt(text, 0, 0);
+    } catch (e) {
+        showToast("No file selected.");
+        console.error(e);
+    }
+}
+
+async function insertFile(prefix, suffix, accept = '*/*') {
+    const file = await uploadFSFile(accept);
+    if (!file || !file.name) throw new Error("No file returned");
+
+    const filePath = `pocket/${file.name}`;
+    return prefix + filePath + suffix;
 }

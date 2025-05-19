@@ -453,8 +453,6 @@ function promptIframe() {
 
         const plataformCbx = document.createElement("select");
         plataformCbx.innerHTML = `
-            <option value='pVideo'>HTML Video</option>
-            <option value='pAudio'>HTML Audio</option>
             <option value='pYouTube'>YouTube Video</option>
         `;
         dialog.appendChild(plataformCbx);
@@ -494,12 +492,6 @@ function promptIframe() {
             switch (plataformCbx.value) {
                 case 'pYouTube':
                     resolve(insertYouTubeVideo(contentField.value));
-                    break;
-                case 'pVideo':
-                    resolve(insertVideo(contentField.value));
-                    break;
-                case 'pAudio':
-                    resolve(insertAudio(contentField.value));
                     break;
             }
         }

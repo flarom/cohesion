@@ -31,7 +31,6 @@
     box-shadow: var(--shadow);
     margin: 10px;
     animation: showdialog 0.5s ease-in-out forwards;
-    overflow: hidden;
 }
 
 .prompt-dialog.warn {
