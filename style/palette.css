@@ -1,3 +1,17 @@
+@font-face {
+    font-family: "Ubuntu";
+    src: url("/resources/fonts/Ubuntu/Ubuntu-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Ubuntu Mono";
+    src: url("/resources/fonts/Ubuntu_Mono/UbuntuMono-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
 :root {
     --font-editor:          "Ubuntu Mono", monospace;
     --font-title:           "Ubuntu", sans-serif;
