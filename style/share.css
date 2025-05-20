@@ -15,12 +15,19 @@ header.window-title {
     justify-content: space-between;
     align-items: center;
     background-color: var(--background-color-2);
-    border-bottom: 1px solid var(--border-dark-color);
     padding: 10px 20px;
     box-sizing: border-box;
     color: var(--title-color);
     height: 48px;
     z-index: 999;
+}
+
+header.window-title.bottom {
+    border-bottom: 1px solid var(--border-dark-color);
+}
+
+header.window-title.off {
+    display: none;
 }
 
 .header-left,
@@ -47,15 +54,13 @@ header.window-title .icon-button {
 }
 
 header.window-title input[type=text] {
-    background-color: transparent;
+    background: transparent;
+    padding: 0;
     border: none;
+    height: 30px;
     color: var(--title-color);
-    font-size: large;
-    height: 24px;
-    border-radius: 12px;
     min-width: 10px;
-    width: 50%;
-    text-align: center;
+    width: 300px;
     transition: background-color 0.3s;
 }
 
@@ -68,6 +73,15 @@ header.window-title input[type=text]:focus {
     background-color: var(--hover-color);
 }
 
+header.window-title .field-container {
+    background-color: var(--background-color-3);
+    border-radius: 5px 0px 0px 5px;
+    padding-left: 5px;
+    display: flex;
+    align-items: center;
+}
+
+label.icon,
 span.icon {
     font-family: "Material Symbols Rounded";
 }
@@ -90,6 +104,23 @@ button {
 
 button.danger {
     color: var(--danger) !important;
+}
+
+.button-group-member {
+    background-color: var(--background-color-3);
+    border-radius: 0;
+    border-left: 1px solid var(--border-light-color);
+}
+
+.button-group-member.right {
+    border-radius: 0px 5px 5px 0px;
+    margin-right: 3.5px;
+}
+
+.button-group-member.left {
+    border-radius: 5px 0px 0px 5px;
+    margin-left: 3.5px;
+    border-left: 0;
 }
 
 .icon-button:focus,
@@ -137,6 +168,10 @@ button.danger:hover {
 
 .button-on {
     background-color: var(--background-color-3);
+}
+
+.button-group-member.button-on {
+    background-color: var(--highlight-color);
 }
 
 @media screen and (max-width: 800px){
