@@ -56,7 +56,7 @@
                         <hr />
                         <button class="text-button" onmouseup="insertBlock(getSummary(editor.getValue())); hideAllMenus()">Summary</button>
                         <button class="text-button" onmouseup="promptTableSelector().then((markdown) => {if (markdown) {insertBlock(markdown);}}); hideAllMenus()">Table</button>
-                        <button class="text-button" onmouseup="insertAtTop(getMeta()); hideAllMenus();">Document meta</button>
+                        <button class="text-button" onmouseup="insertAtTop(getMeta()); hideAllMenus();">Document meta <kbd>Ctrl+;</kbd></button>
                         <hr />
                         <button class="text-button" onmouseup="promptIframe().then((markdown) => {if (markdown) {insertBlock(markdown);}}); hideAllMenus()">Web embed</button>
                     </div>
