@@ -243,6 +243,9 @@
     background-color: var(--background-color-3);
     color: var(--text-color);
     cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .preview embed {
