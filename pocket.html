@@ -118,9 +118,9 @@
             if (["apng", "gif", "ico", "cur", "jpg", "jpeg", "jfif", "pjpeg", "pjp", "png", "svg", "webp"].includes(ext)) {
                 filecontent = `![${name}](pocket/${name})`;
             } else if (["mp4", "webm", "ogg"].includes(ext)) {
-                filecontent = `<video controls src="pocket/${name}"></video>`;
+                filecontent = `![${name}](pocket/${name})`;
             } else if (["mp3", "wav", "aac", "flac"].includes(ext)) {
-                filecontent = `<audio controls src="pocket/${name}"></audio>`;
+                filecontent = `![${name}](pocket/${name})`;
             } else if (ext === "pdf") {
                 filecontent = `<iframe src="pocket/${name}"></iframe>`;
             } else {

@@ -130,7 +130,7 @@ function insertYouTubeVideo(url) {
 
 async function handleInsertImage() {
     try {
-        const text = await insertFile('![ALT TEXT](', '")', '.apng, .gif, .ico, .cur, .jpg, .jpeg, .jfif, .pjpeg, .pjp, .png, .svg, .webp');
+        const text = await insertFile('![ALT TEXT](', ')', '.apng, .gif, .ico, .cur, .jpg, .jpeg, .jfif, .pjpeg, .pjp, .png, .svg, .webp');
         insertAt(text, 2, 10);
     } catch (e) {
         showToast("No file selected.");
@@ -140,8 +140,8 @@ async function handleInsertImage() {
 
 async function handleInsertAudio() {
     try {
-        const text = await insertFile('<audio controls src="', '"></audio>', '.mp4, .wav, .ogg');
-        insertAt(text, 0, 0);
+        const text = await insertFile('![ALT TEXT](', ')', '.mp3, .wav, .ogg');
+        insertAt(text, 2, 10);
     } catch (e) {
         showToast("No file selected.");
         console.error(e);
@@ -150,8 +150,8 @@ async function handleInsertAudio() {
 
 async function handleInsertVideo() {
     try {
-        const text = await insertFile('<video controls src="', '"></video>', '.mp4, .webm, .ogg');
-        insertAt(text, 0, 0);
+        const text = await insertFile('![ALT TEXT](', ')', '.mp4, .webm, .ogg');
+        insertAt(text, 2, 10);
     } catch (e) {
         showToast("No file selected.");
         console.error(e);

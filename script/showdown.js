@@ -3559,113 +3559,114 @@
      * Turn Markdown image shortcuts into <img> tags.
      */
     showdown.subParser('makehtml.images', function (text, options, globals) {
-        'use strict';
+    'use strict';
 
-        text = globals.converter._dispatch('makehtml.images.before', text, options, globals).getText();
+    text = globals.converter._dispatch('makehtml.images.before', text, options, globals).getText();
 
-        var inlineRegExp = /!\[([^\]]*?)][ \t]*()\([ \t]?<?([\S]+?(?:\([\S]*?\)[\S]*?)?)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*(?:(["'])([^"]*?)\6)?[ \t]?\)/g,
-            crazyRegExp = /!\[([^\]]*?)][ \t]*()\([ \t]?<([^>]*)>(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*(?:(?:(["'])([^"]*?)\6))?[ \t]?\)/g,
-            base64RegExp = /!\[([^\]]*?)][ \t]*()\([ \t]?<?(data:.+?\/.+?;base64,[A-Za-z0-9+/=\n]+?)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*(?:(["'])([^"]*?)\6)?[ \t]?\)/g,
-            referenceRegExp = /!\[([^\]]*?)] ?(?:\n *)?\[([\s\S]*?)]()()()()()/g,
-            refShortcutRegExp = /!\[([^\[\]]+)]()()()()()/g;
+    var inlineRegExp = /!\[([^\]]*?)][ \t]*()\([ \t]?<?([\S]+?(?:\([\S]*?\)[\S]*?)?)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*(?:(["'])([^"]*?)\6)?[ \t]?\)/g,
+        crazyRegExp = /!\[([^\]]*?)][ \t]*()\([ \t]?<([^>]*)>(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*(?:(?:(["'])([^"]*?)\6))?[ \t]?\)/g,
+        base64RegExp = /!\[([^\]]*?)][ \t]*()\([ \t]?<?(data:.+?\/.+?;base64,[A-Za-z0-9+/=\n]+?)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*(?:(["'])([^"]*?)\6)?[ \t]?\)/g,
+        referenceRegExp = /!\[([^\]]*?)] ?(?:\n *)?\[([\s\S]*?)]()()()()()/g,
+        refShortcutRegExp = /!\[([^\[\]]+)]()()()()()/g;
 
-        function writeImageTagBase64(wholeMatch, altText, linkId, url, width, height, m5, title) {
-            url = url.replace(/\s/g, '');
-            return writeImageTag(wholeMatch, altText, linkId, url, width, height, m5, title);
+    function writeMediaTag(wholeMatch, altText, linkId, url, width, height, m5, title) {
+        var gUrls = globals.gUrls,
+            gTitles = globals.gTitles,
+            gDims = globals.gDimensions;
+
+        linkId = linkId.toLowerCase();
+        if (!title) title = '';
+
+        if (wholeMatch.search(/\(<?\s*>? ?(['"].*['"])?\)$/m) > -1) {
+            url = '';
+        } else if (!url) {
+            if (!linkId) linkId = altText.toLowerCase().replace(/ ?\n/g, ' ');
+            url = '#' + linkId;
+            if (!showdown.helper.isUndefined(gUrls[linkId])) {
+                url = gUrls[linkId];
+                if (!showdown.helper.isUndefined(gTitles[linkId])) {
+                    title = gTitles[linkId];
+                }
+                if (!showdown.helper.isUndefined(gDims[linkId])) {
+                    width = gDims[linkId].width;
+                    height = gDims[linkId].height;
+                }
+            } else {
+                return wholeMatch;
+            }
         }
 
-        function writeImageTagBaseUrl(wholeMatch, altText, linkId, url, width, height, m5, title) {
-            url = showdown.helper.applyBaseUrl(options.relativePathBaseUrl, url);
+        altText = altText
+            .replace(/"/g, '&quot;')
+            .replace(showdown.helper.regexes.asteriskDashTildeAndColon, showdown.helper.escapeCharactersCallback);
+        url = url.replace(showdown.helper.regexes.asteriskDashTildeAndColon, showdown.helper.escapeCharactersCallback);
 
-            return writeImageTag(wholeMatch, altText, linkId, url, width, height, m5, title);
-        }
+        var extension = url.split('.').pop().toLowerCase();
 
-        function writeImageTag(wholeMatch, altText, linkId, url, width, height, m5, title) {
-            var gUrls = globals.gUrls,
-                gTitles = globals.gTitles,
-                gDims = globals.gDimensions;
+        var supportedAudio = ['mp3', 'wav', 'ogg'];
+        var supportedVideo = ['mp4', 'webm'];
 
-            linkId = linkId.toLowerCase();
-
-            if (!title) {
-                title = '';
+        var mediaTag = '';
+        if (supportedAudio.includes(extension)) {
+            mediaTag = '<audio controls src="' + url + '"></audio>';
+        } else if (supportedVideo.includes(extension)) {
+            mediaTag = '<video controls src="' + url + '"';
+            if (width && height) {
+                width = (width === '*') ? 'auto' : width;
+                height = (height === '*') ? 'auto' : height;
+                mediaTag += ' width="' + width + '" height="' + height + '"';
             }
-
-            if (wholeMatch.search(/\(<?\s*>? ?(['"].*['"])?\)$/m) > -1) {
-                url = '';
-            } else if (url === '' || url === null) {
-                if (linkId === '' || linkId === null) {
-                    linkId = altText.toLowerCase().replace(/ ?\n/g, ' ');
-                }
-                url = '#' + linkId;
-
-                if (!showdown.helper.isUndefined(gUrls[linkId])) {
-                    url = gUrls[linkId];
-                    if (!showdown.helper.isUndefined(gTitles[linkId])) {
-                        title = gTitles[linkId];
-                    }
-                    if (!showdown.helper.isUndefined(gDims[linkId])) {
-                        width = gDims[linkId].width;
-                        height = gDims[linkId].height;
-                    }
-                } else {
-                    return wholeMatch;
-                }
-            }
-
-            altText = altText
-                .replace(/"/g, '&quot;')
-                .replace(showdown.helper.regexes.asteriskDashTildeAndColon, showdown.helper.escapeCharactersCallback);
-            url = url.replace(showdown.helper.regexes.asteriskDashTildeAndColon, showdown.helper.escapeCharactersCallback);
-
+            mediaTag += '></video>';
+        } else {
+            // default: image
             let imgTag = '<img src="' + url + '" alt="' + altText + '"';
-
             if (title && showdown.helper.isString(title)) {
                 title = title
                     .replace(/"/g, '&quot;')
                     .replace(showdown.helper.regexes.asteriskDashTildeAndColon, showdown.helper.escapeCharactersCallback);
                 imgTag += ' title="' + title + '"';
             }
-
             if (width && height) {
                 width = (width === '*') ? 'auto' : width;
                 height = (height === '*') ? 'auto' : height;
-
-                imgTag += ' width="' + width + '"';
-                imgTag += ' height="' + height + '"';
+                imgTag += ' width="' + width + '" height="' + height + '"';
             }
-
             imgTag += ' />';
-
-            return '<div class="image-container">' +
-                '<a href="' + url + '" target="_blank">' +
-                imgTag +
-                '</a>' +
-                '<p>' + altText + '</p>' +
-                '</div>';
+            mediaTag = '<a href="' + url + '" target="_blank">' + imgTag + '</a>';
         }
 
+        return '<div class="media-container">' + mediaTag + '<p>' + altText + '</p></div>';
+    }
 
-        // First, handle reference-style labeled images: ![alt text][id]
-        text = text.replace(referenceRegExp, writeImageTag);
+    function writeMediaTagBase64(wholeMatch, altText, linkId, url, width, height, m5, title) {
+        url = url.replace(/\s/g, '');
+        return writeMediaTag(wholeMatch, altText, linkId, url, width, height, m5, title);
+    }
 
-        // Next, handle inline images:  ![alt text](url =<width>x<height> "optional title")
+    function writeMediaTagBaseUrl(wholeMatch, altText, linkId, url, width, height, m5, title) {
+        url = showdown.helper.applyBaseUrl(options.relativePathBaseUrl, url);
+        return writeMediaTag(wholeMatch, altText, linkId, url, width, height, m5, title);
+    }
 
-        // base64 encoded images
-        text = text.replace(base64RegExp, writeImageTagBase64);
+    // First, handle reference-style labeled media: ![alt text][id]
+    text = text.replace(referenceRegExp, writeMediaTag);
 
-        // cases with crazy urls like ./image/cat1).png
-        text = text.replace(crazyRegExp, writeImageTagBaseUrl);
+    // base64 encoded
+    text = text.replace(base64RegExp, writeMediaTagBase64);
 
-        // normal cases
-        text = text.replace(inlineRegExp, writeImageTagBaseUrl);
+    // crazy URLs
+    text = text.replace(crazyRegExp, writeMediaTagBaseUrl);
 
-        // handle reference-style shortcuts: ![img text]
-        text = text.replace(refShortcutRegExp, writeImageTag);
+    // normal
+    text = text.replace(inlineRegExp, writeMediaTagBaseUrl);
 
-        text = globals.converter._dispatch('makehtml.images.after', text, options, globals).getText();
-        return text;
-    });
+    // shortcut refs
+    text = text.replace(refShortcutRegExp, writeMediaTag);
+
+    text = globals.converter._dispatch('makehtml.images.after', text, options, globals).getText();
+    return text;
+});
+
 
     showdown.subParser('makehtml.italicsAndBold', function (text, options, globals) {
         'use strict';

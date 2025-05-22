@@ -103,7 +103,7 @@
     max-width: calc(100% - 20px);
 }
 
-.preview .image-container p {
+.preview .media-container p {
     text-align: center;
     display: none;
     margin: 5px;
@@ -112,12 +112,12 @@
     gap: 5px;
 }
 
-.preview .image-container p::before {
+.preview .media-container p::before {
     content: "info";
     font-family: 'Material Symbols Rounded';
 }
 
-.preview .image-container:hover p {
+.preview .media-container:hover p {
     display: inline-flex;
 }
 
