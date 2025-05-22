@@ -173,7 +173,7 @@ button.danger:hover {
 }
 
 .button-group-member.button-on {
-    background-color: var(--highlight-color);
+    background-color: var(--background-color);
 }
 
 @media screen and (max-width: 800px){

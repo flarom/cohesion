@@ -3158,14 +3158,14 @@
 
             let runButton = '';
             if (language === 'js' || language === 'javascript') {
-                runButton = `<button class="icon-button" onclick="try{eval(this.closest('.code-head').nextElementSibling.querySelector('code').innerText)}catch(e){showToast(e, 'error')}">rocket_launch</button>`;
+                runButton = `<button class="icon-button" title="Run code" onclick="try{eval(this.closest('.code-head').nextElementSibling.querySelector('code').innerText)}catch(e){showToast(e, 'error')}">rocket_launch</button>`;
             }
 
             codeblock = `
     <div class="code-head">
         ${language}
         <div>
-            <button class="icon-button" onclick="navigator.clipboard.writeText(this.closest('.code-head').nextElementSibling.querySelector('code').innerText)">content_copy</button>
+            <button class="icon-button" title="Copy" onclick="navigator.clipboard.writeText(this.closest('.code-head').nextElementSibling.querySelector('code').innerText)">content_copy</button>
             ${runButton}
         </div>
     </div>

@@ -26,7 +26,7 @@ function createFile(text = "") {
     files.unshift(text);
     saveFilesToStorage();
     renderFiles("files");
-    renderEditor()
+    renderEditor();
 }
 
 /**
