@@ -54,6 +54,51 @@
     padding-left: 15px;
 }
 
+.preview blockquote.quote-note {
+    border-left-color: var(--quote-note);
+}
+
+.preview blockquote.quote-note::before {
+    content: "Note";
+    color: var(--quote-note);
+}
+
+.preview blockquote.quote-tip {
+    border-left-color: var(--quote-tip);
+}
+
+.preview blockquote.quote-tip::before {
+    content: "Tip";
+    color: var(--quote-tip);
+}
+
+.preview blockquote.quote-important {
+    border-left-color: var(--quote-important);
+}
+
+.preview blockquote.quote-important::before {
+    content: "Important";
+    color: var(--quote-important);
+}
+
+.preview blockquote.quote-warning {
+    border-left-color: var(--quote-warning);
+}
+
+.preview blockquote.quote-warning::before {
+    content: "Warning";
+    color: var(--quote-warning);
+}
+
+.preview blockquote.quote-caution {
+    border-left-color: var(--quote-caution);
+}
+
+.preview blockquote.quote-caution::before {
+    content: "Caution";
+    color: var(--quote-caution);
+}
+
 .preview code,
 .preview pre {
     font-size: large;

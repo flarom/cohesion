@@ -2772,28 +2772,48 @@
         }
 
         text = text.replace(rgx, function (bq) {
-            // attacklab: hack around Konqueror 3.5.4 bug:
-            // "----------bug".replace(/^-/g,"") == "bug"
-            bq = bq.replace(/^[ \t]*>[ \t]?/gm, ''); // trim one level of quoting
+            let lines = bq.split('\n').map(line => line.replace(/^ {0,3}>[ \t]?/, ''));
 
-            // attacklab: clean up hack
+            let firstLine = lines[0].trim();
+            let badgeClass = null;
+
+            const badgeMap = {
+                '[!NOTE]': 'quote-note',
+                '[!TIP]': 'quote-tip',
+                '[!IMPORTANT]': 'quote-important',
+                '[!WARNING]': 'quote-warning',
+                '[!CAUTION]': 'quote-caution'
+            };
+
+            if (badgeMap[firstLine]) {
+                badgeClass = badgeMap[firstLine];
+                lines.shift();
+            }
+
+            bq = lines.join('\n');
+
             bq = bq.replace(/¨0/g, '');
+            bq = bq.replace(/^[ \t]+$/gm, '');
 
-            bq = bq.replace(/^[ \t]+$/gm, ''); // trim whitespace-only lines
             bq = showdown.subParser('makehtml.githubCodeBlocks')(bq, options, globals);
-            bq = showdown.subParser('makehtml.blockGamut')(bq, options, globals); // recurse
+            bq = showdown.subParser('makehtml.blockGamut')(bq, options, globals);
 
             bq = bq.replace(/(^|\n)/g, '$1  ');
-            // These leading spaces screw with <pre> content, so we need to fix that:
+
             bq = bq.replace(/(\s*<pre>[^\r]+?<\/pre>)/gm, function (wholeMatch, m1) {
                 var pre = m1;
-                // attacklab: hack around Konqueror 3.5.4 bug:
                 pre = pre.replace(/^  /mg, '¨0');
                 pre = pre.replace(/¨0/g, '');
                 return pre;
             });
 
-            return showdown.subParser('makehtml.hashBlock')('<blockquote>\n' + bq + '\n</blockquote>', options, globals);
+            let blockquoteTag = '<blockquote';
+            if (badgeClass) {
+                blockquoteTag += ` class="${badgeClass}"`;
+            }
+            blockquoteTag += '>\n' + bq + '\n</blockquote>';
+
+            return showdown.subParser('makehtml.hashBlock')(blockquoteTag, options, globals);
         });
 
         text = globals.converter._dispatch('makehtml.blockQuotes.after', text, options, globals).getText();
