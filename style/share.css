@@ -375,7 +375,7 @@ button.danger:hover {
     border-radius: 300px;
     padding: 0px 20px 0px 20px;
     position: fixed;
-    z-index: 1000;
+    z-index: 9999;
     left: 50%;
     top: 30px;
     display: flex;

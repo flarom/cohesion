@@ -224,7 +224,7 @@ function promptMessage(htmlContent, showCloseButton = true) {
     });
 }
 
-function showMessageFromFile(filePath, showCloseButton = true) {
+function showMessageFromFile(filePath, showCloseButton = true, useBigDialog = false) {
     fetch(filePath)
         .then(response => {
             if (!response.ok) {
@@ -237,9 +237,8 @@ function showMessageFromFile(filePath, showCloseButton = true) {
             overlay.className = 'prompt-overlay';
 
             const dialog = document.createElement('div');
-            dialog.className = 'prompt-dialog';
-            dialog.style.width = '100%';
-            dialog.style.maxWidth = '500px';
+            if (useBigDialog) dialog.className = 'prompt-big-dialog';
+            else dialog.className = 'prompt-dialog';
 
             const okButton = document.createElement('button');
             okButton.textContent = 'close';

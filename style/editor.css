@@ -148,6 +148,10 @@
     max-width: calc(100% - 20px);
 }
 
+.preview .media-container {
+    display: contents;
+}
+
 .preview .media-container p {
     text-align: center;
     display: none;

@@ -84,9 +84,9 @@
                             <kbd>Ctrl+S</kbd>
                         </button>
                         <hr />
-                        <button class="text-button" onmouseup="showMessageFromFile('pocket.html'); hideAllMenus()">
+                        <button class="text-button" onmouseup="showMessageFromFile('pocket.html', true, true); hideAllMenus()">
                             Pocket
-                            <kbd>Alt+T</kbd>
+                            <kbd>Alt+P</kbd>
                         </button>
                         <button class="text-button" onmouseup="showMessageFromFile('settings.html'); hideAllMenus()">
                             Settings
@@ -572,9 +572,9 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     event.preventDefault();
                     showMessageFromFile("shortcuts.html");
                     hideAllMenus();
-                } else if (event.altKey && event.key === "t") {
+                } else if (event.altKey && event.key === "p") {
                     event.preventDefault();
-                    showMessageFromFile("pocket.html");
+                    showMessageFromFile('pocket.html', true, true);
                     hideAllMenus();
                 } else if (event.altKey && /^[0-9]$/.test(event.key)) {
                     event.preventDefault();
