@@ -54,48 +54,72 @@
     padding-left: 15px;
 }
 
-.preview blockquote.quote-note {
-    border-left-color: var(--quote-note);
+.preview .quote-label {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: large;
+    user-select: none;
 }
 
-.preview blockquote.quote-note::before {
-    content: "Note";
+.preview blockquote.quote-generic,
+.preview blockquote.quote-note,
+.preview blockquote.quote-tip,
+.preview blockquote.quote-important,
+.preview blockquote.quote-warning,
+.preview blockquote.quote-caution {
+    padding: 10px 15px 10px 15px;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+}
+
+.preview blockquote.quote-generic {
+    border: 1px solid var(--border-light-color);
+    background-color: var(--background-color-3);
+}
+
+.preview blockquote.quote-note {
+    border: 1px solid var(--quote-note);
+    background-color: var(--quote-note-bg);
+}
+
+.preview .quote-note-label {
     color: var(--quote-note);
 }
 
 .preview blockquote.quote-tip {
-    border-left-color: var(--quote-tip);
+    border: 1px solid var(--quote-tip);
+    background-color: var(--quote-tip-bg);
 }
 
-.preview blockquote.quote-tip::before {
-    content: "Tip";
+.preview .quote-tip-label {
     color: var(--quote-tip);
 }
 
 .preview blockquote.quote-important {
-    border-left-color: var(--quote-important);
+    border: 1px solid var(--quote-important);
+    background-color: var(--quote-important-bg);
 }
 
-.preview blockquote.quote-important::before {
-    content: "Important";
+.preview .quote-important-label {
     color: var(--quote-important);
 }
 
 .preview blockquote.quote-warning {
-    border-left-color: var(--quote-warning);
+    border: 1px solid var(--quote-warning);
+    background-color: var(--quote-warning-bg);
 }
 
-.preview blockquote.quote-warning::before {
-    content: "Warning";
+.preview .quote-warning-label {
     color: var(--quote-warning);
 }
 
 .preview blockquote.quote-caution {
-    border-left-color: var(--quote-caution);
+    border: 1px solid var(--quote-caution);
+    background-color: var(--quote-caution-bg);
 }
 
-.preview blockquote.quote-caution::before {
-    content: "Caution";
+.preview .quote-caution-label {
     color: var(--quote-caution);
 }
 
