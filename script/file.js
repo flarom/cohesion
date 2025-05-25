@@ -317,14 +317,6 @@ function renderFiles(containerId) {
         dropdownContent.className = "dropdown-content menu";
         dropdownContent.id = `file-menu-${i}`;
 
-        const shareBtn = document.createElement("button");
-        shareBtn.className = "text-button";
-        shareBtn.textContent = "Share";
-        shareBtn.onclick = (event) => {
-            event.stopPropagation();
-            generateCompressedLink(i);
-        };
-
         const downloadBtn = document.createElement("button");
         downloadBtn.className = "text-button";
         downloadBtn.textContent = "Download";
@@ -354,7 +346,6 @@ function renderFiles(containerId) {
             showToast('Deleted', 'delete');
         };
 
-        dropdownContent.appendChild(shareBtn);
         dropdownContent.appendChild(downloadBtn);
         dropdownContent.appendChild(hr);
         dropdownContent.appendChild(deleteBtn);
@@ -419,20 +410,5 @@ function renderFiles(containerId) {
         };
 
         container.appendChild(fileButton);
-    });
-}
-
-function generateCompressedLink(id) {
-    const markdownText = getFileText(id);
-    const compressed = LZString.compressToEncodedURIComponent(markdownText);
-    const link = `https://flarom.github.io/cohesion/read?c=${compressed}`;
-
-    console.log(link);
-
-    navigator.clipboard.writeText(link).then(() => {
-        showToast("copied", "content_copy");
-    }).catch(err => {
-        console.error(err);
-        showToast("failed copying", "error");
     });
 }

@@ -230,7 +230,10 @@
 }
 
 .cm-s-default .cm-comment {
-    color: var(--text-color);
+    color: var(--title-color);
+    background-color: var(--background-color-2);
+    opacity: 75%;
+    display: inline-block;
 }
 
 .cm-s-default .cm-string {
@@ -640,4 +643,17 @@ span.CodeMirror-selectedtext {
 
 .cm-link {
     color: var(--link-color) !important;
+}
+
+/* .cm-meta {
+    color: blue !important;
+} */
+
+.cm-property {
+    color: var(--link-color) !important;
+}
+
+.cm-builtin {
+    color: var(--title-color) !important;
+    font-weight: bold !important;
 }

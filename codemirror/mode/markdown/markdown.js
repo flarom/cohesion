@@ -36,14 +36,14 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     modeCfg.maxBlockquoteDepth = 0;
 
   // Turn on task lists? ("- [ ] " and "- [x] ")
-  if (modeCfg.taskLists === undefined) modeCfg.taskLists = false;
+  if (modeCfg.taskLists === undefined) modeCfg.taskLists = true;
 
   // Turn on strikethrough syntax
   if (modeCfg.strikethrough === undefined)
-    modeCfg.strikethrough = false;
+    modeCfg.strikethrough = true;
 
   if (modeCfg.emoji === undefined)
-    modeCfg.emoji = false;
+    modeCfg.emoji = true;
 
   if (modeCfg.fencedCodeBlockHighlighting === undefined)
     modeCfg.fencedCodeBlockHighlighting = true;
