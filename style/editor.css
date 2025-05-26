@@ -55,19 +55,22 @@
 }
 
 .preview .quote-label {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 2px;
     font-size: large;
     user-select: none;
+    background-color: var(--background-color);
+    padding: 0px 10px 0px 10px;
+    border-radius: 50px;
 }
 
 .preview blockquote.quote-generic,
-.preview blockquote.quote-note,
-.preview blockquote.quote-tip,
-.preview blockquote.quote-important,
-.preview blockquote.quote-warning,
-.preview blockquote.quote-caution {
+.preview blockquote.quote-blue,
+.preview blockquote.quote-green,
+.preview blockquote.quote-purple,
+.preview blockquote.quote-yellow,
+.preview blockquote.quote-red {
     padding: 10px 15px 10px 15px;
     border-radius: 15px;
     box-shadow: var(--shadow);
@@ -78,49 +81,49 @@
     background-color: var(--background-color-3);
 }
 
-.preview blockquote.quote-note {
-    border: 1px solid var(--quote-note);
-    background-color: var(--quote-note-bg);
+.preview blockquote.quote-blue {
+    border: 1px solid var(--quote-blue);
+    background-color: var(--quote-blue-bg);
 }
 
-.preview .quote-note-label {
-    color: var(--quote-note);
+.preview .quote-blue-label {
+    color: var(--quote-blue);
 }
 
-.preview blockquote.quote-tip {
-    border: 1px solid var(--quote-tip);
-    background-color: var(--quote-tip-bg);
+.preview blockquote.quote-green {
+    border: 1px solid var(--quote-green);
+    background-color: var(--quote-green-bg);
 }
 
-.preview .quote-tip-label {
-    color: var(--quote-tip);
+.preview .quote-green-label {
+    color: var(--quote-green);
 }
 
-.preview blockquote.quote-important {
-    border: 1px solid var(--quote-important);
-    background-color: var(--quote-important-bg);
+.preview blockquote.quote-purple {
+    border: 1px solid var(--quote-purple);
+    background-color: var(--quote-purple-bg);
 }
 
-.preview .quote-important-label {
-    color: var(--quote-important);
+.preview .quote-purple-label {
+    color: var(--quote-purple);
 }
 
-.preview blockquote.quote-warning {
-    border: 1px solid var(--quote-warning);
-    background-color: var(--quote-warning-bg);
+.preview blockquote.quote-yellow {
+    border: 1px solid var(--quote-yellow);
+    background-color: var(--quote-yellow-bg);
 }
 
-.preview .quote-warning-label {
-    color: var(--quote-warning);
+.preview .quote-yellow-label {
+    color: var(--quote-yellow);
 }
 
-.preview blockquote.quote-caution {
-    border: 1px solid var(--quote-caution);
-    background-color: var(--quote-caution-bg);
+.preview blockquote.quote-red {
+    border: 1px solid var(--quote-red);
+    background-color: var(--quote-red-bg);
 }
 
-.preview .quote-caution-label {
-    color: var(--quote-caution);
+.preview .quote-red-label {
+    color: var(--quote-red);
 }
 
 .preview code,
@@ -238,7 +241,6 @@
 }
 
 .preview input[type="checkbox"]:checked::after {
-    content: "check";
     color: var(--text-color);
     font-size: 18px;
     font-weight: 900;

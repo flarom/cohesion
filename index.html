@@ -31,6 +31,7 @@
         <link rel="stylesheet" href="codemirror/lib/codemirror.css" />
 
         <script src="codemirror/lib/codemirror.js"></script>
+        <script src="codemirror/keymap/sublime.js"></script>
         <script src="codemirror/mode/markdown/markdown.js"></script>
         <script src="codemirror/addon/edit/closebrackets.js"></script>
         <script src="codemirror/addon/edit/continuelist.js"></script>
@@ -90,13 +91,13 @@
                             Pocket
                             <kbd>Alt+P</kbd>
                         </button>
-                        <button class="text-button" onmouseup="showMessageFromFile('settings.html'); hideAllMenus()">
+                        <button class="text-button" onmouseup="showMessageFromFile('settings.html', true, false, 900); hideAllMenus()">
                             Settings
                             <kbd>Ctrl+,</kbd>
                         </button>
                         <hr />
                         <button class="text-button" onmouseup="window.open('read.html?path=docs/index.md'); hideAllMenus()">Tutorial</button>
-                        <button class="text-button" onmouseup="showMessageFromFile('shortcuts.html'); hideAllMenus();">
+                        <button class="text-button" onmouseup="showMessageFromFile('shortcuts.html', true, false, 600); hideAllMenus();">
                             Keyboard shortcuts
                             <kbd>Ctrl+?</kbd>
                         </button>
@@ -142,10 +143,13 @@
             </header>
             <textarea id="editor"></textarea>
             <div id="preview" class="preview"></div>
-            <div class="status-bar">
+            <div class="status-bar" id="status">
                 <div class="status-bar-left">
                     <div class="status-bar-item">
                         <label id="cursorPosLabel">Ln 0, Col 0</label>
+                    </div>
+                    <div class="status-bar-item">
+                        <label id="editorMode"><span class="icon">edit</span><span>Edit mode</span></label>
                     </div>
                 </div>
                 <div class="status-bar-right">
@@ -177,13 +181,16 @@
 
             const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
                 mode: "markdown",
-                lineNumbers: false,
+                lineNumbers: getSetting('editorLineNumbers', false) === "true",
                 theme: "default",
                 lineWrapping: true,
                 autoCloseBrackets: true,
                 extraKeys: {
                     Enter: "newlineAndIndentContinueMarkdownList",
                 },
+                keyMap: "sublime",
+                direction: getSetting('editorDirection', 'ltr'),
+                showCursorWhenSelecting: true
             });
 
             const converter = new showdown.Converter({
@@ -192,8 +199,10 @@
 
             const preview = document.getElementById("preview");
 
+            const statusBar = document.getElementById('status');
             const cursorPosLabel = document.getElementById("cursorPosLabel");
             const documentSizeLabel = document.getElementById("documentSizeLabel");
+            const editorModeLabel = document.getElementById('editorMode');
 
             const searchField = document.getElementById("search-field");
             const replaceField = document.getElementById("replace-field");
@@ -294,6 +303,7 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     readBtn.innerText = "edit";
                     readBtn.title = "Write";
                     readBtn.classList.add("button-on");
+                    editorModeLabel.innerHTML = "<span class='icon'>import_contacts</span><span>Read mode</span>";
 
                     requestAnimationFrame(() => {
                         preview.scrollTop = scrollRatio * (preview.scrollHeight - preview.clientHeight);
@@ -305,6 +315,8 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     readBtn.innerText = "import_contacts";
                     readBtn.title = "Read";
                     readBtn.classList.remove("button-on");
+                    
+                    editorModeLabel.innerHTML = "<span class='icon'>edit</span><span>Edit mode</span>";
                 }
             }
 
@@ -344,7 +356,7 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                 }
             }
 
-            function toggleReplaceHeader(force = null) {
+            function toggleReplaceHeader(text = "", force = null) {
                 const mainHeader = document.getElementById("main-header");
                 const searchHeader = document.getElementById("search-header");
                 const replaceHeader = document.getElementById("replace-header");
@@ -366,6 +378,7 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     replaceBtn.classList.add("button-on");
 
                     replaceField.focus();
+                    searchField.value = text;
                 } else {
                     mainHeader.classList.remove("bottom");
                     searchHeader.classList.add("bottom");
@@ -478,6 +491,18 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                 if (colorValue) {
                     metaTag.setAttribute("content", colorValue);
                 }
+
+                if (getSetting('statusShow', 'true') != 'true') statusBar.style.display = 'none';
+                else statusBar.style.display = 'flex';
+
+                if (getSetting('statusCursorPos', 'true') != 'true') cursorPosLabel.style.display = 'none';
+                else cursorPosLabel.style.display = 'flex';
+
+                if (getSetting('statusEditorMode', 'true') != 'true') editorModeLabel.style.display = 'none';
+                else editorModeLabel.style.display = 'flex';
+
+                if (getSetting('statusDocumentSize', 'true') != 'true') documentSizeLabel.style.display = 'none';
+                else documentSizeLabel.style.display = 'flex';
             }
 
             function getCursor(query) {
@@ -512,6 +537,54 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     lastQuery = query;
                 }
             }
+
+            searchField.addEventListener("keydown", function (event) {
+                if (event.shiftKey && event.key === "Enter") {
+                    if (!currentCursor || searchField.value !== lastQuery) updateCursor();
+                    else if (currentCursor.findPrevious()) {
+                        editor.setSelection(currentCursor.from(), currentCursor.to());
+                        scrollSelection(currentCursor.from());
+                        toggleSearchHeader(lastQuery, true);
+                    }
+                } else if (event.key === "Enter") {
+                    if (!currentCursor || searchField.value !== lastQuery) updateCursor();
+                    else if (currentCursor.findNext()) {
+                        editor.setSelection(currentCursor.from(), currentCursor.to());
+                        scrollSelection(currentCursor.from());
+                        toggleSearchHeader(lastQuery, true);
+                    }
+                } else if (event.key === "Escape") {
+                    toggleSearchHeader("", false);
+                }
+            });
+
+            replaceField.addEventListener("keydown", function (event) {
+                if (event.ctrlKey && event.key === "Enter") {
+                    const cm = editor;
+                    const query = searchField.value;
+                    const replaceText = replaceField.value;
+                    if (!query) return;
+
+                    const cursor = getCursor(query);
+                    cm.operation(() => {
+                        while (cursor.findNext()) {
+                            cursor.replace(replaceText);
+                        }
+                    });
+                    toggleReplaceHeader(query, true);
+                } else if (event.shiftKey && event.key === "Enter") {
+                    editor.undo();
+                } else if (event.key === "Enter") {
+                    if (!currentCursor || searchField.value !== lastQuery) updateCursor();
+                    if (currentCursor && currentCursor.from()) {
+                        currentCursor.replace(replaceField.value);
+                        updateCursor();
+                        toggleReplaceHeader(lastQuery, true);
+                    }
+                } else if (event.key === "Escape") {
+                    toggleSearchHeader("", false);
+                }
+            });
 
             document.getElementById("search-next-btn").onclick = () => {
                 if (!currentCursor || searchField.value !== lastQuery) updateCursor();
@@ -548,6 +621,7 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                 if (currentCursor && currentCursor.from()) {
                     currentCursor.replace(replaceField.value);
                     updateCursor();
+                    toggleReplaceHeader(lastQuery, true);
                 }
             };
 
@@ -563,6 +637,7 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                         cursor.replace(replaceText);
                     }
                 });
+                toggleReplaceHeader(query, true);
             };
 
             function scrollSelection(from) {
@@ -576,8 +651,12 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
             }
 
             document.addEventListener("keydown", async function (event) {
+                if (event.key === 'Escape') {
+                    hideAllMenus();
+                    editor.focus();
+                }
                 // NAVIGATION
-                if (event.ctrlKey && event.key === "p") {
+                else if (event.ctrlKey && event.key === "p") {
                     // toggle preview - ctrl+p
                     event.preventDefault();
                     togglePreview();
@@ -719,7 +798,7 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     toggleSearchHeader(editor.getSelection());
                 } else if (event.ctrlKey && event.key === "h") {
                     event.preventDefault();
-                    toggleReplaceHeader();
+                    toggleReplaceHeader(editor.getSelection());
                 } else if (event.ctrlKey && event.key === ";") {
                     event.preventDefault();
                     insertAtTop(getMeta());

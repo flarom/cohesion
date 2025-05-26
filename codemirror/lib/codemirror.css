@@ -36,8 +36,7 @@
 /* GUTTER */
 
 .CodeMirror-gutters {
-    border-right: 1px solid #ddd;
-    background-color: #f7f7f7;
+    background-color: transparent;
     white-space: nowrap;
 }
 
@@ -47,8 +46,9 @@
     padding: 0 3px 0 5px;
     min-width: 20px;
     text-align: right;
-    color: #999;
+    color: var(--text-color);
     white-space: nowrap;
+    opacity: 50%;
 }
 
 .CodeMirror-guttermarker {
@@ -56,7 +56,7 @@
 }
 
 .CodeMirror-guttermarker-subtle {
-    color: #999;
+    color: var(--title-color);
 }
 
 /* CURSOR */

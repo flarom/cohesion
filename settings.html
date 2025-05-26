@@ -1,50 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Settings</title>
+        <style>
+            button.ball {
+                width: 64px;
+                height: 64px;
+                border-radius: 100%;
+                cursor: pointer;
+                border: 0;
+                box-shadow: var(--shadow);
+            }
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings</title>
-    <style>
-        button.ball {
-            width: 64px;
-            height: 64px;
-            border-radius: 100%;
-            cursor: pointer;
-            border: 1px solid black;
-            box-shadow: var(--shadow);
-        }
-    </style>
-</head>
+            .settings-body {
+                display: flex;
+                justify-content: space-between;
+                gap: 20px;
+                padding: 10px;
+            }
 
-<body>
-    <h3>Theme</h3>
+            .main-page {
+                max-height: 500px;
+                overflow-y: scroll;
+                overflow-x: hidden;
+                flex-grow: 1;
+            }
 
-    <div style="display: flex; gap: 10px; align-items: center;">
-        <button class="ball" style="background-color: #ffffff; color: #3c3c3c" onclick="setSetting('theme', 'theme-light');loadSettings()">Light</button>
-        <button class="ball" style="background-color: #f5eacb; color: #4b3a25" onclick="setSetting('theme', 'theme-cream');loadSettings()">Cream</button>
-        <button class="ball" style="background-color: #303030; color: #dddddd" onclick="setSetting('theme', 'theme-dark');loadSettings()">Dark</button>
-        <button class="ball" style="background-color: #1c1a17; color: #e0d6c0" onclick="setSetting('theme', 'theme-cream-dark');loadSettings()">Coffee</button>
-        <button class="ball" style="background-color: #ffffff; color: #000000" onclick="setSetting('theme', 'theme-epaper');loadSettings()">ePaper</button>
-    </div>
+            .side-nav {
+                padding: 10px;
+                min-width: 150px;
+                position: sticky;
+                top: 0;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
 
-    <h3>Fonts</h3>
+            @media screen and (max-width: 800px) {
+                .settings-body {
+                    display: block;
+                }
 
-    <div>
-        <div>
-            <label>Editor font</label>
-            <input type="text" placeholder='Ubuntu Mono' id="field-font-editor" oninput="setSetting('editorFont', this.value); loadSettings();">
+                .side-nav {
+                    flex-direction: row;
+                    overflow: scroll;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="settings-body">
+            <nav class="side-nav">
+                <a href="#theme">Theme</a>
+                <a href="#fonts">Fonts</a>
+                <a href="#editor">Editor</a>
+                <a href="#status_bar">Status Bar</a>
+            </nav>
+            <div class="main-page">
+                <div>
+                    <h3 id="theme">Theme</h3>
+                    <div style="display: flex; gap: 10px; align-items: center">
+                        <button class="ball" style="background-color: #ffffff; color: #3c3c3c" onclick="setSetting('theme', 'theme-light');loadSettings()">Light</button>
+                        <button class="ball" style="background-color: #f5eacb; color: #4b3a25" onclick="setSetting('theme', 'theme-cream');loadSettings()">Cream</button>
+                        <button class="ball" style="background-color: #303030; color: #dddddd" onclick="setSetting('theme', 'theme-dark');loadSettings()">Dark</button>
+                        <button class="ball" style="background-color: #1c1a17; color: #e0d6c0" onclick="setSetting('theme', 'theme-cream-dark');loadSettings()">Coffee</button>
+                        <button class="ball" style="background-color: #ffffff; color: #000000" onclick="setSetting('theme', 'theme-epaper');loadSettings()">ePaper</button>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 id="fonts">Fonts</h3>
+                    <div>
+                        <div>
+                            <label>Editor font</label>
+                            <input type="text" placeholder="Ubuntu Mono" id="fontEditor" oninput="setSetting('editorFont', this.value); loadSettings();" />
+                        </div>
+                        <div>
+                            <label>Paragraph font</label>
+                            <input type="text" placeholder="Ubuntu" id="fontParagraph" oninput="setSetting('paragraphFont', this.value); loadSettings();" />
+                        </div>
+                        <div>
+                            <label>Title font</label>
+                            <input type="text" placeholder="Ubuntu" id="fontTitle" oninput="setSetting('titleFont', this.value); loadSettings();" />
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 id="editor">Editor</h3>
+                    <div style="display: flex; flex-direction: column; gap: 5px">
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="editorLineNumbers" onchange="setSetting('editorLineNumbers', this.checked); location.reload()" />
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-text">Line numbers</span>
+                        </div>
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="editorDirection" onchange="if (this.checked) {setSetting('editorDirection', 'rtl')} else {setSetting('editorDirection', 'ltr')} location.reload()" />
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-text">RTL text align</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 id="status_bar">Status bar</h3>
+                    <div style="display: flex; flex-direction: column; gap: 5px">
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="statusShow" onchange="setSetting('statusShow', this.checked); loadSettings()" />
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-text">Status bar</span>
+                        </div>
+                        <div style="padding-left: 20px; display: flex; flex-direction: column; gap: 5px">
+                            <div class="switch-wrapper">
+                                <label class="switch">
+                                    <input type="checkbox" id="statusCursorPos" onchange="setSetting('statusCursorPos', this.checked); loadSettings()" />
+                                    <span class="slider"></span>
+                                </label>
+                                <span class="switch-text">Cursor position</span>
+                            </div>
+                            <div class="switch-wrapper">
+                                <label class="switch">
+                                    <input type="checkbox" id="statusEditorMode" onchange="setSetting('statusEditorMode', this.checked); loadSettings()" />
+                                    <span class="slider"></span>
+                                </label>
+                                <span class="switch-text">Editor mode</span>
+                            </div>
+                            <div class="switch-wrapper">
+                                <label class="switch">
+                                    <input type="checkbox" id="statusDocumentSize" onchange="setSetting('statusDocumentSize', this.checked); loadSettings()" />
+                                    <span class="slider"></span>
+                                </label>
+                                <span class="switch-text">Document size</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div>
-            <label>Paragraph font</label>
-            <input type="text" placeholder="Ubuntu" id="field-font-paragraph" oninput="setSetting('paragraphFont', this.value); loadSettings();">
-        </div>
-        <div>
-            <label>Title font</label>
-            <input type="text" placeholder="Ubuntu" id="field-font-title" oninput="setSetting('titleFont', this.value); loadSettings();">
-        </div>
-    </div>
 
-</body>
+        <script>
+            (() => {
+                // fonts
+                const txtFontEditor = document.getElementById("fontEditor");
+                const txtFontParagraph = document.getElementById("fontParagraph");
+                const txtFontTitle = document.getElementById("fontTitle");
+                txtFontEditor.value = getSetting("editorFont", "Ubuntu Mono");
+                txtFontParagraph.value = getSetting("paragraphFont", "Ubuntu");
+                txtFontTitle.value = getSetting("titleFont", "Ubuntu");
 
+                // editor
+                const cbxEditorLineNumbers = document.getElementById("editorLineNumbers");
+                const cbxEditorDirection = document.getElementById("editorDirection");
+                if (getSetting("editorLineNumbers", "false") === "true") cbxEditorLineNumbers.checked = "true";
+                if (getSetting("editorDirection", "rtl") === "rtl") cbxEditorDirection.checked = "true";
+
+                // status bar
+                const cbxStatusShow = document.getElementById("statusShow");
+                const cbxStatusCursorPos = document.getElementById("statusCursorPos");
+                const cbxStatusEditorMode = document.getElementById("statusEditorMode");
+                const cbxStatusDocumentSize = document.getElementById("statusDocumentSize");
+                if (getSetting("statusShow", "true") === "true") cbxStatusShow.checked = "true";
+                if (getSetting("statusCursorPos", "true") === "true") cbxStatusCursorPos.checked = "true";
+                if (getSetting("statusEditorMode", "true") === "true") cbxStatusEditorMode.checked = "true";
+                if (getSetting("statusDocumentSize", "true") === "true") cbxStatusDocumentSize.checked = "true";
+            })();
+        </script>
+    </body>
 </html>

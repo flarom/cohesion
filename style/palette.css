@@ -32,16 +32,17 @@
     --shadow:               0px 0px 10px #00000055;
 
     
-    --quote-note:           #818eff;
-    --quote-note-bg:        #818ef333;
-    --quote-tip:            #9aff81; 
-    --quote-tip-bg:         #9aff8133; 
-    --quote-important:      #d781ff; 
-    --quote-important-bg:   #d781ff33; 
-    --quote-warning:        #fff781;
-    --quote-warning-bg:     #fff78133;
-    --quote-caution:        #ff8881;
-    --quote-caution-bg:     #ff888133;
+    --quote-purple:         #d781ff; 
+    --quote-blue:           #818eff;
+    --quote-green:          #9aff81; 
+    --quote-yellow:         #fff781;
+    --quote-red:            #ff8881;
+
+    --quote-purple-bg:      #d781ff33; 
+    --quote-blue-bg:        #818ef333;
+    --quote-green-bg:       #9aff8133; 
+    --quote-yellow-bg:      #fff78133;
+    --quote-red-bg:         #ff888133;
 }
 
 .theme-light {
@@ -72,16 +73,17 @@
     --shadow:               0px 0px 8px #00000022;
 
     
-    --quote-note:           #2178ca; 
-    --quote-note-bg:        #2178ca33; 
-    --quote-tip:            #2fca21; 
-    --quote-tip-bg:         #2fca2133; 
-    --quote-important:      #9421ca; 
-    --quote-important-bg:   #9421ca33; 
-    --quote-warning:        #caa321;
-    --quote-warning-bg:     #caa32133;
-    --quote-caution:        #ca2121; 
-    --quote-caution-bg:     #ca212133; 
+    --quote-purple:         #9421ca; 
+    --quote-blue:           #2178ca; 
+    --quote-green:          #2fca21; 
+    --quote-yellow:         #caa321;
+    --quote-red:            #ca2121; 
+
+    --quote-purple-bg:      #9421ca33; 
+    --quote-blue-bg:        #2178ca33; 
+    --quote-green-bg:       #2fca2133; 
+    --quote-yellow-bg:      #caa32133;
+    --quote-red-bg:         #ca212133; 
 }
 
 .theme-cream {
@@ -111,16 +113,17 @@
 
     --shadow:               0px 0px 6px #00000015;
 
-    --quote-note:           #325ba8; 
-    --quote-note-bg:        #325ba833; 
-    --quote-tip:            #36a832; 
-    --quote-tip-bg:         #36a83233; 
-    --quote-important:      #6f32a8; 
-    --quote-important-bg:   #6f32a833; 
-    --quote-warning:        #a88d32; 
-    --quote-warning-bg:     #a88d3233; 
-    --quote-caution:        #a83232; 
-    --quote-caution-bg:     #a8323233; 
+    --quote-purple:         #6f32a8; 
+    --quote-blue:           #325ba8; 
+    --quote-green:          #36a832; 
+    --quote-yellow:         #a88d32; 
+    --quote-red:            #a83232; 
+
+    --quote-purple-bg:      #6f32a833; 
+    --quote-blue-bg:        #325ba833; 
+    --quote-green-bg:       #36a83233; 
+    --quote-yellow-bg:      #a88d3233; 
+    --quote-red-bg:         #a8323233; 
 }
 
 .theme-cream-dark {
@@ -151,16 +154,17 @@
     --shadow:               0px 0px 6px #00000055;
 
     
-    --quote-note:           #6b8eff; 
-    --quote-note-bg:        #6b8eff33; 
-    --quote-tip:            #89ff6b; 
-    --quote-tip-bg:         #89ff6b33; 
-    --quote-important:      #d06bff; 
-    --quote-important-bg:   #d06bff33; 
-    --quote-warning:        #ffe46b; 
-    --quote-warning-bg:     #ffe46b33; 
-    --quote-caution:        #ff6b6b; 
-    --quote-caution-bg:     #ff6b6b33; 
+    --quote-purple:         #d06bff; 
+    --quote-blue:           #6b8eff; 
+    --quote-green:          #89ff6b; 
+    --quote-yellow:         #ffe46b; 
+    --quote-red:            #ff6b6b; 
+
+    --quote-purple-bg:      #d06bff33; 
+    --quote-blue-bg:        #6b8eff33; 
+    --quote-green-bg:       #89ff6b33; 
+    --quote-yellow-bg:      #ffe46b33; 
+    --quote-red-bg:         #ff6b6b33; 
 }
 
 
@@ -191,16 +195,17 @@
 
     --shadow:               5px 5px 0px #000000, 0px 0px 0px 1px #000000;
 
-    --quote-note:           #000000;
-    --quote-note-bg:        #00000000;
-    --quote-tip:            #000000; 
-    --quote-tip-bg:         #00000000; 
-    --quote-important:      #000000; 
-    --quote-important-bg:   #00000000; 
-    --quote-warning:        #000000; 
-    --quote-warning-bg:     #00000000; 
-    --quote-caution:        #000000; 
-    --quote-caution-bg:     #00000000; 
+    --quote-purple:         #000000; 
+    --quote-blue:           #000000;
+    --quote-green:          #000000; 
+    --quote-yellow:         #000000; 
+    --quote-red:            #000000; 
+
+    --quote-purple-bg:      #00000000; 
+    --quote-blue-bg:        #00000000;
+    --quote-green-bg:       #00000000; 
+    --quote-yellow-bg:      #00000000; 
+    --quote-red-bg:         #00000000; 
 
     img {
         filter: grayscale(100);

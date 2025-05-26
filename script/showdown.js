@@ -164,7 +164,7 @@
                 type: 'boolean'
             },
             splitAdjacentBlockquotes: {
-                defaultValue: false,
+                defaultValue: true,
                 describe: 'Split adjacent blockquote blocks',
                 type: 'boolean'
             },
@@ -2759,98 +2759,89 @@
 
     showdown.subParser('makehtml.blockQuotes', function (text, options, globals) {
         'use strict';
-    
+
         text = globals.converter._dispatch('makehtml.blockQuotes.before', text, options, globals).getText();
-    
+
         text = text + '\n\n';
-    
+
         var rgx = /(^ {0,3}>[ \t]?.+\n(.+\n)*\n*)+/gm;
-    
+
         if (options.splitAdjacentBlockquotes) {
             rgx = /^ {0,3}>[\s\S]*?(?:\n\n)/gm;
         }
-    
+
+        const badgeMap = {
+            // github badges
+            '[!NOTE]':          { class: 'quote-blue',      label: 'Note',      icon: 'article'         },
+            '[!TIP]':           { class: 'quote-green',     label: 'Tip',       icon: 'lightbulb'       },
+            '[!IMPORTANT]':     { class: 'quote-purple',    label: 'Important', icon: 'priority_high'   },
+            '[!WARNING]':       { class: 'quote-yellow',    label: 'Warning',   icon: 'warning'         },
+            '[!CAUTION]':       { class: 'quote-red',       label: 'Caution',   icon: 'dangerous'       },
+            // cohesion badges
+            '[!TODO]':          { class: 'quote-purple',    label: 'Todo',      icon: 'pending'         },
+            '[!IDEA]':          { class: 'quote-green',     label: 'Idea',      icon: 'lightbulb'       },
+            '[!INFO]':          { class: 'quote-blue',      label: 'Info',      icon: 'info'            },
+            '[!INFORMATION]':   { class: 'quote-blue',      label: 'Info',      icon: 'info'            },
+            '[!REMEMBER]':      { class: 'quote-generic',   label: 'Remember',  icon: 'bookmark'        },
+        };
+
         text = text.replace(rgx, function (bq) {
             let lines = bq.split('\n').map(line => line.replace(/^ {0,3}>[ \t]?/, ''));
-        
+
             let firstLine = lines[0].trim();
             let firstLineUpper = firstLine.toUpperCase();
-        
+
             let badgeClass = null;
             let badgeLabel = null;
-        
-            const badgeMap = {
-                '[!NOTE]': 'quote-note',
-                '[!TIP]': 'quote-tip',
-                '[!IMPORTANT]': 'quote-important',
-                '[!WARNING]': 'quote-warning',
-                '[!CAUTION]': 'quote-caution'
-            };
-        
-            const labelMap = {
-                '[!NOTE]': 'Note',
-                '[!TIP]': 'Tip',
-                '[!IMPORTANT]': 'Important',
-                '[!WARNING]': 'Warning',
-                '[!CAUTION]': 'Caution'
-            };
-        
-            const iconMap = {
-                '[!NOTE]': 'article',
-                '[!TIP]': 'lightbulb',
-                '[!IMPORTANT]': 'priority_high',
-                '[!WARNING]': 'warning',
-                '[!CAUTION]': 'dangerous'
-            };
-        
+
             if (badgeMap[firstLineUpper]) {
-                badgeClass = badgeMap[firstLineUpper];
-                badgeLabel = `<label class='${badgeClass}-label quote-label'><span class='icon' translate='no'>${iconMap[firstLineUpper]}</span>${labelMap[firstLineUpper]}</label>\n`;
+                let badge = badgeMap[firstLineUpper];
+                badgeClass = badge.class;
+                badgeLabel = `<label class='${badgeClass}-label quote-label'><span class='icon' translate='no'>${badge.icon}</span>${badge.label}</label>\n`;
                 lines.shift();
             } else if (/^\[\!.*\]$/.test(firstLineUpper)) {
                 // generic badge
                 badgeClass = 'quote-generic';
-                const genericLabel = firstLine.replace(/^\[\!|\]$/g, '');  // tira [! e ]
+                const genericLabel = firstLine.replace(/^\[\!|\]$/g, '');
                 badgeLabel = `<label class='${badgeClass}-label quote-label'>${genericLabel}</label>\n`;
                 lines.shift();
             }
-        
+
             bq = lines.join('\n');
-        
+
             bq = bq.replace(/¨0/g, '');
             bq = bq.replace(/^[ \t]+$/gm, '');
-        
+
             bq = showdown.subParser('makehtml.githubCodeBlocks')(bq, options, globals);
             bq = showdown.subParser('makehtml.blockGamut')(bq, options, globals);
-        
+
             bq = bq.replace(/(^|\n)/g, '$1  ');
-        
+
             bq = bq.replace(/(\s*<pre>[^\r]+?<\/pre>)/gm, function (wholeMatch, m1) {
                 var pre = m1;
                 pre = pre.replace(/^  /mg, '¨0');
                 pre = pre.replace(/¨0/g, '');
                 return pre;
             });
-        
+
             let blockquoteTag = '<blockquote';
             if (badgeClass) {
                 blockquoteTag += ` class="${badgeClass}"`;
             }
             blockquoteTag += '>\n';
-        
+
             if (badgeLabel) {
                 blockquoteTag += badgeLabel;
             }
-        
+
             blockquoteTag += bq + '\n</blockquote>';
-        
+
             return showdown.subParser('makehtml.hashBlock')(blockquoteTag, options, globals);
         });
-    
+
         text = globals.converter._dispatch('makehtml.blockQuotes.after', text, options, globals).getText();
         return text;
     });
-
 
     /**
      * Process Markdown `<pre><code>` blocks.

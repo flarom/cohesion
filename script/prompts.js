@@ -6,43 +6,43 @@ function isPc() {
     return !isMobile();
 }
 
-function toggleDropdown(menuId) {    
+function toggleDropdown(menuId) {
     const menu = document.getElementById(menuId);
     const dropdown = menu.parentElement;
 
-    document.querySelectorAll('.dropdown').forEach(d => {
+    document.querySelectorAll(".dropdown").forEach((d) => {
         if (d !== dropdown) {
-            d.classList.remove('show');
+            d.classList.remove("show");
         }
     });
 
-    dropdown.classList.toggle('show');
+    dropdown.classList.toggle("show");
 
-    if (dropdown.classList.contains('show')) {
-        const buttons = menu.querySelectorAll('button');
+    if (dropdown.classList.contains("show")) {
+        const buttons = menu.querySelectorAll("button");
         if (buttons.length > 0) {
             buttons[0].focus();
         }
 
-        menu.addEventListener('keydown', handleArrowNavigation);
+        menu.addEventListener("keydown", handleArrowNavigation);
     } else {
-        menu.removeEventListener('keydown', handleArrowNavigation);
+        menu.removeEventListener("keydown", handleArrowNavigation);
     }
 
-    document.addEventListener('click', closeDropdownOnClickOutside);
+    document.addEventListener("click", closeDropdownOnClickOutside);
 }
 
 function handleArrowNavigation(e) {
-    const buttons = Array.from(e.currentTarget.querySelectorAll('button'));
-    const currentIndex = buttons.findIndex(btn => btn === document.activeElement);
+    const buttons = Array.from(e.currentTarget.querySelectorAll("button"));
+    const currentIndex = buttons.findIndex((btn) => btn === document.activeElement);
 
-    if (['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft'].includes(e.key)) {
+    if (["ArrowDown", "ArrowRight", "ArrowUp", "ArrowLeft"].includes(e.key)) {
         e.preventDefault();
         let nextIndex;
 
-        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+        if (e.key === "ArrowDown" || e.key === "ArrowRight") {
             nextIndex = (currentIndex + 1) % buttons.length;
-        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+        } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
             nextIndex = (currentIndex - 1 + buttons.length) % buttons.length;
         }
 
@@ -51,35 +51,35 @@ function handleArrowNavigation(e) {
 }
 
 function closeDropdownOnClickOutside(event) {
-    const dropdowns = document.querySelectorAll('.dropdown');
-    dropdowns.forEach(dropdown => {
+    const dropdowns = document.querySelectorAll(".dropdown");
+    dropdowns.forEach((dropdown) => {
         if (!dropdown.contains(event.target)) {
-            dropdown.classList.remove('show');
+            dropdown.classList.remove("show");
         }
     });
-    document.removeEventListener('click', closeDropdownOnClickOutside);
+    document.removeEventListener("click", closeDropdownOnClickOutside);
 }
 
 function toggleSidebar(sidebarId) {
     const sidebar = document.getElementById(sidebarId);
 
-    document.querySelectorAll('.sidebar').forEach(s => {
+    document.querySelectorAll(".sidebar").forEach((s) => {
         if (s !== sidebar) {
-            s.classList.remove('show');
+            s.classList.remove("show");
         }
     });
 
-    sidebar.classList.toggle('show');
+    sidebar.classList.toggle("show");
 
-    if (sidebar.classList.contains('show')) {
-        const buttons = sidebar.querySelectorAll('.file');
+    if (sidebar.classList.contains("show")) {
+        const buttons = sidebar.querySelectorAll(".file");
         if (buttons.length > 0) {
             buttons[0].focus();
         }
 
-        sidebar.addEventListener('keydown', handleArrowNavigation);
+        sidebar.addEventListener("keydown", handleArrowNavigation);
     } else {
-        sidebar.removeEventListener('keydown', handleArrowNavigation);
+        sidebar.removeEventListener("keydown", handleArrowNavigation);
     }
 }
 
@@ -99,54 +99,54 @@ function showToast(message, icon = "") {
 }
 
 function hideAllMenus() {
-    document.querySelectorAll('.dropdown').forEach(dropdown => {
-        dropdown.classList.remove('show');
+    document.querySelectorAll(".dropdown").forEach((dropdown) => {
+        dropdown.classList.remove("show");
     });
 }
 
 function hideAllSidebars() {
-    document.querySelectorAll('.sidebar').forEach(sidebar => {
-        sidebar.classList.remove('show');
+    document.querySelectorAll(".sidebar").forEach((sidebar) => {
+        sidebar.classList.remove("show");
     });
 }
 function closeAllDialogs() {
-    document.querySelectorAll('.prompt-overlay').forEach(el => el.remove());
+    document.querySelectorAll(".prompt-overlay").forEach((el) => el.remove());
 }
 
 function promptString(title, defaultText = "", warn = false) {
     return new Promise((resolve) => {
         // overlay
-        const overlay = document.createElement('div');
-        overlay.className = 'prompt-overlay';
+        const overlay = document.createElement("div");
+        overlay.className = "prompt-overlay";
 
         // dialog
-        const dialog = document.createElement('div');
-        dialog.className = 'prompt-dialog';
-        if (warn) dialog.classList.add('warn')
+        const dialog = document.createElement("div");
+        dialog.className = "prompt-dialog";
+        if (warn) dialog.classList.add("warn");
 
         // title
-        const titleElement = document.createElement('p');
+        const titleElement = document.createElement("p");
         titleElement.textContent = title;
-        titleElement.className = 'prompt-title';
+        titleElement.className = "prompt-title";
         dialog.appendChild(titleElement);
 
         // field
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.value = defaultText ? defaultText : ""
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = defaultText ? defaultText : "";
         dialog.appendChild(input);
 
         // buttons
-        const buttonContainer = document.createElement('div');
-        buttonContainer.className = 'prompt-buttons';
+        const buttonContainer = document.createElement("div");
+        buttonContainer.className = "prompt-buttons";
 
-        const cancelButton = document.createElement('button');
-        cancelButton.textContent = 'Cancel';
-        cancelButton.className = 'prompt-button cancel';
+        const cancelButton = document.createElement("button");
+        cancelButton.textContent = "Cancel";
+        cancelButton.className = "prompt-button cancel";
 
-        const submitButton = document.createElement('button');
-        submitButton.textContent = 'Ok';
-        submitButton.className = 'prompt-button submit';
+        const submitButton = document.createElement("button");
+        submitButton.textContent = "Ok";
+        submitButton.className = "prompt-button submit";
 
         buttonContainer.appendChild(cancelButton);
         buttonContainer.appendChild(submitButton);
@@ -164,14 +164,14 @@ function promptString(title, defaultText = "", warn = false) {
             resolve(result);
         }
 
-        cancelButton.addEventListener('click', () => closePrompt(null));
-        submitButton.addEventListener('click', () => closePrompt(input.value));
+        cancelButton.addEventListener("click", () => closePrompt(null));
+        submitButton.addEventListener("click", () => closePrompt(input.value));
 
-        overlay.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter') {
+        overlay.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
                 event.preventDefault();
                 closePrompt(input.value);
-            } else if (event.key === 'Escape') {
+            } else if (event.key === "Escape") {
                 closePrompt(null);
             }
         });
@@ -181,25 +181,25 @@ function promptString(title, defaultText = "", warn = false) {
 function promptMessage(htmlContent, showCloseButton = true) {
     return new Promise((resolve) => {
         // overlay
-        const overlay = document.createElement('div');
-        overlay.className = 'prompt-overlay';
+        const overlay = document.createElement("div");
+        overlay.className = "prompt-overlay";
 
         // dialog
-        const dialog = document.createElement('div');
-        dialog.className = 'prompt-dialog';
-        dialog.style.width = '100%';
-        dialog.style.maxWidth = '500px';
+        const dialog = document.createElement("div");
+        dialog.className = "prompt-dialog";
+        dialog.style.width = "100%";
+        dialog.style.maxWidth = "500px";
 
         // html content
-        const content = document.createElement('div');
+        const content = document.createElement("div");
         content.innerHTML = htmlContent;
-        content.style.marginBottom = '15px';
+        content.style.marginBottom = "15px";
         dialog.appendChild(content);
 
         // ok button
-        const okButton = document.createElement('button');
-        okButton.textContent = 'Ok';
-        okButton.className = 'prompt-button submit';
+        const okButton = document.createElement("button");
+        okButton.textContent = "Ok";
+        okButton.className = "prompt-button submit";
 
         if (showCloseButton) {
             dialog.appendChild(okButton);
@@ -212,10 +212,10 @@ function promptMessage(htmlContent, showCloseButton = true) {
             resolve();
         }
 
-        okButton.addEventListener('click', closePrompt);
+        okButton.addEventListener("click", closePrompt);
 
-        overlay.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter' || event.key === 'Escape') {
+        overlay.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === "Escape") {
                 closePrompt();
             }
         });
@@ -224,70 +224,70 @@ function promptMessage(htmlContent, showCloseButton = true) {
     });
 }
 
-function showMessageFromFile(filePath, showCloseButton = true, useBigDialog = false) {
+function showMessageFromFile(filePath, showCloseButton = true, useBigDialog = false, width = 400) {
     fetch(filePath)
-        .then(response => {
+        .then((response) => {
             if (!response.ok) {
                 throw new Error(`Failed loading file: ${response.statusText}`);
             }
             return response.text();
         })
-        .then(htmlContent => {
-            const overlay = document.createElement('div');
-            overlay.className = 'prompt-overlay';
+        .then((htmlContent) => {
+            const overlay = document.createElement("div");
+            overlay.className = "prompt-overlay";
 
-            const dialog = document.createElement('div');
-            if (useBigDialog) dialog.className = 'prompt-big-dialog';
-            else dialog.className = 'prompt-dialog';
+            const dialog = document.createElement("div");
+            if (useBigDialog) {
+                dialog.className = "prompt-big-dialog";
+            } else {
+                dialog.className = "prompt-dialog";
+                dialog.style.maxWidth = `${width}px`;
+            }
 
-            const okButton = document.createElement('button');
-            okButton.textContent = 'close';
-            okButton.className = 'icon-button dialog-window-control';
+            const okButton = document.createElement("button");
+            okButton.textContent = "close";
+            okButton.className = "icon-button dialog-window-control";
 
-            const content = document.createElement('div');
+            const content = document.createElement("div");
 
-            const template = document.createElement('template');
+            const template = document.createElement("template");
             template.innerHTML = htmlContent.trim();
 
-            Array.from(template.content.childNodes).forEach(node => {
+            Array.from(template.content.childNodes).forEach((node) => {
                 content.appendChild(node);
             });
 
             dialog.appendChild(content);
-            if (showCloseButton) {
-                dialog.appendChild(okButton);
-            }
+            if (showCloseButton) dialog.appendChild(okButton);
 
             overlay.appendChild(dialog);
             document.body.appendChild(overlay);
 
-            const scripts = content.querySelectorAll('script');
-            scripts.forEach(oldScript => {
-                const newScript = document.createElement('script');
+            const scripts = content.querySelectorAll("script");
+            scripts.forEach((oldScript) => {
+                const newScript = document.createElement("script");
                 if (oldScript.src) {
                     newScript.src = oldScript.src;
                 } else {
                     newScript.textContent = oldScript.textContent;
                 }
-                Array.from(oldScript.attributes).forEach(attr =>
-                    newScript.setAttribute(attr.name, attr.value)
-                );
+                Array.from(oldScript.attributes).forEach((attr) => newScript.setAttribute(attr.name, attr.value));
                 oldScript.replaceWith(newScript);
             });
 
-            okButton.addEventListener('click', () => {
+            okButton.addEventListener("click", () => {
                 document.body.removeChild(overlay);
             });
 
-            overlay.addEventListener('keydown', (event) => {
-                if (event.key === 'Escape') {
+            overlay.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") {
                     document.body.removeChild(overlay);
                 }
             });
 
             okButton.focus();
         })
-        .catch(error => {
+        .catch((error) => {
             console.error(error);
         });
 }
@@ -295,33 +295,36 @@ function showMessageFromFile(filePath, showCloseButton = true, useBigDialog = fa
 function promptConfirm(message, dangerous = false) {
     return new Promise((resolve) => {
         // overlay
-        const overlay = document.createElement('div');
-        overlay.className = 'prompt-overlay';
+        const overlay = document.createElement("div");
+        overlay.className = "prompt-overlay";
 
         // dialog
-        const dialog = document.createElement('div');
-        dialog.className = 'prompt-dialog';
-        dialog.style.width = '100%';
-        dialog.style.maxWidth = '400px';
+        const dialog = document.createElement("div");
+        dialog.className = "prompt-dialog";
+        dialog.style.width = "100%";
+        dialog.style.maxWidth = "400px";
 
         // message
-        const text = document.createElement('p');
+        const text = document.createElement("p");
         text.textContent = message;
-        text.className = 'prompt-title';
+        text.className = "prompt-title";
         dialog.appendChild(text);
 
         // buttons
-        const buttonContainer = document.createElement('div');
-        buttonContainer.className = 'prompt-buttons';
+        const buttonContainer = document.createElement("div");
+        buttonContainer.className = "prompt-buttons";
 
-        const yesButton = document.createElement('button');
-        yesButton.textContent = 'Yes';
-        if (dangerous) { yesButton.className = 'prompt-button danger'; }
-        else { yesButton.className = 'prompt-button submit'; }
+        const yesButton = document.createElement("button");
+        yesButton.textContent = "Yes";
+        if (dangerous) {
+            yesButton.className = "prompt-button danger";
+        } else {
+            yesButton.className = "prompt-button submit";
+        }
 
-        const noButton = document.createElement('button');
-        noButton.textContent = 'No';
-        noButton.className = 'prompt-button cancel';
+        const noButton = document.createElement("button");
+        noButton.textContent = "No";
+        noButton.className = "prompt-button cancel";
 
         buttonContainer.appendChild(noButton);
         buttonContainer.appendChild(yesButton);
@@ -335,11 +338,11 @@ function promptConfirm(message, dangerous = false) {
             resolve(result);
         }
 
-        yesButton.addEventListener('click', () => closePrompt(true));
-        noButton.addEventListener('click', () => closePrompt(false));
+        yesButton.addEventListener("click", () => closePrompt(true));
+        noButton.addEventListener("click", () => closePrompt(false));
 
-        overlay.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') {
+        overlay.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
                 closePrompt(false);
             }
         });
@@ -382,12 +385,12 @@ function promptTableSelector() {
         info.style.marginTop = "8px";
         dialog.appendChild(info);
 
-        const buttonContainer = document.createElement('div');
-        buttonContainer.className = 'prompt-buttons';
+        const buttonContainer = document.createElement("div");
+        buttonContainer.className = "prompt-buttons";
 
-        const cancelButton = document.createElement('button');
-        cancelButton.textContent = 'close';
-        cancelButton.className = 'icon-button dialog-window-control';
+        const cancelButton = document.createElement("button");
+        cancelButton.textContent = "close";
+        cancelButton.className = "icon-button dialog-window-control";
         buttonContainer.appendChild(cancelButton);
 
         dialog.appendChild(buttonContainer);
@@ -403,16 +406,16 @@ function promptTableSelector() {
             buttons.forEach((btn) => {
                 const r = parseInt(btn.dataset.row);
                 const c = parseInt(btn.dataset.col);
-                btn.classList.toggle(
-                    "highlighted",
-                    r <= targetRow && c <= targetCol
-                );
+                btn.classList.toggle("highlighted", r <= targetRow && c <= targetCol);
             });
 
             info.textContent = `${targetRow} x ${targetCol}`;
         });
 
-        cancelButton.addEventListener('click', () => { document.body.removeChild(overlay); resolve(null); });
+        cancelButton.addEventListener("click", () => {
+            document.body.removeChild(overlay);
+            resolve(null);
+        });
         tableContainer.addEventListener("click", (e) => {
             if (!e.target.classList.contains("table-item-ex")) return;
 
@@ -457,30 +460,30 @@ function promptIframe() {
         dialog.appendChild(plataformCbx);
 
         const contentField = document.createElement("input");
-        contentField.type = 'text';
-        contentField.className = 'prompt-input';
-        contentField.placeholder = 'URL'
+        contentField.type = "text";
+        contentField.className = "prompt-input";
+        contentField.placeholder = "URL";
         dialog.appendChild(contentField);
 
-        const buttonContainer = document.createElement('div');
-        buttonContainer.className = 'prompt-buttons';
+        const buttonContainer = document.createElement("div");
+        buttonContainer.className = "prompt-buttons";
 
-        const insertButton = document.createElement('button');
-        insertButton.textContent = 'Insert';
-        insertButton.className = 'prompt-button submit';
+        const insertButton = document.createElement("button");
+        insertButton.textContent = "Insert";
+        insertButton.className = "prompt-button submit";
         buttonContainer.appendChild(insertButton);
 
-        const cancelButton = document.createElement('button');
-        cancelButton.textContent = 'Cancel';
-        cancelButton.className = 'prompt-button cancel';
+        const cancelButton = document.createElement("button");
+        cancelButton.textContent = "Cancel";
+        cancelButton.className = "prompt-button cancel";
         buttonContainer.appendChild(cancelButton);
         dialog.appendChild(buttonContainer);
 
         overlay.appendChild(dialog);
         document.body.appendChild(overlay);
 
-        insertButton.addEventListener('click', () => closePrompt(false));
-        cancelButton.addEventListener('click', () => closePrompt(true));
+        insertButton.addEventListener("click", () => closePrompt(false));
+        cancelButton.addEventListener("click", () => closePrompt(true));
 
         function closePrompt(returnNull) {
             document.body.removeChild(overlay);
@@ -489,14 +492,14 @@ function promptIframe() {
             if (contentField.value.length == 0) resolve(null);
 
             switch (plataformCbx.value) {
-                case 'pYouTube':
+                case "pYouTube":
                     resolve(insertYouTubeVideo(contentField.value));
                     break;
             }
         }
 
-        overlay.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') {
+        overlay.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
                 closePrompt(true);
             } else if (event.key === "Enter") {
                 closePrompt(false);
@@ -509,24 +512,24 @@ function promptIframe() {
 
 async function promptFileSearch() {
     return new Promise((resolve) => {
-        const overlay = document.createElement('div');
-        overlay.className = 'prompt-overlay';
+        const overlay = document.createElement("div");
+        overlay.className = "prompt-overlay";
 
-        const dialog = document.createElement('div');
-        dialog.className = 'prompt-dialog';
+        const dialog = document.createElement("div");
+        dialog.className = "prompt-dialog";
 
-        const title = document.createElement('p');
-        title.textContent = 'Search files...';
-        title.className = 'prompt-title';
+        const title = document.createElement("p");
+        title.textContent = "Search files...";
+        title.className = "prompt-title";
         dialog.appendChild(title);
 
-        const input = document.createElement('input');
-        input.type = 'text';
+        const input = document.createElement("input");
+        input.type = "text";
         input.placeholder = 'Search title, ~author, @date, #tag or "text"';
         dialog.appendChild(input);
 
-        const previewList = document.createElement('ul');
-        previewList.className = 'prompt-preview-list';
+        const previewList = document.createElement("ul");
+        previewList.className = "prompt-preview-list";
         previewList.style.marginTop = "8px";
         dialog.appendChild(previewList);
 
@@ -546,25 +549,31 @@ async function promptFileSearch() {
             const metadata = conv.getMetadata();
 
             const title = (getFileTitle(index) || "").toLowerCase();
-            const authors = (metadata.authors || "").toLowerCase().split(',').map(a => a.trim());
-            const tags = (metadata.tags || "").toLowerCase().split(',').map(t => t.trim());
+            const authors = (metadata.authors || "")
+                .toLowerCase()
+                .split(",")
+                .map((a) => a.trim());
+            const tags = (metadata.tags || "")
+                .toLowerCase()
+                .split(",")
+                .map((t) => t.trim());
             const date = (metadata.date || "").toLowerCase();
             const description = (metadata.description || "").toLowerCase();
             const body = text.toLowerCase();
 
             const lowerQuery = query.toLowerCase();
 
-            if (lowerQuery.startsWith('#')) {
+            if (lowerQuery.startsWith("#")) {
                 const tagQuery = lowerQuery.slice(1);
-                return tags.some(t => t.includes(tagQuery));
+                return tags.some((t) => t.includes(tagQuery));
             }
 
-            if (lowerQuery.startsWith('~')) {
+            if (lowerQuery.startsWith("~")) {
                 const authorQuery = lowerQuery.slice(1);
-                return authors.some(a => a.includes(authorQuery));
+                return authors.some((a) => a.includes(authorQuery));
             }
 
-            if (lowerQuery.startsWith('@')) {
+            if (lowerQuery.startsWith("@")) {
                 const dateQuery = lowerQuery.slice(1);
                 return date.includes(dateQuery);
             }
@@ -587,15 +596,15 @@ async function promptFileSearch() {
                         index: i,
                         title: getFileTitle(i) || `New document`,
                     }))
-                    .filter(file => matchFile(query, file.index))
+                    .filter((file) => matchFile(query, file.index))
                     .slice(0, 10);
             }
 
-            previewList.innerHTML = '';
+            previewList.innerHTML = "";
             filtered.forEach((item, i) => {
-                const li = document.createElement('li');
+                const li = document.createElement("li");
                 li.textContent = item.title;
-                li.className = i === selectedIndex ? 'selected-option' : '';
+                li.className = i === selectedIndex ? "selected-option" : "";
                 previewList.appendChild(li);
             });
         }
@@ -605,32 +614,32 @@ async function promptFileSearch() {
             resolve(result);
         }
 
-        input.addEventListener('input', () => {
+        input.addEventListener("input", () => {
             selectedIndex = 0;
             updatePreview();
         });
 
-        overlay.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter') {
+        overlay.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
                 if (filtered[selectedIndex]) {
                     event.preventDefault();
                     closePrompt(filtered[selectedIndex].index);
                 } else {
                     closePrompt(null);
                 }
-            } else if (event.key === 'ArrowDown') {
+            } else if (event.key === "ArrowDown") {
                 event.preventDefault();
                 if (selectedIndex < filtered.length - 1) {
                     selectedIndex++;
                     updatePreview();
                 }
-            } else if (event.key === 'ArrowUp') {
+            } else if (event.key === "ArrowUp") {
                 event.preventDefault();
                 if (selectedIndex > 0) {
                     selectedIndex--;
                     updatePreview();
                 }
-            } else if (event.key === 'Escape') {
+            } else if (event.key === "Escape") {
                 closePrompt(null);
             }
         });
@@ -640,23 +649,23 @@ async function promptFileSearch() {
 }
 
 function promptSaveFile(fileId) {
-    const overlay = document.createElement('div');
-    overlay.className = 'prompt-overlay';
+    const overlay = document.createElement("div");
+    overlay.className = "prompt-overlay";
 
-    const dialog = document.createElement('div');
-    dialog.className = 'prompt-dialog';
+    const dialog = document.createElement("div");
+    dialog.className = "prompt-dialog";
 
-    const fileNameLabel = document.createElement('label');
-    fileNameLabel.textContent = "File name:"
+    const fileNameLabel = document.createElement("label");
+    fileNameLabel.textContent = "File name:";
     dialog.appendChild(fileNameLabel);
 
-    const fileNameField = document.createElement('input');
-    fileNameField.type = 'text';
-    fileNameField.className = 'prompt-input';
+    const fileNameField = document.createElement("input");
+    fileNameField.type = "text";
+    fileNameField.className = "prompt-input";
     fileNameField.value = `${getFileTitle(fileId) || "New document"}`;
     dialog.appendChild(fileNameField);
 
-    const fileFormatField = document.createElement('select');
+    const fileFormatField = document.createElement("select");
     fileFormatField.innerHTML = `
             <option value='md'>Markdown Document (*.md)</option>
             <option value='pdf'>Portable Document File (*.pdf)</option>
@@ -664,25 +673,25 @@ function promptSaveFile(fileId) {
         `;
     dialog.appendChild(fileFormatField);
 
-    const buttonContainer = document.createElement('div');
-    buttonContainer.className = 'prompt-buttons';
+    const buttonContainer = document.createElement("div");
+    buttonContainer.className = "prompt-buttons";
 
-    const saveButton = document.createElement('button');
-    saveButton.textContent = 'Save';
-    saveButton.className = 'prompt-button submit';
+    const saveButton = document.createElement("button");
+    saveButton.textContent = "Save";
+    saveButton.className = "prompt-button submit";
     buttonContainer.appendChild(saveButton);
 
-    const cancelButton = document.createElement('button');
-    cancelButton.textContent = 'Cancel';
-    cancelButton.className = 'prompt-button cancel';
+    const cancelButton = document.createElement("button");
+    cancelButton.textContent = "Cancel";
+    cancelButton.className = "prompt-button cancel";
     buttonContainer.appendChild(cancelButton);
     dialog.appendChild(buttonContainer);
 
     overlay.appendChild(dialog);
     document.body.appendChild(overlay);
 
-    saveButton.addEventListener('click', () => closePrompt(false));
-    cancelButton.addEventListener('click', () => closePrompt(true));
+    saveButton.addEventListener("click", () => closePrompt(false));
+    cancelButton.addEventListener("click", () => closePrompt(true));
 
     function closePrompt(returnNull) {
         document.body.removeChild(overlay);
@@ -691,14 +700,14 @@ function promptSaveFile(fileId) {
         if (fileNameField.value.length == 0) return;
 
         switch (fileFormatField.value) {
-            case 'md':
+            case "md":
                 exportFile(fileId, fileNameField.value);
                 break;
-            case 'pdf':
-                showToast("Can't export PDF yet!!!!", "sentiment_frustrated")
+            case "pdf":
+                showToast("Can't export PDF yet!!!!", "sentiment_frustrated");
                 break;
-            case 'html':
-                const htmlContainer = document.createElement('html');
+            case "html":
+                const htmlContainer = document.createElement("html");
                 htmlContainer.lang = "en";
                 htmlContainer.innerHTML = `
                     <head>
@@ -717,22 +726,19 @@ function promptSaveFile(fileId) {
                     </body>
                 `;
 
-                const blob = new Blob(
-                    ['<!DOCTYPE html>\n' + htmlContainer.outerHTML],
-                    { type: 'text/html' }
-                );
+                const blob = new Blob(["<!DOCTYPE html>\n" + htmlContainer.outerHTML], { type: "text/html" });
                 const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
+                const a = document.createElement("a");
                 a.href = url;
-                a.download = fileNameField.value + '.html';
+                a.download = fileNameField.value + ".html";
                 a.click();
                 URL.revokeObjectURL(url);
                 break;
         }
     }
 
-    overlay.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
+    overlay.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
             closePrompt(true);
         } else if (event.key === "Enter") {
             closePrompt(false);
