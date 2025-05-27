@@ -128,6 +128,63 @@ function insertYouTubeVideo(url) {
     }
 }
 
+function insertVimeoVideo(url) {
+    let prefix = `<!-- Vimeo Video Player -->\n<iframe width="100%" allowfullscreen\n    src="`;
+    let value = formatVimeoEmbed(url);
+    let suffix = `"\n    title="⚠️ PLACE ALT TEXT HERE"\n></iframe>`;
+
+    return (prefix + value + suffix);
+
+    function formatVimeoEmbed(url) {
+        let regex = /(?:https?:\/\/)?(?:www\.)?(?:vimeo\.com\/(?:video\/)?)(\d+)/;
+        let match = url.match(regex);
+
+        if (match && match[1]) {
+            return `https://player.vimeo.com/video/${match[1]}`;
+        } else {
+            return "Unknown";
+        }
+    }
+}
+
+function insertXPost(url) {
+    let prefix = `<!-- X (Twitter) Post Embed -->\n<iframe width="100%" allowfullscreen\n    src="`;
+    let value = formatXEmbed(url);
+    let suffix = `"\n    title="⚠️ PLACE ALT TEXT HERE"\n></iframe>`;
+
+    return (prefix + value + suffix);
+
+    function formatXEmbed(url) {
+        let regex = /(?:https?:\/\/)?(?:www\.)?(?:twitter\.com|x\.com)\/[a-zA-Z0-9_]+\/status\/(\d+)/;
+        let match = url.match(regex);
+
+        if (match && match[1]) {
+            return `https://twitframe.com/show?url=${encodeURIComponent(url)}`;
+        } else {
+            return "Unknown";
+        }
+    }
+}
+
+function insertBlueskyPost(url) {
+    let prefix = `<!-- Bluesky Post Embed -->\n<iframe width="100%" allowfullscreen\n    src="`;
+    let value = formatBlueskyEmbed(url);
+    let suffix = `"\n    title="⚠️ PLACE ALT TEXT HERE"\n></iframe>`;
+
+    return (prefix + value + suffix);
+
+    function formatBlueskyEmbed(url) {
+        let regex = /(?:https?:\/\/)?(?:www\.)?bsky\.app\/profile\/[^\/]+\/post\/[a-zA-Z0-9]+/;
+        let match = url.match(regex);
+
+        if (match) {
+            return `https://bsky.app/embed?url=${encodeURIComponent(url)}`;
+        } else {
+            return "Unknown";
+        }
+    }
+}
+
 async function handleInsertImage() {
     try {
         const text = await insertFile('![ALT TEXT](', ')', '.apng, .gif, .ico, .cur, .jpg, .jpeg, .jfif, .pjpeg, .pjp, .png, .svg, .webp');

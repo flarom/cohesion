@@ -54,8 +54,8 @@
                         <button class="text-button" onmouseup="handleInsertAudio(); hideAllMenus(); editor.focus();">Audio</button>
                         <button class="text-button" onmouseup="handleInsertVideo(); hideAllMenus(); editor.focus();">Video</button>
                         <hr />
-                        <button class="text-button" onmouseup="insertBlock(getSummary(editor.getValue())); hideAllMenus()">Summary</button>
                         <button class="text-button" onmouseup="promptTableSelector().then((markdown) => {if (markdown) {insertBlock(markdown);}}); hideAllMenus()">Table</button>
+                        <button class="text-button" onmouseup="insertBlock(getSummary(editor.getValue())); hideAllMenus()">Summary</button>
                         <button class="text-button" onmouseup="insertAtTop(getMeta()); hideAllMenus();">
                             Document meta
                             <kbd>Ctrl+;</kbd>
