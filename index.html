@@ -105,8 +105,6 @@
                             About Cohesion
                             <kbd>F1</kbd>
                         </button>
-                        <hr />
-                        <button class="text-button" onmouseup="deleteEmptyFiles(); hideAllMenus()">Clear empty files</button>
                     </div>
                 </div>
             </div>
@@ -160,6 +158,7 @@
             </div>
         </div>
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
         <script src="script/pocket.js"></script>
         <script src="script/internalLinkExtension.js"></script>
         <script src="script/showdown.js"></script>
@@ -670,11 +669,11 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     toggleSidebar("files-bar");
                 } else if (event.ctrlKey && event.key === ",") {
                     event.preventDefault();
-                    showMessageFromFile("settings.html");
+                    showMessageFromFile('settings.html', true, false, 900);
                     hideAllMenus();
                 } else if (event.ctrlKey && event.key === "?") {
                     event.preventDefault();
-                    showMessageFromFile("shortcuts.html");
+                    showMessageFromFile('shortcuts.html', true, false, 600);
                     hideAllMenus();
                 } else if (event.altKey && event.key === "p") {
                     event.preventDefault();

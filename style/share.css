@@ -146,8 +146,12 @@ button.danger:hover {
 }
 
 .text-button {
-    font-weight: bold;
     padding: 0px 10px 0px 10px;
+    background-color: var(--field-color);
+}
+
+.text-button.danger {
+    background-color: var(--danger-bg);
 }
 
 .icon-button.dialog-window-control {

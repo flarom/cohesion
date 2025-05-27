@@ -295,7 +295,7 @@
 }
 
 .prompt-dialog input:checked + .slider:before {
-    background-color: var(--title-color);
+    background-color: white;
     transform: translateX(20px);
 }
 

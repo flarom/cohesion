@@ -120,6 +120,122 @@ function exportFile(index, fileName = getFileTitle(index)) {
 }
 
 /**
+ * Exports all files as a .zip file
+ */
+async function exportBook() {
+    const zip = new JSZip();
+
+    files.forEach((file, index) => {
+        let title = getFileTitle(index) || `untitled-${index + 1}`;
+        title = title.replace(/[<>:"/\\|?*\x00-\x1F]/g, "").trim(); 
+        zip.file(`${title}.md`, file);
+    });
+
+    const fsFiles = await getFSFiles();
+    const pocketFolder = zip.folder("pocket");
+
+    fsFiles.forEach(file => {
+        const base64Content = file.content.split(',')[1];
+        pocketFolder.file(file.name, base64Content, { base64: true });
+    });
+
+    zip.generateAsync({ type: "blob" }).then(content => {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(content);
+        a.download = `${new Date().toISOString().split('T')[0]}-cohesion.zip`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+    });
+}
+
+
+/**
+ * Imports a .zip file, tries to unshift into files
+ */
+function importBook() {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".zip";
+    input.onchange = (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = async () => {
+            const zip = await JSZip.loadAsync(reader.result);
+            const newFiles = [];
+
+            const entries = Object.values(zip.files);
+            for (const entry of entries) {
+                if (!entry.dir) {
+                    if (entry.name.startsWith("pocket/")) {
+                        const base64 = await entry.async("base64");
+                        await setFSFile({
+                            name: entry.name.replace("pocket/", ""),
+                            content: `data:application/octet-stream;base64,${base64}`
+                        });
+                    } else {
+                        const content = await entry.async("string");
+                        newFiles.unshift(content);
+                    }
+                }
+            }
+
+            files = [...newFiles, ...files];
+            saveFilesToStorage();
+            renderFiles("files");
+            renderEditor();
+        };
+        reader.readAsArrayBuffer(file);
+    };
+    input.click();
+}
+
+/**
+ * Imports a .zip file, replaces files[] with contents
+ */
+function importDeleteBook() {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".zip";
+    input.onchange = (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = async () => {
+            const zip = await JSZip.loadAsync(reader.result);
+            const newFiles = [];
+
+            await deleteAllFS();
+
+            const entries = Object.values(zip.files);
+            for (const entry of entries) {
+                if (!entry.dir) {
+                    if (entry.name.startsWith("pocket/")) {
+                        const base64 = await entry.async("base64");
+                        await setFSFile({
+                            name: entry.name.replace("pocket/", ""),
+                            content: `data:application/octet-stream;base64,${base64}`
+                        });
+                    } else {
+                        const content = await entry.async("string");
+                        newFiles.unshift(content);
+                    }
+                }
+            }
+
+            files = newFiles;
+            saveFilesToStorage();
+            renderFiles("files");
+            renderEditor();
+        };
+        reader.readAsArrayBuffer(file);
+    };
+    input.click();
+}
+
+/**
  * Gets the text of a file
  * @param {The file to be returned} index 
  * @returns The text content of a file || null if id doesn't exists
