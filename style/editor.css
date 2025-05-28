@@ -343,6 +343,14 @@
     border-radius: 15px;
 }
 
+/* custom html */
+
 .preview icon {
     font-family: "Material Symbols Rounded";
+    font-size: x-large;
+}
+
+.preview blank-space {
+    display: block;
+    height: 100vh;
 }
