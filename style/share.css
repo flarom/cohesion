@@ -180,6 +180,7 @@ button.danger:hover {
     background-color: var(--background-color);
 }
 
+
 @media screen and (max-width: 800px){
     .hide-on-tablet {
         display: none;

@@ -481,6 +481,12 @@ function renderFiles(containerId) {
             if (isMobile()) { hideAllSidebars(); }
         };
 
+        fileButton.addEventListener("contextmenu", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            toggleDropdown(`file-menu-${i}`);
+        });
+
         fileButton.ondragstart = (e) => {
             e.dataTransfer.setData("text/plain", i);
             e.dataTransfer.effectAllowed = "move";

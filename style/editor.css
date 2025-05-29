@@ -25,7 +25,7 @@
     font-weight: 100;
     font-family: var(--font-title);
     color: var(--title-color);
-    padding-bottom: 15px;
+    padding-top: 15px;
 }
 
 .preview h1, .preview h2 {
@@ -241,7 +241,8 @@
 }
 
 .preview input[type="checkbox"]:checked::after {
-    color: var(--text-color);
+    content: "check";
+    color: white;
     font-size: 18px;
     font-weight: 900;
     position: absolute;
@@ -300,6 +301,19 @@
 }
 
 /* html stuff */
+
+.preview input[type=text] {
+    background-color: var(--field-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-light-color);
+    padding: 5px 10px;
+    border-radius: 100px;
+    width: 300px;
+}
+
+.preview input[type=text]:focus {
+    outline: 2px solid var(--highlight-color);
+}
 
 .preview iframe {
     width: calc(100% - 20px);
