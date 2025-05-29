@@ -1,6 +1,6 @@
 # Cohesion
 
-![App screen shot](resources/scrshot.png)
+![App screen shot](res/scrshot.png)
 
 [Launch Cohesion](https://flarom.github.io/cohesion/)
 

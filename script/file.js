@@ -132,11 +132,11 @@ async function exportBook() {
     });
 
     const fsFiles = await getFSFiles();
-    const pocketFolder = zip.folder("pocket");
+    const resourcesFolder = zip.folder("resources");
 
     fsFiles.forEach(file => {
         const base64Content = file.content.split(',')[1];
-        pocketFolder.file(file.name, base64Content, { base64: true });
+        resourcesFolder.file(file.name, base64Content, { base64: true });
     });
 
     zip.generateAsync({ type: "blob" }).then(content => {
@@ -168,10 +168,10 @@ function importBook() {
             const entries = Object.values(zip.files);
             for (const entry of entries) {
                 if (!entry.dir) {
-                    if (entry.name.startsWith("pocket/")) {
+                    if (entry.name.startsWith("resources/")) {
                         const base64 = await entry.async("base64");
                         await setFSFile({
-                            name: entry.name.replace("pocket/", ""),
+                            name: entry.name.replace("resources/", ""),
                             content: `data:application/octet-stream;base64,${base64}`
                         });
                     } else {
@@ -212,10 +212,10 @@ function importDeleteBook() {
             const entries = Object.values(zip.files);
             for (const entry of entries) {
                 if (!entry.dir) {
-                    if (entry.name.startsWith("pocket/")) {
+                    if (entry.name.startsWith("resources/")) {
                         const base64 = await entry.async("base64");
                         await setFSFile({
-                            name: entry.name.replace("pocket/", ""),
+                            name: entry.name.replace("resources/", ""),
                             content: `data:application/octet-stream;base64,${base64}`
                         });
                     } else {
@@ -433,6 +433,15 @@ function renderFiles(containerId) {
         dropdownContent.className = "dropdown-content menu";
         dropdownContent.id = `file-menu-${i}`;
 
+        const duplicateBtn = document.createElement("button");
+        duplicateBtn.className = "text-button";
+        duplicateBtn.textContent = "Duplicate";
+        duplicateBtn.onclick = (event) => {
+            event.stopPropagation();
+            showToast(`Duplicated ${getFileTitle(i)}`, 'file_copy')
+            createFile(getFileText(i));
+        };
+
         const downloadBtn = document.createElement("button");
         downloadBtn.className = "text-button";
         downloadBtn.textContent = "Download";
@@ -462,6 +471,7 @@ function renderFiles(containerId) {
             showToast('Deleted', 'delete');
         };
 
+        dropdownContent.appendChild(duplicateBtn);
         dropdownContent.appendChild(downloadBtn);
         dropdownContent.appendChild(hr);
         dropdownContent.appendChild(deleteBtn);

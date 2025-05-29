@@ -10,39 +10,39 @@ function toggleDropdown(menuId) {
     const menu = document.getElementById(menuId);
     const dropdown = menu.parentElement;
 
-    document.querySelectorAll(".dropdown").forEach((d) => {
+    document.querySelectorAll('.dropdown').forEach(d => {
         if (d !== dropdown) {
-            d.classList.remove("show");
+            d.classList.remove('show');
         }
     });
 
-    dropdown.classList.toggle("show");
+    dropdown.classList.toggle('show');
 
-    if (dropdown.classList.contains("show")) {
-        const buttons = menu.querySelectorAll("button");
+    if (dropdown.classList.contains('show')) {
+        const buttons = menu.querySelectorAll('button');
         if (buttons.length > 0) {
-            buttons[0].focus();
+            setTimeout(() => buttons[0].focus(), 0);
         }
 
-        menu.addEventListener("keydown", handleArrowNavigation);
+        menu.addEventListener('keydown', handleArrowNavigation);
+        menu.addEventListener('keydown', handleActivation);
     } else {
-        menu.removeEventListener("keydown", handleArrowNavigation);
+        menu.removeEventListener('keydown', handleArrowNavigation);
+        menu.removeEventListener('keydown', handleActivation);
     }
-
-    document.addEventListener("click", closeDropdownOnClickOutside);
 }
 
 function handleArrowNavigation(e) {
-    const buttons = Array.from(e.currentTarget.querySelectorAll("button"));
-    const currentIndex = buttons.findIndex((btn) => btn === document.activeElement);
+    const buttons = Array.from(e.currentTarget.querySelectorAll('button'));
+    const currentIndex = buttons.findIndex(btn => btn === document.activeElement);
 
-    if (["ArrowDown", "ArrowRight", "ArrowUp", "ArrowLeft"].includes(e.key)) {
+    if (['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft'].includes(e.key)) {
         e.preventDefault();
         let nextIndex;
 
-        if (e.key === "ArrowDown" || e.key === "ArrowRight") {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
             nextIndex = (currentIndex + 1) % buttons.length;
-        } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
             nextIndex = (currentIndex - 1 + buttons.length) % buttons.length;
         }
 
@@ -50,14 +50,16 @@ function handleArrowNavigation(e) {
     }
 }
 
-function closeDropdownOnClickOutside(event) {
-    const dropdowns = document.querySelectorAll(".dropdown");
-    dropdowns.forEach((dropdown) => {
-        if (!dropdown.contains(event.target)) {
-            dropdown.classList.remove("show");
+function handleActivation(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+        const active = document.activeElement;
+        if (active && active.tagName === 'BUTTON') {
+            e.preventDefault();
+
+            active.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+            active.dispatchEvent(new MouseEvent('click', { bubbles: true }));
         }
-    });
-    document.removeEventListener("click", closeDropdownOnClickOutside);
+    }
 }
 
 function toggleSidebar(sidebarId) {
@@ -656,6 +658,89 @@ async function promptFileSearch() {
         });
 
         updatePreview();
+    });
+}
+
+function promptSelect(title, options) {
+    return new Promise((resolve) => {
+        const overlay = document.createElement("div");
+        overlay.className = "prompt-overlay";
+
+        const dialog = document.createElement("div");
+        dialog.className = "prompt-dialog";
+
+        const titleElement = document.createElement("p");
+        titleElement.textContent = title;
+        titleElement.className = "prompt-title";
+        dialog.appendChild(titleElement);
+
+        const buttonContainer = document.createElement("div");
+        buttonContainer.className = "prompt-button-list";
+        dialog.appendChild(buttonContainer);
+
+        const titleButtonContainer = document.createElement("div");
+        titleButtonContainer.className = "prompt-buttons";
+        dialog.appendChild(titleButtonContainer);
+
+        const cancelButton = document.createElement("button");
+        cancelButton.textContent = "close";
+        cancelButton.className = "icon-button dialog-window-control";
+        cancelButton.addEventListener("click", () => {
+            document.body.removeChild(overlay);
+            resolve(null);
+        });
+        titleButtonContainer.appendChild(cancelButton);
+
+        const buttons = options.map((optionText, index) => {
+            const button = document.createElement("button");
+            button.innerHTML = optionText;
+            button.className = "prompt-button";
+            buttonContainer.appendChild(button);
+            button.addEventListener("click", () => closePrompt(index));
+            return button;
+        });
+
+        overlay.appendChild(dialog);
+        document.body.appendChild(overlay);
+
+        let selectedIndex = 0;
+        updateSelection();
+
+        function updateSelection() {
+            buttons.forEach((btn, i) => {
+                if (i === selectedIndex) {
+                    btn.classList.add("selected-option");
+                    btn.focus();
+                } else {
+                    btn.classList.remove("selected-option");
+                }
+            });
+        }
+
+        function closePrompt(result) {
+            document.body.removeChild(overlay);
+            resolve(result);
+        }
+
+        overlay.addEventListener("keydown", (event) => {
+            if (event.key === "ArrowDown") {
+                event.preventDefault();
+                selectedIndex = (selectedIndex + 1) % options.length;
+                updateSelection();
+            } else if (event.key === "ArrowUp") {
+                event.preventDefault();
+                selectedIndex = (selectedIndex - 1 + options.length) % options.length;
+                updateSelection();
+            } else if (event.key === "Enter") {
+                event.preventDefault();
+                closePrompt(selectedIndex);
+            } else if (event.key === "Escape") {
+                closePrompt(null);
+            }
+        });
+
+        overlay.tabIndex = -1;
+        overlay.focus();
     });
 }
 

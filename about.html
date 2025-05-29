@@ -7,18 +7,30 @@
 </head>
 <body>
     <div class="center">
-        <img src="resources/favicon.png" alt="">
+        <img src="res/favicon.png" alt="">
         <h3>Cohesion</h3>
         <p>1.0</p>
         Cohesion is a free and opensource markdown editor
         <hr>
         <a href="https://github.com/flarom/cohesion" target="_blank">Repository</a> | 
         <a onclick="promptMessage(`
+                <b>Libraries</b>
                 <ul>
-                    <li><a target='_blank' href='https://codemirror.net/'>CodeMirror</a></li>
-                    <li><a target='_blank' href='https://showdownjs.com/'>Showdown</a></li>
+                    <li><a target='_blank' href='https://codemirror.net/'>Text input field (CodeMirror)</a></li>
+                    <li><a target='_blank' href='https://showdownjs.com/'>Markdown processor (Showdown)</a></li>
+                    <li><a target='_blank' href='https://www.npmjs.com/package/jszip'>Folder compressor (jszip)</a></li>
                 </ul>
-            `)" style="cursor: pointer;">Used libraries
+                <b>Graphics</b>
+                <ul>
+                    <li><a target='_blank' href='https://fonts.google.com/icons'>Symbolic icons (Google Material Icons)</a></li>
+                    <li><a target='_blank' href='https://github.com/PapirusDevelopmentTeam/papirus-icon-theme/'>Colored icons (Papirus)</a></li>
+                    <li>The Cohesion logo is a recolor of the <a target='_blank' href='https://apps.gnome.org/TextEditor/'>GNOME Text Editor</a> logo</li>  
+                </ul>
+                <b>Design</b>
+                <ul>
+                    <li>Cohesion follows the <a target='_blank' href='https://developer.gnome.org/hig/'>GNOME Human Interface Guidelines</a></li>
+                </ul>
+            `)" style="cursor: pointer;">Used libraries and graphics
         </a> |
         <a onclick="promptMessage(`
                 <p>Copyright (C) 2025, F. Bergamin.</p>

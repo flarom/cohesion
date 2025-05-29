@@ -2782,7 +2782,7 @@
             '[!IDEA]':          { class: 'quote-green',     label: 'Idea',      icon: 'lightbulb'       },
             '[!INFO]':          { class: 'quote-blue',      label: 'Info',      icon: 'info'            },
             '[!INFORMATION]':   { class: 'quote-blue',      label: 'Info',      icon: 'info'            },
-            '[!REMEMBER]':      { class: 'quote-generic',   label: 'Remember',  icon: 'bookmark'        },
+            '[!REMEMBER]':      { class: 'quote-red',   label: 'Remember',  icon: 'bookmark'        },
         };
 
         text = text.replace(rgx, function (bq) {

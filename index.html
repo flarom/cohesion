@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>New document</title>
-        <link rel="shortcut icon" href="resources/favicon.png" type="image/x-icon" />
+        <link rel="shortcut icon" href="res/favicon.png" type="image/x-icon" />
 
         <meta content="website" property="og:type" />
         <meta content="Flarom" name="author" />
@@ -15,7 +15,7 @@
         <meta content="Cohesion is a free and opensource online markdown text editor" property="og:description" />
 
         <meta content="Cohesion, markdown, text, editor, free, opensource" name="keywords" />
-        <meta content="https://flarom.github.io/cohesion/resources/scrshot.png" property="og:image" />
+        <meta content="https://flarom.github.io/cohesion/res/scrshot.png" property="og:image" />
         <meta content="https://flarom.github.io/cohesion" property="og:url" />
         <meta content="index, follow" name="robots" />
 
@@ -54,6 +54,7 @@
                         <button class="text-button" onmouseup="handleInsertAudio(); hideAllMenus(); editor.focus();">Audio</button>
                         <button class="text-button" onmouseup="handleInsertVideo(); hideAllMenus(); editor.focus();">Video</button>
                         <hr />
+                        <button class="text-button" onmouseup="handleInsertBlock(); hideAllMenus();">Block</button>
                         <button class="text-button" onmouseup="promptTableSelector().then((markdown) => {if (markdown) {insertBlock(markdown);}}); hideAllMenus()">Table</button>
                         <button class="text-button" onmouseup="insertBlock(getSummary(editor.getValue())); hideAllMenus()">Summary</button>
                         <button class="text-button" onmouseup="insertAtTop(getMeta()); hideAllMenus();">
@@ -87,8 +88,8 @@
                             <kbd>Ctrl+S</kbd>
                         </button>
                         <hr />
-                        <button class="text-button" onmouseup="showMessageFromFile('pocket.html', true, true); hideAllMenus()">
-                            Pocket
+                        <button class="text-button" onmouseup="showMessageFromFile('resources.html', true, true); hideAllMenus()">
+                            Resources
                             <kbd>Alt+P</kbd>
                         </button>
                         <button class="text-button" onmouseup="showMessageFromFile('settings.html', true, false, 900); hideAllMenus()">
@@ -159,7 +160,7 @@
         </div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-        <script src="script/pocket.js"></script>
+        <script src="script/resources.js"></script>
         <script src="script/internalLinkExtension.js"></script>
         <script src="script/showdown.js"></script>
         <script src="script/editorTools.js"></script>
@@ -231,7 +232,7 @@ editor: Cohesion
 »»»
 
 <center>
-<img src=resources/favicon.png>
+<img src=res/favicon.png>
 
 # Wellcome to Cohesion
 </center>
@@ -240,7 +241,7 @@ Hit the <icon>edit</icon> button to edit this document, or press \`Ctrl\`+\`P\` 
 
 Hit the <icon>side_navigation</icon> button or \`F9\` to show your file list. You can manage your files in there! You can also press \`Ctrl\`+\`E\` to search your files.
 
-Hit the <icon>attach_file</icon> button to insert fun things into your document! You can also upload files from your device to Cohesion Pocket.
+Hit the <icon>attach_file</icon> button to insert fun things into your document! You can also upload files from your device to your Resources.
 
 ***
 
@@ -408,8 +409,8 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     const elements = preview.querySelectorAll(tag);
                     for (const el of elements) {
                         const src = el.getAttribute("src");
-                        if (src && src.startsWith("pocket/")) {
-                            const fileName = src.slice(7);
+                        if (src && src.startsWith("resources/")) {
+                            const fileName = src.slice(10);
                             const dataUrl = await resolveFSItem(fileName);
                             if (dataUrl) el.src = dataUrl;
                         }
@@ -659,26 +660,42 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     // toggle preview - ctrl+p
                     event.preventDefault();
                     togglePreview();
+
                 } else if (event.key === "F1") {
                     // about - f1
                     event.preventDefault();
                     showMessageFromFile("about.html");
+
                 } else if (event.key === "F9") {
                     // toggle sidepane - f9
                     event.preventDefault();
                     toggleSidebar("files-bar");
+
+                } else if (event.key === "F10") {
+                    // show main menu
+                    event.preventDefault();
+                    toggleDropdown('more-menu');
+
+                } else if (event.altKey && event.key === "i") {
+                    // show insert menu
+                    event.preventDefault();
+                    toggleDropdown('insert-menu');
+
                 } else if (event.ctrlKey && event.key === ",") {
                     event.preventDefault();
                     showMessageFromFile('settings.html', true, false, 900);
                     hideAllMenus();
+
                 } else if (event.ctrlKey && event.key === "?") {
                     event.preventDefault();
                     showMessageFromFile('shortcuts.html', true, false, 600);
                     hideAllMenus();
+
                 } else if (event.altKey && event.key === "p") {
                     event.preventDefault();
-                    showMessageFromFile("pocket.html", true, true);
+                    showMessageFromFile("resources.html", true, true);
                     hideAllMenus();
+
                 } else if (event.altKey && /^[0-9]$/.test(event.key)) {
                     event.preventDefault();
                     const newIndex = event.key === "0" ? 9 : parseInt(event.key) - 1;
@@ -686,6 +703,7 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     index = newIndex;
                     renderEditor();
                     editor.focus();
+
                 } else if (event.ctrlKey && event.key === "e") {
                     event.preventDefault();
 
@@ -702,15 +720,17 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     // new - ctrl+n
                     event.preventDefault();
                     createFile();
+
                 } else if (event.ctrlKey && event.key === "s") {
                     // download - ctrl+s
                     event.preventDefault();
-                    // exportFile(index);
                     promptSaveFile(index);
+
                 } else if (event.ctrlKey && event.key === "o") {
                     // open - ctrl+o
                     event.preventDefault();
                     importFile();
+
                 } else if (event.shiftKey && event.ctrlKey && event.key === "Delete") {
                     // delete - ctrl+shift+delete
                     event.preventDefault();
@@ -737,6 +757,7 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     } else {
                         insertAt("**Bold text**", 2, 11);
                     }
+
                 } else if (event.ctrlKey && event.key === "i") {
                     // italic - ctrl+i
                     event.preventDefault();
@@ -745,10 +766,12 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     } else {
                         insertAt("*Italic text*", 1, 12);
                     }
+
                 } else if (event.ctrlKey && event.key === "u") {
                     // unordered list - ctrl+u
                     event.preventDefault();
                     toggleLineStart("- ", true, ["- ", "* ", "+ "]);
+
                 } else if (event.ctrlKey && event.key >= "1" && event.key <= "6") {
                     // titles - ctrl+1/6
                     event.preventDefault();
@@ -758,6 +781,7 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                         true,
                         Array.from({ length: 6 }, (_, i) => "#".repeat(i + 1) + " ")
                     );
+
                 } else if (event.ctrlKey && event.key === "r") {
                     // horizontal rule - ctrl+r
                     event.preventDefault();
@@ -792,13 +816,18 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                             search(true);
                         }
                     }
+
                 } else if (event.ctrlKey && event.key === "f") {
                     event.preventDefault();
                     toggleSearchHeader(editor.getSelection());
+                    
                 } else if (event.ctrlKey && event.key === "h") {
                     event.preventDefault();
                     toggleReplaceHeader(editor.getSelection());
-                } else if (event.ctrlKey && event.key === ";") {
+                } 
+
+                // INSERT
+                else if (event.ctrlKey && event.key === ";") {
                     event.preventDefault();
                     insertAtTop(getMeta());
                 }

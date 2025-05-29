@@ -215,10 +215,58 @@ async function handleInsertVideo() {
     }
 }
 
+async function handleInsertBlock() {
+    const blocks = [
+        "<span style='color:var(--quote-blue);'     ><span class=icon>article       </span>Note         </span>",
+        "<span style='color:var(--quote-green);'    ><span class=icon>lightbulb     </span>Tip          </span>",
+        "<span style='color:var(--quote-purple);'   ><span class=icon>priority_high </span>Important    </span>",
+        "<span style='color:var(--quote-yellow);'   ><span class=icon>warning       </span>Warning      </span>",
+        "<span style='color:var(--quote-red);'      ><span class=icon>dangerous     </span>Caution      </span>",
+        "<span style='color:var(--quote-purple);'   ><span class=icon>pending       </span>To-do        </span>",
+        "<span style='color:var(--quote-green);'    ><span class=icon>lightbulb     </span>Idea         </span>",
+        "<span style='color:var(--quote-blue);'     ><span class=icon>info          </span>Information  </span>",
+        "<span style='color:var(--quote-red);'      ><span class=icon>bookmark      </span>Remember     </span>"
+    ];
+
+    const selection = await promptSelect('Select a block', blocks);
+
+    switch (selection) {
+        case 0 :
+            resolve('NOTE');
+            break;
+        case 1:
+            resolve('TIP');
+            break;
+        case 2:
+            resolve('IMPORTANT');
+            break;
+        case 3:
+            resolve('WARNING');
+            break;
+        case 4:
+            resolve('CAUTION');
+            break;
+        case 5:
+            resolve('TODO');
+            break;
+        case 6:
+            resolve('INFO');
+            break;
+        case 7:
+            resolve('REMEMBER');
+            break;
+    }
+
+    function resolve(value){
+        insertBlock('> [!'+value+']\n> \n> \n> ');
+        editor.focus();
+    }
+}
+
 async function insertFile(prefix, suffix, accept = '*/*') {
     const file = await uploadFSFile(accept);
     if (!file || !file.name) throw new Error("No file returned");
 
-    const filePath = `pocket/${file.name}`;
+    const filePath = `resources/${file.name}`;
     return prefix + filePath + suffix;
 }

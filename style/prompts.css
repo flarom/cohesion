@@ -232,6 +232,32 @@
     text-decoration: underline;
 }
 
+.prompt-button-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.prompt-button-list button,
+.prompt-button-list button *,
+.prompt-button-list button:focus {
+    border: none;
+    transition: 0s;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.prompt-button-list .icon {
+    font-size: large;
+}
+
+.prompt-button-list .selected-option {
+    background-color: var(--hover-color);
+    color: var(--text-color);
+}
+
 .prompt-preview-list {
     list-style: none;
     padding: 0;
