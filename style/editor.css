@@ -235,12 +235,22 @@
     transition: background-color 0.3s, border-color 0.3s;
 }
 
-.preview input[type="checkbox"]:checked {
+.preview .task-list-item-complete input[type="checkbox"]:checked {
     background-color: var(--highlight-color);
     border-color: var(--highlight-color);
 }
 
-.preview input[type="checkbox"]:checked::after {
+.preview .partialy-completed-task-list-item input[type="checkbox"]:checked {
+    background-color: var(--border-light-color);
+    border-color: var(--border-light-color);
+}
+
+.preview .cancelled-task-list-item input[type="checkbox"]:checked {
+    background-color: var(--quote-red);
+    border-color: var(--quote-red);
+}
+
+.preview .task-list-item-complete input[type="checkbox"]:checked::after {
     content: "check";
     color: white;
     font-size: 18px;
@@ -250,9 +260,33 @@
     left: -1px;
 }
 
+.preview .partialy-completed-task-list-item input[type="checkbox"]:checked::after {
+    content: "check_indeterminate_small";
+    color: white;
+    font-size: 18px;
+    font-weight: 900;
+    position: absolute;
+    top: -3px;
+    left: -1px;
+}
+
+.preview .cancelled-task-list-item input[type="checkbox"]:checked::after {
+    content: "close";
+    color: white;
+    font-size: 18px;
+    font-weight: 900;
+    position: absolute;
+    top: -3px;
+    left: -1px;
+}
+
 .preview .task-list-item-complete {
-    text-decoration: line-through;
     color: var(--highlight-color);
+}
+
+.preview .cancelled-task-list-item {
+    color: var(--quote-red);
+    text-decoration: line-through;
 }
 
 /* tables */

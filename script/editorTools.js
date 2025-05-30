@@ -83,9 +83,77 @@ function Fetch_insert(url, position = Insert_position.CURSOR, parseAs = 'text') 
         .then(data => {
             const text = parseAs === 'json' ? JSON.stringify(data, null, 2) : data;
             Insert_text(text, position);
-            showToast(`Data fetched and inserted`);
         })
         .catch(error => {
             showToast(`Fetch error: ${error.message}`, 'error');
         });
+}
+
+/**
+ * Set the content of a block by its ID
+ */
+function SetBlockContent(id, value) {
+    const doc = editor.getDoc();
+    let content = doc.getValue();
+    const rgx = new RegExp(`(^ {0,3}>\\s*\\[!.+?\\]\\(${id}\\)\\s*\\n)([\\s\\S]*?)(?=\\n{2,}|$)`, 'gm');
+
+    if (rgx.test(content)) {
+        const formattedValue = value.split('\n').map(line => `> ${line}`).join('\n');
+        content = content.replace(rgx, `$1${formattedValue}`);
+        doc.setValue(content);
+    } else {
+        showToast(`Block '${id}' not found`, 'warning');
+    }
+}
+
+/**
+ * Add content to the end of a block by its ID
+ */
+function AddBlockContent(id, value) {
+    const doc = editor.getDoc();
+    let content = doc.getValue();
+    const rgx = new RegExp(`(^ {0,3}>\\s*\\[!.+?\\]\\(${id}\\)\\s*\\n)([\\s\\S]*?)(?=\\n{2,}|$)`, 'gm');
+
+    if (rgx.test(content)) {
+        content = content.replace(rgx, (match, header, blockContent) => {
+            return `${header}${blockContent}\n> ${value}`;
+        });
+        doc.setValue(content);
+    } else {
+        showToast(`Block '${id}' not found`, 'warning');
+    }
+}
+
+/**
+ * Add content to the start of a block by its ID
+ */
+function ShiftBlockContent(id, value) {
+    const doc = editor.getDoc();
+    let content = doc.getValue();
+    const rgx = new RegExp(`(^ {0,3}>\\s*\\[!.+?\\]\\(${id}\\)\\s*\\n)([\\s\\S]*?)(?=\\n{2,}|$)`, 'gm');
+
+    if (rgx.test(content)) {
+        content = content.replace(rgx, (match, header, blockContent) => {
+            return `${header}\n> ${value}${blockContent}`;
+        });
+        doc.setValue(content);
+    } else {
+        showToast(`Block '${id}' not found`, 'warning');
+    }
+}
+
+/**
+ * Rename the title of a block by its ID
+ */
+function RenameBlock(id, name) {
+    const doc = editor.getDoc();
+    let content = doc.getValue();
+    const rgx = new RegExp(`(^ {0,3}>\\s*\\[!)(.+?)(\\]\\(${id}\\))`, 'gm');
+
+    if (rgx.test(content)) {
+        content = content.replace(rgx, `$1${name}$3`);
+        doc.setValue(content);
+    } else {
+        showToast(`Block '${id}' not found`, 'warning');
+    }
 }
