@@ -2,7 +2,7 @@
  * aditional tools for editors to use in their documents scripts and automations
  */
 
-function Notify(message) {
+function notify(message) {
     showToast(message, 'info');
 }
 
@@ -13,7 +13,7 @@ const Insert_position = Object.freeze({
     DOCUMENT_START_SAFE: 3, // Start of the document, after the meta block
 });
 
-function Insert_text(text, positon = Insert_position.DOCUMENT_END) {
+function inserttext(text, positon = Insert_position.DOCUMENT_END) {
     const doc = editor.getDoc();
 
     switch (positon) {
@@ -42,7 +42,7 @@ function Insert_text(text, positon = Insert_position.DOCUMENT_END) {
     }
 }
 
-async function Create_document(Content = "") {
+async function createdocument(Content = "") {
     if (await promptConfirm("This script is trying to create a file. That's fine?")){
         createFile(Content);
     }
@@ -52,7 +52,7 @@ async function Create_document(Content = "") {
  * Fetch data from a given URL and execute a callback with the parsed JSON data.
  * Limited to same-origin or CORS-enabled endpoints for security.
  */
-function Fetch_data(url, callback) {
+function fetchdata(url, callback) {
     fetch(url)
         .then(response => {
             if (!response.ok) {
@@ -72,7 +72,7 @@ function Fetch_data(url, callback) {
  * Fetch text data from a given URL and insert it into the document at the given position.
  * Supports JSON or plain text.
  */
-function Fetch_insert(url, position = Insert_position.CURSOR, parseAs = 'text') {
+function fetchinsert(url, position = Insert_position.CURSOR, parseAs = 'text') {
     fetch(url)
         .then(response => {
             if (!response.ok) {
@@ -92,7 +92,7 @@ function Fetch_insert(url, position = Insert_position.CURSOR, parseAs = 'text') 
 /**
  * Set the content of a block by its ID
  */
-function SetBlockContent(id, value) {
+function setblockcontent(id, value) {
     const doc = editor.getDoc();
     let content = doc.getValue();
     const rgx = new RegExp(`(^ {0,3}>\\s*\\[!.+?\\]\\(${id}\\)\\s*\\n)([\\s\\S]*?)(?=\\n{2,}|$)`, 'gm');
@@ -109,7 +109,7 @@ function SetBlockContent(id, value) {
 /**
  * Add content to the end of a block by its ID
  */
-function AddBlockContent(id, value) {
+function addblockcontent(id, value) {
     const doc = editor.getDoc();
     let content = doc.getValue();
     const rgx = new RegExp(`(^ {0,3}>\\s*\\[!.+?\\]\\(${id}\\)\\s*\\n)([\\s\\S]*?)(?=\\n{2,}|$)`, 'gm');
@@ -127,7 +127,7 @@ function AddBlockContent(id, value) {
 /**
  * Add content to the start of a block by its ID
  */
-function ShiftBlockContent(id, value) {
+function shiftblockcontent(id, value) {
     const doc = editor.getDoc();
     let content = doc.getValue();
     const rgx = new RegExp(`(^ {0,3}>\\s*\\[!.+?\\]\\(${id}\\)\\s*\\n)([\\s\\S]*?)(?=\\n{2,}|$)`, 'gm');
@@ -145,7 +145,7 @@ function ShiftBlockContent(id, value) {
 /**
  * Rename the title of a block by its ID
  */
-function RenameBlock(id, name) {
+function renameblock(id, name) {
     const doc = editor.getDoc();
     let content = doc.getValue();
     const rgx = new RegExp(`(^ {0,3}>\\s*\\[!)(.+?)(\\]\\(${id}\\))`, 'gm');
