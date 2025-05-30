@@ -6,15 +6,39 @@
 
 ***
 
-Cohesion is a free and opensource markdown editor that features:
-- Syntax Highlighted text editor
-- Markdown Live preview
-- Multiple document support
-- Keyboard / Mobile friendly interface
-- Summary generator
-- Table generator
+## Cohesion Markdown Support
+Cohesion provides support for the following Markdown elements.
 
-All in your browser!
+| Element               | Support | Notes |
+|---                    |---      |---    |
+| Headings              | Yes     |       |
+| Paragraphs            | Yes     |       |
+| Line Breaks           | Yes     |       |
+| Bold                  | Yes     |       |
+| Italic                | Yes     |       |
+| Blockquotes           | Yes     | In addition to normal blockquotes, a `> [!header]` can also be inserted at the top of the quote, to create a block.
+| Ordered Lists         | Yes     |       |
+| Unordered Lists       | Yes     |       |
+| Code                  | Yes     |       |
+| Horizontal Rules      | Yes     |       |
+| Links                 | Yes     |       |
+| Images                | Yes     | In addition to images, audio and video can also be inserted using the image syntax.
+| Tables                | Yes     |       |
+| Fenced Code Blocks    | Yes     | JavaScript can be executed from the document preview.
+| Syntax Highlighting   | Yes     | Highlighting is kept simple for astethics.
+| Footnotes             | No      |       |
+| Heading IDs           | Partial | Automatically generated. There’s no way to set custom heading IDs. 
+| Definition Lists      | No      |       |
+| Strikethrough         | Yes     |       |
+| Task Lists            | Yes     | In addition to checked and unchecked items, partially completed items and cancelled items are also available.
+| Emoji (copy and paste) | Yes    |       |
+| Emoji (shortcodes)    | Yes     |       |
+| Highlight             | No      | HTML tag only.
+| Subscript             | No      | HTML tag only.
+| Superscript           | No      | HTML tag only.
+| Automatic URL Linking | Yes     |       |
+| Disabling Automatic URL Linking | Yes  ||
+| HTML                  | Yes     | Some tags like `<script>` are note available to prevent auto-run, use JavaScript codeblocks instead.
 
 ***
 ## About
