@@ -25,7 +25,7 @@ Cohesion provides support for the following Markdown elements.
 | Images                | Yes     | In addition to images, audio and video can also be inserted using the image syntax.
 | Tables                | Yes     |       |
 | Fenced Code Blocks    | Yes     | JavaScript can be executed from the document preview.
-| Syntax Highlighting   | Yes     | Highlighting is kept simple for astethics.
+| Syntax Highlighting   | No      |       |
 | Footnotes             | No      |       |
 | Heading IDs           | Partial | Automatically generated. There’s no way to set custom heading IDs. 
 | Definition Lists      | No      |       |
