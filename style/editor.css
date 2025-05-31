@@ -335,8 +335,7 @@
 }
 
 /* html stuff */
-
-.preview input[type=text] {
+.preview input:not([type="checkbox"]) {
     background-color: var(--field-color);
     color: var(--text-color);
     border: 1px solid var(--border-light-color);
@@ -345,7 +344,7 @@
     width: 300px;
 }
 
-.preview input[type=text]:focus {
+.preview input:not([type="checkbox"]):focus {
     outline: 2px solid var(--highlight-color);
 }
 
