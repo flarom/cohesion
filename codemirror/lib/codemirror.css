@@ -231,9 +231,7 @@
 
 .cm-s-default .cm-comment {
     color: var(--title-color);
-    background-color: var(--background-color-2);
     opacity: 75%;
-    display: inline-block;
 }
 
 .cm-s-default .cm-string {

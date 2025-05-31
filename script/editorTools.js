@@ -68,25 +68,10 @@ function fetchdata(url, callback) {
         });
 }
 
-/**
- * Fetch text data from a given URL and insert it into the document at the given position.
- * Supports JSON or plain text.
- */
-function fetchinsert(url, position = Insert_position.CURSOR, parseAs = 'text') {
-    fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return parseAs === 'json' ? response.json() : response.text();
-        })
-        .then(data => {
-            const text = parseAs === 'json' ? JSON.stringify(data, null, 2) : data;
-            Insert_text(text, position);
-        })
-        .catch(error => {
-            showToast(`Fetch error: ${error.message}`, 'error');
-        });
+function fetchfield(id) {
+    let field = document.getElementById(id);
+    if (field) { return field.value; }
+    return null
 }
 
 /**
@@ -112,17 +97,22 @@ function setblockcontent(id, value) {
 function addblockcontent(id, value) {
     const doc = editor.getDoc();
     let content = doc.getValue();
-    const rgx = new RegExp(`(^ {0,3}>\\s*\\[!.+?\\]\\(${id}\\)\\s*\\n)([\\s\\S]*?)(?=\\n{2,}|$)`, 'gm');
+    const rgx = new RegExp(
+        `(^ {0,3}>\\s*\\[!.+?\\]\\(${id}\\)\\s*\\n)((?:>.*\\n)*)(?=\\n{2,}|$)`,
+        'gm'
+    );
 
     if (rgx.test(content)) {
         content = content.replace(rgx, (match, header, blockContent) => {
-            return `${header}${blockContent}\n> ${value}`;
+            const trimmed = blockContent.trimEnd();
+            return `${header}${trimmed}\n> ${value}\n`;
         });
         doc.setValue(content);
     } else {
         showToast(`Block '${id}' not found`, 'warning');
     }
 }
+
 
 /**
  * Add content to the start of a block by its ID
@@ -134,13 +124,15 @@ function shiftblockcontent(id, value) {
 
     if (rgx.test(content)) {
         content = content.replace(rgx, (match, header, blockContent) => {
-            return `${header}\n> ${value}${blockContent}`;
+            // Garante espaçamento certinho
+            return `${header}> ${value}\n${blockContent.trimStart()}`;
         });
         doc.setValue(content);
     } else {
         showToast(`Block '${id}' not found`, 'warning');
     }
 }
+
 
 /**
  * Rename the title of a block by its ID
