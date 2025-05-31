@@ -29,6 +29,7 @@
         <link rel="stylesheet" href="style/editor.css" />
         <link rel="stylesheet" href="style/prompts.css" />
         <link rel="stylesheet" href="codemirror/lib/codemirror.css" />
+        <link rel="stylesheet" href="codemirror/addon/hint/show-hint.css" />
 
         <script src="codemirror/lib/codemirror.js"></script>
         <script src="codemirror/keymap/sublime.js"></script>
@@ -36,6 +37,8 @@
         <script src="codemirror/addon/edit/closebrackets.js"></script>
         <script src="codemirror/addon/edit/continuelist.js"></script>
         <script src="codemirror/addon/search/searchcursor.js"></script>
+        <script src="codemirror/addon/hint/show-hint.js"></script>
+        <script src="codemirror/addon/hint/anyword-hint.js"></script>
     </head>
 
     <body class="theme-dark">
@@ -148,7 +151,10 @@
                         <label id="cursorPosLabel">Ln 0, Col 0</label>
                     </div>
                     <div class="status-bar-item">
-                        <label id="editorMode"><span class="icon">edit</span><span>Edit mode</span></label>
+                        <label id="editorMode">
+                            <span class="icon">edit</span>
+                            <span>Edit mode</span>
+                        </label>
                     </div>
                 </div>
                 <div class="status-bar-right">
@@ -181,16 +187,17 @@
 
             const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
                 mode: "markdown",
-                lineNumbers: getSetting('editorLineNumbers', false) === "true",
+                lineNumbers: getSetting("editorLineNumbers", false) === "true",
                 theme: "default",
                 lineWrapping: true,
                 autoCloseBrackets: true,
                 extraKeys: {
                     Enter: "newlineAndIndentContinueMarkdownList",
+                    "Ctrl-Space": "autocomplete",
                 },
                 keyMap: "sublime",
-                direction: getSetting('editorDirection', 'ltr'),
-                showCursorWhenSelecting: true
+                direction: getSetting("editorDirection", "ltr"),
+                showCursorWhenSelecting: true,
             });
 
             const converter = new showdown.Converter({
@@ -199,10 +206,10 @@
 
             const preview = document.getElementById("preview");
 
-            const statusBar = document.getElementById('status');
+            const statusBar = document.getElementById("status");
             const cursorPosLabel = document.getElementById("cursorPosLabel");
             const documentSizeLabel = document.getElementById("documentSizeLabel");
-            const editorModeLabel = document.getElementById('editorMode');
+            const editorModeLabel = document.getElementById("editorMode");
 
             const searchField = document.getElementById("search-field");
             const replaceField = document.getElementById("replace-field");
@@ -285,6 +292,23 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                 }, 100);
             });
 
+            editor.on("inputRead", function (cm, change) {
+                if (getSetting("editorShowHints", 'true') === 'false') return;
+                if (!change.text[0].match(/\w/)) return;
+
+                var cursor = cm.getCursor();
+                var token = cm.getTokenAt(cursor);
+
+                var currentWord = token.string;
+
+                if (currentWord.length >= 3) {
+                    cm.showHint({
+                        hint: CodeMirror.hint.anyword,
+                        completeSingle: false,
+                    });
+                }
+            });
+
             function togglePreview(forceMode) {
                 const isOn = preview.classList.contains("on");
                 const readBtn = document.getElementById("readbtn");
@@ -315,7 +339,7 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     readBtn.innerText = "import_contacts";
                     readBtn.title = "Read";
                     readBtn.classList.remove("button-on");
-                    
+
                     editorModeLabel.innerHTML = "<span class='icon'>edit</span><span>Edit mode</span>";
                 }
             }
@@ -492,17 +516,17 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     metaTag.setAttribute("content", colorValue);
                 }
 
-                if (getSetting('statusShow', 'true') != 'true') statusBar.style.display = 'none';
-                else statusBar.style.display = 'flex';
+                if (getSetting("statusShow", "true") != "true") statusBar.style.display = "none";
+                else statusBar.style.display = "flex";
 
-                if (getSetting('statusCursorPos', 'true') != 'true') cursorPosLabel.style.display = 'none';
-                else cursorPosLabel.style.display = 'flex';
+                if (getSetting("statusCursorPos", "true") != "true") cursorPosLabel.style.display = "none";
+                else cursorPosLabel.style.display = "flex";
 
-                if (getSetting('statusEditorMode', 'true') != 'true') editorModeLabel.style.display = 'none';
-                else editorModeLabel.style.display = 'flex';
+                if (getSetting("statusEditorMode", "true") != "true") editorModeLabel.style.display = "none";
+                else editorModeLabel.style.display = "flex";
 
-                if (getSetting('statusDocumentSize', 'true') != 'true') documentSizeLabel.style.display = 'none';
-                else documentSizeLabel.style.display = 'flex';
+                if (getSetting("statusDocumentSize", "true") != "true") documentSizeLabel.style.display = "none";
+                else documentSizeLabel.style.display = "flex";
             }
 
             function getCursor(query) {
@@ -651,7 +675,7 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
             }
 
             document.addEventListener("keydown", async function (event) {
-                if (event.key === 'Escape') {
+                if (event.key === "Escape") {
                     hideAllMenus();
                     editor.focus();
                 }
@@ -660,42 +684,34 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     // toggle preview - ctrl+p
                     event.preventDefault();
                     togglePreview();
-
                 } else if (event.key === "F1") {
                     // about - f1
                     event.preventDefault();
                     showMessageFromFile("about.html");
-
                 } else if (event.key === "F9") {
                     // toggle sidepane - f9
                     event.preventDefault();
                     toggleSidebar("files-bar");
-
                 } else if (event.key === "F10") {
                     // show main menu
                     event.preventDefault();
-                    toggleDropdown('more-menu');
-
+                    toggleDropdown("more-menu");
                 } else if (event.altKey && event.key === "i") {
                     // show insert menu
                     event.preventDefault();
-                    toggleDropdown('insert-menu');
-
+                    toggleDropdown("insert-menu");
                 } else if (event.ctrlKey && event.key === ",") {
                     event.preventDefault();
-                    showMessageFromFile('settings.html', true, false, 900);
+                    showMessageFromFile("settings.html", true, false, 900);
                     hideAllMenus();
-
                 } else if (event.ctrlKey && event.key === "?") {
                     event.preventDefault();
-                    showMessageFromFile('shortcuts.html', true, false, 600);
+                    showMessageFromFile("shortcuts.html", true, false, 600);
                     hideAllMenus();
-
                 } else if (event.altKey && event.key === "p") {
                     event.preventDefault();
                     showMessageFromFile("resources.html", true, true);
                     hideAllMenus();
-
                 } else if (event.altKey && /^[0-9]$/.test(event.key)) {
                     event.preventDefault();
                     const newIndex = event.key === "0" ? 9 : parseInt(event.key) - 1;
@@ -703,7 +719,6 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     index = newIndex;
                     renderEditor();
                     editor.focus();
-
                 } else if (event.ctrlKey && event.key === "e") {
                     event.preventDefault();
 
@@ -720,17 +735,14 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     // new - ctrl+n
                     event.preventDefault();
                     createFile();
-
                 } else if (event.ctrlKey && event.key === "s") {
                     // download - ctrl+s
                     event.preventDefault();
                     promptSaveFile(index);
-
                 } else if (event.ctrlKey && event.key === "o") {
                     // open - ctrl+o
                     event.preventDefault();
                     importFile();
-
                 } else if (event.shiftKey && event.ctrlKey && event.key === "Delete") {
                     // delete - ctrl+shift+delete
                     event.preventDefault();
@@ -757,7 +769,6 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     } else {
                         insertAt("**Bold text**", 2, 11);
                     }
-
                 } else if (event.ctrlKey && event.key === "i") {
                     // italic - ctrl+i
                     event.preventDefault();
@@ -766,12 +777,10 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     } else {
                         insertAt("*Italic text*", 1, 12);
                     }
-
                 } else if (event.ctrlKey && event.key === "u") {
                     // unordered list - ctrl+u
                     event.preventDefault();
                     toggleLineStart("- ", true, ["- ", "* ", "+ "]);
-
                 } else if (event.ctrlKey && event.key >= "1" && event.key <= "6") {
                     // titles - ctrl+1/6
                     event.preventDefault();
@@ -781,7 +790,6 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                         true,
                         Array.from({ length: 6 }, (_, i) => "#".repeat(i + 1) + " ")
                     );
-
                 } else if (event.ctrlKey && event.key === "r") {
                     // horizontal rule - ctrl+r
                     event.preventDefault();
@@ -816,15 +824,13 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                             search(true);
                         }
                     }
-
                 } else if (event.ctrlKey && event.key === "f") {
                     event.preventDefault();
                     toggleSearchHeader(editor.getSelection());
-                    
                 } else if (event.ctrlKey && event.key === "h") {
                     event.preventDefault();
                     toggleReplaceHeader(editor.getSelection());
-                } 
+                }
 
                 // INSERT
                 else if (event.ctrlKey && event.key === ";") {
