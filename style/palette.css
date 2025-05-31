@@ -222,3 +222,43 @@
         background-color: #ffffffdd;
     }
 }
+
+.theme-oled {
+    --background-color:     #000000;
+    --background-color-2:   #000000;
+    --background-color-3:   #1d1d1d;
+
+    --field-color:          #1d1d1d;
+
+    --border-dark-color:    #333333;
+    --border-light-color:   #333333;
+    --border-field-color:   transparent;
+
+    --hover-color:          #1d1d1d;
+
+    --title-color:          #ffffff;
+    --button-color:         #ffffff;
+    --button-color-2:       #ffffff;
+    --text-color:           #888888;
+
+    --highlight-color:      #3584e4; 
+    --selection-color:      #3584e433;
+    --link-color:           #99c1f1;
+
+    --danger:               #ff8881; 
+    --danger-bg:            #ff888133;
+
+    --shadow:               0px 0px 10px #00000000;
+    
+    --quote-purple:         #d781ff; 
+    --quote-blue:           #818eff;
+    --quote-green:          #9aff81; 
+    --quote-yellow:         #fff781;
+    --quote-red:            #ff8881;
+
+    --quote-purple-bg:      #d781ff33; 
+    --quote-blue-bg:        #818ef333;
+    --quote-green-bg:       #9aff8133; 
+    --quote-yellow-bg:      #fff78133;
+    --quote-red-bg:         #ff888133;
+}

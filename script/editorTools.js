@@ -68,7 +68,10 @@ function fetchdata(url, callback) {
         });
 }
 
-function fetchfield(id) {
+/**
+ * Get text value from a text field
+ */
+function getfieldvalue(id) {
     let field = document.getElementById(id);
     if (field) { return field.value; }
     return null

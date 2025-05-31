@@ -342,6 +342,7 @@
     padding: 5px 10px;
     border-radius: 100px;
     width: 300px;
+    margin: 10px 40px 10px 40px;
 }
 
 .preview input:not([type="checkbox"]):focus {
