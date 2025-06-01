@@ -175,6 +175,10 @@
                 <button class="icon-button" translate="no" title="Preformatted" onmouseup="formatPreformatted()">code</button>
                 <button class="icon-button" translate="no" title="Highlight" onmouseup="formatHighlight()">stylus_highlighter</button>
             </div>
+            <hr id="contextual-selection-separator" style="display: none;">
+            <button class="text-button" onmouseup="formatTable()" id="formatTable" style="display: none;">
+                Format table
+            </button>
             <hr />
             <button class="text-button" onmouseup="cutText()">
                 Cut
@@ -247,9 +251,19 @@
             editor.addOverlay(markOverlay);
 
             const editorMenu = document.getElementById("editorMenu");
+            const hrContextualSeparator = document.getElementById('contextual-selection-separator');
+            const btnFormatTable = document.getElementById('formatTable');
 
             editor.getWrapperElement().addEventListener("contextmenu", function (e) {
                 e.preventDefault();
+
+                if(hasTableSelected()) {
+                    hrContextualSeparator.style.display = 'block';
+                    btnFormatTable.style.display = 'flex';
+                } else {
+                    hrContextualSeparator.style.display = 'none';
+                    btnFormatTable.style.display = 'none';
+                }
 
                 const rect = editor.getWrapperElement().getBoundingClientRect();
                 editorMenu.style.top = e.clientY + "px";
