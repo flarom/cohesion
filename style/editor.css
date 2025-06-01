@@ -391,6 +391,34 @@
     border-radius: 15px;
 }
 
+.preview mark {
+    background-color: var(--quote-yellow-bg);
+    color: var(--text-color);
+    padding: 0 5px;
+    border-radius: 5px;
+}
+
+.preview mark:nth-of-type(5n+1) {
+    background-color: var(--quote-yellow-bg);
+}
+
+.preview mark:nth-of-type(5n+2) {
+    background-color: var(--quote-green-bg);
+}
+
+.preview mark:nth-of-type(5n+3) {
+    background-color: var(--quote-blue-bg);
+}
+
+.preview mark:nth-of-type(5n+4) {
+    background-color: var(--quote-purple-bg);
+}
+
+.preview mark:nth-of-type(5n) {
+    background-color: var(--quote-red-bg);
+}
+
+
 /* custom html */
 
 .preview icon {

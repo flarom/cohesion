@@ -655,3 +655,7 @@ span.CodeMirror-selectedtext {
     color: var(--title-color) !important;
     font-weight: bold !important;
 }
+
+.cm-mark-highlight {
+    background-color: var(--quote-yellow-bg);
+}

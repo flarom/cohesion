@@ -3656,10 +3656,6 @@
 
         text = globals.converter._dispatch("makehtml.italicsAndBold.before", text, options, globals).getText();
 
-        // it's faster to have 3 separate regexes for each case than have just one
-        // because of backtracing, in some cases, it could lead to an exponential effect
-        // called "catastrophic backtrace". Ominous!
-
         function parseInside(txt, left, right) {
             return left + txt + right;
         }
@@ -3683,25 +3679,11 @@
                 return /\S$/.test(m) ? parseInside(m, "<strong>", "</strong>") : wm;
             });
             text = text.replace(/_([^\s_][\s\S]*?)_/g, function (wm, m) {
-                // !/^_[^_]/.test(m) - test if it doesn't start with __ (since it seems redundant, we removed it)
                 return /\S$/.test(m) ? parseInside(m, "<em>", "</em>") : wm;
             });
         }
 
-        // Now parse asterisks
-        /*
-        if (options.literalMidWordAsterisks) {
-          text = text.replace(/([^*]|^)\B\*\*\*(\S[\s\S]+?)\*\*\*\B(?!\*)/g, function (wm, lead, txt) {
-            return parseInside (txt, lead + '<strong><em>', '</em></strong>');
-          });
-          text = text.replace(/([^*]|^)\B\*\*(\S[\s\S]+?)\*\*\B(?!\*)/g, function (wm, lead, txt) {
-            return parseInside (txt, lead + '<strong>', '</strong>');
-          });
-          text = text.replace(/([^*]|^)\B\*(\S[\s\S]+?)\*\B(?!\*)/g, function (wm, lead, txt) {
-            return parseInside (txt, lead + '<em>', '</em>');
-          });
-        } else {
-        */
+        // Parse asterisks
         text = text.replace(/\*\*\*(\S[\s\S]*?)\*\*\*/g, function (wm, m) {
             return /\S$/.test(m) ? parseInside(m, "<strong><em>", "</em></strong>") : wm;
         });
@@ -3709,12 +3691,16 @@
             return /\S$/.test(m) ? parseInside(m, "<strong>", "</strong>") : wm;
         });
         text = text.replace(/\*([^\s*][\s\S]*?)\*/g, function (wm, m) {
-            // !/^\*[^*]/.test(m) - test if it doesn't start with ** (since it seems redundant, we removed it)
             return /\S$/.test(m) ? parseInside(m, "<em>", "</em>") : wm;
         });
-        //}
+
+        // Parse equals
+        text = text.replace(/==([\s\S]+?)==/g, function (wm, m) {
+            return /\S/.test(m) ? parseInside(m, "<mark>", "</mark>") : wm;
+        });
 
         text = globals.converter._dispatch("makehtml.italicsAndBold.after", text, options, globals).getText();
+
         return text;
     });
 

@@ -34,6 +34,7 @@
         <script src="codemirror/lib/codemirror.js"></script>
         <script src="codemirror/keymap/sublime.js"></script>
         <script src="codemirror/mode/markdown/markdown.js"></script>
+        <script src="codemirror/overlay/markOverlay.js"></script>
         <script src="codemirror/addon/edit/closebrackets.js"></script>
         <script src="codemirror/addon/edit/continuelist.js"></script>
         <script src="codemirror/addon/search/searchcursor.js"></script>
@@ -199,6 +200,8 @@
                 direction: getSetting("editorDirection", "ltr"),
                 showCursorWhenSelecting: true,
             });
+
+            editor.addOverlay(markOverlay);
 
             const converter = new showdown.Converter({
                 extensions: [internalLinkExtension],
