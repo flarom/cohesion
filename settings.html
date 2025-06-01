@@ -78,7 +78,7 @@
             <div class="main-page">
                 <div>
                     <h3 id="theme">Theme</h3>
-                    <div class="setting" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <div class="setting" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap">
                         <button class="ball" style="background-color: #ffffff; color: #000000" onclick="setSetting('theme', 'theme-epaper');loadSettings()">ePaper</button>
                         <button class="ball" style="background-color: #ffffff; color: #3c3c3c" onclick="setSetting('theme', 'theme-light');loadSettings()">Light</button>
                         <button class="ball" style="background-color: #f5eacb; color: #4b3a25" onclick="setSetting('theme', 'theme-cream');loadSettings()">Cream</button>
@@ -93,16 +93,47 @@
                     <div class="setting">
                         <div>
                             <label>Editor font</label>
-                            <input type="text" placeholder="Ubuntu Mono" id="fontEditor" oninput="setSetting('editorFont', this.value); loadSettings();" />
+                            <input list="default-fonts" type="text" placeholder="Ubuntu Mono" id="fontEditor" oninput="setSetting('editorFont', this.value); loadSettings();" />
                         </div>
                         <div>
                             <label>Paragraph font</label>
-                            <input type="text" placeholder="Ubuntu" id="fontParagraph" oninput="setSetting('paragraphFont', this.value); loadSettings();" />
+                            <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontParagraph" oninput="setSetting('paragraphFont', this.value); loadSettings();" />
                         </div>
                         <div>
                             <label>Title font</label>
-                            <input type="text" placeholder="Ubuntu" id="fontTitle" oninput="setSetting('titleFont', this.value); loadSettings();" />
+                            <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontTitle" oninput="setSetting('titleFont', this.value); loadSettings();" />
                         </div>
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="fontExtended" onchange="setSetting('fontExtended', this.checked); location.reload()" />
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-text" title="Use an expanded collection of fonts">Extended font collection</span>
+                        </div>
+
+                        <datalist id="default-fonts">
+                            <option value="Ubuntu"></option>
+                            <option value="Ubuntu Mono"></option>
+                            <option value="Sans serif"></option>
+                            <option value="Serif"></option>
+                            <option value="Monospace"></option>
+                            <option value="Cursive"></option>
+                        </datalist>
+
+                        <datalist id="extended-fonts">
+                            <option value="Ubuntu"></option>
+                            <option value="Ubuntu Mono"></option>
+                            <option value="Sans serif"></option>
+                            <option value="Serif"></option>
+                            <option value="Monospace"></option>
+                            <option value="Cursive"></option>
+                            <!-- extended -->
+                            <option value="Meow Script">Cute - Meow Script</option>
+                            <option value="Cherry Bomb One">Cute - Cherry Bomb One</option>
+                            <option value="Ms Madi">Cute - Ms Madi</option>
+                            <option value="Comic Neue">Cute - Comic Neue</option>
+                            <option value="Moirai One">Cute - Moirai One</option>
+                        </datalist>
                     </div>
                 </div>
 
@@ -169,65 +200,72 @@
                     </div>
 
                     <div>
-                    <h3 id="data">My files</h3>
-                    <div>
-                        <div class="setting box">
-                            <div>
-                                <h4>Export package</h4>
-                                <p>Export your notes as a zip file</p>
+                        <h3 id="data">My files</h3>
+                        <div>
+                            <div class="setting box">
+                                <div>
+                                    <h4>Export package</h4>
+                                    <p>Export your notes as a zip file</p>
+                                </div>
+                                <div>
+                                    <button class="text-button" onclick="exportBook();">Export</button>
+                                </div>
                             </div>
-                            <div>
-                                <button class="text-button" onclick="exportBook();">Export</button>
-                            </div>
-                        </div>
 
-                        <div class="setting box">
-                            <div>
-                                <h4>Import package</h4>
-                                <p>Import files from a zip file</p>
+                            <div class="setting box">
+                                <div>
+                                    <h4>Import package</h4>
+                                    <p>Import files from a zip file</p>
+                                </div>
+                                <div>
+                                    <button class="text-button" onclick="importBook();">Import</button>
+                                </div>
                             </div>
-                            <div>
-                                <button class="text-button" onclick="importBook();">Import</button>
-                            </div>
-                        </div>
 
-                        <div class="setting box">
-                            <div>
-                                <h4>Delete empty files</h4>
-                                <p>Delete all files without any text or meta.</p>
+                            <div class="setting box">
+                                <div>
+                                    <h4>Delete empty files</h4>
+                                    <p>Delete all files without any text or meta.</p>
+                                </div>
+                                <div>
+                                    <button class="text-button danger" onclick="deleteEmptyFiles();">Delete</button>
+                                </div>
                             </div>
-                            <div>
-                                <button class="text-button danger" onclick="deleteEmptyFiles();">Delete</button>
-                            </div>
-                        </div>
 
-                        <div class="setting box">
-                            <div>
-                                <h4>Replace with package</h4>
-                                <p>Import files from a zip file, replacing your files.</p>
-                            </div>
-                            <div>
-                                <button class="text-button danger" onclick="importDeleteBook();">Replace</button>
+                            <div class="setting box">
+                                <div>
+                                    <h4>Replace with package</h4>
+                                    <p>Import files from a zip file, replacing your files.</p>
+                                </div>
+                                <div>
+                                    <button class="text-button danger" onclick="importDeleteBook();">Replace</button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                </div>
             </div>
         </div>
-        
+
         <script>
             (() => {
                 // fonts
                 const txtFontEditor = document.getElementById("fontEditor");
                 const txtFontParagraph = document.getElementById("fontParagraph");
                 const txtFontTitle = document.getElementById("fontTitle");
+                const cbxFontExtended = document.getElementById('fontExtended');
                 txtFontEditor.value = getSetting("editorFont", "Ubuntu Mono");
                 txtFontParagraph.value = getSetting("paragraphFont", "Ubuntu");
                 txtFontTitle.value = getSetting("titleFont", "Ubuntu");
+                if (getSetting("fontExtended", "false") === "true"){
+                    cbxFontExtended.checked = "true";
+                    txtFontEditor.setAttribute("list","extended-fonts");
+                    txtFontParagraph.setAttribute("list","extended-fonts");
+                    txtFontTitle.setAttribute("list","extended-fonts");
+                }
 
                 // editor
-                const cbxEditorShowHints = document.getElementById('editorShowHints');
+                const cbxEditorShowHints = document.getElementById("editorShowHints");
                 const cbxEditorLineNumbers = document.getElementById("editorLineNumbers");
                 const cbxEditorDirection = document.getElementById("editorDirection");
                 if (getSetting("editorShowHints", "true") === "true") cbxEditorShowHints.checked = "true";

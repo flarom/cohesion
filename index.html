@@ -166,6 +166,48 @@
             </div>
         </div>
 
+        <div id="editorMenu" class="context-menu">
+            <div style="display: flex; margin: 0px 5px;">
+                <button class="icon-button" translate="no" title="Bold" onmouseup="formatBold()">format_bold</button>
+                <button class="icon-button" translate="no" title="Italic" onmouseup="formatItalic()">format_italic</button>
+                <button class="icon-button" translate="no" title="Underline" onmouseup="formatUnderline()">format_underlined</button>
+                <button class="icon-button" translate="no" title="Strikethrough" onmouseup="formatStrikethrough()">strikethrough_s</button>
+                <button class="icon-button" translate="no" title="Preformatted" onmouseup="formatPreformatted()">code</button>
+                <button class="icon-button" translate="no" title="Highlight" onmouseup="formatHighlight()">stylus_highlighter</button>
+            </div>
+            <hr />
+            <button class="text-button" onmouseup="cutText()">
+                Cut
+                <kbd>Ctrl+X</kbd>
+            </button>
+            <button class="text-button" onmouseup="copyText()">
+                Copy
+                <kbd>Ctrl+C</kbd>
+            </button>
+            <button class="text-button" onmouseup="pasteText()">
+                Paste
+                <kbd>Ctrl+V</kbd>
+            </button>
+            <button class="text-button" onmouseup="deleteText()">
+                Delete
+                <kbd>Delete</kbd>
+            </button>
+            <hr />
+            <button class="text-button" onmouseup="editor.undo()">
+                Un-do
+                <kbd>Ctrl+Z</kbd>
+            </button>
+            <button class="text-button" onmouseup="editor.redo()">
+                Re-do
+                <kbd>Ctrl+Y</kbd>
+            </button>
+            <hr />
+            <button class="text-button" onmouseup="selectAllText()">
+                Select all
+                <kbd>Ctrl+A</kbd>
+            </button>
+        </div>
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
         <script src="script/resources.js"></script>
         <script src="script/internalLinkExtension.js"></script>
@@ -174,6 +216,7 @@
         <script src="script/insert.js"></script>
         <script src="script/prompts.js"></script>
         <script src="script/file.js"></script>
+        <script src="script/edit.js"></script>
         <script src="script/settings.js"></script>
         <script>
             window.addEventListener("storage", (event) => {
@@ -202,6 +245,21 @@
             });
 
             editor.addOverlay(markOverlay);
+
+            const editorMenu = document.getElementById("editorMenu");
+
+            editor.getWrapperElement().addEventListener("contextmenu", function (e) {
+                e.preventDefault();
+
+                const rect = editor.getWrapperElement().getBoundingClientRect();
+                editorMenu.style.top = e.clientY + "px";
+                editorMenu.style.left = e.clientX + "px";
+                editorMenu.style.display = "block";
+            });
+
+            document.addEventListener("click", function () {
+                editorMenu.style.display = "none";
+            });
 
             const converter = new showdown.Converter({
                 extensions: [internalLinkExtension],
@@ -296,7 +354,7 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
             });
 
             editor.on("inputRead", function (cm, change) {
-                if (getSetting("editorShowHints", 'true') === 'false') return;
+                if (getSetting("editorShowHints", "true") === "false") return;
                 if (!change.text[0].match(/\w/)) return;
 
                 var cursor = cm.getCursor();
@@ -530,6 +588,13 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
 
                 if (getSetting("statusDocumentSize", "true") != "true") documentSizeLabel.style.display = "none";
                 else documentSizeLabel.style.display = "flex";
+
+                if (getSetting("fontExtended", "false") === "true") {
+                    const link = document.createElement("link");
+                    link.rel = "stylesheet";
+                    link.href = "style/extendedfonts.css";
+                    document.head.appendChild(link);
+                }
             }
 
             function getCursor(query) {
@@ -767,19 +832,11 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                 else if (event.ctrlKey && event.key === "b") {
                     // bold - ctrl+b
                     event.preventDefault();
-                    if (hasSelection()) {
-                        wrapSelection("**", "**");
-                    } else {
-                        insertAt("**Bold text**", 2, 11);
-                    }
+                    formatBold();
                 } else if (event.ctrlKey && event.key === "i") {
                     // italic - ctrl+i
                     event.preventDefault();
-                    if (hasSelection()) {
-                        wrapSelection("*", "*");
-                    } else {
-                        insertAt("*Italic text*", 1, 12);
-                    }
+                    formatItalic();
                 } else if (event.ctrlKey && event.key === "u") {
                     // unordered list - ctrl+u
                     event.preventDefault();
