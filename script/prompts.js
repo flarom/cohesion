@@ -33,7 +33,8 @@ function toggleDropdown(menuId) {
 }
 
 function handleArrowNavigation(e) {
-    const buttons = Array.from(e.currentTarget.querySelectorAll('button'));
+    const buttons = Array.from(e.currentTarget.querySelectorAll('button'))
+        .filter(btn => btn.offsetParent !== null);
     const currentIndex = buttons.findIndex(btn => btn === document.activeElement);
 
     if (['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft'].includes(e.key)) {

@@ -176,7 +176,7 @@
                 <button class="icon-button" translate="no" title="Highlight" onmouseup="formatHighlight()">stylus_highlighter</button>
             </div>
             <hr id="contextual-selection-separator" style="display: none;">
-            <button class="text-button" onmouseup="formatTable()" id="formatTable" style="display: none;">
+            <button class="text-button" onmouseup="formatTable(); editor.focus()" id="formatTable" style="display: none;">
                 Format table
             </button>
             <hr />
@@ -269,10 +269,19 @@
                 editorMenu.style.top = e.clientY + "px";
                 editorMenu.style.left = e.clientX + "px";
                 editorMenu.style.display = "block";
+
+                const buttons = editorMenu.querySelectorAll('button');
+                if (buttons.length > 0) {
+                    setTimeout(() => buttons[0].focus(), 0);
+                }
+                editorMenu.addEventListener('keydown', handleArrowNavigation);
+                editorMenu.addEventListener('keydown', handleActivation);
             });
 
             document.addEventListener("click", function () {
                 editorMenu.style.display = "none";
+                editorMenu.removeEventListener('keydown', handleArrowNavigation);
+                editorMenu.removeEventListener('keydown', handleActivation);
             });
 
             const converter = new showdown.Converter({
@@ -760,6 +769,9 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                 if (event.key === "Escape") {
                     hideAllMenus();
                     editor.focus();
+                    editorMenu.style.display = "none";
+                    editorMenu.removeEventListener('keydown', handleArrowNavigation);
+                    editorMenu.removeEventListener('keydown', handleActivation);
                 }
                 // NAVIGATION
                 else if (event.ctrlKey && event.key === "p") {
