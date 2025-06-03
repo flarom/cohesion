@@ -159,3 +159,50 @@ async function resolveFSItem(name) {
         request.onerror = () => reject(request.error);
     });
 }
+
+async function saveClipboardFile(file) {
+    const reader = new FileReader();
+
+    return new Promise((resolve, reject) => {
+        reader.onload = async () => {
+            try {
+                const content = reader.result;
+                const files = await getFSFiles();
+                let name = file.name || `clipboard.${getDefaultExtension(file.type)}`;
+
+                const baseName = name.replace(/\.[^/.]+$/, "");
+                const ext = name.split('.').pop();
+                let counter = 1;
+
+                while (files.find(f => f.name === name)) {
+                    name = `${baseName}_${counter}.${ext}`;
+                    counter++;
+                }
+
+                await setFSFile({ name, content });
+                resolve({ name, content });
+            } catch (e) {
+                reject(e);
+            }
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+function getDefaultExtension(mimeType) {
+    const map = {
+        "image/png": "png",
+        "image/jpeg": "jpg",
+        "image/gif": "gif",
+        "image/webp": "webp",
+        "image/svg+xml": "svg",
+        "audio/mpeg": "mp3",
+        "audio/wav": "wav",
+        "audio/ogg": "ogg",
+        "video/mp4": "mp4",
+        "video/webm": "webm",
+        "video/ogg": "ogg"
+    };
+    return map[mimeType] || "bin";
+}

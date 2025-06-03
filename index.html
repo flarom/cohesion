@@ -167,7 +167,7 @@
         </div>
 
         <div id="editorMenu" class="context-menu">
-            <div style="display: flex; margin: 0px 5px;">
+            <div style="display: flex; margin: 0px 5px">
                 <button class="icon-button" translate="no" title="Bold" onmouseup="formatBold()">format_bold</button>
                 <button class="icon-button" translate="no" title="Italic" onmouseup="formatItalic()">format_italic</button>
                 <button class="icon-button" translate="no" title="Underline" onmouseup="formatUnderline()">format_underlined</button>
@@ -175,10 +175,8 @@
                 <button class="icon-button" translate="no" title="Preformatted" onmouseup="formatPreformatted()">code</button>
                 <button class="icon-button" translate="no" title="Highlight" onmouseup="formatHighlight()">stylus_highlighter</button>
             </div>
-            <hr id="contextual-selection-separator" style="display: none;">
-            <button class="text-button" onmouseup="formatTable(); editor.focus()" id="formatTable" style="display: none;">
-                Format table
-            </button>
+            <hr id="contextual-selection-separator" style="display: none" />
+            <button class="text-button" onmouseup="formatTable(); editor.focus()" id="formatTable" style="display: none">Format table</button>
             <hr />
             <button class="text-button" onmouseup="cutText()">
                 Cut
@@ -251,18 +249,18 @@
             editor.addOverlay(markOverlay);
 
             const editorMenu = document.getElementById("editorMenu");
-            const hrContextualSeparator = document.getElementById('contextual-selection-separator');
-            const btnFormatTable = document.getElementById('formatTable');
+            const hrContextualSeparator = document.getElementById("contextual-selection-separator");
+            const btnFormatTable = document.getElementById("formatTable");
 
             editor.getWrapperElement().addEventListener("contextmenu", function (e) {
                 e.preventDefault();
 
-                if(hasTableSelected()) {
-                    hrContextualSeparator.style.display = 'block';
-                    btnFormatTable.style.display = 'flex';
+                if (hasTableSelected()) {
+                    hrContextualSeparator.style.display = "block";
+                    btnFormatTable.style.display = "flex";
                 } else {
-                    hrContextualSeparator.style.display = 'none';
-                    btnFormatTable.style.display = 'none';
+                    hrContextualSeparator.style.display = "none";
+                    btnFormatTable.style.display = "none";
                 }
 
                 const rect = editor.getWrapperElement().getBoundingClientRect();
@@ -270,18 +268,44 @@
                 editorMenu.style.left = e.clientX + "px";
                 editorMenu.style.display = "block";
 
-                const buttons = editorMenu.querySelectorAll('button');
+                const buttons = editorMenu.querySelectorAll("button");
                 if (buttons.length > 0) {
                     setTimeout(() => buttons[0].focus(), 0);
                 }
-                editorMenu.addEventListener('keydown', handleArrowNavigation);
-                editorMenu.addEventListener('keydown', handleActivation);
+                editorMenu.addEventListener("keydown", handleArrowNavigation);
+                editorMenu.addEventListener("keydown", handleActivation);
+            });
+
+            editor.getWrapperElement().addEventListener("paste", async function (e) {
+                const items = e.clipboardData.items;
+                for (let i = 0; i < items.length; i++) {
+                    const item = items[i];
+                    if (item.kind === "file") {
+                        const file = item.getAsFile();
+                        if (file) {
+                            try {
+                                const savedFile = await saveClipboardFile(file);
+                                const filePath = `resources/${savedFile.name}`;
+
+                                const ext = savedFile.name.split(".").pop().toLowerCase();
+
+                                let markdown = `![ALT TEXT](${filePath})`;
+
+                                insertAt(markdown, 2, 10);
+                                showToast(`Archieved ${savedFile.name}`, "archive");
+                            } catch (err) {
+                                showToast("Failed to insert clipboard file.", "error");
+                                console.error(err);
+                            }
+                        }
+                    }
+                }
             });
 
             document.addEventListener("click", function () {
                 editorMenu.style.display = "none";
-                editorMenu.removeEventListener('keydown', handleArrowNavigation);
-                editorMenu.removeEventListener('keydown', handleActivation);
+                editorMenu.removeEventListener("keydown", handleArrowNavigation);
+                editorMenu.removeEventListener("keydown", handleActivation);
             });
 
             const converter = new showdown.Converter({
@@ -770,8 +794,8 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     hideAllMenus();
                     editor.focus();
                     editorMenu.style.display = "none";
-                    editorMenu.removeEventListener('keydown', handleArrowNavigation);
-                    editorMenu.removeEventListener('keydown', handleActivation);
+                    editorMenu.removeEventListener("keydown", handleArrowNavigation);
+                    editorMenu.removeEventListener("keydown", handleActivation);
                 }
                 // NAVIGATION
                 else if (event.ctrlKey && event.key === "p") {
