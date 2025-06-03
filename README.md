@@ -3,6 +3,10 @@
 ![App screen shot](res/scrshot.png)
 
 [Launch Cohesion](https://flarom.github.io/cohesion/)
+⸳
+[Get Cohesion Desktop](https://github.com/flarom/cohesion/releases/tag/v1.0.0)
+⸳
+[Wiki](https://github.com/flarom/cohesion/wiki)
 
 ***
 
