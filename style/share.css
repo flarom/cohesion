@@ -218,7 +218,7 @@ button.danger:hover {
     overflow: hidden;
     right: 0;
     transform: translateX(0);
-    padding: 10px 0px 10px 0px;
+    padding: 5px 0px 5px 0px;
     box-shadow: var(--shadow);
     margin-top: 10px;
 }
