@@ -103,7 +103,7 @@ function getMeta() {
         `tags: misc\n` +
         `description: *\n` +
         `color: *\n` +
-        `banner: *\n` +
+        `banner: cohesion/banners/1.png\n` +
         `***\n` +
         `editor: Cohesion\n` +
         `»»»`

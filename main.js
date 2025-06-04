@@ -8,7 +8,7 @@ app.whenReady().then(() => {
         width: 500,
         height: 500,
         autoHideMenuBar: true,
-        icon: path.join(__dirname, "res", "favicon.png"),
+        icon: path.join(__dirname, "cohesion", "favicon.png"),
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true

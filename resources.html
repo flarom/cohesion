@@ -160,20 +160,20 @@
                 const ext = fileName.split(".").pop().toLowerCase();
 
                 if (["apng", "gif", "ico", "cur", "jpg", "jpeg", "jfif", "pjpeg", "pjp", "png", "svg", "webp"].includes(ext)) {
-                    return "res/file-icons/image-x-generic.svg";
+                    return "cohesion/file-icons/image-x-generic.svg";
                 } else if (["mp4", "webm", "ogg"].includes(ext)) {
-                    return "res/file-icons/video-x-generic.svg";
+                    return "cohesion/file-icons/video-x-generic.svg";
                 } else if (["mp3", "wav", "aac", "flac"].includes(ext)) {
-                    return "res/file-icons/audio-x-generic.svg";
+                    return "cohesion/file-icons/audio-x-generic.svg";
                 } else if (["pdf"].includes(ext)) {
-                    return "res/file-icons/application-pdf.svg";
+                    return "cohesion/file-icons/application-pdf.svg";
                 }
                 
                 
                 else if (["txt"].includes(ext)) {
-                    return "res/file-icons/text-x-generic.svg";
+                    return "cohesion/file-icons/text-x-generic.svg";
                 } else {
-                    return "res/file-icons/text-x-generic.svg"; // ícone padrão nyaa~
+                    return "cohesion/file-icons/text-x-generic.svg"; // ícone padrão nyaa~
                 }
             }
 
