@@ -418,6 +418,12 @@
     background-color: var(--quote-red-bg);
 }
 
+.preview .banner {
+    height: 300px;
+    width: 100%;
+    object-fit: cover;
+}
+
 /* custom html */
 
 .preview icon {

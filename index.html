@@ -212,8 +212,9 @@
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
         <script src="script/resources.js"></script>
-        <script src="script/internalLinkExtension.js"></script>
         <script src="script/showdown.js"></script>
+        <script src="script/bannerImageExtension.js"></script>
+        <script src="script/internalLinkExtension.js"></script>
         <script src="script/editorTools.js"></script>
         <script src="script/insert.js"></script>
         <script src="script/prompts.js"></script>
@@ -309,7 +310,7 @@
             });
 
             const converter = new showdown.Converter({
-                extensions: [internalLinkExtension],
+                extensions: ['bannerImage', internalLinkExtension],
             });
 
             const preview = document.getElementById("preview");
@@ -524,6 +525,25 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                 }
             }
 
+            function extractMetadata(markdown) {
+                const metaMatch = markdown.match(/«««([\s\S]*?)»»»/);
+                if (!metaMatch) return {};
+
+                const metaText = metaMatch[1];
+                const metaLines = metaText.split('\n').map(line => line.trim()).filter(Boolean);
+
+                const metadata = {};
+                metaLines.forEach(line => {
+                    const [key, ...rest] = line.split(':');
+                    if (key && rest.length) {
+                        metadata[key.trim()] = rest.join(':').trim();
+                    }
+                });
+            
+                return metadata;
+            }
+
+
             async function updateMarkdown(markdown) {
                 let codeBlocks = [];
                 const placeholder = "￼";
@@ -531,11 +551,17 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     codeBlocks.push(match);
                     return placeholder;
                 });
-
+            
                 let i = 0;
                 markdown = markdown.replace(/\uFFFC/g, () => codeBlocks[i++]);
+            
+                const metadata = extractMetadata(markdown);
+                converter.getMetadata = function() {
+                    return metadata;
+                };
+            
                 preview.innerHTML = converter.makeHtml(markdown);
-
+            
                 const selectors = ["img", "audio", "video", "iframe"];
                 for (const tag of selectors) {
                     const elements = preview.querySelectorAll(tag);
@@ -548,21 +574,21 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                         }
                     }
                 }
-
+            
                 document.addEventListener("click", function (e) {
                     if (e.target.classList.contains("internal-link")) {
                         e.preventDefault();
                         const titleToFind = e.target.dataset.title;
-
+                    
                         for (let i = 0; i < files.length; i++) {
                             const text = getFileText(i);
                             if (!text) continue;
-
+                        
                             const conv = new showdown.Converter({ metadata: true });
                             conv.makeHtml(text);
-                            const metadata = conv.getMetadata();
-
-                            if (metadata.title === titleToFind) {
+                            const fileMetadata = conv.getMetadata();
+                        
+                            if (fileMetadata.title === titleToFind) {
                                 index = i;
                                 localStorage.setItem("lastIndex", index);
                                 renderFiles("files");

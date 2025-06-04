@@ -8,10 +8,15 @@
             button.ball {
                 width: 64px;
                 height: 64px;
-                border-radius: 100%;
+                border-radius: 32px;
                 cursor: pointer;
                 border: 0;
                 box-shadow: var(--shadow);
+                transition: border-radius 0.3s;
+            }
+
+            button.ball:hover {
+                border-radius: 15px;
             }
 
             .settings-body {
