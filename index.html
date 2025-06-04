@@ -54,6 +54,8 @@
                 <div class="dropdown">
                     <button class="icon-button" translate="no" onmousedown="toggleDropdown('insert-menu')" title="Insert">attach_filearrow_drop_down</button>
                     <div class="dropdown-content menu align-left" id="insert-menu">
+                        <button class="text-button" onmouseup="insertDate(); hideAllMenus(); editor.focus()">Date and time <kbd>F6</kbd></button>
+                        <hr>
                         <button class="text-button" onmouseup="handleInsertImage(); hideAllMenus(); editor.focus();">Image</button>
                         <button class="text-button" onmouseup="handleInsertAudio(); hideAllMenus(); editor.focus();">Audio</button>
                         <button class="text-button" onmouseup="handleInsertVideo(); hideAllMenus(); editor.focus();">Video</button>
@@ -972,6 +974,9 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                 else if (event.ctrlKey && event.key === ";") {
                     event.preventDefault();
                     insertAtTop(getMeta());
+                } else if(event.key === "F6") {
+                    event.preventDefault();
+                    insertDate();
                 }
             });
         </script>
