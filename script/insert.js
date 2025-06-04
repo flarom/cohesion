@@ -252,8 +252,10 @@ async function insertFile(prefix, suffix, accept = "*/*") {
     return prefix + filePath + suffix;
 }
 
-function insertDate() {
-    const format = getSetting('dateFormat', "%A, %d %B %Y %H:%M:%S");
+function insertDate(format) {
+    if (!format) {
+        format = getSetting('dateFormat', "%A, %d %B %Y %H:%M:%S");
+    }
 
     const time = strftime(format);
 
