@@ -198,6 +198,8 @@
                                 <button class="text-button" onclick="insertDateTimeOption('%a')" id="dateTimeBtn1" title="Weekday as locale's abbreviated name.">Sun</button>
                                 <button class="text-button" onclick="insertDateTimeOption('%A')" id="dateTimeBtn2" title="Weekday as locale's full name.">Sunday</button>
                                 <button class="text-button" onclick="insertDateTimeOption('%d')" id="dateTimeBtn3" title="Day of the month as a zero-padded decimal number.">08</button>
+                                <button class="text-button" onclick="insertDateTimeOption('%-d')" id="dateTimeBtn14" title="Day of the month as a decimal number.">8</button>
+
                             </div>
                         </div>
                         <div>
@@ -390,6 +392,7 @@
             btnDateTime11.innerHTML = strftime("%p");
             btnDateTime12.innerHTML = strftime("%M");
             btnDateTime13.innerHTML = strftime("%S");
+            btnDateTime14.innerHTML = strftime("%-d");
         })();
 
         function insertDateTimeOption(block) {

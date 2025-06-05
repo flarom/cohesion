@@ -259,66 +259,79 @@ function insertDate(format) {
 
     const time = strftime(format);
 
-    insertAt(time,0,time.length);
+    insertAt(time, 0, time.length);
 }
 
 function strftime(format, date = new Date()) {
-    const locale = navigator.language || "en-US";
+    const locale = navigator.language || 'en-US';
 
-    const pad = (num, len = 2) => String(num).padStart(len, "0");
-    const blankPad = (num) => String(num).padStart(2, " ");
+    const pad = (num, len = 2) => String(num).padStart(len, '0');
+    const blankPad = (num) => String(num).padStart(2, ' ');
 
-    const replacements = {
-        "%S": () => pad(date.getSeconds()),
-        "%L": () => pad(date.getMilliseconds(), 3),
-        "%s": () => Math.floor(date.getTime() / 1000),
-        "%M": () => pad(date.getMinutes()),
-        "%H": () => pad(date.getHours()),
-        "%I": () => pad(date.getHours() % 12 || 12),
-        "%k": () => blankPad(date.getHours()),
-        "%l": () => blankPad(date.getHours() % 12 || 12),
-        "%a": () => new Intl.DateTimeFormat(locale, { weekday: "short" }).format(date),
-        "%A": () => new Intl.DateTimeFormat(locale, { weekday: "long" }).format(date),
-        "%w": () => date.getDay(),
-        "%u": () => (date.getDay() === 0 ? 7 : date.getDay()),
-        "%d": () => pad(date.getDate()),
-        "%e": () => String(date.getDate()),
-        "%j": () => pad(Math.ceil((date - new Date(date.getFullYear(), 0, 0)) / 86400000), 3),
-        "%U": () => pad(getWeekNumber(date, "sunday")),
-        "%V": () => pad(getISOWeekNumber(date)),
-        "%b": () => new Intl.DateTimeFormat(locale, { month: "short" }).format(date),
-        "%B": () => new Intl.DateTimeFormat(locale, { month: "long" }).format(date),
-        "%m": () => pad(date.getMonth() + 1),
-        "%y": () => pad(date.getFullYear() % 100),
-        "%Y": () => date.getFullYear(),
-        "%p": () => (date.getHours() < 12 ? "AM" : "PM"),
-        "%P": () => (date.getHours() < 12 ? "am" : "pm"),
-        "%c": () => new Intl.DateTimeFormat(locale, { dateStyle: "full", timeStyle: "long" }).format(date),
-        "%Z": () => Intl.DateTimeFormat().resolvedOptions().timeZone,
-        "%%": () => "%",
-        "%C": () => Math.floor(date.getFullYear() / 100),
-        "%D": () => `${pad(date.getMonth() + 1)}/${pad(date.getDate())}/${pad(date.getFullYear() % 100)}`,
-        "%n": () => "\n",
-        "%t": () => "\t",
+    const getMicroseconds = (date) => pad(date.getMilliseconds() * 1000, 6);
+
+    const getUTCOffset = (date) => {
+        const offset = -date.getTimezoneOffset();
+        const sign = offset >= 0 ? "+" : "-";
+        const absOffset = Math.abs(offset);
+        const hours = pad(Math.floor(absOffset / 60));
+        const minutes = pad(absOffset % 60);
+        return `${sign}${hours}${minutes}`;
     };
 
-    function getWeekNumber(d, startOfWeek) {
+    const getWeekNumber = (d, startOfWeek) => {
         const newDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
         const dayNum = newDate.getDay();
-        const weekStart = startOfWeek === "sunday" ? 0 : 1;
+        const weekStart = startOfWeek === 'sunday' ? 0 : 1;
         const diff = (newDate - new Date(newDate.getFullYear(), 0, 1)) / 86400000;
-        return Math.floor((diff + new Date(newDate.getFullYear(), 0, 1).getDay() - weekStart) / 7) + 1;
-    }
+        return Math.floor((diff + new Date(newDate.getFullYear(), 0, 1).getDay() - weekStart) / 7) + 0;
+    };
 
-    function getISOWeekNumber(d) {
+    const getISOWeekNumber = (d) => {
         const date = new Date(d.getTime());
         date.setHours(0, 0, 0, 0);
-        date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));
+        date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
         const week1 = new Date(date.getFullYear(), 0, 4);
-        return 1 + Math.round(((date - week1) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7);
-    }
+        return 1 + Math.round(((date - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+    };
 
-    return format.replace(/%[a-zA-Z%]/g, (match) => {
+    const replacements = {
+        '%a': () => new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(date),
+        '%A': () => new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(date),
+        '%w': () => date.getDay(),
+        '%d': () => pad(date.getDate()),
+        '%-d': () => date.getDate(),
+        '%b': () => new Intl.DateTimeFormat(locale, { month: 'short' }).format(date),
+        '%B': () => new Intl.DateTimeFormat(locale, { month: 'long' }).format(date),
+        '%m': () => pad(date.getMonth() + 1),
+        '%-m': () => date.getMonth() + 1,
+        '%y': () => pad(date.getFullYear() % 100),
+        '%Y': () => date.getFullYear(),
+        '%H': () => pad(date.getHours()),
+        '%-H': () => date.getHours(),
+        '%I': () => pad((date.getHours() % 12) || 12),
+        '%-I': () => (date.getHours() % 12) || 12,
+        '%p': () => date.getHours() < 12 ? 'AM' : 'PM',
+        '%M': () => pad(date.getMinutes()),
+        '%-M': () => date.getMinutes(),
+        '%S': () => pad(date.getSeconds()),
+        '%-S': () => date.getSeconds(),
+        '%f': () => getMicroseconds(date),
+        '%z': () => getUTCOffset(date),
+        '%Z': () => Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+        '%j': () => pad(Math.ceil((date - new Date(date.getFullYear(), 0, 0)) / 86400000), 3),
+        '%-j': () => Math.ceil((date - new Date(date.getFullYear(), 0, 0)) / 86400000),
+        '%U': () => pad(getWeekNumber(date, 'sunday')),
+        '%-U': () => getWeekNumber(date, 'sunday'),
+        '%W': () => pad(getWeekNumber(date, 'monday')),
+        '%-W': () => getWeekNumber(date, 'monday'),
+        '%c': () => new Intl.DateTimeFormat(locale, { dateStyle: 'full', timeStyle: 'long' }).format(date),
+        '%x': () => new Intl.DateTimeFormat(locale, { dateStyle: 'short' }).format(date),
+        '%X': () => new Intl.DateTimeFormat(locale, { timeStyle: 'medium' }).format(date),
+        '%%': () => '%'
+    };
+
+    return format.replace(/%[-]?[a-zA-Z%]/g, (match) => {
         const replacer = replacements[match];
         return replacer ? replacer() : match;
     });
