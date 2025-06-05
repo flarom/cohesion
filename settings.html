@@ -369,9 +369,7 @@
             if (getSetting("statusCursorPos", "true") === "true") cbxStatusCursorPos.checked = "true";
             if (getSetting("statusEditorMode", "true") === "true") cbxStatusEditorMode.checked = "true";
             if (getSetting("statusDocumentSize", "true") === "true") cbxStatusDocumentSize.checked = "true";
-        })();
-
-        function updateDateTimeButtons() {
+            
             document.getElementById('dateTimeBtn1').innerHTML = strftime("%a");
             document.getElementById('dateTimeBtn2').innerHTML = strftime("%A");
             document.getElementById('dateTimeBtn3').innerHTML = strftime("%d");
@@ -390,11 +388,8 @@
             document.getElementById('dateTimeBtn16').innerHTML = strftime("%-H");
             document.getElementById('dateTimeBtn17').innerHTML = strftime("%-I");
             document.getElementById('dateTimeBtn18').innerHTML = strftime("%-M");
-            document.getElementById('dateTimeBtn19').innerHTML = strftime("%-S");          
-        }
-
-        updateDateTimeButtons();
-        setInterval(updateDateTimeButtons, 1000);
+            document.getElementById('dateTimeBtn19').innerHTML = strftime("%-S");         
+        })();
 
         function insertDateTimeOption(block) {
             const txtEditorDate = document.getElementById('editorDate');
