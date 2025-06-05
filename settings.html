@@ -353,7 +353,7 @@
             if (getSetting("editorShowHints", "true") === "true") cbxEditorShowHints.checked = "true";
             if (getSetting("editorLineNumbers", "false") === "true") cbxEditorLineNumbers.checked = "true";
             if (getSetting("editorDirection", "rtl") === "rtl") cbxEditorDirection.checked = "true";
-            txtEditorDate.value = getSetting('dateFormat', "%c");
+            txtEditorDate.value = getSetting('dateFormat', "%d/%m/%Y %H:%M");
 
             // status bar
             const cbxStatusShow = document.getElementById("statusShow");
