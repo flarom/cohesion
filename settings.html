@@ -1,292 +1,406 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Settings</title>
-        <style>
-            button.ball {
-                width: 64px;
-                height: 64px;
-                border-radius: 32px;
-                cursor: pointer;
-                border: 0;
-                box-shadow: var(--shadow);
-                transition: border-radius 0.3s;
-            }
 
-            button.ball:hover {
-                border-radius: 15px;
-            }
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings</title>
+    <style>
+        button.ball {
+            width: 64px;
+            height: 64px;
+            border-radius: 32px;
+            cursor: pointer;
+            border: 0;
+            box-shadow: var(--shadow);
+            transition: border-radius 0.3s;
+        }
 
+        button.ball:hover {
+            border-radius: 15px;
+        }
+
+        .settings-body {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 10px;
+        }
+
+        .main-page {
+            max-height: 500px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            flex-grow: 1;
+        }
+
+        .side-nav {
+            padding: 10px;
+            min-width: 150px;
+            position: sticky;
+            top: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .setting {
+            padding: 20px;
+            background-color: var(--background-color-2);
+            border-radius: 15px;
+            margin-bottom: 10px;
+        }
+
+        .setting.box {
+            padding: 0px 20px 0px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        @media screen and (max-width: 800px) {
             .settings-body {
-                display: flex;
-                justify-content: space-between;
-                gap: 20px;
-                padding: 10px;
-            }
-
-            .main-page {
-                max-height: 500px;
-                overflow-y: scroll;
-                overflow-x: hidden;
-                flex-grow: 1;
+                display: block;
             }
 
             .side-nav {
-                padding: 10px;
-                min-width: 150px;
-                position: sticky;
-                top: 0;
-                height: 100%;
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
+                flex-direction: row;
+                overflow: scroll;
             }
+        }
+    </style>
+</head>
 
-            .setting {
-                padding: 20px;
-                background-color: var(--background-color-2);
-                border-radius: 15px;
-                margin-bottom: 10px;
-            }
-
-            .setting.box {
-                padding: 0px 20px 0px 20px;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            }
-
-            @media screen and (max-width: 800px) {
-                .settings-body {
-                    display: block;
-                }
-
-                .side-nav {
-                    flex-direction: row;
-                    overflow: scroll;
-                }
-            }
-        </style>
-    </head>
-
-    <body>
-        <div class="settings-body">
-            <nav class="side-nav">
-                <a href="#theme">Theme</a>
-                <a href="#fonts">Fonts</a>
-                <a href="#editor">Editor</a>
-                <a href="#status_bar">Status Bar</a>
-                <a href="#data">My files</a>
-            </nav>
-            <div class="main-page">
-                <div>
-                    <h3 id="theme">Theme</h3>
-                    <div class="setting" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap">
-                        <button class="ball" style="background-color: #ffffff; color: #000000" onclick="setSetting('theme', 'theme-epaper');loadSettings()">ePaper</button>
-                        <button class="ball" style="background-color: #ffffff; color: #3c3c3c" onclick="setSetting('theme', 'theme-light');loadSettings()">Light</button>
-                        <button class="ball" style="background-color: #f5eacb; color: #4b3a25" onclick="setSetting('theme', 'theme-cream');loadSettings()">Cream</button>
-                        <button class="ball" style="background-color: #303030; color: #dddddd" onclick="setSetting('theme', 'theme-dark');loadSettings()">Dark</button>
-                        <button class="ball" style="background-color: #1c1a17; color: #e0d6c0" onclick="setSetting('theme', 'theme-cream-dark');loadSettings()">Coffee</button>
-                        <button class="ball" style="background-color: #000000; color: #888888" onclick="setSetting('theme', 'theme-oled');loadSettings()">OLED</button>
-                    </div>
+<body>
+    <div class="settings-body">
+        <nav class="side-nav">
+            <a href="#theme">Theme</a>
+            <a href="#fonts">Fonts</a>
+            <a href="#editor">Editor</a>
+            <a href="#status_bar">Status Bar</a>
+            <a href="#data">My files</a>
+        </nav>
+        <div class="main-page">
+            <div>
+                <h3 id="theme">Theme</h3>
+                <div class="setting" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap">
+                    <button class="ball" style="background-color: #ffffff; color: #000000"
+                        onclick="setSetting('theme', 'theme-epaper');loadSettings()">ePaper</button>
+                    <button class="ball" style="background-color: #ffffff; color: #3c3c3c"
+                        onclick="setSetting('theme', 'theme-light');loadSettings()">Light</button>
+                    <button class="ball" style="background-color: #f5eacb; color: #4b3a25"
+                        onclick="setSetting('theme', 'theme-cream');loadSettings()">Cream</button>
+                    <button class="ball" style="background-color: #303030; color: #dddddd"
+                        onclick="setSetting('theme', 'theme-dark');loadSettings()">Dark</button>
+                    <button class="ball" style="background-color: #1c1a17; color: #e0d6c0"
+                        onclick="setSetting('theme', 'theme-cream-dark');loadSettings()">Coffee</button>
+                    <button class="ball" style="background-color: #000000; color: #888888"
+                        onclick="setSetting('theme', 'theme-oled');loadSettings()">OLED</button>
                 </div>
+            </div>
 
-                <div>
-                    <h3 id="fonts">Fonts</h3>
-                    <div class="setting">
-                        <div>
-                            <label>Editor font</label>
-                            <input list="default-fonts" type="text" placeholder="Ubuntu Mono" id="fontEditor" oninput="setSetting('editorFont', this.value); loadSettings();" />
-                        </div>
-                        <div>
-                            <label>Paragraph font</label>
-                            <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontParagraph" oninput="setSetting('paragraphFont', this.value); loadSettings();" />
-                        </div>
-                        <div>
-                            <label>Title font</label>
-                            <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontTitle" oninput="setSetting('titleFont', this.value); loadSettings();" />
-                        </div>
-                        <div class="switch-wrapper">
-                            <label class="switch">
-                                <input type="checkbox" id="fontExtended" onchange="setSetting('fontExtended', this.checked); location.reload()" />
-                                <span class="slider"></span>
-                            </label>
-                            <span class="switch-text" title="Use an expanded collection of fonts">Extended font collection</span>
-                        </div>
-
-                        <datalist id="default-fonts">
-                            <option value="Ubuntu"></option>
-                            <option value="Ubuntu Mono"></option>
-                            <option value="Sans serif"></option>
-                            <option value="Serif"></option>
-                            <option value="Monospace"></option>
-                            <option value="Cursive"></option>
-                        </datalist>
-
-                        <datalist id="extended-fonts">
-                            <option value="Ubuntu"></option>
-                            <option value="Ubuntu Mono"></option>
-                            <option value="Sans serif"></option>
-                            <option value="Serif"></option>
-                            <option value="Monospace"></option>
-                            <option value="Cursive"></option>
-                            <!-- extended -->
-                            <option value="Meow Script">Cute - Meow Script</option>
-                            <option value="Cherry Bomb One">Cute - Cherry Bomb One</option>
-                            <option value="Ms Madi">Cute - Ms Madi</option>
-                            <option value="Comic Neue">Cute - Comic Neue</option>
-                            <option value="Moirai One">Cute - Moirai One</option>
-                        </datalist>
-                    </div>
-                </div>
-
-                <div>
-                    <h3 id="editor">Editor</h3>
-                    <div class="setting" style="display: flex; flex-direction: column; gap: 5px">
-                        <div class="switch-wrapper">
-                            <label class="switch">
-                                <input type="checkbox" id="editorShowHints" onchange="setSetting('editorShowHints', this.checked);" />
-                                <span class="slider"></span>
-                            </label>
-                            <span class="switch-text">Auto-complete</span>
-                        </div>
-                        <div class="switch-wrapper">
-                            <label class="switch">
-                                <input type="checkbox" id="editorLineNumbers" onchange="setSetting('editorLineNumbers', this.checked); location.reload()" />
-                                <span class="slider"></span>
-                            </label>
-                            <span class="switch-text">Line numbers</span>
-                        </div>
-                        <div class="switch-wrapper">
-                            <label class="switch">
-                                <input type="checkbox" id="editorDirection" onchange="if (this.checked) {setSetting('editorDirection', 'rtl')} else {setSetting('editorDirection', 'ltr')} location.reload()" />
-                                <span class="slider"></span>
-                            </label>
-                            <span class="switch-text">RTL text align</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <h3 id="status_bar">Status bar</h3>
-                    <div class="setting" style="display: flex; flex-direction: column; gap: 5px">
-                        <div class="switch-wrapper">
-                            <label class="switch">
-                                <input type="checkbox" id="statusShow" onchange="setSetting('statusShow', this.checked); loadSettings()" />
-                                <span class="slider"></span>
-                            </label>
-                            <span class="switch-text">Status bar</span>
-                        </div>
-                        <div style="padding-left: 20px; display: flex; flex-direction: column; gap: 5px">
-                            <div class="switch-wrapper">
-                                <label class="switch">
-                                    <input type="checkbox" id="statusCursorPos" onchange="setSetting('statusCursorPos', this.checked); loadSettings()" />
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="switch-text">Cursor position</span>
-                            </div>
-                            <div class="switch-wrapper">
-                                <label class="switch">
-                                    <input type="checkbox" id="statusEditorMode" onchange="setSetting('statusEditorMode', this.checked); loadSettings()" />
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="switch-text">Editor mode</span>
-                            </div>
-                            <div class="switch-wrapper">
-                                <label class="switch">
-                                    <input type="checkbox" id="statusDocumentSize" onchange="setSetting('statusDocumentSize', this.checked); loadSettings()" />
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="switch-text">Document size</span>
-                            </div>
-                        </div>
-                    </div>
-
+            <div>
+                <h3 id="fonts">Fonts</h3>
+                <div class="setting">
                     <div>
-                        <h3 id="data">My files</h3>
+                        <label>Editor font</label>
+                        <input list="default-fonts" type="text" placeholder="Ubuntu Mono" id="fontEditor"
+                            oninput="setSetting('editorFont', this.value); loadSettings();" />
+                    </div>
+                    <div>
+                        <label>Paragraph font</label>
+                        <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontParagraph"
+                            oninput="setSetting('paragraphFont', this.value); loadSettings();" />
+                    </div>
+                    <div>
+                        <label>Title font</label>
+                        <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontTitle"
+                            oninput="setSetting('titleFont', this.value); loadSettings();" />
+                    </div>
+                    <div class="switch-wrapper">
+                        <label class="switch">
+                            <input type="checkbox" id="fontExtended"
+                                onchange="setSetting('fontExtended', this.checked); location.reload()" />
+                            <span class="slider"></span>
+                        </label>
+                        <span class="switch-text" title="Use an expanded collection of fonts">Extended font
+                            collection</span>
+                    </div>
+
+                    <datalist id="default-fonts">
+                        <option value="Ubuntu"></option>
+                        <option value="Ubuntu Mono"></option>
+                        <option value="Sans serif"></option>
+                        <option value="Serif"></option>
+                        <option value="Monospace"></option>
+                        <option value="Cursive"></option>
+                    </datalist>
+
+                    <datalist id="extended-fonts">
+                        <option value="Ubuntu"></option>
+                        <option value="Ubuntu Mono"></option>
+                        <option value="Sans serif"></option>
+                        <option value="Serif"></option>
+                        <option value="Monospace"></option>
+                        <option value="Cursive"></option>
+                        <!-- extended -->
+                        <option value="Meow Script">Cute - Meow Script</option>
+                        <option value="Cherry Bomb One">Cute - Cherry Bomb One</option>
+                        <option value="Ms Madi">Cute - Ms Madi</option>
+                        <option value="Comic Neue">Cute - Comic Neue</option>
+                        <option value="Moirai One">Cute - Moirai One</option>
+                    </datalist>
+                </div>
+            </div>
+
+            <div>
+                <h3 id="editor">Editor</h3>
+                <div class="setting" style="display: flex; flex-direction: column; gap: 5px">
+                    <div class="switch-wrapper">
+                        <label class="switch">
+                            <input type="checkbox" id="editorShowHints"
+                                onchange="setSetting('editorShowHints', this.checked);" />
+                            <span class="slider"></span>
+                        </label>
+                        <span class="switch-text">Auto-complete</span>
+                    </div>
+                    <div class="switch-wrapper">
+                        <label class="switch">
+                            <input type="checkbox" id="editorLineNumbers"
+                                onchange="setSetting('editorLineNumbers', this.checked); location.reload()" />
+                            <span class="slider"></span>
+                        </label>
+                        <span class="switch-text">Line numbers</span>
+                    </div>
+                    <div class="switch-wrapper">
+                        <label class="switch">
+                            <input type="checkbox" id="editorDirection"
+                                onchange="if (this.checked) {setSetting('editorDirection', 'rtl')} else {setSetting('editorDirection', 'ltr')} location.reload()" />
+                            <span class="slider"></span>
+                        </label>
+                        <span class="switch-text">RTL text align</span>
+                    </div>
+                </div>
+                <div class="setting">
+                    <h4>Date & Time</h4>
+
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="text" id="editorDate" value="%d/%m/%Y %H:%M" onchange="setSetting('dateFormat', this.value)">
+                        <button class="icon-button" style="margin-bottom: 15px;" title="Reset" onclick="document.getElementById('editorDate').value='%d/%m/%Y %H:%M'; setSetting('dateFormat', document.getElementById('editorDate').value); document.getElementById('editorDate').focus();">refresh</button>
+                        <button class="icon-button" style="margin-bottom: 15px;" title="Clear" onclick="document.getElementById('editorDate').value=''; document.getElementById('editorDate').focus();">backspace</button>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                         <div>
-                            <div class="setting box">
-                                <div>
-                                    <h4>Export package</h4>
-                                    <p>Export your notes as a zip file</p>
-                                </div>
-                                <div>
-                                    <button class="text-button" onclick="exportBook();">Export</button>
-                                </div>
+                            <p>Day</p>
+                            <div style="display: flex; flex-wrap: nowrap; gap: 5px;">
+                                <button class="text-button" onclick="insertDateTimeOption('%a')" id="dateTimeBtn1" title="Weekday as locale's abbreviated name.">Sun</button>
+                                <button class="text-button" onclick="insertDateTimeOption('%A')" id="dateTimeBtn2" title="Weekday as locale's full name.">Sunday</button>
+                                <button class="text-button" onclick="insertDateTimeOption('%d')" id="dateTimeBtn3" title="Day of the month as a zero-padded decimal number.">08</button>
                             </div>
-
-                            <div class="setting box">
-                                <div>
-                                    <h4>Import package</h4>
-                                    <p>Import files from a zip file</p>
-                                </div>
-                                <div>
-                                    <button class="text-button" onclick="importBook();">Import</button>
-                                </div>
+                        </div>
+                        <div>
+                            <p>Month</p>
+                            <div style="display: flex; flex-wrap: nowrap; gap: 5px;">
+                                <button class="text-button" onclick="insertDateTimeOption('%b')" id="dateTimeBtn4" title="Month as locale's abbreviated name.">Sep</button>
+                                <button class="text-button" onclick="insertDateTimeOption('%B')" id="dateTimeBtn5" title="Month as locale's full name.">September</button>
+                                <button class="text-button" onclick="insertDateTimeOption('%m')" id="dateTimeBtn6" title="Month as a zero-padded decimal number.">09</button>
                             </div>
-
-                            <div class="setting box">
-                                <div>
-                                    <h4>Delete empty files</h4>
-                                    <p>Delete all files without any text or meta.</p>
-                                </div>
-                                <div>
-                                    <button class="text-button danger" onclick="deleteEmptyFiles();">Delete</button>
-                                </div>
+                        </div>
+                        <div>
+                            <p>Year</p>
+                            <div style="display: flex; flex-wrap: nowrap; gap: 5px;">
+                                <button class="text-button" onclick="insertDateTimeOption('%y')" id="dateTimeBtn7" title="Year without century as a zero-padded decimal number.">20</button>
+                                <button class="text-button" onclick="insertDateTimeOption('%Y')" id="dateTimeBtn8" title="Year with century as a decimal number.">2020</button>
                             </div>
+                        </div>
+                        <div>
+                            <p>Hour</p>
+                            <div style="display: flex; flex-wrap: nowrap; gap: 5px;">
+                                <button class="text-button" onclick="insertDateTimeOption('%H')" id="dateTimeBtn9" title="Hour (24-hour clock) as a zero-padded decimal number.">13</button>
+                                <button class="text-button" onclick="insertDateTimeOption('%I')" id="dateTimeBtn10" title="Hour (12-hour clock) as a zero-padded decimal number.">01</button>
+                                <button class="text-button" onclick="insertDateTimeOption('%p')" id="dateTimeBtn11" title="Locale's equivalent of either AM or PM.">PM</button>
+                            </div>
+                        </div>
+                        <div>
+                            <p>Minute</p>
+                            <div style="display: flex; flex-wrap: nowrap; gap: 5px;">
+                                <button class="text-button" onclick="insertDateTimeOption('%M')" id="dateTimeBtn12" title="Minute as a zero-padded decimal number.">06</button>
+                            </div>
+                        </div>
+                        <div>
+                            <p>Second</p>
+                            <div style="display: flex; flex-wrap: nowrap; gap: 5px;">
+                                <button class="text-button" onclick="insertDateTimeOption('%S')" id="dateTimeBtn13" title="Second as a zero-padded decimal number.">05</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                            <div class="setting box">
-                                <div>
-                                    <h4>Replace with package</h4>
-                                    <p>Import files from a zip file, replacing your files.</p>
-                                </div>
-                                <div>
-                                    <button class="text-button danger" onclick="importDeleteBook();">Replace</button>
-                                </div>
+            <div>
+                <h3 id="status_bar">Status bar</h3>
+                <div class="setting" style="display: flex; flex-direction: column; gap: 5px">
+                    <div class="switch-wrapper">
+                        <label class="switch">
+                            <input type="checkbox" id="statusShow"
+                                onchange="setSetting('statusShow', this.checked); loadSettings()" />
+                            <span class="slider"></span>
+                        </label>
+                        <span class="switch-text">Status bar</span>
+                    </div>
+                    <div style="padding-left: 20px; display: flex; flex-direction: column; gap: 5px">
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="statusCursorPos"
+                                    onchange="setSetting('statusCursorPos', this.checked); loadSettings()" />
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-text">Cursor position</span>
+                        </div>
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="statusEditorMode"
+                                    onchange="setSetting('statusEditorMode', this.checked); loadSettings()" />
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-text">Editor mode</span>
+                        </div>
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="statusDocumentSize"
+                                    onchange="setSetting('statusDocumentSize', this.checked); loadSettings()" />
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-text">Document size</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 id="data">My files</h3>
+                    <div>
+                        <div class="setting box">
+                            <div>
+                                <h4>Export package</h4>
+                                <p>Export your notes as a zip file</p>
+                            </div>
+                            <div>
+                                <button class="text-button" onclick="exportBook();">Export</button>
+                            </div>
+                        </div>
+
+                        <div class="setting box">
+                            <div>
+                                <h4>Import package</h4>
+                                <p>Import files from a zip file</p>
+                            </div>
+                            <div>
+                                <button class="text-button" onclick="importBook();">Import</button>
+                            </div>
+                        </div>
+
+                        <div class="setting box">
+                            <div>
+                                <h4>Delete empty files</h4>
+                                <p>Delete all files without any text or meta.</p>
+                            </div>
+                            <div>
+                                <button class="text-button danger" onclick="deleteEmptyFiles();">Delete</button>
+                            </div>
+                        </div>
+
+                        <div class="setting box">
+                            <div>
+                                <h4>Replace with package</h4>
+                                <p>Import files from a zip file, replacing your files.</p>
+                            </div>
+                            <div>
+                                <button class="text-button danger" onclick="importDeleteBook();">Replace</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <script>
-            (() => {
-                // fonts
-                const txtFontEditor = document.getElementById("fontEditor");
-                const txtFontParagraph = document.getElementById("fontParagraph");
-                const txtFontTitle = document.getElementById("fontTitle");
-                const cbxFontExtended = document.getElementById('fontExtended');
-                txtFontEditor.value = getSetting("editorFont", "Ubuntu Mono");
-                txtFontParagraph.value = getSetting("paragraphFont", "Ubuntu");
-                txtFontTitle.value = getSetting("titleFont", "Ubuntu");
-                if (getSetting("fontExtended", "false") === "true"){
-                    cbxFontExtended.checked = "true";
-                    txtFontEditor.setAttribute("list","extended-fonts");
-                    txtFontParagraph.setAttribute("list","extended-fonts");
-                    txtFontTitle.setAttribute("list","extended-fonts");
-                }
+    <script>
+        (() => {
+            // fonts
+            const txtFontEditor = document.getElementById("fontEditor");
+            const txtFontParagraph = document.getElementById("fontParagraph");
+            const txtFontTitle = document.getElementById("fontTitle");
+            const cbxFontExtended = document.getElementById('fontExtended');
+            txtFontEditor.value = getSetting("editorFont", "Ubuntu Mono");
+            txtFontParagraph.value = getSetting("paragraphFont", "Ubuntu");
+            txtFontTitle.value = getSetting("titleFont", "Ubuntu");
+            if (getSetting("fontExtended", "false") === "true") {
+                cbxFontExtended.checked = "true";
+                txtFontEditor.setAttribute("list", "extended-fonts");
+                txtFontParagraph.setAttribute("list", "extended-fonts");
+                txtFontTitle.setAttribute("list", "extended-fonts");
+            }
 
-                // editor
-                const cbxEditorShowHints = document.getElementById("editorShowHints");
-                const cbxEditorLineNumbers = document.getElementById("editorLineNumbers");
-                const cbxEditorDirection = document.getElementById("editorDirection");
-                if (getSetting("editorShowHints", "true") === "true") cbxEditorShowHints.checked = "true";
-                if (getSetting("editorLineNumbers", "false") === "true") cbxEditorLineNumbers.checked = "true";
-                if (getSetting("editorDirection", "rtl") === "rtl") cbxEditorDirection.checked = "true";
+            // editor
+            const cbxEditorShowHints = document.getElementById("editorShowHints");
+            const cbxEditorLineNumbers = document.getElementById("editorLineNumbers");
+            const cbxEditorDirection = document.getElementById("editorDirection");
+            const txtEditorDate = document.getElementById("editorDate");
+            if (getSetting("editorShowHints", "true") === "true") cbxEditorShowHints.checked = "true";
+            if (getSetting("editorLineNumbers", "false") === "true") cbxEditorLineNumbers.checked = "true";
+            if (getSetting("editorDirection", "rtl") === "rtl") cbxEditorDirection.checked = "true";
+            txtEditorDate.value = getSetting('dateFormat', "%c");
 
-                // status bar
-                const cbxStatusShow = document.getElementById("statusShow");
-                const cbxStatusCursorPos = document.getElementById("statusCursorPos");
-                const cbxStatusEditorMode = document.getElementById("statusEditorMode");
-                const cbxStatusDocumentSize = document.getElementById("statusDocumentSize");
-                if (getSetting("statusShow", "true") === "true") cbxStatusShow.checked = "true";
-                if (getSetting("statusCursorPos", "true") === "true") cbxStatusCursorPos.checked = "true";
-                if (getSetting("statusEditorMode", "true") === "true") cbxStatusEditorMode.checked = "true";
-                if (getSetting("statusDocumentSize", "true") === "true") cbxStatusDocumentSize.checked = "true";
-            })();
-        </script>
-    </body>
+            // status bar
+            const cbxStatusShow = document.getElementById("statusShow");
+            const cbxStatusCursorPos = document.getElementById("statusCursorPos");
+            const cbxStatusEditorMode = document.getElementById("statusEditorMode");
+            const cbxStatusDocumentSize = document.getElementById("statusDocumentSize");
+            if (getSetting("statusShow", "true") === "true") cbxStatusShow.checked = "true";
+            if (getSetting("statusCursorPos", "true") === "true") cbxStatusCursorPos.checked = "true";
+            if (getSetting("statusEditorMode", "true") === "true") cbxStatusEditorMode.checked = "true";
+            if (getSetting("statusDocumentSize", "true") === "true") cbxStatusDocumentSize.checked = "true";
+
+            const btnDateTime1 = document.getElementById('dateTimeBtn1');
+            const btnDateTime2 = document.getElementById('dateTimeBtn2');
+            const btnDateTime3 = document.getElementById('dateTimeBtn3');
+            const btnDateTime4 = document.getElementById('dateTimeBtn4');
+            const btnDateTime5 = document.getElementById('dateTimeBtn5');
+            const btnDateTime6 = document.getElementById('dateTimeBtn6');
+            const btnDateTime7 = document.getElementById('dateTimeBtn7');
+            const btnDateTime8 = document.getElementById('dateTimeBtn8');
+            const btnDateTime9 = document.getElementById('dateTimeBtn9');
+            const btnDateTime10 = document.getElementById('dateTimeBtn10');
+            const btnDateTime11 = document.getElementById('dateTimeBtn11');
+            const btnDateTime12 = document.getElementById('dateTimeBtn12');
+            const btnDateTime13 = document.getElementById('dateTimeBtn13');
+            const btnDateTime14 = document.getElementById('dateTimeBtn14');
+            btnDateTime1.innerHTML = strftime("%a");
+            btnDateTime2.innerHTML = strftime("%A");
+            btnDateTime3.innerHTML = strftime("%d");
+            btnDateTime4.innerHTML = strftime("%b");
+            btnDateTime5.innerHTML = strftime("%B");
+            btnDateTime6.innerHTML = strftime("%m");
+            btnDateTime7.innerHTML = strftime("%y");
+            btnDateTime8.innerHTML = strftime("%Y");
+            btnDateTime9.innerHTML = strftime("%H");
+            btnDateTime10.innerHTML = strftime("%I");
+            btnDateTime11.innerHTML = strftime("%p");
+            btnDateTime12.innerHTML = strftime("%M");
+            btnDateTime13.innerHTML = strftime("%S");
+        })();
+
+        function insertDateTimeOption(block) {
+            const txtEditorDate = document.getElementById('editorDate');
+            let value = txtEditorDate.value;
+
+            txtEditorDate.value = value + (value ? " " : "") + block;
+            txtEditorDate.focus();
+            setSetting('dateFormat', txtEditorDate.value);
+        }
+    </script>
+</body>
+
 </html>

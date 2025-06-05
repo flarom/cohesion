@@ -97,7 +97,7 @@ function getMeta() {
         title = `${baseTitle} (${suffix++})`;
     }
 
-    return `«««\n` + `title: ${title}\n` + `authors: *\n` + `date: ${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}\n` + `tags: misc\n` + `description: *\n` + `color: *\n` + `banner: cohesion/banners/1.png\n` + `***\n` + `editor: Cohesion\n` + `»»»`;
+    return `«««\n` + `title: ${title}\n` + `authors: *\n` + `date: ${strftime(getSetting('dateFormat', "%d/%m/%Y %H:%M"))}\n` + `tags: misc\n` + `description: *\n` + `color: *\n` + `banner: cohesion/banners/1.png\n` + `***\n` + `editor: Cohesion\n` + `»»»`;
 }
 
 function insertYouTubeVideo(url) {
@@ -254,7 +254,7 @@ async function insertFile(prefix, suffix, accept = "*/*") {
 
 function insertDate(format) {
     if (!format) {
-        format = getSetting('dateFormat', "%A, %d %B %Y %H:%M:%S");
+        format = getSetting('dateFormat', "%d/%m/%Y %H:%M");
     }
 
     const time = strftime(format);
