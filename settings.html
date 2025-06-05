@@ -188,7 +188,7 @@
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <input type="text" id="editorDate" value="%d/%m/%Y %H:%M" onchange="setSetting('dateFormat', this.value)">
                         <button class="icon-button" translate="no" style="margin-bottom: 15px;" title="Reset" onclick="document.getElementById('editorDate').value='%d/%m/%Y %H:%M'; setSetting('dateFormat', document.getElementById('editorDate').value); document.getElementById('editorDate').focus();">refresh</button>
-                        <button class="icon-button" translate="no" style="margin-bottom: 15px;" title="Clear" onclick="removeLastDateBlock()">backspace</button>
+                        <button class="icon-button" translate="no" style="margin-bottom: 15px;" title="Remove" onclick="removeLastDateBlock()">backspace</button>
                     </div>
 
                     <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px;">
