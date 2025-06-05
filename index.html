@@ -93,6 +93,11 @@
                             Save
                             <kbd>Ctrl+S</kbd>
                         </button>
+                        <hr>
+                        <button class="text-button" onmouseup="searchDocuments(); hideAllMenus();">
+                            Search documents
+                            <kbd>Ctrl+E</kbd>
+                        </button>
                         <hr />
                         <button class="text-button" onmouseup="showMessageFromFile('resources.html', true, true); hideAllMenus()">
                             Resources
@@ -817,6 +822,15 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                 el.scrollTop = coords.top - 50;
             }
 
+            async function searchDocuments() {
+                const newIndex = await promptFileSearch();
+                if (newIndex != null) {
+                    index = newIndex;
+                    renderEditor();
+                    editor.focus();
+                }
+            }
+
             document.addEventListener("keydown", async function (event) {
                 if (event.key === "Escape") {
                     hideAllMenus();
@@ -868,12 +882,7 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                 } else if (event.ctrlKey && event.key === "e") {
                     event.preventDefault();
 
-                    const newIndex = await promptFileSearch();
-                    if (newIndex != null) {
-                        index = newIndex;
-                        renderEditor();
-                        editor.focus();
-                    }
+                    searchDocuments();
                 }
 
                 // FILE
