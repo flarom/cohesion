@@ -250,6 +250,7 @@ function showMessageFromFile(filePath, showCloseButton = true, useBigDialog = fa
             const okButton = document.createElement("button");
             okButton.textContent = "close";
             okButton.className = "icon-button dialog-window-control";
+            okButton.setAttribute('translate', 'no');
 
             const content = document.createElement("div");
 
@@ -394,6 +395,7 @@ function promptTableSelector() {
         const cancelButton = document.createElement("button");
         cancelButton.textContent = "close";
         cancelButton.className = "icon-button dialog-window-control";
+        cancelButton.setAttribute('translate', 'no');
         buttonContainer.appendChild(cancelButton);
 
         dialog.appendChild(buttonContainer);
@@ -686,6 +688,7 @@ function promptSelect(title, options) {
         const cancelButton = document.createElement("button");
         cancelButton.textContent = "close";
         cancelButton.className = "icon-button dialog-window-control";
+        cancelButton.setAttribute('translate', 'no');
         cancelButton.addEventListener("click", () => {
             document.body.removeChild(overlay);
             resolve(null);

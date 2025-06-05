@@ -384,6 +384,7 @@ function renderFiles(containerId) {
         fileButton.className = "file";
         fileButton.setAttribute("draggable", "true");
         fileButton.dataset.index = i;
+        fileButton.setAttribute('translate', 'no');
 
         if (i === index) {
             fileButton.classList.add("selected");

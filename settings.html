@@ -187,57 +187,62 @@
 
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <input type="text" id="editorDate" value="%d/%m/%Y %H:%M" onchange="setSetting('dateFormat', this.value)">
-                        <button class="icon-button" style="margin-bottom: 15px;" title="Reset" onclick="document.getElementById('editorDate').value='%d/%m/%Y %H:%M'; setSetting('dateFormat', document.getElementById('editorDate').value); document.getElementById('editorDate').focus();">refresh</button>
-                        <button class="icon-button" style="margin-bottom: 15px;" title="Clear" onclick="document.getElementById('editorDate').value=''; document.getElementById('editorDate').focus();">backspace</button>
+                        <button class="icon-button" translate="no" style="margin-bottom: 15px;" title="Reset" onclick="document.getElementById('editorDate').value='%d/%m/%Y %H:%M'; setSetting('dateFormat', document.getElementById('editorDate').value); document.getElementById('editorDate').focus();">refresh</button>
+                        <button class="icon-button" translate="no" style="margin-bottom: 15px;" title="Clear" onclick="removeLastDateBlock()">backspace</button>
                     </div>
 
-                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px;">
                         <div>
                             <p>Day</p>
                             <div style="display: flex; flex-wrap: nowrap; gap: 5px;">
-                                <button class="text-button" onclick="insertDateTimeOption('%a')" id="dateTimeBtn1" title="Weekday as locale's abbreviated name.">Sun</button>
-                                <button class="text-button" onclick="insertDateTimeOption('%A')" id="dateTimeBtn2" title="Weekday as locale's full name.">Sunday</button>
-                                <button class="text-button" onclick="insertDateTimeOption('%d')" id="dateTimeBtn3" title="Day of the month as a zero-padded decimal number.">08</button>
-                                <button class="text-button" onclick="insertDateTimeOption('%-d')" id="dateTimeBtn14" title="Day of the month as a decimal number.">8</button>
-
+                                <button class="text-button" translate="no" onclick="insertDateTimeOption('%A')" id="dateTimeBtn2" title="Full weekday name (e.g., 'Sunday')">%A</button>
+                                <button class="text-button" translate="no" onclick="insertDateTimeOption('%a')" id="dateTimeBtn1" title="Abbreviated weekday name (e.g., 'Sun' for Sunday)">%a</button>
+                                <button class="text-button" translate="no" onclick="insertDateTimeOption('%d')" id="dateTimeBtn3" title="Day of the month with leading zero (01-31)">%d</button>
+                                <button class="text-button" translate="no" onclick="insertDateTimeOption('%-d')" id="dateTimeBtn14" title="Day of the month without leading zero (1-31)">%-d</button>
                             </div>
                         </div>
                         <div>
                             <p>Month</p>
                             <div style="display: flex; flex-wrap: nowrap; gap: 5px;">
-                                <button class="text-button" onclick="insertDateTimeOption('%b')" id="dateTimeBtn4" title="Month as locale's abbreviated name.">Sep</button>
-                                <button class="text-button" onclick="insertDateTimeOption('%B')" id="dateTimeBtn5" title="Month as locale's full name.">September</button>
-                                <button class="text-button" onclick="insertDateTimeOption('%m')" id="dateTimeBtn6" title="Month as a zero-padded decimal number.">09</button>
+                                <button class="text-button" translate="no" onclick="insertDateTimeOption('%B')" id="dateTimeBtn5" title="Full month name (e.g., 'September')">%B</button>
+                                <button class="text-button" translate="no" onclick="insertDateTimeOption('%b')" id="dateTimeBtn4" title="Abbreviated month name (e.g., 'Sep' for September)">%b</button>
+                                <button class="text-button" translate="no" onclick="insertDateTimeOption('%m')" id="dateTimeBtn6" title="Month as a number with leading zero (01-12)">%m</button>
+                                <button class="text-button" translate="no" onclick="insertDateTimeOption('%-m')" id="dateTimeBtn15" title="Month as a number without leading zero (1-12)">%-m</button>
                             </div>
                         </div>
                         <div>
                             <p>Year</p>
                             <div style="display: flex; flex-wrap: nowrap; gap: 5px;">
-                                <button class="text-button" onclick="insertDateTimeOption('%y')" id="dateTimeBtn7" title="Year without century as a zero-padded decimal number.">20</button>
-                                <button class="text-button" onclick="insertDateTimeOption('%Y')" id="dateTimeBtn8" title="Year with century as a decimal number.">2020</button>
+                                <button class="text-button" translate="no" onclick="insertDateTimeOption('%Y')" id="dateTimeBtn8" title="Full year with century (e.g., '2024')">%Y</button>
+                                <button class="text-button" translate="no" onclick="insertDateTimeOption('%y')" id="dateTimeBtn7" title="Year without century, as two digits (e.g., '24' for 2024)">%y</button>
                             </div>
                         </div>
                         <div>
                             <p>Hour</p>
                             <div style="display: flex; flex-wrap: nowrap; gap: 5px;">
-                                <button class="text-button" onclick="insertDateTimeOption('%H')" id="dateTimeBtn9" title="Hour (24-hour clock) as a zero-padded decimal number.">13</button>
-                                <button class="text-button" onclick="insertDateTimeOption('%I')" id="dateTimeBtn10" title="Hour (12-hour clock) as a zero-padded decimal number.">01</button>
-                                <button class="text-button" onclick="insertDateTimeOption('%p')" id="dateTimeBtn11" title="Locale's equivalent of either AM or PM.">PM</button>
+                                <button class="text-button" translate="no" onclick="insertDateTimeOption('%H')" id="dateTimeBtn9" title="Hour (24-hour clock) with leading zero (00-23)">%H</button>
+                                <button class="text-button" translate="no" onclick="insertDateTimeOption('%-H')" id="dateTimeBtn16" title="Hour (24-hour clock) without leading zero (0-23)">%-H</button>
+                                <button class="text-button" translate="no" onclick="insertDateTimeOption('%I')" id="dateTimeBtn10" title="Hour (12-hour clock) with leading zero (01-12)">%I</button>
+                                <button class="text-button" translate="no" onclick="insertDateTimeOption('%-I')" id="dateTimeBtn17" title="Hour (12-hour clock) without leading zero (1-12)">%-I</button>
+                                <button class="text-button" translate="no" onclick="insertDateTimeOption('%p')" id="dateTimeBtn11" title="AM or PM indicator">%p</button>
                             </div>
                         </div>
                         <div>
                             <p>Minute</p>
                             <div style="display: flex; flex-wrap: nowrap; gap: 5px;">
-                                <button class="text-button" onclick="insertDateTimeOption('%M')" id="dateTimeBtn12" title="Minute as a zero-padded decimal number.">06</button>
+                                <button class="text-button" translate="no" onclick="insertDateTimeOption('%M')" id="dateTimeBtn12" title="Minute with leading zero (00-59)">%M</button>
+                                <button class="text-button" translate="no" onclick="insertDateTimeOption('%-M')" id="dateTimeBtn18" title="Minute without leading zero (0-59)">%-M</button>
                             </div>
                         </div>
                         <div>
                             <p>Second</p>
                             <div style="display: flex; flex-wrap: nowrap; gap: 5px;">
-                                <button class="text-button" onclick="insertDateTimeOption('%S')" id="dateTimeBtn13" title="Second as a zero-padded decimal number.">05</button>
+                                <button class="text-button" translate="no" onclick="insertDateTimeOption('%S')" id="dateTimeBtn13" title="Second with leading zero (00-59)">%S</button>
+                                <button class="text-button" translate="no" onclick="insertDateTimeOption('%-S')" id="dateTimeBtn19" title="Second without leading zero (0-59)">%-S</button>
                             </div>
                         </div>
                     </div>
+                    <a href="https://www.foragoodstrftime.com/">Learn more about date and time syntax</a>
                 </div>
             </div>
 
@@ -364,36 +369,32 @@
             if (getSetting("statusCursorPos", "true") === "true") cbxStatusCursorPos.checked = "true";
             if (getSetting("statusEditorMode", "true") === "true") cbxStatusEditorMode.checked = "true";
             if (getSetting("statusDocumentSize", "true") === "true") cbxStatusDocumentSize.checked = "true";
-
-            const btnDateTime1 = document.getElementById('dateTimeBtn1');
-            const btnDateTime2 = document.getElementById('dateTimeBtn2');
-            const btnDateTime3 = document.getElementById('dateTimeBtn3');
-            const btnDateTime4 = document.getElementById('dateTimeBtn4');
-            const btnDateTime5 = document.getElementById('dateTimeBtn5');
-            const btnDateTime6 = document.getElementById('dateTimeBtn6');
-            const btnDateTime7 = document.getElementById('dateTimeBtn7');
-            const btnDateTime8 = document.getElementById('dateTimeBtn8');
-            const btnDateTime9 = document.getElementById('dateTimeBtn9');
-            const btnDateTime10 = document.getElementById('dateTimeBtn10');
-            const btnDateTime11 = document.getElementById('dateTimeBtn11');
-            const btnDateTime12 = document.getElementById('dateTimeBtn12');
-            const btnDateTime13 = document.getElementById('dateTimeBtn13');
-            const btnDateTime14 = document.getElementById('dateTimeBtn14');
-            btnDateTime1.innerHTML = strftime("%a");
-            btnDateTime2.innerHTML = strftime("%A");
-            btnDateTime3.innerHTML = strftime("%d");
-            btnDateTime4.innerHTML = strftime("%b");
-            btnDateTime5.innerHTML = strftime("%B");
-            btnDateTime6.innerHTML = strftime("%m");
-            btnDateTime7.innerHTML = strftime("%y");
-            btnDateTime8.innerHTML = strftime("%Y");
-            btnDateTime9.innerHTML = strftime("%H");
-            btnDateTime10.innerHTML = strftime("%I");
-            btnDateTime11.innerHTML = strftime("%p");
-            btnDateTime12.innerHTML = strftime("%M");
-            btnDateTime13.innerHTML = strftime("%S");
-            btnDateTime14.innerHTML = strftime("%-d");
         })();
+
+        function updateDateTimeButtons() {
+            document.getElementById('dateTimeBtn1').innerHTML = strftime("%a");
+            document.getElementById('dateTimeBtn2').innerHTML = strftime("%A");
+            document.getElementById('dateTimeBtn3').innerHTML = strftime("%d");
+            document.getElementById('dateTimeBtn4').innerHTML = strftime("%b");
+            document.getElementById('dateTimeBtn5').innerHTML = strftime("%B");
+            document.getElementById('dateTimeBtn6').innerHTML = strftime("%m");
+            document.getElementById('dateTimeBtn7').innerHTML = strftime("%y");
+            document.getElementById('dateTimeBtn8').innerHTML = strftime("%Y");
+            document.getElementById('dateTimeBtn9').innerHTML = strftime("%H");
+            document.getElementById('dateTimeBtn10').innerHTML = strftime("%I");
+            document.getElementById('dateTimeBtn11').innerHTML = strftime("%p");
+            document.getElementById('dateTimeBtn12').innerHTML = strftime("%M");
+            document.getElementById('dateTimeBtn13').innerHTML = strftime("%S");
+            document.getElementById('dateTimeBtn14').innerHTML = strftime("%-d");
+            document.getElementById('dateTimeBtn15').innerHTML = strftime("%-m");  
+            document.getElementById('dateTimeBtn16').innerHTML = strftime("%-H");
+            document.getElementById('dateTimeBtn17').innerHTML = strftime("%-I");
+            document.getElementById('dateTimeBtn18').innerHTML = strftime("%-M");
+            document.getElementById('dateTimeBtn19').innerHTML = strftime("%-S");          
+        }
+
+        updateDateTimeButtons();
+        setInterval(updateDateTimeButtons, 1000);
 
         function insertDateTimeOption(block) {
             const txtEditorDate = document.getElementById('editorDate');
@@ -403,6 +404,24 @@
             txtEditorDate.focus();
             setSetting('dateFormat', txtEditorDate.value);
         }
+
+        function removeLastDateBlock() {
+            const input = document.getElementById('editorDate');
+            let value = input.value;
+
+            const lastPercentIndex = value.lastIndexOf('%');
+
+            if (lastPercentIndex !== -1) {
+                value = value.substring(0, lastPercentIndex);
+            } else {
+                value = '';
+            }
+
+            input.value = value;
+            input.focus();
+            setSetting('dateFormat', value);
+        }
+
     </script>
 </body>
 
