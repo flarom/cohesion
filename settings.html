@@ -181,6 +181,14 @@
                         </label>
                         <span class="switch-text">RTL text align</span>
                     </div>
+                    <div class="switch-wrapper">
+                        <label class="switch">
+                            <input type="checkbox" id="editorWidth"
+                                onchange="setSetting('editorWidth', this.checked); location.reload()" />
+                            <span class="slider"></span>
+                        </label>
+                        <span class="switch-text">Full width</span>
+                    </div>
                 </div>
                 <div class="setting">
                     <h4>Date & Time</h4>
@@ -354,10 +362,12 @@
             const cbxEditorShowHints = document.getElementById("editorShowHints");
             const cbxEditorLineNumbers = document.getElementById("editorLineNumbers");
             const cbxEditorDirection = document.getElementById("editorDirection");
+            const cbxEditorWidth = document.getElementById("editorWidth");
             const txtEditorDate = document.getElementById("editorDate");
             if (getSetting("editorShowHints", "true") === "true") cbxEditorShowHints.checked = "true";
             if (getSetting("editorLineNumbers", "false") === "true") cbxEditorLineNumbers.checked = "true";
             if (getSetting("editorDirection", "rtl") === "rtl") cbxEditorDirection.checked = "true";
+            if (getSetting("editorWidth", "false") === "true") cbxEditorWidth.checked = "true";
             txtEditorDate.value = getSetting('dateFormat', "%d/%m/%Y %H:%M");
 
             // status bar

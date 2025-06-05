@@ -675,6 +675,10 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     link.href = "style/extendedfonts.css";
                     document.head.appendChild(link);
                 }
+
+                if (getSetting("editorWidth", "false") === "true") {
+                    editor.getWrapperElement().classList.add('CodeMirror-Large');
+                }
             }
 
             function getCursor(query) {
