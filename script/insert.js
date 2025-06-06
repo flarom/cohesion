@@ -97,7 +97,7 @@ function getMeta() {
         title = `${baseTitle} (${suffix++})`;
     }
 
-    return `«««\n` + `title: ${title}\n` + `authors: *\n` + `date: ${strftime(getSetting('dateFormat', "%d/%m/%Y %H:%M"))}\n` + `tags: misc\n` + `description: *\n` + `color: *\n` + `banner: cohesion/banners/1.png\n` + `***\n` + `editor: Cohesion\n` + `»»»`;
+    return `«««\n` + `title: ${title}\n` + `authors: *\n` + `date: ${strftime(getSetting("dateFormat", "%d/%m/%Y %H:%M"))}\n` + `tags: misc\n` + `description: *\n` + `color: *\n` + `banner: cohesion/banners/1.png\n` + `***\n` + `editor: Cohesion\n` + `»»»`;
 }
 
 function insertYouTubeVideo(url) {
@@ -254,7 +254,7 @@ async function insertFile(prefix, suffix, accept = "*/*") {
 
 function insertDate(format) {
     if (!format) {
-        format = getSetting('dateFormat', "%d/%m/%Y %H:%M");
+        format = getSetting("dateFormat", "%d/%m/%Y %H:%M");
     }
 
     const time = strftime(format);
@@ -263,10 +263,10 @@ function insertDate(format) {
 }
 
 function strftime(format, date = new Date()) {
-    const locale = navigator.language || 'en-US';
+    const locale = navigator.language || "en-US";
 
-    const pad = (num, len = 2) => String(num).padStart(len, '0');
-    const blankPad = (num) => String(num).padStart(2, ' ');
+    const pad = (num, len = 2) => String(num).padStart(len, "0");
+    const blankPad = (num) => String(num).padStart(2, " ");
 
     const getMicroseconds = (date) => pad(date.getMilliseconds() * 1000, 6);
 
@@ -282,7 +282,7 @@ function strftime(format, date = new Date()) {
     const getWeekNumber = (d, startOfWeek) => {
         const newDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
         const dayNum = newDate.getDay();
-        const weekStart = startOfWeek === 'sunday' ? 0 : 1;
+        const weekStart = startOfWeek === "sunday" ? 0 : 1;
         const diff = (newDate - new Date(newDate.getFullYear(), 0, 1)) / 86400000;
         return Math.floor((diff + new Date(newDate.getFullYear(), 0, 1).getDay() - weekStart) / 7) + 0;
     };
@@ -290,59 +290,87 @@ function strftime(format, date = new Date()) {
     const getISOWeekNumber = (d) => {
         const date = new Date(d.getTime());
         date.setHours(0, 0, 0, 0);
-        date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+        date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));
         const week1 = new Date(date.getFullYear(), 0, 4);
-        return 1 + Math.round(((date - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+        return 1 + Math.round(((date - week1) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7);
     };
 
     const formatTimeZone = () => {
-        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-        const parts = timeZone.split('/');
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+        const parts = timeZone.split("/");
         if (parts.length > 1) {
-            const city = parts[1].replace(/_/g, ' ');
+            const city = parts[1].replace(/_/g, " ");
             return city.charAt(0).toUpperCase() + city.slice(1);
         }
         return timeZone;
     };
 
     const replacements = {
-        '%a': () => new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(date),
-        '%A': () => new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(date),
-        '%w': () => date.getDay(),
-        '%d': () => pad(date.getDate()),
-        '%-d': () => date.getDate(),
-        '%b': () => new Intl.DateTimeFormat(locale, { month: 'short' }).format(date),
-        '%B': () => new Intl.DateTimeFormat(locale, { month: 'long' }).format(date),
-        '%m': () => pad(date.getMonth() + 1),
-        '%-m': () => date.getMonth() + 1,
-        '%y': () => pad(date.getFullYear() % 100),
-        '%Y': () => date.getFullYear(),
-        '%H': () => pad(date.getHours()),
-        '%-H': () => date.getHours(),
-        '%I': () => pad((date.getHours() % 12) || 12),
-        '%-I': () => (date.getHours() % 12) || 12,
-        '%p': () => date.getHours() < 12 ? 'AM' : 'PM',
-        '%M': () => pad(date.getMinutes()),
-        '%-M': () => date.getMinutes(),
-        '%S': () => pad(date.getSeconds()),
-        '%-S': () => date.getSeconds(),
-        '%f': () => getMicroseconds(date),
-        '%z': () => getUTCOffset(date),
-        '%Z': () => formatTimeZone(),
-        '%j': () => pad(Math.ceil((date - new Date(date.getFullYear(), 0, 0)) / 86400000), 3),
-        '%-j': () => Math.ceil((date - new Date(date.getFullYear(), 0, 0)) / 86400000),
-        '%U': () => pad(getWeekNumber(date, 'sunday')),
-        '%-U': () => getWeekNumber(date, 'sunday'),
-        '%W': () => pad(getWeekNumber(date, 'monday')),
-        '%-W': () => getWeekNumber(date, 'monday'),
-        '%c': () => new Intl.DateTimeFormat(locale, { dateStyle: 'full', timeStyle: 'long' }).format(date),
-        '%x': () => new Intl.DateTimeFormat(locale, { dateStyle: 'short' }).format(date),
-        '%X': () => new Intl.DateTimeFormat(locale, { timeStyle: 'medium' }).format(date),
-        '%%': () => '%'
+        "%a": () => new Intl.DateTimeFormat(locale, { weekday: "short" }).format(date),
+        "%A": () => new Intl.DateTimeFormat(locale, { weekday: "long" }).format(date),
+        "%w": () => date.getDay(),
+        "%d": () => pad(date.getDate()),
+        "%-d": () => date.getDate(),
+        "%b": () => new Intl.DateTimeFormat(locale, { month: "short" }).format(date),
+        "%B": () => new Intl.DateTimeFormat(locale, { month: "long" }).format(date),
+        "%m": () => pad(date.getMonth() + 1),
+        "%-m": () => date.getMonth() + 1,
+        "%y": () => pad(date.getFullYear() % 100),
+        "%Y": () => date.getFullYear(),
+        "%H": () => pad(date.getHours()),
+        "%-H": () => date.getHours(),
+        "%I": () => pad(date.getHours() % 12 || 12),
+        "%-I": () => date.getHours() % 12 || 12,
+        "%p": () => (date.getHours() < 12 ? "AM" : "PM"),
+        "%M": () => pad(date.getMinutes()),
+        "%-M": () => date.getMinutes(),
+        "%S": () => pad(date.getSeconds()),
+        "%-S": () => date.getSeconds(),
+        "%f": () => getMicroseconds(date),
+        "%z": () => getUTCOffset(date),
+        "%Z": () => formatTimeZone(),
+        "%j": () => pad(Math.ceil((date - new Date(date.getFullYear(), 0, 0)) / 86400000), 3),
+        "%-j": () => Math.ceil((date - new Date(date.getFullYear(), 0, 0)) / 86400000),
+        "%U": () => pad(getWeekNumber(date, "sunday")),
+        "%-U": () => getWeekNumber(date, "sunday"),
+        "%W": () => pad(getWeekNumber(date, "monday")),
+        "%-W": () => getWeekNumber(date, "monday"),
+        "%c": () => new Intl.DateTimeFormat(locale, { dateStyle: "full", timeStyle: "long" }).format(date),
+        "%x": () => new Intl.DateTimeFormat(locale, { dateStyle: "short" }).format(date),
+        "%X": () => new Intl.DateTimeFormat(locale, { timeStyle: "medium" }).format(date),
+        "%%": () => "%",
     };
 
     return format.replace(/%[-]?[a-zA-Z%]/g, (match) => {
         const replacer = replacements[match];
         return replacer ? replacer() : match;
     });
+}
+
+function getSummary(markdown) {
+    const lines = markdown.split("\n");
+    const titles = [];
+
+    for (const line of lines) {
+        const match = line.match(/^(#{1,6})\s+(.+)$/);
+        if (match) {
+            const level = match[1].length;
+            const text = match[2].trim();
+            const id = text
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^\w\s-]/g, "")
+                .replace(/\s+/g, "-");
+
+            titles.push({ level, text, id });
+        }
+    }
+
+    return titles
+        .map((title) => {
+            const indent = "    ".repeat(title.level - 1);
+            return `${indent}- [${title.text}](#${title.id})`;
+        })
+        .join("\n");
 }

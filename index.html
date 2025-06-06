@@ -608,34 +608,6 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                 });
             }
 
-            function getSummary(markdown) {
-                const lines = markdown.split("\n");
-                const titles = [];
-
-                for (const line of lines) {
-                    const match = line.match(/^(#{1,6})\s+(.+)$/);
-                    if (match) {
-                        const level = match[1].length;
-                        const text = match[2].trim();
-                        const id = text
-                            .toLowerCase()
-                            .normalize("NFD")
-                            .replace(/[\u0300-\u036f]/g, "")
-                            .replace(/[^\w\s-]/g, "")
-                            .replace(/\s+/g, "-");
-
-                        titles.push({ level, text, id });
-                    }
-                }
-
-                return titles
-                    .map((title) => {
-                        const indent = "    ".repeat(title.level - 1);
-                        return `${indent}- [${title.text}](#${title.id})`;
-                    })
-                    .join("\n");
-            }
-
             function loadSettings() {
                 const theme = getSetting("theme");
                 if (theme) document.body.className = theme;
@@ -836,6 +808,9 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
             }
 
             document.addEventListener("keydown", async function (event) {
+                /** NAVIGATION **/
+
+                //// Focus on editor (esc)
                 if (event.key === "Escape") {
                     hideAllMenus();
                     editor.focus();
@@ -843,67 +818,84 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     editorMenu.removeEventListener("keydown", handleArrowNavigation);
                     editorMenu.removeEventListener("keydown", handleActivation);
                 }
-                // NAVIGATION
+                //// Toggle preview (ctrl p)
                 else if (event.ctrlKey && event.key === "p") {
-                    // toggle preview - ctrl+p
                     event.preventDefault();
                     togglePreview();
-                } else if (event.key === "F1") {
-                    // about - f1
+                }
+                //// About cohesion (f1)
+                else if (event.key === "F1") {
                     event.preventDefault();
                     showMessageFromFile("about.html");
-                } else if (event.key === "F9") {
-                    // toggle sidepane - f9
+                }
+                //// Toggle sidebar (f9)
+                else if (event.key === "F9") {
                     event.preventDefault();
                     toggleSidebar("files-bar");
-                } else if (event.key === "F10") {
-                    // show main menu
+                }
+                //// Toggle main menu (f10)
+                else if (event.key === "F10") {
                     event.preventDefault();
                     toggleDropdown("more-menu");
-                } else if (event.altKey && event.key === "i") {
-                    // show insert menu
+                }
+                //// Toggle insert menu (ctrl i)
+                else if (event.altKey && event.key === "i") {
                     event.preventDefault();
                     toggleDropdown("insert-menu");
-                } else if (event.ctrlKey && event.key === ",") {
+                }
+                //// Show settings screen (ctrl ,)
+                else if (event.ctrlKey && event.key === ",") {
                     event.preventDefault();
                     showMessageFromFile("settings.html", true, false, 900);
                     hideAllMenus();
-                } else if (event.ctrlKey && event.key === "?") {
+                }
+                //// Show shortcuts screen (ctrl ? || ctrl shift ?)
+                else if (event.ctrlKey && event.key === "?") {
                     event.preventDefault();
                     showMessageFromFile("shortcuts.html", true, false, 600);
                     hideAllMenus();
-                } else if (event.altKey && event.key === "p") {
+                }
+                //// Show resources screen (alt p)
+                else if (event.altKey && event.key === "p") {
                     event.preventDefault();
                     showMessageFromFile("resources.html", true, true);
                     hideAllMenus();
-                } else if (event.altKey && /^[0-9]$/.test(event.key)) {
+                }
+                //// Switch between the first ten documents (alt 1-0)
+                else if (event.altKey && /^[0-9]$/.test(event.key)) {
                     event.preventDefault();
                     const newIndex = event.key === "0" ? 9 : parseInt(event.key) - 1;
                     if (newIndex > files.length - 1) return;
                     index = newIndex;
                     renderEditor();
                     editor.focus();
-                } else if (event.ctrlKey && event.key === "e") {
+                }
+                //// Search documents (ctrl e)
+                else if (event.ctrlKey && event.key === "e") {
                     event.preventDefault();
 
                     searchDocuments();
                 }
 
-                // FILE
+                /** FILE **/
+
+                //// New file (ctrl n)
                 else if (event.altKey && event.key === "n") {
-                    // new - ctrl+n
                     event.preventDefault();
                     createFile();
-                } else if (event.ctrlKey && event.key === "s") {
-                    // download - ctrl+s
+                }
+                //// Download file (ctrl s)
+                else if (event.ctrlKey && event.key === "s") {
                     event.preventDefault();
                     promptSaveFile(index);
-                } else if (event.ctrlKey && event.key === "o") {
-                    // open - ctrl+o
+                }
+                //// Upload file (ctrl o)
+                else if (event.ctrlKey && event.key === "o") {
                     event.preventDefault();
                     importFile();
-                } else if (event.shiftKey && event.ctrlKey && event.key === "Delete") {
-                    // delete - ctrl+shift+delete
+                }
+                //// Delete file (ctrl shift delete)
+                else if (event.shiftKey && event.ctrlKey && event.key === "Delete") {
                     event.preventDefault();
                     if (!(await promptConfirm("Delete this document?", true))) return;
 
@@ -919,21 +911,25 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                     showToast("Deleted", "delete");
                 }
 
-                // EDIT
+                /** EDIT **/
+
+                //// Bold (ctrl b)
                 else if (event.ctrlKey && event.key === "b") {
-                    // bold - ctrl+b
                     event.preventDefault();
                     formatBold();
-                } else if (event.ctrlKey && event.key === "i") {
-                    // italic - ctrl+i
+                }
+                //// Italic (ctrl i)
+                else if (event.ctrlKey && event.key === "i") {
                     event.preventDefault();
                     formatItalic();
-                } else if (event.ctrlKey && event.key === "u") {
-                    // unordered list - ctrl+u
+                }
+                //// Unordered list (ctrl u)
+                else if (event.ctrlKey && event.key === "u") {
                     event.preventDefault();
                     toggleLineStart("- ", true, ["- ", "* ", "+ "]);
-                } else if (event.ctrlKey && event.key >= "1" && event.key <= "6") {
-                    // titles - ctrl+1/6
+                }
+                //// Title (ctrl 1-6)
+                else if (event.ctrlKey && event.key >= "1" && event.key <= "6") {
                     event.preventDefault();
                     const level = parseInt(event.key, 10);
                     toggleLineStart(
@@ -941,13 +937,16 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                         true,
                         Array.from({ length: 6 }, (_, i) => "#".repeat(i + 1) + " ")
                     );
-                } else if (event.ctrlKey && event.key === "r") {
-                    // horizontal rule - ctrl+r
+                }
+                //// Horizontal rule (ctrl r)
+                else if (event.ctrlKey && event.key === "r") {
                     event.preventDefault();
                     insertAt("\n\n***\n\n", 7, 7);
                 }
 
-                //SEACRH
+                /** SEARCH **/
+
+                //// Go to line (ctrl g)
                 else if (event.ctrlKey && event.key === "g") {
                     event.preventDefault();
                     search();
@@ -975,19 +974,36 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                             search(true);
                         }
                     }
-                } else if (event.ctrlKey && event.key === "f") {
+                }
+                //// Show search bar (ctrl f)
+                else if (event.ctrlKey && event.key === "f") {
                     event.preventDefault();
                     toggleSearchHeader(editor.getSelection());
-                } else if (event.ctrlKey && event.key === "h") {
+                }
+                //// Show search and replace bar (ctrl h)
+                else if (event.ctrlKey && event.key === "h") {
                     event.preventDefault();
                     toggleReplaceHeader(editor.getSelection());
                 }
 
-                // INSERT
+                /** INSERT **/
+                
+                //// Insert meta block (ctrl ;)
                 else if (event.ctrlKey && event.key === ";") {
                     event.preventDefault();
                     insertAtTop(getMeta());
-                } else if(event.key === "F6") {
+                }
+                //// Insert date and time with custom syntax (shift f6)
+                else if (event.shiftKey && event.key === "F6") {
+                    event.preventDefault();
+                    const strftime = await promptString("Insert date time format", getSetting("dateFormat", "%d/%m/%Y %H:%M"));
+                    if (strftime){
+                    insertDate(strftime);
+                    }
+                    editor.focus();
+                }
+                //// Insert date and time with default syntax (f6)
+                else if(event.key === "F6") {
                     event.preventDefault();
                     insertDate();
                 }
