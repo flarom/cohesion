@@ -1,4 +1,4 @@
-const internalLinkExtension = () => {
+const internalLink = () => {
     return [{
         type: 'lang',
         regex: /\[\[([^\]]+)\]\]/g,

@@ -1,7 +1,7 @@
-showdown.extension('bannerImage', function() {
+const bannerImage = () => {
   return [{
     type: 'output',
-    filter: function(text, converter, options) {
+    filter: (text, converter, options) => {
       const metadata = converter.getMetadata ? converter.getMetadata() : {};
       const bannerPath = metadata.banner;
 
@@ -13,4 +13,4 @@ showdown.extension('bannerImage', function() {
       return text;
     }
   }];
-});
+};
