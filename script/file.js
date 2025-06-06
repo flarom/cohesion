@@ -90,7 +90,7 @@ function importFile() {
             files.unshift(reader.result);
             saveFilesToStorage();
             renderFiles("files");
-            index = files.lenght - 1;
+            index = 0;
             localStorage.setItem('lastIndex', index);
             renderEditor();
             editor.focus();

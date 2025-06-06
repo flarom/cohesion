@@ -804,7 +804,30 @@ function promptSaveFile(fileId) {
                 exportFile(fileId, fileNameField.value);
                 break;
             case "pdf":
-                showToast("Can't export PDF yet!!!!", "sentiment_frustrated");
+                const pdfContainer = document.createElement("div");
+                pdfContainer.innerHTML = converter.makeHtml(getFileText(fileId));
+                pdfContainer.style.padding = "20px";
+                pdfContainer.style.maxWidth = "900px";
+                pdfContainer.style.margin = "0 auto";
+                pdfContainer.style.fontFamily = "sans-serif";
+
+                document.body.appendChild(pdfContainer);
+                html2pdf()
+                    .set({
+                        margin: 10,
+                        filename: fileNameField.value + ".pdf",
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2 },
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    })
+                    .from(pdfContainer)
+                    .save()
+                    .then(() => {
+                        document.body.removeChild(pdfContainer);
+                    })
+                    .catch(() => {
+                        document.body.removeChild(pdfContainer);
+                    });
                 break;
             case "html":
                 const htmlContainer = document.createElement("html");

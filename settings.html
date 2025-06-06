@@ -322,7 +322,7 @@
                                 <p>Delete all files without any text or meta.</p>
                             </div>
                             <div>
-                                <button class="text-button danger" onclick="deleteEmptyFiles();">Delete</button>
+                                <button class="text-button danger" onclick="handleDeleteEmptyFiles();">Delete</button>
                             </div>
                         </div>
 
@@ -332,7 +332,7 @@
                                 <p>Import files from a zip file, replacing your files.</p>
                             </div>
                             <div>
-                                <button class="text-button danger" onclick="importDeleteBook();">Replace</button>
+                                <button class="text-button danger" onclick="handleImportDeleteBook();">Replace</button>
                             </div>
                         </div>
                     </div>
@@ -427,6 +427,17 @@
             setSetting('dateFormat', value);
         }
 
+        async function handleDeleteEmptyFiles() {
+            if(await promptConfirm("Are you sure you want to delete empty files?", true)) {
+                deleteEmptyFiles();
+            }
+        }
+
+        async function handleImportDeleteBook() {
+            if(await promptConfirm("Are you sure you want to replace your documents? This action can not be reverted.", true)) {
+                importDeleteBook();
+            }
+        }
     </script>
 </body>
 
