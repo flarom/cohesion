@@ -295,6 +295,16 @@ function strftime(format, date = new Date()) {
         return 1 + Math.round(((date - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
     };
 
+    const formatTimeZone = () => {
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+        const parts = timeZone.split('/');
+        if (parts.length > 1) {
+            const city = parts[1].replace(/_/g, ' ');
+            return city.charAt(0).toUpperCase() + city.slice(1);
+        }
+        return timeZone;
+    };
+
     const replacements = {
         '%a': () => new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(date),
         '%A': () => new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(date),
@@ -318,7 +328,7 @@ function strftime(format, date = new Date()) {
         '%-S': () => date.getSeconds(),
         '%f': () => getMicroseconds(date),
         '%z': () => getUTCOffset(date),
-        '%Z': () => Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+        '%Z': () => formatTimeZone(),
         '%j': () => pad(Math.ceil((date - new Date(date.getFullYear(), 0, 0)) / 86400000), 3),
         '%-j': () => Math.ceil((date - new Date(date.getFullYear(), 0, 0)) / 86400000),
         '%U': () => pad(getWeekNumber(date, 'sunday')),

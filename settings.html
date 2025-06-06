@@ -405,7 +405,7 @@
             const txtEditorDate = document.getElementById('editorDate');
             let value = txtEditorDate.value;
 
-            txtEditorDate.value = value + (value ? " " : "") + block;
+            txtEditorDate.value = value + block;
             txtEditorDate.focus();
             setSetting('dateFormat', txtEditorDate.value);
         }
