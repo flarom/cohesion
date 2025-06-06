@@ -593,26 +593,32 @@ span.CodeMirror-selectedtext {
 
 .cm-header-1 {
     margin-left: -2ch !important;
+    margin-right: 2ch !important;
 }
 
 .cm-header-2 {
     margin-left: -3ch !important;
+    margin-right: 3ch !important;
 }
 
 .cm-header-3 {
     margin-left: -4ch !important;
+    margin-right: 4ch !important;
 }
 
 .cm-header-4 {
     margin-left: -5ch !important;
+    margin-right: 5ch !important;
 }
 
 .cm-header-5 {
     margin-left: -6ch !important;
+    margin-right: 6ch !important;
 }
 
 .cm-header-6 {
     margin-left: -7ch !important;
+    margin-right: 7ch !important;
 }
 
 @media screen and (max-width: 700px){
@@ -626,6 +632,7 @@ span.CodeMirror-selectedtext {
     .cm-header-5 ,
     .cm-header-6 {
         margin-left: 0ch !important;
+        margin-right: 0ch !important;
     }
 }
 
