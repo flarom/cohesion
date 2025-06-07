@@ -167,6 +167,7 @@ function promptString(title, defaultText = "", warn = false) {
             resolve(result);
         }
 
+        overlay.addEventListener("click", () => closePrompt(null));
         cancelButton.addEventListener("click", () => closePrompt(null));
         submitButton.addEventListener("click", () => closePrompt(input.value));
 
@@ -215,6 +216,7 @@ function promptMessage(htmlContent, showCloseButton = true) {
             resolve();
         }
 
+        overlay.addEventListener("click", closePrompt);
         okButton.addEventListener("click", closePrompt);
 
         overlay.addEventListener("keydown", (event) => {
@@ -277,6 +279,10 @@ function showMessageFromFile(filePath, showCloseButton = true, useBigDialog = fa
                 }
                 Array.from(oldScript.attributes).forEach((attr) => newScript.setAttribute(attr.name, attr.value));
                 oldScript.replaceWith(newScript);
+            });
+
+            overlay.addEventListener("click", () => {
+                document.body.removeChild(overlay);
             });
 
             okButton.addEventListener("click", () => {
@@ -344,6 +350,7 @@ function promptConfirm(message, dangerous = false) {
 
         yesButton.addEventListener("click", () => closePrompt(true));
         noButton.addEventListener("click", () => closePrompt(false));
+        overlay.addEventListener("click", () => closePrompt(false));
 
         overlay.addEventListener("keydown", (event) => {
             if (event.key === "Escape") {
@@ -417,6 +424,10 @@ function promptTableSelector() {
             info.textContent = `${targetRow} x ${targetCol}`;
         });
 
+        overlay.addEventListener("click", () => {
+            document.body.removeChild(overlay);
+            resolve(null);
+        });
         cancelButton.addEventListener("click", () => {
             document.body.removeChild(overlay);
             resolve(null);
@@ -492,6 +503,7 @@ function promptIframe() {
 
         insertButton.addEventListener("click", () => closePrompt(false));
         cancelButton.addEventListener("click", () => closePrompt(true));
+        overlay.addEventListener("click", () => closePrompt(true));
 
         function closePrompt(returnNull) {
             document.body.removeChild(overlay);
@@ -625,6 +637,8 @@ async function promptFileSearch() {
             });
         }
 
+        overlay.addEventListener("click", () => closePrompt(null));
+
         function closePrompt(result) {
             document.body.removeChild(overlay);
             resolve(result);
@@ -721,6 +735,11 @@ function promptSelect(title, options) {
             });
         }
 
+        overlay.addEventListener("click", () => {
+            document.body.removeChild(overlay);
+            resolve(null);
+        });
+
         function closePrompt(result) {
             document.body.removeChild(overlay);
             resolve(result);
@@ -792,6 +811,7 @@ function promptSaveFile(fileId) {
 
     saveButton.addEventListener("click", () => closePrompt(false));
     cancelButton.addEventListener("click", () => closePrompt(true));
+    overlay.addEventListener("click", () => closePrompt(true));
 
     function closePrompt(returnNull) {
         document.body.removeChild(overlay);
