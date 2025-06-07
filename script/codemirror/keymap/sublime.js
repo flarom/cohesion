@@ -590,7 +590,7 @@
   keyMap.macSublime = {
     "Cmd-Left": "goLineStartSmart",
     "Shift-Tab": "indentLess",
-    "Shift-Ctrl-K": "deleteLine",
+    // "Shift-Ctrl-K": "deleteLine",
     "Alt-Q": "wrapLines",
     "Ctrl-Left": "goSubwordLeft",
     "Ctrl-Right": "goSubwordRight",
@@ -653,7 +653,7 @@
 
   keyMap.pcSublime = {
     "Shift-Tab": "indentLess",
-    "Shift-Ctrl-K": "deleteLine",
+    // "Shift-Ctrl-K": "deleteLine",
     "Alt-Q": "wrapLines",
     "Ctrl-T": "transposeChars",
     "Alt-Left": "goSubwordLeft",

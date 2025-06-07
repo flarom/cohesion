@@ -181,6 +181,7 @@
                 <button class="icon-button" translate="no" title="Strikethrough" onmouseup="formatStrikethrough()">strikethrough_s</button>
                 <button class="icon-button" translate="no" title="Preformatted" onmouseup="formatPreformatted()">code</button>
                 <button class="icon-button" translate="no" title="Highlight" onmouseup="formatHighlight()">stylus_highlighter</button>
+                <button class="icon-button" translate="no" title="Link" onmouseup="formatUrl()">link</button>
             </div>
             <hr id="contextual-selection-separator" style="display: none" />
             <button class="text-button" onmouseup="formatTable(); editor.focus()" id="formatTable" style="display: none">Format table</button>
@@ -938,6 +939,11 @@ Hit the <icon>attach_file</icon> button to insert fun things into your document!
                         true,
                         Array.from({ length: 6 }, (_, i) => "#".repeat(i + 1) + " ")
                     );
+                }
+                //// Link (ctrl shift k)
+                else if (event.shiftKey && event.ctrlKey && event.key === "K") {
+                    event.preventDefault();
+                    formatUrl();
                 }
                 //// Horizontal rule (ctrl r)
                 else if (event.ctrlKey && event.key === "r") {

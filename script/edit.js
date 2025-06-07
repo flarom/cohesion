@@ -52,17 +52,50 @@ function formatHighlight() {
     editor.focus();
 }
 
+function formatUrl() {
+    const doc = editor.getDoc();
+    const selection = doc.getSelection();
+
+    if (selection) {
+        const newText = `[${selection}](URL)`;
+        const cursorPos = doc.getCursor();
+
+        doc.replaceSelection(newText);
+
+        const urlStartCh = cursorPos.ch + newText.indexOf("(URL)") + 1;
+        const urlEndCh = urlStartCh + 3;
+
+        doc.setSelection(
+            { line: cursorPos.line, ch: urlStartCh },
+            { line: cursorPos.line, ch: urlEndCh }
+        );
+    } else {
+        const cursor = doc.getCursor();
+        doc.replaceRange("[Link title](URL)", cursor);
+
+        const urlStartCh = cursor.ch + 13;
+        const urlEndCh = urlStartCh + 3;
+
+        doc.setSelection(
+            { line: cursor.line, ch: urlStartCh },
+            { line: cursor.line, ch: urlEndCh }
+        );
+    }
+
+    editor.focus();
+}
+
 function formatTable() {
     const selection = editor.getSelection();
     if (!selection) return;
 
     const lines = selection.split('\n').filter(line => line.trim().length > 0);
-    if (lines.length < 2) return;  // Pelo menos cabeçalho e separador
+    if (lines.length < 2) return;
 
     const table = lines.map(line => {
         return line.trim()
-                   .replace(/^\|/, '')   // remove | no começo
-                   .replace(/\|$/, '')   // remove | no final
+                   .replace(/^\|/, '')
+                   .replace(/\|$/, '')
                    .split('|')
                    .map(cell => cell.trim());
     });
@@ -71,14 +104,12 @@ function formatTable() {
 
     const colCount = Math.max(...table.map(row => row.length));
 
-    // Ajustar as linhas para sempre terem colCount células
     for (let row of table) {
         while (row.length < colCount) {
             row.push('');
         }
     }
 
-    // Calcular largura máxima de cada coluna
     const colWidths = Array(colCount).fill(0);
     for (let row of table) {
         row.forEach((cell, i) => {
@@ -86,19 +117,17 @@ function formatTable() {
         });
     }
 
-    // Detectar alinhamento com base no separador (segunda linha)
     const alignments = table[1].map(cell => {
         const left = cell.startsWith(':');
         const right = cell.endsWith(':');
         if (left && right) return 'center';
         if (right) return 'right';
-        return 'left';  // Default: left
+        return 'left';
     });
 
-    // Reformatar as linhas
     const formatted = table.map((row, rowIndex) => {
         return '| ' + row.map((cell, colIndex) => {
-            if (rowIndex === 1) {  // linha de separador
+            if (rowIndex === 1) {
                 const left = cell.startsWith(':');
                 const right = cell.endsWith(':');
                 let dashes = '-'.repeat(colWidths[colIndex]);
