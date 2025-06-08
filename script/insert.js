@@ -81,24 +81,50 @@ function insertAtTop(text) {
 }
 
 function getMeta() {
-    const date = new Date();
     let baseTitle = getFileTitle(index) || "New document";
     let title = baseTitle;
     let suffix = 1;
 
     const existingTitles = files
-        .map((_, i) => {
-            if (i === index) return null;
-            return getFileTitle(i);
-        })
+        .map((_, i) => (i === index ? null : getFileTitle(i)))
         .filter(Boolean);
 
     while (existingTitles.includes(title)) {
         title = `${baseTitle} (${suffix++})`;
     }
 
-    return `«««\n` + `title: ${title}\n` + `authors: *\n` + `date: ${strftime(getSetting("dateFormat", "%d/%m/%Y %H:%M"))}\n` + `tags: misc\n` + `description: *\n` + `color: *\n` + `banner: cohesion/banners/1.png\n` + `***\n` + `editor: Cohesion\n` + `»»»`;
+    const defaultMeta = {
+        title,
+        authors: "*",
+        date: strftime(getSetting("dateFormat", "%Y/%m/%d %H:%M")),
+        tags: "uncategorized",
+        description: "*",
+        color: "*",
+        banner: "cohesion/banners/1.png"
+    };
+
+    const rawMeta = getSetting(
+        "editorMeta",
+        `title: *\nauthors: *\ndate: *\ntags: *\ndescription: *\ncolor: *\nbanner: *`,
+        true
+    );
+
+    const metaLines = rawMeta
+        .split("\n")
+        .map(line => line.trim())
+        .filter(line => line.includes(":"))
+        .map(line => {
+            const [key, ...rest] = line.split(":");
+            const trimmedKey = key.trim();
+            const value = rest.join(":").trim();
+
+            const resolved = value === "*" ? (defaultMeta[trimmedKey] || "*") : value;
+            return `${trimmedKey}: ${resolved}`;
+        });
+
+    return `«««\n${metaLines.join("\n")}\n»»»`;
 }
+
 
 function insertYouTubeVideo(url) {
     let prefix = `<!-- YouTube Video Player -->\n<iframe width="100%" allowfullscreen\n    src="`;

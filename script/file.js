@@ -31,8 +31,8 @@ function createFile(text = "") {
 
 /**
  * Updates the value of a certain file
- * @param {The new value of the file} value 
- * @param {The file to be updated} index 
+ * @param {string} value The new value of the file
+ * @param {int} index The file to be updated
  */
 function updateFile(value, index) {
     if (files[index] !== undefined) {
@@ -44,7 +44,7 @@ function updateFile(value, index) {
 
 /**
  * Deletes a file
- * @param {The file to be deleted} index 
+ * @param {int} index The file to be deleted
  */
 function deleteFile(index) {
     if (files[index] !== undefined) {
@@ -102,7 +102,8 @@ function importFile() {
 
 /**
  * Exports a file as a .md markdown document
- * @param {The file to be exported} index 
+ * @param {int} index The file to be exported
+ * @param {string} fileName File name
  * @returns null if the file doesn't exists
  */
 function exportFile(index, fileName = getFileTitle(index)) {
@@ -237,7 +238,7 @@ function importDeleteBook() {
 
 /**
  * Gets the text of a file
- * @param {The file to be returned} index 
+ * @param {int} index The file to be returned
  * @returns The text content of a file || null if id doesn't exists
  */
 function getFileText(index) {
@@ -246,7 +247,7 @@ function getFileText(index) {
 
 /**
  * Gets statistics of a file
- * @param {The file to be returned} index 
+ * @param {int} index The file to be returned
  * @returns Object containing: read time string, paragraphs qtd, sentences qtd, words qtd, characters qtd, aprox. file size string
  */
 function getFileStats(index) {
@@ -299,7 +300,7 @@ function getFileStats(index) {
 
 /**
  * Gets an adequate title to a file
- * @param {The file to be returned} index 
+ * @param {int} index The file to be returned
  * @returns a title
  */
 function getFileTitle(index) {
@@ -338,8 +339,8 @@ function formatTitle(title) {
 
 /**
  * Gets a tiny text snippet of a file
- * @param {The file to be returned} index 
- * @param {lenght of returned text} lenght
+ * @param {int} index The file to be returned
+ * @param {int} lenght lenght of returned text
  * @returns file snippet
  */
 function getFileSnippet(index, lenght) {
@@ -348,7 +349,7 @@ function getFileSnippet(index, lenght) {
 
 /**
  * Gets all tags from a file
- * @param {The file to have tags returned} index 
+ * @param {int} index The file to have tags returned
  * @returns Array of strings with all tags
  */
 function getFileTags(index) {
@@ -363,7 +364,6 @@ function getFileTags(index) {
 
     return metadata.tags.split(', ').map(tag => tag.trim()).filter(Boolean);
 }
-
 
 function renderFiles(containerId) {
     const container = document.getElementById(containerId);
