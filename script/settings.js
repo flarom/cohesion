@@ -18,3 +18,14 @@ function getSetting(key, fallback = null, ignoreComments = false) {
 function removeSetting(key) {
     localStorage.removeItem(settingsStorageKey + key);
 }
+
+function clearAllSettings() {
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith(settingsStorageKey)) {
+            localStorage.removeItem(key);
+            i--;
+        }
+    }
+    location.reload();
+}

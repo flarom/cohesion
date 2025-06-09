@@ -69,17 +69,15 @@
                 }
             }
 
-            textarea {
+            .settings-body textarea {
                 background: var(--field-color);
+                border-radius: 10px;
+                padding: 10px;
                 color: var(--text-color);
-                width: calc(100% - 40px);
                 height: 20ch;
-                padding: 0px 20px;
-                margin-bottom: 15px;
                 border: 1px solid var(--border-field-color);
                 outline: none;
-                border-radius: 15px;
-                font-size: large;
+                font-size: 12pt;
                 resize: vertical;
             }
         </style>
@@ -252,7 +250,11 @@
                     </div>
                     <div class="setting">
                         <h4>Meta</h4>
-                        <div class="setting" style="display: flex; flex-direction: column; gap: 5px">
+                        <div style="display: flex; flex-direction: column; gap: 5px">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <p>Use asterisks to use the default value, you can disable lines by placing # at the start of the line.</p>
+                                <button class="icon-button" translate="no" style="margin-bottom: 15px" title="Reset" onclick="resetEditorMeta();">refresh</button>
+                            </div>
                             <textarea name="editorMeta" id="editorMeta" onchange="setSetting('editorMeta', this.value)"></textarea>
                         </div>
                     </div>
@@ -441,6 +443,12 @@
                 if (await promptConfirm("Are you sure you want to replace your documents? This action can not be reverted.", true)) {
                     importDeleteBook();
                 }
+            }
+
+            function resetEditorMeta() {
+                const txtEditorMeta = document.getElementById('editorMeta');
+                txtEditorMeta.value = 'title: *\nauthors: *\ndate: *\ntags: *\ndescription: *\ncolor: *\nbanner: *';
+                setSetting('editorMeta', txtEditorMeta.value);
             }
         </script>
     </body>
