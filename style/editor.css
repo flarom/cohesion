@@ -22,7 +22,6 @@
 
 .preview h1, .preview h2, .preview h3, .preview h4, .preview h5, .preview h6 {
     width: calc(100% - 20px);
-    font-weight: 100;
     font-family: var(--font-title);
     color: var(--title-color);
     padding-top: 15px;
@@ -434,4 +433,10 @@
 .preview blank-space {
     display: block;
     height: 100vh;
+}
+
+.preview .small {
+    font-size: small;
+    opacity: 50%;
+    display: block;
 }

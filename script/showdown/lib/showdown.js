@@ -3434,6 +3434,12 @@
             return showdown.subParser("makehtml.hashBlock")(hashBlock, options, globals);
         });
 
+        // -# small line support
+        text = text.replace(/^-# (.*)$/gm, function (wholeMatch, content) {
+            var span = showdown.subParser("makehtml.spanGamut")(content, options, globals);
+            return '<span class="small">' + span + '</span>';
+        });
+
         // atx-style headers:
         //  # Header 1
         //  ## Header 2
