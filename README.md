@@ -37,9 +37,9 @@ Cohesion provides support for the following Markdown elements.
 | Task Lists            | Yes     | In addition to checked and unchecked items, partially completed items and cancelled items are also available.
 | Emoji (copy and paste) | Yes    |       |
 | Emoji (shortcodes)    | Yes     |       |
-| Highlight             | No      | HTML tag only.
-| Subscript             | No      | HTML tag only.
-| Superscript           | No      | HTML tag only.
+| Highlight             | Yes     |       |
+| Subscript             | Yes     |       |
+| Superscript           | Yes     |       |
 | Automatic URL Linking | Yes     |       |
 | Disabling Automatic URL Linking | Yes  ||
 | HTML                  | Yes     | Some tags like `<script>` are note available to prevent auto-run, use JavaScript codeblocks instead.
