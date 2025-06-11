@@ -436,6 +436,10 @@
     padding-left: 20px;
 }
 
+.preview abbr {
+    cursor: help;
+}
+
 /* custom html */
 
 .preview icon {

@@ -225,6 +225,7 @@
         <script src="script/showdown/extension/bannerImage.js"></script>
         <script src="script/showdown/extension/internalLink.js"></script>
         <script src="script/showdown/extension/definition-list.js"></script>
+        <script src="script/showdown/extension/abbreviation.js"></script>
         <script src="script/editorTools.js"></script>
         <script src="script/insert.js"></script>
         <script src="script/prompts.js"></script>
@@ -320,7 +321,7 @@
             });
 
             const converter = new showdown.Converter({
-                extensions: [bannerImage, internalLink, 'definition-list'],
+                extensions: [bannerImage, internalLink, 'definition-list', 'abbreviation'],
             });
 
             const preview = document.getElementById("preview");
