@@ -35,6 +35,7 @@
         <script src="script/codemirror/keymap/sublime.js"></script>
         <script src="script/codemirror/mode/markdown/markdown.js"></script>
         <script src="script/codemirror/overlay/markOverlay.js"></script>
+        <script src="script/codemirror/overlay/entityOverlay.js"></script>
         <script src="script/codemirror/addon/edit/closebrackets.js"></script>
         <script src="script/codemirror/addon/edit/continuelist.js"></script>
         <script src="script/codemirror/addon/search/searchcursor.js"></script>
@@ -259,6 +260,7 @@
             });
 
             editor.addOverlay(markOverlay);
+            editor.addOverlay(htmlEntityOverlay);
 
             const editorMenu = document.getElementById("editorMenu");
             const hrContextualSeparator = document.getElementById("contextual-selection-separator");

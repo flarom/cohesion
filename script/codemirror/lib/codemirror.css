@@ -670,3 +670,7 @@ span.CodeMirror-selectedtext {
 .cm-mark-highlight {
     background-color: var(--quote-yellow-bg);
 }
+
+.cm-entitychar {
+    opacity: 50%;
+}
