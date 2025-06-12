@@ -1,11 +1,17 @@
 showdown.extension('abbreviation', function () {
     let abbrMap = {};
 
+    const invalidChars = /[{}\[\]()<>\#\*\+\-\.\!\|]/;
+
     return [
         {
             type: 'lang',
             regex: /^\*\[([^\]]+)\]:\s+(.+)$/gim,
             replace: function (match, abbr, title) {
+                if (invalidChars.test(abbr)) {
+
+                    return match;
+                }
                 abbrMap[abbr.toLowerCase()] = title;
                 return '';
             }
