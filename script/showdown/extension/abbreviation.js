@@ -1,29 +1,24 @@
 showdown.extension('abbreviation', function () {
-    let abbrMap = {};
-
     const invalidChars = /[{}\[\]()<>\#\*\+\-\.\!\|]/;
 
     return [
         {
             type: 'lang',
-            regex: /^\*\[([^\]]+)\]:\s+(.+)$/gim,
-            replace: function (match, abbr, title) {
-                if (invalidChars.test(abbr)) {
+            filter: function (text, converter, options) {
+                const abbrMap = {};
 
-                    return match;
-                }
-                abbrMap[abbr.toLowerCase()] = title;
-                return '';
-            }
-        },
-        {
-            type: 'output',
-            filter: function (text) {
+                text = text.replace(/^\*\[([^\]]+)\]:\s+(.+)$/gim, function (_, abbr, title) {
+                    if (invalidChars.test(abbr)) return _;
+                    abbrMap[abbr.toLowerCase()] = title;
+                    return '';
+                });
+
                 for (let abbr in abbrMap) {
                     const regex = new RegExp(`\\b(${abbr})\\b`, 'gi');
                     const replacement = `<abbr title="${abbrMap[abbr]}">$1</abbr>`;
                     text = text.replace(regex, replacement);
                 }
+
                 return text;
             }
         }

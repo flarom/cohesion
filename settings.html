@@ -120,13 +120,6 @@
                             <label>Title font</label>
                             <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontTitle" oninput="setSetting('titleFont', this.value); loadSettings();" />
                         </div>
-                        <div class="switch-wrapper">
-                            <label class="switch">
-                                <input type="checkbox" id="fontExtended" onchange="setSetting('fontExtended', this.checked); location.reload()" />
-                                <span class="slider"></span>
-                            </label>
-                            <span class="switch-text" title="Use an expanded collection of fonts">Extended font collection</span>
-                        </div>
 
                         <datalist id="default-fonts">
                             <option value="Ubuntu"></option>
@@ -135,21 +128,6 @@
                             <option value="Serif"></option>
                             <option value="Monospace"></option>
                             <option value="Cursive"></option>
-                        </datalist>
-
-                        <datalist id="extended-fonts">
-                            <option value="Ubuntu"></option>
-                            <option value="Ubuntu Mono"></option>
-                            <option value="Sans serif"></option>
-                            <option value="Serif"></option>
-                            <option value="Monospace"></option>
-                            <option value="Cursive"></option>
-                            <!-- extended -->
-                            <option value="Meow Script">Cute - Meow Script</option>
-                            <option value="Cherry Bomb One">Cute - Cherry Bomb One</option>
-                            <option value="Ms Madi">Cute - Ms Madi</option>
-                            <option value="Comic Neue">Cute - Comic Neue</option>
-                            <option value="Moirai One">Cute - Moirai One</option>
                         </datalist>
                     </div>
                 </div>
@@ -349,16 +327,9 @@
                 const txtFontEditor = document.getElementById("fontEditor");
                 const txtFontParagraph = document.getElementById("fontParagraph");
                 const txtFontTitle = document.getElementById("fontTitle");
-                const cbxFontExtended = document.getElementById("fontExtended");
                 txtFontEditor.value = getSetting("editorFont", "Ubuntu Mono");
                 txtFontParagraph.value = getSetting("paragraphFont", "Ubuntu");
                 txtFontTitle.value = getSetting("titleFont", "Ubuntu");
-                if (getSetting("fontExtended", "false") === "true") {
-                    cbxFontExtended.checked = "true";
-                    txtFontEditor.setAttribute("list", "extended-fonts");
-                    txtFontParagraph.setAttribute("list", "extended-fonts");
-                    txtFontTitle.setAttribute("list", "extended-fonts");
-                }
 
                 // editor
                 const cbxEditorShowHints = document.getElementById("editorShowHints");
