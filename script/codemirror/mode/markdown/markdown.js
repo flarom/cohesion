@@ -873,7 +873,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 
     blockCommentStart: "<!--",
     blockCommentEnd: "-->",
-    closeBrackets: "()[]{}''\"\"``",
+    closeBrackets: "()[]{}''\"\"``<>",
     fold: "markdown"
   };
   return mode;

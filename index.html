@@ -257,6 +257,7 @@
                 keyMap: "sublime",
                 direction: getSetting("editorDirection", "ltr"),
                 showCursorWhenSelecting: true,
+                autoCloseTags: true
             });
 
             editor.addOverlay(markOverlay);
@@ -542,6 +543,7 @@
                 let i = 0;
                 markdown = markdown.replace(/\uFFFC/g, () => codeBlocks[i++]);
             
+                // refreshes metadata
                 const metadata = extractMetadata(markdown);
                 converter.getMetadata = function() {
                     return metadata;

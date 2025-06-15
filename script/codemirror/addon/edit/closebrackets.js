@@ -13,7 +13,7 @@
     pairs: "()[]{}''\"\"<>",
     closeBefore: ")]}'\":;>",
     triples: "",
-    explode: "[]{}"
+    explode: "[]{}<>"
   };
 
   var Pos = CodeMirror.Pos;

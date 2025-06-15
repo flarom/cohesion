@@ -674,3 +674,18 @@ span.CodeMirror-selectedtext {
 .cm-entitychar {
     opacity: 50%;
 }
+
+.cm-trailing-space-a,
+.cm-trailing-space-b,
+.cm-trailing-space-new-line {
+    background-color: var(--danger-bg);
+    border-radius: 0;
+}
+
+.CodeMirror-line .cm-trailing-space-a:first-of-type {
+    border-radius: 20px 0px 0px 20px;
+}
+
+.CodeMirror-line .cm-trailing-space-new-line:last-of-type {
+    border-radius: 0px 20px 20px 0px;
+}

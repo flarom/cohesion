@@ -3622,10 +3622,10 @@
                     imgTag += ' width="' + width + '" height="' + height + '"';
                 }
                 imgTag += " />";
-                mediaTag = '<a href="' + url + '" target="_blank">' + imgTag + "</a>";
+                mediaTag = imgTag;
             }
 
-            return '<div class="media-container">' + mediaTag + "<p>" + altText + "</p></div>";
+            return '<div class="media-container">' + mediaTag + "<div><span class='alt'>" + altText + "</span><span class='url'>" + url + "</span></div></div>";
         }
 
         function writeMediaTagBase64(wholeMatch, altText, linkId, url, width, height, m5, title) {
