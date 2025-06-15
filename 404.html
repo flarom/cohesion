@@ -16,6 +16,7 @@
             color: white;
             margin: 0;
             overflow: hidden;
+            font-family: "Ubuntu";
         }
 
         canvas {
@@ -28,7 +29,6 @@
 
         .main-header {
             position: relative;
-            font-family: "Ubuntu";
             font-size: 24px;
             color: gray;
             z-index: 1;
@@ -45,16 +45,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 2px solid #282828;
         }
 
         span.icon {
             font-family: "Material Symbols Rounded";
+            box-shadow: 0px 0px 10px -2px black;
         }
 
         span.number {
-            background-color: #303030;
-            color: white;
+            color: gray;
+            font-weight: bolder;
+            background-color: white;
+            box-shadow: 0px 0px 50px white;
             z-index: 9999;
         }
     </style>
@@ -113,12 +115,26 @@
             return { x, y };
         }
 
+        function distance(a, b) {
+            return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
+        }
+
         function updateCharsCoordinates() {
+            const positions = [];
             chars.forEach(char => {
-                const { x, y } = getSafeCoordinates(char);
-                char.style.left = x + "px";
-                char.style.top = y + "px";
+                let pos;
+                let attempts = 0;
+                do {
+                    pos = getSafeCoordinates(char);
+                    attempts++;
+                } while (
+                    positions.some(p => distance(p, pos) < 20) && attempts < 100
+                );
+                positions.push(pos);
+                char.style.left = pos.x + "px";
+                char.style.top = pos.y + "px";
             });
+            window.lastCharPositions = positions;
         }
 
         function centerCharsCoordinates() {
@@ -136,8 +152,51 @@
             };
         }
 
+        function drawShadows() {
+            const lightSources = [2, 3, 4];
+            const shadowTargets = [0, 1, 5, 6];
+
+            const lights = lightSources.map(i => getCharCenter(chars[i]));
+
+            shadowTargets.forEach(i => {
+                const target = getCharCenter(chars[i]);
+                lights.forEach(light => {
+                    const dx = target.x - light.x;
+                    const dy = target.y - light.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (!isFinite(dist) || dist < 1) return;
+
+                    const shadowLength = 120;
+                    const nx = dx / dist;
+                    const ny = dy / dist;
+
+                    const endX = target.x + nx * shadowLength;
+                    const endY = target.y + ny * shadowLength;
+
+                    const grad = ctx.createLinearGradient(target.x, target.y, endX, endY);
+                    grad.addColorStop(0, "rgba(0,0,0,0.2)");
+                    grad.addColorStop(1, "rgba(0,0,0,0)");
+
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(target.x, target.y);
+                    ctx.lineTo(endX, endY);
+                    ctx.strokeStyle = grad;
+                    ctx.lineWidth = 18;
+                    ctx.globalAlpha = 0.7;
+                    ctx.shadowBlur = 0;
+                    ctx.stroke();
+                    ctx.restore();
+                });
+            });
+        }
+
         function drawLine() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawShadows();
+
             const p1 = getCharCenter(chars[0]);
             const p2 = getCharCenter(chars[1]);
             const p3 = getCharCenter(chars[2]);
@@ -146,16 +205,35 @@
             const p6 = getCharCenter(chars[5]);
             const p7 = getCharCenter(chars[6]);
 
+            // gray p1 -> p2 -> p3
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
             ctx.lineTo(p3.x, p3.y);
+            ctx.strokeStyle = "gray";
+            ctx.lineWidth = 1;
+            ctx.shadowBlur = 0;
+            ctx.stroke();
+
+            // white p3 -> p4 -> p5
+            ctx.beginPath();
+            ctx.moveTo(p3.x, p3.y);
             ctx.lineTo(p4.x, p4.y);
             ctx.lineTo(p5.x, p5.y);
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 1;
+            ctx.shadowColor = "white";
+            ctx.shadowBlur = 10;
+            ctx.stroke();
+
+            // gray p5 -> p6 -> p7
+            ctx.beginPath();
+            ctx.moveTo(p5.x, p5.y);
             ctx.lineTo(p6.x, p6.y);
             ctx.lineTo(p7.x, p7.y);
             ctx.strokeStyle = "gray";
             ctx.lineWidth = 1;
+            ctx.shadowBlur = 0;
             ctx.stroke();
         }
 
