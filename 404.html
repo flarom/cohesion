@@ -11,12 +11,8 @@
         @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded");
         @import url("https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
 
-        * {
-            pointer-events: none;
-        }
-
         body {
-            background-color: #282828;
+            background: #282828;
             color: white;
             margin: 0;
             overflow: hidden;
@@ -25,8 +21,13 @@
         }
 
         @keyframes unblur {
-            from { filter: blur(50px);} 
-            to { filter: blur(0px); }
+            from {
+                filter: blur(50px);
+            }
+
+            to {
+                filter: blur(0px);
+            }
         }
 
         canvas {
@@ -45,6 +46,7 @@
         }
 
         .main-header span {
+            pointer-events: none;
             position: absolute;
             transition: all 5s;
             background-color: #282828;
@@ -88,6 +90,9 @@
     <script>
         const canvas = document.getElementById("lineCanvas");
         const ctx = canvas.getContext("2d");
+
+        const SHADOW_LENGTH_MAX = 256;
+        const SHADOW_LENGTH_MIN = 0;
 
         const chars = [
             document.getElementById("char1"),
@@ -177,7 +182,12 @@
 
                     if (!isFinite(dist) || dist < 1) return;
 
-                    const shadowLength = 128;
+                    const maxDist = Math.max(window.innerWidth, window.innerHeight);
+                    const linearNorm = 1 - Math.min(dist / maxDist, 1);
+                    const expoNorm = Math.pow(linearNorm, 2.5);
+
+                    const shadowLength = SHADOW_LENGTH_MIN + (SHADOW_LENGTH_MAX - SHADOW_LENGTH_MIN) * expoNorm;
+
                     const nx = dx / dist;
                     const ny = dy / dist;
 
