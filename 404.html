@@ -1,166 +1,178 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cohesion</title>
-  <style>
-    @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded");
-    body {
-      background-color: #282828;
-      color: white;
-      margin: 0;
-      overflow: hidden;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page not found - Cohesion</title>
+    <link rel="shortcut icon" href="cohesion/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="style/palette.css">
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded");
+        @import url("https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
 
-    canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      pointer-events: none;
-      z-index: 0;
-    }
+        body {
+            background-color: #282828;
+            color: white;
+            margin: 0;
+            overflow: hidden;
+        }
 
-    .main-header {
-      position: relative;
-      font-family: monospace;
-      font-size: 24px;
-      color: gray;
-      z-index: 1;
-    }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
 
-    .main-header span {
-      position: absolute;
-      transition: all 5s;
-      background-color: #282828;
-      height: 32px;
-      width: 32px;
-      border-radius: 32px;
-      text-align: center;
-    }
+        .main-header {
+            position: relative;
+            font-family: "Ubuntu";
+            font-size: 24px;
+            color: gray;
+            z-index: 1;
+        }
 
-    span.icon {
-        font-family: "Material Symbols Rounded";
-    }
+        .main-header span {
+            position: absolute;
+            transition: all 5s;
+            background-color: #282828;
+            height: 32px;
+            width: 32px;
+            border-radius: 1000px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #282828;
+        }
 
-    span.number {
-        color: white;
-        z-index: 9999;
-    }
-  </style>
+        span.icon {
+            font-family: "Material Symbols Rounded";
+        }
+
+        span.number {
+            background-color: #303030;
+            color: white;
+            z-index: 9999;
+        }
+    </style>
 </head>
+
 <body>
-  <canvas id="lineCanvas"></canvas>
+    <canvas id="lineCanvas"></canvas>
 
-  <div class="main-header">
-    <span id="char1" class="icon" translate="no">hard_drive</span>
-    <span id="char2" class="icon" translate="no">description</span>
-    <span id="char3" class="number">4</span>
-    <span id="char4" class="number">0</span>
-    <span id="char5" class="number">4</span>
-    <span id="char6" class="icon" translate="no">draft</span>
-    <span id="char7" class="icon" translate="no">computer</span>
-  </div>
+    <div class="main-header">
+        <span id="char1" class="icon" translate="no">hard_drive</span>
+        <span id="char2" class="icon" translate="no">description</span>
+        <span id="char3" class="number">4</span>
+        <span id="char4" class="number">0</span>
+        <span id="char5" class="number">4</span>
+        <span id="char6" class="icon" translate="no">draft</span>
+        <span id="char7" class="icon" translate="no">computer</span>
+    </div>
 
-  <script>
-    const canvas = document.getElementById("lineCanvas");
-    const ctx = canvas.getContext("2d");
+    <script>
+        const canvas = document.getElementById("lineCanvas");
+        const ctx = canvas.getContext("2d");
 
-    const chars = [
-      document.getElementById("char1"),
-      document.getElementById("char2"),
-      document.getElementById("char3"),
-      document.getElementById("char4"),
-      document.getElementById("char5"),
-      document.getElementById("char6"),
-      document.getElementById("char7"),
-    ];
+        const chars = [
+            document.getElementById("char1"),
+            document.getElementById("char2"),
+            document.getElementById("char3"),
+            document.getElementById("char4"),
+            document.getElementById("char5"),
+            document.getElementById("char6"),
+            document.getElementById("char7"),
+        ];
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
 
-    function getSafeCoordinates(char) {
-      const charWidth = char.offsetWidth;
-      const charHeight = char.offsetHeight;
+        function getSafeCoordinates(char) {
+            const charWidth = char.offsetWidth;
+            const charHeight = char.offsetHeight;
 
-      const margin = 100;
-      const maxX = window.innerWidth - charWidth - margin;
-      const maxY = window.innerHeight - charHeight - margin;
+            const margin = 100;
+            const maxX = window.innerWidth - charWidth - margin;
+            const maxY = window.innerHeight - charHeight - margin;
 
-      const x = Math.random() * (maxX - margin) + margin;
-      const y = Math.random() * (maxY - margin) + margin;
+            const x = Math.random() * (maxX - margin) + margin;
+            const y = Math.random() * (maxY - margin) + margin;
 
-      return { x, y };
-    }
+            return { x, y };
+        }
 
-    function getScreenCenter(){
-        const x = window.innerWidth/2;
-        const y = window.innerHeight/2;
+        function getScreenCenter() {
+            const x = window.innerWidth / 2;
+            const y = window.innerHeight / 2;
 
-        return { x, y };
-    }
+            return { x, y };
+        }
 
-    function updateCharsCoordinates() {
-      chars.forEach(char => {
-        const { x, y } = getSafeCoordinates(char);
-        char.style.left = x + "px";
-        char.style.top = y + "px";
-      });
-    }
+        function updateCharsCoordinates() {
+            chars.forEach(char => {
+                const { x, y } = getSafeCoordinates(char);
+                char.style.left = x + "px";
+                char.style.top = y + "px";
+            });
+        }
 
-    function centerCharsCoordinates() {
-      chars.forEach(char => {
-        char.style.left = getScreenCenter(char).x + "px";
-        char.style.top = getCharCenter(char).y + "px";
-      });
-    }
+        function centerCharsCoordinates() {
+            chars.forEach(char => {
+                char.style.left = getScreenCenter(char).x + "px";
+                char.style.top = getCharCenter(char).y + "px";
+            });
+        }
 
-    function getCharCenter(char) {
-      const rect = char.getBoundingClientRect();
-      return {
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2
-      };
-    }
+        function getCharCenter(char) {
+            const rect = char.getBoundingClientRect();
+            return {
+                x: rect.left + rect.width / 2,
+                y: rect.top + rect.height / 2
+            };
+        }
 
-    function drawLine() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const p1 = getCharCenter(chars[0]);
-      const p2 = getCharCenter(chars[1]);
-      const p3 = getCharCenter(chars[2]);
-      const p4 = getCharCenter(chars[3]);
-      const p5 = getCharCenter(chars[4]);
-      const p6 = getCharCenter(chars[5]);
-      const p7 = getCharCenter(chars[6]);
+        function drawLine() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const p1 = getCharCenter(chars[0]);
+            const p2 = getCharCenter(chars[1]);
+            const p3 = getCharCenter(chars[2]);
+            const p4 = getCharCenter(chars[3]);
+            const p5 = getCharCenter(chars[4]);
+            const p6 = getCharCenter(chars[5]);
+            const p7 = getCharCenter(chars[6]);
 
-      ctx.beginPath();
-      ctx.moveTo(p1.x, p1.y);
-      ctx.lineTo(p2.x, p2.y);
-      ctx.lineTo(p3.x, p3.y);
-      ctx.lineTo(p4.x, p4.y);
-      ctx.lineTo(p5.x, p5.y);
-      ctx.lineTo(p6.x, p6.y);
-      ctx.lineTo(p7.x, p7.y);
-      ctx.strokeStyle = "gray";
-      ctx.lineWidth = 1;
-      ctx.stroke();
-    }
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.lineTo(p3.x, p3.y);
+            ctx.lineTo(p4.x, p4.y);
+            ctx.lineTo(p5.x, p5.y);
+            ctx.lineTo(p6.x, p6.y);
+            ctx.lineTo(p7.x, p7.y);
+            ctx.strokeStyle = "gray";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
 
-    function loop() {
-      drawLine();
-      requestAnimationFrame(loop);
-    }
+        function loop() {
+            drawLine();
+            requestAnimationFrame(loop);
+        }
 
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+        window.addEventListener("resize", resizeCanvas);
 
-    centerCharsCoordinates();
-    updateCharsCoordinates();
-    setInterval(updateCharsCoordinates, 5000);
+        centerCharsCoordinates();
+        updateCharsCoordinates();
+        setInterval(updateCharsCoordinates, 5000);
 
-    requestAnimationFrame(loop);
-  </script>
+        requestAnimationFrame(loop);
+    </script>
 </body>
+
 </html>
