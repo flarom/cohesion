@@ -128,7 +128,7 @@
                     pos = getSafeCoordinates(char);
                     attempts++;
                 } while (
-                    positions.some(p => distance(p, pos) < 20) && attempts < 100
+                    positions.some(p => distance(p, pos) < 32) && attempts < 100
                 );
                 positions.push(pos);
                 char.style.left = pos.x + "px";
@@ -167,26 +167,37 @@
 
                     if (!isFinite(dist) || dist < 1) return;
 
-                    const shadowLength = 120;
+                    const shadowLength = 128;
                     const nx = dx / dist;
                     const ny = dy / dist;
+
+                    const baseWidth = 32;
 
                     const endX = target.x + nx * shadowLength;
                     const endY = target.y + ny * shadowLength;
 
+                    const perpX = -ny * (baseWidth / 2);
+                    const perpY = nx * (baseWidth / 2);
+
+                    const base1X = target.x + perpX;
+                    const base1Y = target.y + perpY;
+                    const base2X = target.x - perpX;
+                    const base2Y = target.y - perpY;
+
                     const grad = ctx.createLinearGradient(target.x, target.y, endX, endY);
-                    grad.addColorStop(0, "rgba(0,0,0,0.2)");
+                    grad.addColorStop(0, "rgba(0,0,0,0.3)");
                     grad.addColorStop(1, "rgba(0,0,0,0)");
 
                     ctx.save();
                     ctx.beginPath();
-                    ctx.moveTo(target.x, target.y);
+                    ctx.moveTo(base1X, base1Y);
+                    ctx.lineTo(base2X, base2Y);
                     ctx.lineTo(endX, endY);
-                    ctx.strokeStyle = grad;
-                    ctx.lineWidth = 18;
-                    ctx.globalAlpha = 0.7;
+                    ctx.closePath();
+                    ctx.fillStyle = grad;
+                    ctx.globalAlpha = 0.3;
                     ctx.shadowBlur = 0;
-                    ctx.stroke();
+                    ctx.fill();
                     ctx.restore();
                 });
             });
