@@ -299,14 +299,17 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
 }
 
 .CodeMirror-activeline-background {
-    background: #2e3436;
+    background: var(--active-line);
+    border-radius: 5px;
+    border: 1px solid var(--background-color);
 }
-
 
 /* STOP */
 
 /* The rest of this file contains styles related to the mechanics of
-   the editor. You probably shouldn't touch them. */
+the editor. You probably shouldn't touch them. */
+
+/* shut up :3 */
 
 .CodeMirror {
     position: relative;
@@ -638,6 +641,11 @@ span.CodeMirror-selectedtext {
 
 .cm-strong {
     font-weight: bold !important;
+}
+
+.cm-underline {
+    text-decoration: underline;
+    font-weight: normal !important;
 }
 
 .cm-em {

@@ -5,6 +5,8 @@
 }
 
 .theme-dark {
+    --active-line:          #303030;
+
     --background-color:     #282828;
     --background-color-2:   #303030;
     --background-color-3:   #454545;
@@ -30,7 +32,6 @@
     --danger-bg:            #ff888133;
 
     --shadow:               0px 0px 10px #00000055;
-
     
     --quote-purple:         #d781ff; 
     --quote-blue:           #818eff;
@@ -46,6 +47,8 @@
 }
 
 .theme-light {
+    --active-line:          #e5e5e5;
+
     --background-color:     #f5f5f5;
     --background-color-2:   #ffffff;
     --background-color-3:   #f5f5f5;
@@ -72,7 +75,6 @@
 
     --shadow:               0px 0px 8px #00000022;
 
-    
     --quote-purple:         #9421ca; 
     --quote-blue:           #2178ca; 
     --quote-green:          #2fca21; 
@@ -87,6 +89,8 @@
 }
 
 .theme-cream {
+    --active-line:          #e8ddc0;
+
     --background-color:     #fdf6e3;
     --background-color-2:   #fffaf0;
     --background-color-3:   #f5eacb;
@@ -127,6 +131,8 @@
 }
 
 .theme-cream-dark {
+    --active-line:          #25211d;
+
     --background-color:     #1c1a17;
     --background-color-2:   #25211d;
     --background-color-3:   #2f2a24;
@@ -152,7 +158,6 @@
     --danger-bg:            #ff6b6b33;
 
     --shadow:               0px 0px 6px #00000055;
-
     
     --quote-purple:         #d06bff; 
     --quote-blue:           #6b8eff; 
@@ -169,6 +174,8 @@
 
 
 .theme-epaper {
+    --active-line:          #bbbbbb;
+
     --background-color:     #ffffff;
     --background-color-2:   #ffffff;
     --background-color-3:   #ffffff;
@@ -224,6 +231,8 @@
 }
 
 .theme-oled {
+    --active-line:          #1d1d1d;
+
     --background-color:     #000000;
     --background-color-2:   #000000;
     --background-color-3:   #1d1d1d;
@@ -239,7 +248,7 @@
     --title-color:          #ffffff;
     --button-color:         #ffffff;
     --button-color-2:       #ffffff;
-    --text-color:           #888888;
+    --text-color:           #cecece;
 
     --highlight-color:      #3584e4; 
     --selection-color:      #3584e433;
@@ -248,7 +257,7 @@
     --danger:               #ff8881; 
     --danger-bg:            #ff888133;
 
-    --shadow:               0px 0px 10px #00000000;
+    --shadow:               0px 0px 10px #ffffff11;
     
     --quote-purple:         #d781ff; 
     --quote-blue:           #818eff;
