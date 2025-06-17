@@ -792,6 +792,7 @@
                 //// Focus on editor (esc)
                 if (event.key === "Escape") {
                     hideAllMenus();
+                    closeAllDialogs();
                     editor.focus();
                     editorMenu.style.display = "none";
                     editorMenu.removeEventListener("keydown", handleArrowNavigation);
