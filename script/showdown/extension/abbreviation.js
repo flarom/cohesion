@@ -20,12 +20,14 @@ showdown.extension('abbreviation', function () {
                 });
 
                 for (let abbr in abbrMap) {
-                    const regex = new RegExp(`\\b(${abbr})\\b`, 'gi');
+                    const regex = new RegExp(`(?<!\\\\)\\b(${abbr})\\b`, 'gi');
                     const replacement = `<abbr title="${abbrMap[abbr]}">$1</abbr>`;
                     text = text.replace(regex, replacement);
                 }
 
                 text = text.replace(/§§§CODEBLOCK(\d+)§§§/g, (_, i) => codeBlocks[i]);
+
+                text = text.replace(/\\([^\w\s])/g, '$1').replace(/\\(\w+)/g, '$1');
 
                 return text;
             }
