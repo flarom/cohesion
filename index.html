@@ -42,6 +42,7 @@
         <script src="script/codemirror/addon/search/searchcursor.js"></script>
         <script src="script/codemirror/addon/hint/show-hint.js"></script>
         <script src="script/codemirror/addon/hint/anyword-hint.js"></script>
+        <script src="script/codemirror/addon/hint/emoji-hint.js"></script>
         <script src="script/codemirror/addon/selection/active-line.js"></script>
     </head>
 
@@ -230,6 +231,7 @@
         <script src="script/showdown/extension/definitionList.js"></script>
         <script src="script/showdown/extension/abbreviation.js"></script>
         <script src="script/showdown/extension/rubyText.js"></script>
+        <script src="script/showdown/extension/details.js"></script>
         <script src="script/editorTools.js"></script>
         <script src="script/insert.js"></script>
         <script src="script/prompts.js"></script>
@@ -329,7 +331,7 @@
             });
 
             const converter = new showdown.Converter({
-                extensions: ['bannerImage', 'internalLink', 'definitionList', 'abbreviation', 'rubyText'],
+                extensions: ['bannerImage', 'internalLink', 'definitionList', 'abbreviation', 'rubyText', 'details'],
             });
 
             const preview = document.getElementById("preview");
@@ -403,9 +405,9 @@
 
                 var currentWord = token.string;
 
-                if (currentWord.length >= 3) {
+                if (currentWord.length >= 2) {
                     cm.showHint({
-                        hint: CodeMirror.hint.anyword,
+                        hint: CodeMirror.hint.anyword, hint: CodeMirror.hint.emoji,
                         completeSingle: false,
                     });
                 }

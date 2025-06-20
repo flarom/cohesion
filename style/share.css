@@ -526,28 +526,3 @@ button.danger:hover {
 * {
     scrollbar-color: var(--border-light-color) transparent;
 }
-
-details {
-    background: var(--background-color);
-    border-radius: 10px;
-    transition: all 0.3s ease;
-    margin-bottom: 10px;
-}
-
-summary {
-    cursor: pointer;
-    list-style: none;
-    outline: none;
-    display: flex;
-    align-items: center;
-    height: 30px;
-    border-radius: 15px;
-    padding-left: 15px;
-    margin-bottom: 10px;
-    width: 90%;
-}
-
-summary:focus,
-summary:hover {
-    background-color: var(--hover-color);
-}

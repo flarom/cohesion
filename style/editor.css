@@ -488,3 +488,51 @@
     opacity: 50%;
     display: block;
 }
+
+.preview details {
+    border: 1px solid var(--border-light-color);
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    margin: 20px 0;
+    transition: all 0.3s ease-in-out;
+    overflow: hidden;
+}
+
+.preview details summary {
+    background-color: var(--background-color-3);
+    color: var(--title-color);
+    font-size: large;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    align-items: center;
+    position: relative;
+    padding: 5px;
+    border-radius: 10px;
+    transition: all 0.3s;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.preview details summary::before {
+    content: "expand_more";
+    font-family: "Material Symbols Outlined";
+    font-size: 24px;
+    transform: rotate(-90deg);
+    transition: transform 0.3s;
+}
+
+.preview details[open] summary {
+    margin: 7px;
+}
+
+.preview details[open] summary::before {
+    transform: rotate(0deg);
+}
+
+.preview details .content {
+    padding: 0px 15px;
+    overflow: scroll;
+}

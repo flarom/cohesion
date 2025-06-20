@@ -31,6 +31,6 @@
 }
 
 li.CodeMirror-hint-active {
-  background: var(--highlight-color);
+  background: var(--field-color);
   color: var(--button-color-2);
 }
