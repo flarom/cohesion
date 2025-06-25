@@ -37,6 +37,7 @@
         <script src="script/codemirror/overlay/markOverlay.js"></script>
         <script src="script/codemirror/overlay/entityOverlay.js"></script>
         <script src="script/codemirror/overlay/underlineOverlay.js"></script>
+        <script src="script/codemirror/overlay/blockOverlay.js"></script>
         <script src="script/codemirror/addon/edit/closebrackets.js"></script>
         <script src="script/codemirror/addon/edit/continuelist.js"></script>
         <script src="script/codemirror/addon/search/searchcursor.js"></script>
@@ -231,7 +232,7 @@
         <script src="script/showdown/extension/definitionList.js"></script>
         <script src="script/showdown/extension/abbreviation.js"></script>
         <script src="script/showdown/extension/rubyText.js"></script>
-        <script src="script/showdown/extension/details.js"></script>
+        <script src="script/showdown/extension/blocks.js"></script>
         <script src="script/editorTools.js"></script>
         <script src="script/insert.js"></script>
         <script src="script/prompts.js"></script>
@@ -269,6 +270,7 @@
             editor.addOverlay(markOverlay);
             editor.addOverlay(htmlEntityOverlay);
             editor.addOverlay(underlineOverlay);
+            editor.addOverlay(blockOverlay);
 
             const editorMenu = document.getElementById("editorMenu");
             const hrContextualSeparator = document.getElementById("contextual-selection-separator");
@@ -331,7 +333,7 @@
             });
 
             const converter = new showdown.Converter({
-                extensions: ['bannerImage', 'internalLink', 'definitionList', 'abbreviation', 'rubyText', 'details'],
+                extensions: ['bannerImage', 'internalLink', 'definitionList', 'abbreviation', 'rubyText', 'blocks'],
             });
 
             const preview = document.getElementById("preview");

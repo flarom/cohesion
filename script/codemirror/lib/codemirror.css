@@ -679,7 +679,7 @@ span.CodeMirror-selectedtext {
     background-color: var(--quote-yellow-bg);
 }
 
-.cm-entitychar {
+.cm-block {
     opacity: 50%;
 }
 
