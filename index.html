@@ -429,6 +429,7 @@
                     const scrollRatio = cursorLine / totalLines;
 
                     preview.classList.add("on");
+                    setTimeout(()=>{ preview.focus(); }, 1);
                     editor.getWrapperElement().style.display = "none";
                     readBtn.innerText = "edit";
                     readBtn.title = "Write";
