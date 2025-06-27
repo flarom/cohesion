@@ -536,3 +536,34 @@
     padding: 12px 15px;
     overflow: scroll;
 }
+
+.preview .table-hover-menu {
+    position: relative;
+}
+
+.preview .table-hover-menu .icon-button {
+    background-color: var(--background-color);
+    border: none;
+    border-radius: 10px;
+}
+
+.preview .table-hover-menu .table-menu {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.preview .table-hover-menu:hover .table-menu,
+.preview .table-hover-menu .table-menu:focus-within,
+.preview .table-hover-menu .table-menu:active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.preview .table-hover-menu table {
+    width: 100%;
+}

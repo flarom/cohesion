@@ -4961,8 +4961,20 @@
         }
 
         function buildTable(headers, cells) {
-            var tb = '<div class="table-container">\n<table>\n<thead>\n<tr>\n',
-                tblLgn = headers.length;
+            var tb = '';
+
+            tb += `
+            <div class="table-container table-hover-menu">
+                <div class="dropdown table-menu">
+                    <button class="icon-button" translate="no" onmousedown="toggleDropdown(this.nextElementSibling.id)" title="Table options">more_vert</button>
+                    <div class="dropdown-content menu" id="table-menu-${Math.random().toString(36).substr(2, 9)}">
+                        <button class="text-button" onmouseup="saveTableAsCSV(this); hideAllMenus();">Save as CSV</button>
+                    </div>
+                </div>
+            `;
+
+            tb += '<div class="table-container">\n<table>\n<thead>\n<tr>\n';
+            var tblLgn = headers.length;
 
             for (var i = 0; i < tblLgn; ++i) {
                 tb += headers[i];
@@ -4976,9 +4988,10 @@
                 }
                 tb += "</tr>\n";
             }
-            tb += "</tbody>\n</table>\n</div>\n";
+            tb += "</tbody>\n</table>\n</div>\n</div>\n";
             return tb;
         }
+
 
         function parseTable(rawTable) {
             var i,
@@ -5065,6 +5078,31 @@
 
         return text;
     });
+
+    if (typeof window !== "undefined" && !window.saveTableAsCSV) {
+        window.saveTableAsCSV = function (btn) {
+            let table = btn.closest('.dropdown').nextElementSibling.querySelector('table');
+            if (!table) return;
+
+            let csv = 'sep=,\n';
+            for (let row of table.rows) {
+                let rowData = [];
+                for (let cell of row.cells) {
+                    let text = cell.innerText.replace(/\r?\n|\r/g, ' ').replace(/"/g, '""');
+                    rowData.push('"' + text + '"');
+                }
+                csv += rowData.join(', ') + '\n';
+            }
+
+            let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            let link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'tabela.csv';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+    }
 
     showdown.subParser("makehtml.underline", function (text, options, globals) {
         "use strict";
