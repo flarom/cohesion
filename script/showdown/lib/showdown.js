@@ -5080,8 +5080,24 @@
     });
 
     if (typeof window !== "undefined" && !window.saveTableAsCSV) {
-        window.saveTableAsCSV = function (btn) {
-            let table = btn.closest('.dropdown').nextElementSibling.querySelector('table');
+        window.saveTableAsCSV = async function (btn) {
+            let filename = await promptString("What should the file be named?");
+
+            if (
+                !filename ||
+                typeof filename !== "string" ||
+                !filename.trim() ||
+                /[\\/:*?"<>|]/.test(filename)
+            ) {
+                showToast("Invalid file name", "warning");
+                return;
+            }
+
+            if (!filename.toLowerCase().endsWith(".csv")) {
+                filename += ".csv";
+            }
+
+            let table = btn.closest('.dropdown').parentElement.querySelector('table');
             if (!table) return;
 
             let csv = 'sep=,\n';
@@ -5097,7 +5113,7 @@
             let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             let link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = 'tabela.csv';
+            link.download = filename;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
