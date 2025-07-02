@@ -42,10 +42,5 @@ Cohesion provides support for the following Markdown elements.
 | Disabling Automatic URL Linking | Yes  ||
 | HTML                  | Yes     | Some tags like `<script>` are note available to prevent auto-run, use JavaScript codeblocks instead.
 
-***
 ## About
 Cohesion is heavily inspired by the [Apostrophe](https://apps.gnome.org/en/Apostrophe/) text editor, by [Manuel Genovés](https://gitlab.gnome.org/somas), but built for a web environment and with extra features! It uses [CodeMirror 5](https://codemirror.net/) to render syntax highlighting and [Showdownjs](https://showdownjs.com/) to parse Markdown.
-
-## Useful resources
-- [Cohesion Markdown Tutorial](https://flarom.github.io/cohesion/read.html?path=tutorial.md)
-- [GitHub Markdown Guide](https://docs.github.com/articles/markdown-basics)
