@@ -409,7 +409,17 @@
 
                 if (currentWord.length >= 2) {
                     cm.showHint({
-                        hint: CodeMirror.hint.anyword, hint: CodeMirror.hint.emoji,
+                        hint: function(cm) {
+                            var anyword = CodeMirror.hint.anyword(cm) || {from: cm.getCursor(), to: cm.getCursor(), list: []};
+                            var emoji = CodeMirror.hint.emoji(cm) || {from: cm.getCursor(), to: cm.getCursor(), list: []};
+
+                            var list = [...new Set([...anyword.list, ...emoji.list])];
+                            return {
+                                from: anyword.from,
+                                to: anyword.to,
+                                list: list
+                            };
+                        },
                         completeSingle: false,
                     });
                 }
