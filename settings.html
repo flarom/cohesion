@@ -11,12 +11,17 @@
                 border-radius: 32px;
                 cursor: pointer;
                 border: 0;
-                box-shadow: var(--shadow);
                 transition: border-radius 0.3s;
             }
 
             button.ball:hover {
                 border-radius: 15px;
+            }
+
+            button.ball.selected {
+                outline: 2px solid var(--highlight-color);
+                border: 4px solid var(--background-color-2);
+                box-shadow: var(--shadow);
             }
 
             .settings-body {
@@ -96,12 +101,12 @@
                 <div>
                     <h3 id="setting-theme">Theme</h3>
                     <div class="setting" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap">
-                        <button class="ball" style="background-color: #ffffff; color: #000000" onclick="setSetting('theme', 'theme-epaper');loadSettings()">ePaper</button>
-                        <button class="ball" style="background-color: #ffffff; color: #3c3c3c" onclick="setSetting('theme', 'theme-light');loadSettings()">Light</button>
-                        <button class="ball" style="background-color: #f5eacb; color: #4b3a25" onclick="setSetting('theme', 'theme-cream');loadSettings()">Cream</button>
-                        <button class="ball" style="background-color: #303030; color: #dddddd" onclick="setSetting('theme', 'theme-dark');loadSettings()">Dark</button>
-                        <button class="ball" style="background-color: #1c1a17; color: #e0d6c0" onclick="setSetting('theme', 'theme-cream-dark');loadSettings()">Coffee</button>
-                        <button class="ball" style="background-color: #000000; color: #888888" onclick="setSetting('theme', 'theme-oled');loadSettings()">OLED</button>
+                        <button id="theme-epaper" class="ball" style="background-color: #ffffff; color: #000000" onclick="setSetting('theme', 'theme-epaper');loadSettings(); updateSelectedTheme()">ePaper</button>
+                        <button id="theme-light" class="ball" style="background-color: #ffffff; color: #3c3c3c" onclick="setSetting('theme', 'theme-light');loadSettings(); updateSelectedTheme()">Light</button>
+                        <button id="theme-cream" class="ball" style="background-color: #f5eacb; color: #4b3a25" onclick="setSetting('theme', 'theme-cream');loadSettings(); updateSelectedTheme()">Cream</button>
+                        <button id="theme-dark" class="ball" style="background-color: #303030; color: #dddddd" onclick="setSetting('theme', 'theme-dark');loadSettings(); updateSelectedTheme()">Dark</button>
+                        <button id="theme-cream-dark" class="ball" style="background-color: #1c1a17; color: #e0d6c0" onclick="setSetting('theme', 'theme-cream-dark');loadSettings(); updateSelectedTheme()">Coffee</button>
+                        <button id="theme-oled" class="ball" style="background-color: #000000; color: #888888" onclick="setSetting('theme', 'theme-oled');loadSettings(); updateSelectedTheme()">OLED</button>
                     </div>
                 </div>
 
@@ -429,6 +434,15 @@
                 const txtEditorMeta = document.getElementById('editorMeta');
                 txtEditorMeta.value = 'title: *\nauthors: *\ndate: *\ntags: *\ndescription: *\ncolor: *\nbanner: *';
                 setSetting('editorMeta', txtEditorMeta.value);
+            }
+
+            updateSelectedTheme();
+
+            function updateSelectedTheme() {
+                const theme = getSetting("theme", "theme-dark");
+                document.querySelectorAll("button.ball").forEach(btn => btn.classList.remove("selected"));
+                const selectedBtn = document.getElementById(theme);
+                if (selectedBtn) selectedBtn.classList.add("selected");
             }
         </script>
     </body>
