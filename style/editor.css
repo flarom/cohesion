@@ -10,6 +10,10 @@
     font-family: var(--font-text);
 }
 
+.preview:focus {
+    outline:none;
+}
+
 .preview::before {
     padding-bottom: 100vh;
 }

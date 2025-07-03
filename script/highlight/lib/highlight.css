@@ -79,8 +79,14 @@
 .hljs-addition {
     color: var(--quote-green);
     background-color: var(--quote-green-bg);
+    padding-left: 2px;
+    padding-right: 2px;
+    border-radius: 2px;
 }
 .hljs-deletion {
     color: var(--quote-red);
     background-color: var(--quote-red-bg);
+    padding-left: 2px;
+    padding-right: 2px;
+    border-radius: 2px;
 }
