@@ -134,10 +134,14 @@
     font-size: large;
     background-color: var(--background-color-2);
     padding: 10px;
-    border-radius: 5px 5px 10px 10px;
+    border-radius: 10px;
     max-width: calc(100% - 20px);
     overflow-x: scroll;
     margin-top: 2px;
+}
+
+.preview pre.ghcodeblock {
+    border-radius: 5px 5px 10px 10px;
 }
 
 .preview code {

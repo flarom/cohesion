@@ -3425,13 +3425,15 @@
 
             codeblock = `
     <div class="code-head">
+        <div>
         ${language}
+        </div>
         <div>
             <button class="icon-button" title="Copy" onclick="navigator.clipboard.writeText(this.closest('.code-head').nextElementSibling.querySelector('code').innerText)">content_copy</button>
             ${runButton}
         </div>
     </div>
-    <pre><code${language ? ' class="' + language + " language-" + language + '"' : ""}>${codeblock + end}</code></pre>
+    <pre class='ghcodeblock'><code${language ? ' class="' + language + " language-" + language + '"' : ""}>${codeblock + end}</code></pre>
             `;
 
             codeblock = showdown.subParser("makehtml.hashBlock")(codeblock, options, globals);
