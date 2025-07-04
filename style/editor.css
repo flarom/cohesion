@@ -129,50 +129,62 @@
     color: var(--quote-red);
 }
 
-.preview code,
-.preview pre {
-    font-size: large;
-    background-color: var(--background-color-2);
-    padding: 10px;
+.preview .code-container {
+    position: relative;
+    margin: 20px 0;
     border-radius: 10px;
+    background-color: var(--background-color-2);
     max-width: calc(100% - 20px);
-    overflow-x: scroll;
-    margin-top: 2px;
+    overflow-x: auto;
+    padding: 0;
 }
 
-.preview pre.ghcodeblock {
-    border-radius: 5px 5px 10px 10px;
-}
-
-.preview code {
-    padding: 1px 10px 1px 10px;
-    border-radius: 10px;
-}
-
-.preview pre code {
-    background-color: transparent;
-    padding: 0px;
-}
-
-.preview .code-head {
-    background-color: var(--background-color-2);
-    padding: 5px;
-    padding-left: 10px;
-    padding-right: 10px;
-    border-radius: 10px 10px 5px 5px;
+.preview .code-container .code-head {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    z-index: 2;
+    background: none;
+    padding: 0;
     display: flex;
     align-items: center;
     gap: 10px;
     font-family: var(--font-editor);
-    justify-content: space-between;
+    justify-content: end;
+    border-radius: 8px;
 }
 
-.preview .code-head button {
+.preview .code-container pre,
+.preview .code-container pre.ghcodeblock {
+    margin: 0;
+    border-radius: 10px;
+    background: none;
+    box-shadow: none;
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 18px 10px 10px 10px;
+    position: relative;
+}
+
+.preview .code-container code {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    font-size: large;
+}
+
+.preview .code-container .code-head button {
     border: 0;
     padding: 0;
     width: 24px;
     height: 24px;
     border-radius: 100px;
+    background-color: var(--background-color-3);
+    cursor: pointer;
+}
+
+.preview .code-head {
+    all: unset;
 }
 
 /* images */

@@ -3094,9 +3094,18 @@
                 end = "";
             }
 
-            codeblock = "<pre><code>" + codeblock + end + "</code></pre>";
+            let codeHead = `
+                <div class="code-container">
+                    <div class="code-head">
+                        <div>
+                            <button class="icon-button" title="Copy" onclick="navigator.clipboard.writeText(this.closest('.code-container').querySelector('code').innerText)">content_copy</button>
+                        </div>
+                    </div>
+                    <pre><code>${codeblock + end}</code></pre>
+                </div>
+            `;
 
-            return showdown.subParser("makehtml.hashBlock")(codeblock, options, globals) + nextChar;
+            return showdown.subParser("makehtml.hashBlock")(codeHead, options, globals) + nextChar;
         });
 
         // strip sentinel
@@ -3420,20 +3429,19 @@
 
             let runButton = "";
             if (language === "js" || language === "javascript") {
-                runButton = `<button class="icon-button" title="Run code" onclick="try{eval(this.closest('.code-head').nextElementSibling.querySelector('code').innerText)}catch(e){showToast(e, 'error')}">rocket_launch</button>`;
+                runButton = `<button class="icon-button" title="Run code" onclick="try{eval(this.closest('.code-container').querySelector('code').innerText)}catch(e){showToast(e, 'error')}">step_over</button>`;
             }
 
             codeblock = `
-    <div class="code-head">
-        <div>
-        ${language}
-        </div>
-        <div>
-            <button class="icon-button" title="Copy" onclick="navigator.clipboard.writeText(this.closest('.code-head').nextElementSibling.querySelector('code').innerText)">content_copy</button>
-            ${runButton}
-        </div>
-    </div>
-    <pre class='ghcodeblock'><code${language ? ' class="' + language + " language-" + language + '"' : ""}>${codeblock + end}</code></pre>
+                <div class="code-container">
+                    <div class="code-head">
+                        <div>
+                            ${runButton}
+                            <button class="icon-button" title="Copy" onclick="navigator.clipboard.writeText(this.closest('.code-container').querySelector('code').innerText)">content_copy</button>
+                        </div>
+                    </div>
+                    <pre class='ghcodeblock'><code${language ? ' class="' + language + " language-" + language + '"' : ""}>${codeblock + end}</code></pre>
+                </div>
             `;
 
             codeblock = showdown.subParser("makehtml.hashBlock")(codeblock, options, globals);
