@@ -550,15 +550,18 @@
 }
 
 .preview .table-hover-menu .icon-button {
-    background-color: var(--background-color);
+    /* background-color: var(--background-color); */
     border: none;
-    border-radius: 10px;
+    /* border-radius: 10px; */
+    height: 30px;
+    width: 30px;
+    padding: 0;
 }
 
 .preview .table-hover-menu .table-menu {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 28px;
+    right: 28px;
     z-index: 2;
     opacity: 0;
     pointer-events: none;

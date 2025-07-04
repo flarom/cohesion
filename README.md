@@ -39,7 +39,7 @@ Cohesion provides support for the following Markdown elements.
 | Subscript             | Yes     |       |
 | Superscript           | Yes     |       |
 | Automatic URL Linking | Yes     |       |
-| Disabling Automatic URL Linking | Yes  ||
+| Disabling Automatic URL Linking | No  ||
 | HTML                  | Yes     | Some tags like `<script>` are note available to prevent auto-run, use JavaScript codeblocks instead.
 
 ## About
