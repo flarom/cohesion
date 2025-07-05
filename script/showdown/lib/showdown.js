@@ -3098,7 +3098,7 @@
                 <div class="code-container">
                     <div class="code-head">
                         <div>
-                            <button class="icon-button" title="Copy" onclick="navigator.clipboard.writeText(this.closest('.code-container').querySelector('code').innerText)">content_copy</button>
+                            <button class="icon-button" title="Copy" onclick="navigator.clipboard.writeText(this.closest('.code-container').querySelector('code').innerText); showToast('Copied to the clipboard', 'content_copy')">content_copy</button>
                         </div>
                     </div>
                     <pre><code>${codeblock + end}</code></pre>
@@ -3437,7 +3437,7 @@
                     <div class="code-head">
                         <div>
                             ${runButton}
-                            <button class="icon-button" title="Copy" onclick="navigator.clipboard.writeText(this.closest('.code-container').querySelector('code').innerText)">content_copy</button>
+                            <button class="icon-button" title="Copy" onclick="navigator.clipboard.writeText(this.closest('.code-container').querySelector('code').innerText); showToast('Copied to the clipboard', 'content_copy')">content_copy</button>
                         </div>
                     </div>
                     <pre class='ghcodeblock'><code${language ? ' class="' + language + " language-" + language + '"' : ""}>${codeblock + end}</code></pre>

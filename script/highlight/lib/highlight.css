@@ -11,7 +11,10 @@
     color: var(--text-color);
     background: var(--background-color);
 }
-.hljs-doctag,
+.hljs-doctag {
+    color: var(--title-color);
+    font-weight: bold;
+}
 .hljs-keyword,
 .hljs-meta .hljs-keyword,
 .hljs-template-tag,
@@ -51,6 +54,7 @@
 .hljs-comment,
 .hljs-formula {
     color: var(--text-color);
+    opacity: 75%;
 }
 .hljs-name,
 .hljs-quote,
