@@ -170,7 +170,7 @@
     background: transparent;
     padding: 0;
     border-radius: 0;
-    font-size: large;
+    font-size: medium;
 }
 
 .preview .code-container .code-head button {
@@ -185,6 +185,16 @@
 
 .preview .code-head {
     all: unset;
+}
+
+.preview code {
+    background-color: var(--background-color-2);
+    padding: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 30px;
+    font-family: var(--font-editor);
+    font-size: medium;
 }
 
 /* images */
