@@ -5089,7 +5089,7 @@
         return text;
     });
 
-    if (typeof window !== "undefined" && !window.saveTableAsCSV) {
+if (typeof window !== "undefined" && !window.saveTableAsCSV) {
         window.saveTableAsCSV = async function (btn) {
             let filename = await promptString("What should the file be named?");
 
@@ -5115,9 +5115,11 @@
                 let rowData = [];
                 for (let cell of row.cells) {
                     let text = cell.innerText.replace(/\r?\n|\r/g, ' ').replace(/"/g, '""');
-                    rowData.push('"' + text + '"');
+                    text = text.trim();
+                    text = text.replace(/,/g, ''); 
+                    rowData.push(text);
                 }
-                csv += rowData.join(', ') + '\n';
+                csv += rowData.join(',') + '\n';
             }
 
             let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
