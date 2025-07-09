@@ -42,6 +42,18 @@ function toggleLineStart(prefix, toggle = false, prefixesToRemove = []) {
     });
 }
 
+function getTable(cols, rows) {
+    let md = "";
+    const headerRow = Array(cols).fill("          ").join("|");
+    const separator = Array(cols).fill(":--------:").join("|");
+    md += `|${headerRow}|\n`;
+    md += `|${separator}|\n`;
+    for (let i = 0; i < rows - 1; i++) {
+        md += `|${Array(cols).fill("          ").join("|")}|\n`;
+    }
+    return md;
+}
+
 function insertBlock(text) {
     const doc = editor.getDoc();
     const selection = doc.listSelections()[0];
@@ -52,7 +64,10 @@ function insertBlock(text) {
     const start = doc.indexFromPos(from);
     const end = doc.indexFromPos(to);
 
-    const block = `\n${text}\n`;
+    const lineText = doc.getLine(from.line);
+    const needsNewline = lineText.trim().length > 0;
+
+    const block = (needsNewline ? "\n" : "") + text;
     doc.replaceRange(block, from, to);
 
     const newIndex = start + block.length;

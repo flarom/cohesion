@@ -8,18 +8,63 @@
     "use strict";
 
     var COMMANDS = {
-        "/today": {
-            description: "Insert todays date",
-            exec: function(editor) {
+        "today": {
+            description: "Today's date",
+            exec: function(arg) {
                 insertDate();
             }
         },
-        "/note": {
+        "note": {
             description: "Note block",
-            exec: function(editor) {
+            exec: function(arg) {
                 insertBlock("> [!NOTE]\n> \n> \n> ");
             }
-        }
+        },
+        "list": {
+            description: "Unordered list",
+            exec: function(arg) {
+                let count = parseInt(arg, 10) || 3;
+                let items = Array.from({length: count}, () => '- ').join('\n');
+                insertBlock(items);
+            }
+        },
+        "ul": {
+            description: "Unordered list",
+            exec: function(arg) {
+                let count = parseInt(arg, 10) || 3;
+                let items = Array.from({length: count}, () => '- ').join('\n');
+                insertBlock(items);
+            }
+        },
+        "ol": {
+            description: "Ordered list",
+            exec: function(arg) {
+                let count = parseInt(arg, 10) || 3;
+                let items = Array.from({length: count}, (_, i) => `${i+1}. `).join('\n');
+                insertBlock(items);
+            }
+        },
+        "checklist": {
+            description: "Check list",
+            exec: function(arg) {
+                let count = parseInt(arg, 10) || 3;
+                let items = Array.from({length: count}, () => '- [ ] ').join('\n');
+                insertBlock(items);
+            }
+        },
+        "summary": {
+            description: "Create a summary",
+            exec: function(arg) {
+                insertBlock(getSummary(editor.getValue()));
+            }
+        },
+        "table": {
+            description: "Insert table",
+            exec: function(arg) {
+                let count = parseInt(arg, 10) || 3;
+                insertBlock(getTable(count, 2));
+            }
+        },
     };
 
     CodeMirror.registerHelper("hint", "command", function (editor, options) {
@@ -29,22 +74,45 @@
             start = end;
         while (start && curLine.charAt(start - 1) !== "/") --start;
         if (curLine.charAt(start - 1) !== "/") return;
-        var curWord = curLine.slice(start - 1, end);
-        if (!curWord.startsWith("/")) return;
+        var curWord = curLine.slice(start, end);
 
         var list = [];
-        for (var key in COMMANDS) {
-            if (key.indexOf(curWord) === 0) {
-                list.push({
-                    text: key,
-                    displayText: key + " - " + COMMANDS[key].description,
-                    hint: function(cm, data, completion) {
-                        var from = CodeMirror.Pos(cur.line, start - 1);
-                        var to = CodeMirror.Pos(cur.line, end);
-                        cm.replaceRange("", from, to);
-                        COMMANDS[key].exec(cm);
-                    }
-                });
+        if (!curWord) {
+            for (var key in COMMANDS) {
+                (function(commandKey) {
+                    list.push({
+                        text: "/" + commandKey,
+                        displayText: "/" + commandKey + " - " + COMMANDS[commandKey].description,
+                        hint: function(cm, data, completion) {
+                            var from = CodeMirror.Pos(cur.line, start - 1);
+                            var to = CodeMirror.Pos(cur.line, end);
+                            cm.replaceRange("", from, to);
+                            COMMANDS[commandKey].exec();
+                        }
+                    });
+                })(key);
+            }
+        } else {
+            var match = curWord.match(/^([a-zA-Z]+)(\d*)$/);
+            if (!match) return;
+            var cmd = match[1];
+            var arg = match[2];
+
+            for (var key in COMMANDS) {
+                if (key.indexOf(cmd) === 0) {
+                    (function(commandKey) {
+                        list.push({
+                            text: "/" + commandKey + (arg ? arg : ""),
+                            displayText: "/" + commandKey + " - " + COMMANDS[commandKey].description,
+                            hint: function(cm, data, completion) {
+                                var from = CodeMirror.Pos(cur.line, start - 1);
+                                var to = CodeMirror.Pos(cur.line, end);
+                                cm.replaceRange("", from, to);
+                                COMMANDS[commandKey].exec(arg);
+                            }
+                        });
+                    })(key);
+                }
             }
         }
         return {

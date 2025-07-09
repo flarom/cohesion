@@ -429,16 +429,7 @@ function promptTableSelector() {
 
             document.body.removeChild(overlay);
 
-            let md = "";
-            const headerRow = Array(colCount).fill("          ").join("|");
-            const separator = Array(colCount).fill(":--------:").join("|");
-            md += `|${headerRow}|\n`;
-            md += `|${separator}|\n`;
-            for (let i = 0; i < rowCount - 1; i++) {
-                md += `|${Array(colCount).fill("          ").join("|")}|\n`;
-            }
-
-            resolve(md);
+            resolve(getTable(colCount, rowCount));
         });
 
         overlay.addEventListener("keydown", (event) => {
