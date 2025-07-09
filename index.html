@@ -45,6 +45,7 @@
         <script src="script/codemirror/addon/hint/show-hint.js"></script>
         <script src="script/codemirror/addon/hint/anyword-hint.js"></script>
         <script src="script/codemirror/addon/hint/emoji-hint.js"></script>
+        <script src="script/codemirror/addon/hint/command-hint.js"></script>
         <script src="script/codemirror/addon/selection/active-line.js"></script>
     </head>
 
@@ -402,10 +403,23 @@
 
             editor.on("inputRead", function (cm, change) {
                 if (getSetting("editorShowHints", "true") === "false") return;
-                if (!change.text[0].match(/\w/)) return;
 
                 var cursor = cm.getCursor();
                 var token = cm.getTokenAt(cursor);
+                var line = cm.getLine(cursor.line);
+                var beforeCursor = line.slice(0, cursor.ch);
+
+                var match = beforeCursor.match(/\/[\w\-]*$/);
+
+                if (match) {
+                    cm.showHint({
+                        hint: CodeMirror.hint.command,
+                        completeSingle: false,
+                    });
+                    return;
+                }
+
+                if (!change.text[0].match(/\w/)) return;
 
                 var currentWord = token.string;
 
