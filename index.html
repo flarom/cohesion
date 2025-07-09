@@ -7,7 +7,6 @@
         <link rel="shortcut icon" href="cohesion/favicon.png" type="image/x-icon" />
 
         <meta content="website" property="og:type" />
-        <meta content="Flarom" name="author" />
 
         <meta content="Cohesion Markdown Text Editor" name="title" />
         <meta content="Cohesion Markdown Text Editor" property="og:title" />
@@ -361,7 +360,7 @@
             }
 
             if (files.length < 1) {
-                fetch("intro.md")
+                fetch("cohesion/intro.md")
                     .then((res) => res.text())
                     .then((text) => {
                         createFile(text);
