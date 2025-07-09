@@ -20,6 +20,12 @@
                 insertBlock("> [!NOTE]\n> \n> \n> ");
             }
         },
+        "todo": {
+            description: "To-Do block",
+            exec: function(arg) {
+                insertBlock("> [!TODO]\n> \n> \n> ");
+            }
+        },
         "list": {
             description: "Unordered list",
             exec: function(arg) {
