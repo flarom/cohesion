@@ -105,21 +105,21 @@
                             <kbd>Ctrl+E</kbd>
                         </button>
                         <hr />
-                        <button class="text-button" onmouseup="showMessageFromFile('resources.html', true, true); hideAllMenus()">
+                        <button class="text-button" onmouseup="showMessageFromFile('dialogs/resources.html', true, true); hideAllMenus()">
                             Resources
                             <kbd>Alt+P</kbd>
                         </button>
-                        <button class="text-button" onmouseup="showMessageFromFile('settings.html', true, false, 900); hideAllMenus()">
+                        <button class="text-button" onmouseup="showMessageFromFile('dialogs/settings.html', true, false, 900); hideAllMenus()">
                             Settings
                             <kbd>Ctrl+,</kbd>
                         </button>
                         <hr />
                         <button class="text-button" onmouseup="window.open('https://github.com/flarom/cohesion/wiki'); hideAllMenus()">Learn</button>
-                        <button class="text-button" onmouseup="showMessageFromFile('shortcuts.html', true, false, 600); hideAllMenus();">
+                        <button class="text-button" onmouseup="showMessageFromFile('dialogs/shortcuts.html', true, false, 600); hideAllMenus();">
                             Keyboard shortcuts
                             <kbd>Ctrl+?</kbd>
                         </button>
-                        <button class="text-button" onmouseup="showMessageFromFile('about.html'); hideAllMenus();">
+                        <button class="text-button" onmouseup="showMessageFromFile('dialogs/about.html'); hideAllMenus();">
                             About Cohesion
                             <kbd>F1</kbd>
                         </button>
@@ -841,7 +841,7 @@
                 //// About cohesion (f1)
                 else if (event.key === "F1") {
                     event.preventDefault();
-                    showMessageFromFile("about.html");
+                    showMessageFromFile("dialogs/about.html");
                 }
                 //// Toggle sidebar (f9)
                 else if (event.key === "F9") {
@@ -861,19 +861,19 @@
                 //// Show settings screen (ctrl ,)
                 else if (event.ctrlKey && event.key === ",") {
                     event.preventDefault();
-                    showMessageFromFile("settings.html", true, false, 900);
+                    showMessageFromFile("dialogs/settings.html", true, false, 900);
                     hideAllMenus();
                 }
                 //// Show shortcuts screen (ctrl ? || ctrl shift ?)
                 else if (event.ctrlKey && event.key === "?") {
                     event.preventDefault();
-                    showMessageFromFile("shortcuts.html", true, false, 600);
+                    showMessageFromFile("dialogs/shortcuts.html", true, false, 600);
                     hideAllMenus();
                 }
                 //// Show resources screen (alt p)
                 else if (event.altKey && event.key === "p") {
                     event.preventDefault();
-                    showMessageFromFile("resources.html", true, true);
+                    showMessageFromFile("dialogs/resources.html", true, true);
                     hideAllMenus();
                 }
                 //// Switch between the first ten documents (alt 1-0)
