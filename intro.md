@@ -20,7 +20,7 @@ Hit the <icon>side_navigation</icon> button or `F9` to show your file list. You 
 Hit the <icon>attach_file</icon> button to insert fun things into your document! You can also upload files from your device to your Resources.
 
 <button onclick="createFile()">Start creating</button>
-[Read tutorial for more hints](https://github.com/flarom/cohesion/wiki)
+[Learn](https://github.com/flarom/cohesion/wiki)
 
 ***
 
