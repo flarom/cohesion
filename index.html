@@ -409,10 +409,18 @@
                 var beforeCursor = line.slice(0, cursor.ch);
 
                 var match = beforeCursor.match(/\/[\w\-]*$/);
-
                 if (match) {
                     cm.showHint({
                         hint: CodeMirror.hint.command,
+                        completeSingle: false,
+                    });
+                    return;
+                }
+
+                var emojiMatch = beforeCursor.match(/:[\w+\-_]*:?$/);
+                if (emojiMatch) {
+                    cm.showHint({
+                        hint: CodeMirror.hint.emoji,
                         completeSingle: false,
                     });
                     return;
