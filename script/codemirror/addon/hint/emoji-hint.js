@@ -9,7 +9,19 @@
 })(function (CodeMirror) {
     "use strict";
 
-    var EMOJI_WORD = /:[\w+\-_]*:?/;
+    function fuzzyMatch(str, pattern) {
+        pattern = pattern.replace(/:/g, "");
+        if (!pattern) return true;
+        let patternIdx = 0,
+            strIdx = 0;
+        while (strIdx < str.length && patternIdx < pattern.length) {
+            if (str[strIdx].toLowerCase() === pattern[patternIdx].toLowerCase()) {
+                patternIdx++;
+            }
+            strIdx++;
+        }
+        return patternIdx === pattern.length;
+    }
 
     CodeMirror.registerHelper("hint", "emoji", function (editor, options) {
         var cur = editor.getCursor(),
@@ -24,7 +36,7 @@
         var list = [];
         for (var key in showdown.helper.emojis) {
             var emojiCode = ":" + key + ":";
-            if (emojiCode.indexOf(curWord) === 0) {
+            if (fuzzyMatch(key, curWord)) {
                 list.push({
                     text: emojiCode,
                     displayText: showdown.helper.emojis[key] + "  " + emojiCode,
