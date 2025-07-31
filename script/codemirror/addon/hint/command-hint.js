@@ -94,6 +94,12 @@
             exec: function(arg) {
                 insertAt("[TITLE](URL)", 8, 11);
             }
+        },
+        "details": {
+            description: "Insert a detail block",
+            exec: function(arg) {
+                insertAt("> [!DETAILS:title here]", 12, 22);
+            }
         }
     };
 

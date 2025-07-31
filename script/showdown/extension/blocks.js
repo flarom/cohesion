@@ -53,12 +53,6 @@
         };
     }
 
-    const detailsBlock = registerBlock('details', function (param, content) {
-        const summary = (param || '').trim();
-        const innerHtml = new showdown.Converter().makeHtml(content);
-        return `<details><summary title='Click to expand'><span>${summary}</span></summary>\n<div class='content'>${innerHtml}</div>\n</details>`;
-    });
-
     const csvBlock = registerBlock('csv', function (param, content) {
         const sep = (param && param.length > 0) ? param : ',';
         const lines = content.trim().split('\n').filter(Boolean);
@@ -71,7 +65,6 @@
     });
 
     const blockHandlers = {
-        details: detailsBlock,
         csv: csvBlock
     };
 
@@ -83,7 +76,6 @@
                     return parseBlocks(text, blockHandlers);
                 }
             },
-            detailsBlock.output,
             csvBlock.output
         ];
     });

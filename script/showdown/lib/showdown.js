@@ -1197,94 +1197,113 @@
     });
 
     showdown.subParser("makehtml.blockQuotes", function (text, options, globals) {
-    "use strict";
+        "use strict";
 
-    text = globals.converter._dispatch("makehtml.blockQuotes.before", text, options, globals).getText();
+        text = globals.converter._dispatch("makehtml.blockQuotes.before", text, options, globals).getText();
+        text = text + "\n\n";
 
-    text = text + "\n\n";
-
-    var rgx = /(^ {0,3}>[ \t]?.+\n(.+\n)*\n*)+/gm;
-
-    if (options.splitAdjacentBlockquotes) {
-        rgx = /^ {0,3}>[\s\S]*?(?:\n\n)/gm;
-    }
-
-    const badgeMap = {
-        "[!NOTE]": { class: "quote-blue", label: "Note", icon: "article" },
-        "[!TIP]": { class: "quote-green", label: "Tip", icon: "lightbulb" },
-        "[!IMPORTANT]": { class: "quote-purple", label: "Important", icon: "priority_high" },
-        "[!WARNING]": { class: "quote-yellow", label: "Warning", icon: "warning" },
-        "[!CAUTION]": { class: "quote-red", label: "Caution", icon: "dangerous" },
-        "[!TODO]": { class: "quote-purple", label: "Todo", icon: "pending" },
-        "[!IDEA]": { class: "quote-green", label: "Idea", icon: "lightbulb" },
-        "[!INFO]": { class: "quote-blue", label: "Info", icon: "info" },
-        "[!INFORMATION]": { class: "quote-blue", label: "Info", icon: "info" },
-        "[!REMEMBER]": { class: "quote-red", label: "Remember", icon: "bookmark" },
-    };
-
-    text = text.replace(rgx, function (bq) {
-        let lines = bq.split("\n").map((line) => line.replace(/^ {0,3}>[ \t]?/, ""));
-
-        let firstLine = lines[0].trim();
-        let firstLineUpper = firstLine.toUpperCase();
-
-        let badgeClass = null;
-        let badgeLabel = null;
-        let blockId = null;
-
-        // Regex para detectar label e id
-        const labelIdRegex = /^\[\!(.+?)\](?:\((.+?)\))?$/;
-
-        let match = firstLine.match(labelIdRegex);
-        if (match) {
-            let label = match[1];
-            blockId = match[2] || null;
-
-            const badgeKey = `[!${label.toUpperCase()}]`;
-
-            if (badgeMap[badgeKey]) {
-                let badge = badgeMap[badgeKey];
-                badgeClass = badge.class;
-                badgeLabel = `<label class='${badgeClass}-label quote-label'><span class='icon' translate='no'>${badge.icon}</span>${badge.label}</label>\n`;
-            } else {
-                badgeClass = "quote-generic";
-                badgeLabel = `<label class='${badgeClass}-label quote-label'>${label}</label>\n`;
-            }
-            lines.shift();
+        let rgx = /(^ {0,3}>[ \t]?.+\n(.+\n)*\n*)+/gm;
+        if (options.splitAdjacentBlockquotes) {
+            rgx = /^ {0,3}>[\s\S]*?(?:\n\n)/gm;
         }
 
-        bq = lines.join("\n").replace(/¨0/g, "").replace(/^[ \t]+$/gm, "");
+        const badgeMap = {
+            "[!NOTE]":       { class: "quote-blue", label: "Note", icon: "article" },
+            "[!TIP]":        { class: "quote-green", label: "Tip", icon: "lightbulb" },
+            "[!IMPORTANT]":  { class: "quote-purple", label: "Important", icon: "priority_high" },
+            "[!WARNING]":    { class: "quote-yellow", label: "Warning", icon: "warning" },
+            "[!CAUTION]":    { class: "quote-red", label: "Caution", icon: "dangerous" },
+            "[!TODO]":       { class: "quote-purple", label: "Todo", icon: "pending" },
+            "[!IDEA]":       { class: "quote-green", label: "Idea", icon: "lightbulb" },
+            "[!INFO]":       { class: "quote-blue", label: "Info", icon: "info" },
+            "[!INFORMATION]":{ class: "quote-blue", label: "Info", icon: "info" },
+            "[!REMEMBER]":   { class: "quote-red", label: "Remember", icon: "bookmark" },
+        };
 
-        bq = showdown.subParser("makehtml.githubCodeBlocks")(bq, options, globals);
-        bq = showdown.subParser("makehtml.blockGamut")(bq, options, globals);
+        const customBlockMap = {
+            "DETAILS": {
+                render: function (title, contentHtml) {
+                    return `<details><summary title="Click to expand"><span>${title}</span></summary>\n` +
+                        `<div class="content">\n${contentHtml}\n</div>\n</details>`;
+                }
+            },
+            "SPOILER": {
+                render: function (title, contentHtml) {
+                    return `<details class="spoiler"><summary><span>${title}</span></summary>\n` +
+                        `<div class="content">${contentHtml}</div>\n</details>`;
+                }
+            }
+        };
 
-        bq = bq.replace(/(^|\n)/g, "$1  ");
+        text = text.replace(rgx, function (bq) {
+            let lines = bq.split("\n").map((line) => line.replace(/^ {0,3}>[ \t]?/, ""));
+            let firstLine = lines[0].trim();
 
-        bq = bq.replace(/(\s*<pre>[^\r]+?<\/pre>)/gm, function (wholeMatch, m1) {
-            return m1.replace(/^  /gm, "¨0").replace(/¨0/g, "");
+            const customBlockRegex = /^\[\!(\w+):(.+?)\]$/i;
+            const matchCustom = firstLine.match(customBlockRegex);
+            if (matchCustom) {
+                const blockType = matchCustom[1].toUpperCase();
+                const blockTitle = matchCustom[2].trim();
+
+                if (customBlockMap[blockType]) {
+                    lines.shift();
+                    let content = lines.join("\n").replace(/¨0/g, "").replace(/^[ \t]+$/gm, "");
+
+                    content = showdown.subParser("makehtml.githubCodeBlocks")(content, options, globals);
+                    content = showdown.subParser("makehtml.blockGamut")(content, options, globals);
+
+                    const html = customBlockMap[blockType].render(blockTitle, content);
+                    return showdown.subParser("makehtml.hashBlock")(html, options, globals);
+                }
+            }
+
+            const labelIdRegex = /^\[\!(.+?)\](?:\((.+?)\))?$/;
+            let match = firstLine.match(labelIdRegex);
+
+            let badgeClass = null;
+            let badgeLabel = null;
+            let blockId = null;
+
+            if (match) {
+                let label = match[1];
+                blockId = match[2] || null;
+                const badgeKey = `[!${label.toUpperCase()}]`;
+
+                if (badgeMap[badgeKey]) {
+                    let badge = badgeMap[badgeKey];
+                    badgeClass = badge.class;
+                    badgeLabel = `<label class='${badgeClass}-label quote-label'><span class='icon' translate='no'>${badge.icon}</span>${badge.label}</label>\n`;
+                } else {
+                    badgeClass = "quote-generic";
+                    badgeLabel = `<label class='${badgeClass}-label quote-label'>${label}</label>\n`;
+                }
+
+                lines.shift();
+            }
+
+            bq = lines.join("\n").replace(/¨0/g, "").replace(/^[ \t]+$/gm, "");
+            bq = showdown.subParser("makehtml.githubCodeBlocks")(bq, options, globals);
+            bq = showdown.subParser("makehtml.blockGamut")(bq, options, globals);
+
+            bq = bq.replace(/(^|\n)/g, "$1  ");
+            bq = bq.replace(/(\s*<pre>[^\r]+?<\/pre>)/gm, function (wholeMatch, m1) {
+                return m1.replace(/^  /gm, "¨0").replace(/¨0/g, "");
+            });
+
+            let blockquoteTag = "<blockquote";
+            if (badgeClass) blockquoteTag += ` class="${badgeClass}"`;
+            if (blockId) blockquoteTag += ` id="${blockId}"`;
+            blockquoteTag += ">\n";
+
+            if (badgeLabel) blockquoteTag += badgeLabel;
+            blockquoteTag += bq + "\n</blockquote>";
+
+            return showdown.subParser("makehtml.hashBlock")(blockquoteTag, options, globals);
         });
 
-        let blockquoteTag = "<blockquote";
-        if (badgeClass) {
-            blockquoteTag += ` class="${badgeClass}"`;
-        }
-        if (blockId) {
-            blockquoteTag += ` id="${blockId}"`;
-        }
-        blockquoteTag += ">\n";
-
-        if (badgeLabel) {
-            blockquoteTag += badgeLabel;
-        }
-
-        blockquoteTag += bq + "\n</blockquote>";
-
-        return showdown.subParser("makehtml.hashBlock")(blockquoteTag, options, globals);
+        text = globals.converter._dispatch("makehtml.blockQuotes.after", text, options, globals).getText();
+        return text;
     });
-
-    text = globals.converter._dispatch("makehtml.blockQuotes.after", text, options, globals).getText();
-    return text;
-});
 
 
     /**
