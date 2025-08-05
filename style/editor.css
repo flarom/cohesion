@@ -389,6 +389,13 @@
     background-color: var(--background-color-3);
 }
 
+.preview table.csv-table tbody tr:first-child td:first-child {
+    border-top-left-radius: 10px;
+}
+.preview table.csv-table tbody tr:first-child td:last-child {
+    border-top-right-radius: 10px;
+}
+
 /* html stuff */
 .preview input:not([type="checkbox"]) {
     background-color: var(--field-color);

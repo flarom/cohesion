@@ -365,7 +365,14 @@
                     })
                     .catch((e) => console.error(e));
             }
+            try {
             renderFiles("files");
+            } catch (err) {
+                promptMessage(`
+                    <h1>That's bad...</h1>
+                    <p>Something went wrong while loading the application, and it cannot run safely.</p>
+                `, false);
+            }
             renderEditor();
             editor.focus();
             document.addEventListener("DOMContentLoaded", () => {

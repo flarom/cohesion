@@ -1232,6 +1232,28 @@
                     return `<details class="spoiler"><summary><span>${title}</span></summary>\n` +
                         `<div class="content">${contentHtml}</div>\n</details>`;
                 }
+            },
+            "CSV": {
+                render: function (sepOrTitle, contentText) {
+                    let separator = ",";
+                    let data = contentText;
+
+                    if (sepOrTitle.length === 1 || sepOrTitle.length === 0) {
+                        separator = sepOrTitle || ",";
+                    }
+
+                    const lines = data.split(/\r?\n/).filter(line => line.trim() !== "");
+                    if (lines.length === 0) return "";
+
+                    const rows = lines.map(line => line.split(separator).map(cell => cell.trim()));
+
+                    let tbody = "";
+                    for (let i = 0; i < rows.length; i++) {
+                        tbody += "<tr>" + rows[i].map(cell => `<td>${cell}</td>`).join("") + "</tr>\n";
+                    }
+
+                    return `<div class="csv-table-wrapper">\n<table class="csv-table">\n<tbody>\n${tbody}</tbody>\n</table>\n</div>`;
+                }
             }
         };
 
@@ -1239,15 +1261,20 @@
             let lines = bq.split("\n").map((line) => line.replace(/^ {0,3}>[ \t]?/, ""));
             let firstLine = lines[0].trim();
 
-            const customBlockRegex = /^\[\!(\w+):(.+?)\]$/i;
+            const customBlockRegex = /^\[\!(\w+)(?::(.*?))?\]$/i;
             const matchCustom = firstLine.match(customBlockRegex);
             if (matchCustom) {
                 const blockType = matchCustom[1].toUpperCase();
-                const blockTitle = matchCustom[2].trim();
+                const blockTitle = (matchCustom[2] || "").trim();
 
                 if (customBlockMap[blockType]) {
                     lines.shift();
                     let content = lines.join("\n").replace(/¨0/g, "").replace(/^[ \t]+$/gm, "");
+
+                    if (blockType === "CSV") {
+                        const html = customBlockMap[blockType].render(blockTitle, content);
+                        return showdown.subParser("makehtml.hashBlock")(html, options, globals);
+                    }
 
                     content = showdown.subParser("makehtml.githubCodeBlocks")(content, options, globals);
                     content = showdown.subParser("makehtml.blockGamut")(content, options, globals);
