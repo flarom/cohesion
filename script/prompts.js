@@ -199,7 +199,7 @@ function promptMessage(htmlContent, showCloseButton = true, useBigDialog = false
         // html content
         const content = document.createElement("div");
         content.innerHTML = htmlContent;
-        content.style.marginBottom = "15px";
+        content.style.height = "100%";
         dialog.appendChild(content);
 
         const closeButton = document.createElement("button");

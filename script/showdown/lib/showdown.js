@@ -1665,46 +1665,87 @@
     showdown.subParser("makehtml.githubCodeBlocks", function (text, options, globals) {
         "use strict";
 
-        if (!options.ghCodeBlocks) {
-            return text;
-        }
+        if (!options.ghCodeBlocks) return text;
 
         text = globals.converter._dispatch("makehtml.githubCodeBlocks.before", text, options, globals).getText();
         text += "¨0";
 
-        text = text.replace(/(?:^|\n) {0,3}(```+|~~~+) *([^\n\t`~]*)\n([\s\S]*?)\n {0,3}\1/g, function (wholeMatch, delim, language, codeblock) {
-            var end = options.omitExtraWLInCodeBlocks ? "" : "\n";
+        const languageHandlers = {
+            js: `<button class="icon-button" title="Run JS" onclick="try{eval(this.closest('.code-container').querySelector('code').innerText)}catch(e){showToast(e,'error')}">step_over</button>`,
+            javascript: `<button class="icon-button" title="Run JS" onclick="try{eval(this.closest('.code-container').querySelector('code').innerText)}catch(e){showToast(e,'error')}">step_over</button>`,
 
-            language = language.trim().split(" ")[0].toLowerCase();
+            html: `<button class="icon-button" title="Show HTML" onclick="(function(el){
+                const iframe=document.createElement('iframe');
+                iframe.setAttribute('sandbox','allow-scripts');
+                iframe.setAttribute('style','width:100%;height:100%;border:none;background:white;border-radius:5px;');
+                iframe.srcdoc=el.innerText;
+                const wrapper=document.createElement('div');
+                wrapper.setAttribute('style','width:100%;height:100%;');
+                wrapper.appendChild(iframe);
+                promptMessage(wrapper.outerHTML,true,true);
+            })(this.closest('.code-container').querySelector('code'))">step_over</button>`,
 
-            codeblock = showdown.subParser("makehtml.encodeCode")(codeblock, options, globals);
-            codeblock = showdown.subParser("makehtml.detab")(codeblock, options, globals);
-            codeblock = codeblock.replace(/^\n+/g, ""); // trim leading newlines
-            codeblock = codeblock.replace(/\n+$/g, ""); // trim trailing whitespace
+            csv: `<button class="icon-button" title="Show table" onclick="(function(el){
+                const raw = el.innerText.trim();
+                let sep = ',';
+                const lines = raw.split(/\\r?\\n/);
+                if (/^sep=./i.test(lines[0])) {
+                    sep = lines[0].charAt(4);
+                    lines.shift();
+                }
+                const rows = lines.map(line => line.split(sep));
+                let html = '<table style=\\'width:100%;border-collapse:collapse;text-align:left;\\'><thead><tr>';
+                html += rows[0].map(c=>'<th style=\\'border:1px solid var(--border-light-color);padding:6px;\\'>'+c+'</th>').join('');
+                html += '</tr></thead><tbody>';
+                for(let i=1;i<rows.length;i++){
+                    html += '<tr>' + rows[i].map(c=>'<td style=\\'border:1px solid var(--border-light-color);padding:6px;\\'>'+c+'</td>').join('') + '</tr>';
+                }
+                html += '</tbody></table>';
+                promptMessage(html, true, false);
+            })(this.closest('.code-container').querySelector('code'))">step_over</button>`,
 
-            let runButton = "";
-            if (language === "js" || language === "javascript") {
-                runButton = `<button class="icon-button" title="Run code" onclick="try{eval(this.closest('.code-container').querySelector('code').innerText)}catch(e){showToast(e, 'error')}">step_over</button>`;
-            } else if (language === "html") {
-                runButton = `<button class="icon-button" title="Run HTML" onclick="(function(el){const iframe=document.createElement('iframe');iframe.setAttribute('sandbox','allow-scripts');iframe.setAttribute('style','width:100%; height:100%; border:none; background-color:white; border-radius:5px;');iframe.srcdoc=el.innerText;const wrapper=document.createElement('div');wrapper.setAttribute('style','width:100%; height:100%;');wrapper.appendChild(iframe);promptMessage(wrapper.outerHTML,true,true);})(this.closest('.code-container').querySelector('code'))">step_over</button>`;
-            }
+            tsv: `<button class="icon-button" title="Show table" onclick="(function(el){
+                const raw = el.innerText.trim();
+                const rows = raw.split(/\\r?\\n/).map(line => line.split('\\t'));
+                let html = '<table style=\\'width:100%;border-collapse:collapse;text-align:left;\\'><thead><tr>';
+                html += rows[0].map(c=>'<th style=\\'border:1px solid var(--border-light-color);padding:6px;\\'>'+c+'</th>').join('');
+                html += '</tr></thead><tbody>';
+                for(let i=1;i<rows.length;i++){
+                    html += '<tr>' + rows[i].map(c=>'<td style=\\'border:1px solid var(--border-light-color);padding:6px;\\'>'+c+'</td>').join('') + '</tr>';
+                }
+                html += '</tbody></table>';
+                promptMessage(html, true, false);
+            })(this.closest('.code-container').querySelector('code'))">step_over</button>`
+        };
 
-            codeblock = `
-                <div class="code-container">
-                    <div class="code-head">
-                        <div style="display:flex;gap:5px">
-                            ${runButton}
-                            <button class="icon-button" title="Copy" onclick="navigator.clipboard.writeText(this.closest('.code-container').querySelector('code').innerText); showToast('Copied to the clipboard', 'content_copy')">content_copy</button>
+        text = text.replace(/(?:^|\n) {0,3}(```+|~~~+) *([^\n\t`~]*)\n([\s\S]*?)\n {0,3}\1/g,
+            function (wholeMatch, delim, language, codeblock) {
+                var end = options.omitExtraWLInCodeBlocks ? "" : "\n";
+
+                language = language.trim().split(" ")[0].toLowerCase();
+
+                codeblock = showdown.subParser("makehtml.encodeCode")(codeblock, options, globals);
+                codeblock = showdown.subParser("makehtml.detab")(codeblock, options, globals);
+                codeblock = codeblock.replace(/^\n+/g, ""); // trim leading newlines
+                codeblock = codeblock.replace(/\n+$/g, ""); // trim trailing whitespace
+
+                const runButton = languageHandlers[language] ?? "";
+
+                codeblock = `
+                    <div class="code-container">
+                        <div class="code-head">
+                            <div style="display:flex;gap:5px">
+                                ${runButton}
+                                <button class="icon-button" title="Copy" onclick="navigator.clipboard.writeText(this.closest('.code-container').querySelector('code').innerText); showToast('Copied to the clipboard', 'content_copy')">content_copy</button>
+                            </div>
                         </div>
+                        <pre class='ghcodeblock'><code${language ? ' class="' + language + " language-" + language + '"' : ""}>${codeblock + end}</code></pre>
                     </div>
-                    <pre class='ghcodeblock'><code${language ? ' class="' + language + " language-" + language + '"' : ""}>${codeblock + end}</code></pre>
-                </div>
-            `;
+                `;
 
-            codeblock = showdown.subParser("makehtml.hashBlock")(codeblock, options, globals);
-
-            return "\n\n¨G" + (globals.ghCodeBlocks.push({ text: wholeMatch, codeblock: codeblock }) - 1) + "G\n\n";
-        });
+                codeblock = showdown.subParser("makehtml.hashBlock")(codeblock, options, globals);
+                return "\n\n¨G" + (globals.ghCodeBlocks.push({ text: wholeMatch, codeblock: codeblock }) - 1) + "G\n\n";
+            });
 
         text = text.replace(/¨0/, "");
         return globals.converter._dispatch("makehtml.githubCodeBlocks.after", text, options, globals).getText();
