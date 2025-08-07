@@ -1702,19 +1702,6 @@
                 }
                 html += '</tbody></table>';
                 promptMessage(html, true, false);
-            })(this.closest('.code-container').querySelector('code'))">step_over</button>`,
-
-            tsv: `<button class="icon-button" title="Show table" onclick="(function(el){
-                const raw = el.innerText.trim();
-                const rows = raw.split(/\\r?\\n/).map(line => line.split('\\t'));
-                let html = '<table style=\\'width:100%;border-collapse:collapse;text-align:left;\\'><thead><tr>';
-                html += rows[0].map(c=>'<th style=\\'border:1px solid var(--border-light-color);padding:6px;\\'>'+c+'</th>').join('');
-                html += '</tr></thead><tbody>';
-                for(let i=1;i<rows.length;i++){
-                    html += '<tr>' + rows[i].map(c=>'<td style=\\'border:1px solid var(--border-light-color);padding:6px;\\'>'+c+'</td>').join('') + '</tr>';
-                }
-                html += '</tbody></table>';
-                promptMessage(html, true, false);
             })(this.closest('.code-container').querySelector('code'))">step_over</button>`
         };
 
