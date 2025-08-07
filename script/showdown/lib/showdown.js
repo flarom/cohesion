@@ -1212,12 +1212,7 @@
             "[!TIP]":        { class: "quote-green", label: "Tip", icon: "lightbulb" },
             "[!IMPORTANT]":  { class: "quote-purple", label: "Important", icon: "priority_high" },
             "[!WARNING]":    { class: "quote-yellow", label: "Warning", icon: "warning" },
-            "[!CAUTION]":    { class: "quote-red", label: "Caution", icon: "dangerous" },
-            "[!TODO]":       { class: "quote-purple", label: "Todo", icon: "pending" },
-            "[!IDEA]":       { class: "quote-green", label: "Idea", icon: "lightbulb" },
-            "[!INFO]":       { class: "quote-blue", label: "Info", icon: "info" },
-            "[!INFORMATION]":{ class: "quote-blue", label: "Info", icon: "info" },
-            "[!REMEMBER]":   { class: "quote-red", label: "Remember", icon: "bookmark" },
+            "[!CAUTION]":    { class: "quote-red", label: "Caution", icon: "dangerous" }
         };
 
         const customBlockMap = {
@@ -1225,12 +1220,6 @@
                 render: function (title, contentHtml) {
                     return `<details><summary title="Click to expand"><span>${title}</span></summary>\n` +
                         `<div class="content">\n${contentHtml}\n</div>\n</details>`;
-                }
-            },
-            "SPOILER": {
-                render: function (title, contentHtml) {
-                    return `<details class="spoiler"><summary><span>${title}</span></summary>\n` +
-                        `<div class="content">${contentHtml}</div>\n</details>`;
                 }
             },
             "CSV": {
@@ -1252,7 +1241,7 @@
                         tbody += "<tr>" + rows[i].map(cell => `<td>${cell}</td>`).join("") + "</tr>\n";
                     }
 
-                    return `<div class="csv-table-wrapper">\n<table class="csv-table">\n<tbody>\n${tbody}</tbody>\n</table>\n</div>`;
+                    return `<div class="csv-table-container">\n<table class="csv-table">\n<tbody>\n${tbody}</tbody>\n</table>\n</div>`;
                 }
             }
         };
@@ -1696,12 +1685,14 @@
             let runButton = "";
             if (language === "js" || language === "javascript") {
                 runButton = `<button class="icon-button" title="Run code" onclick="try{eval(this.closest('.code-container').querySelector('code').innerText)}catch(e){showToast(e, 'error')}">step_over</button>`;
+            } else if (language === "html") {
+                runButton = `<button class="icon-button" title="Run HTML" onclick="(function(el){const iframe=document.createElement('iframe');iframe.setAttribute('sandbox','allow-scripts');iframe.setAttribute('style','width:100%; height:100%; border:none; background-color:white; border-radius:5px;');iframe.srcdoc=el.innerText;const wrapper=document.createElement('div');wrapper.setAttribute('style','width:100%; height:100%;');wrapper.appendChild(iframe);promptMessage(wrapper.outerHTML,true,true);})(this.closest('.code-container').querySelector('code'))">step_over</button>`;
             }
 
             codeblock = `
                 <div class="code-container">
                     <div class="code-head">
-                        <div>
+                        <div style="display:flex;gap:5px">
                             ${runButton}
                             <button class="icon-button" title="Copy" onclick="navigator.clipboard.writeText(this.closest('.code-container').querySelector('code').innerText); showToast('Copied to the clipboard', 'content_copy')">content_copy</button>
                         </div>

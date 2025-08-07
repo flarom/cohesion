@@ -181,7 +181,7 @@ function promptString(title, defaultText = "", warn = false) {
     });
 }
 
-function promptMessage(htmlContent, showCloseButton = true) {
+function promptMessage(htmlContent, showCloseButton = true, useBigDialog = false) {
     return new Promise((resolve) => {
         // overlay
         const overlay = document.createElement("div");
@@ -189,9 +189,12 @@ function promptMessage(htmlContent, showCloseButton = true) {
 
         // dialog
         const dialog = document.createElement("div");
-        dialog.className = "prompt-dialog";
-        dialog.style.width = "100%";
-        dialog.style.maxWidth = "500px";
+        dialog.className = useBigDialog ? "prompt-big-dialog" : "prompt-dialog";
+
+        if (!useBigDialog) {
+            dialog.style.width = "100%";
+            dialog.style.maxWidth = "500px";
+        }
 
         // html content
         const content = document.createElement("div");
@@ -199,14 +202,15 @@ function promptMessage(htmlContent, showCloseButton = true) {
         content.style.marginBottom = "15px";
         dialog.appendChild(content);
 
-        // ok button
-        const okButton = document.createElement("button");
-        okButton.textContent = "Ok";
-        okButton.className = "prompt-button submit";
+        const closeButton = document.createElement("button");
+        closeButton.textContent = "close";
+        closeButton.className = "icon-button dialog-window-control";
+        closeButton.setAttribute("translate", "no");
 
         if (showCloseButton) {
-            dialog.appendChild(okButton);
+            dialog.appendChild(closeButton);
         }
+
         overlay.appendChild(dialog);
         document.body.appendChild(overlay);
 
@@ -215,7 +219,7 @@ function promptMessage(htmlContent, showCloseButton = true) {
             resolve();
         }
 
-        okButton.addEventListener("click", closePrompt);
+        closeButton.addEventListener("click", closePrompt);
 
         overlay.addEventListener("keydown", (event) => {
             if (event.key === "Enter" || event.key === "Escape") {
@@ -223,7 +227,7 @@ function promptMessage(htmlContent, showCloseButton = true) {
             }
         });
 
-        okButton.focus();
+        closeButton.focus();
     });
 }
 

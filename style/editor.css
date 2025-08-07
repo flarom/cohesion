@@ -8,14 +8,11 @@
     display: none;
     overflow: scroll;
     font-family: var(--font-text);
+    box-sizing: border-box;
 }
 
 .preview:focus {
     outline:none;
-}
-
-.preview::before {
-    padding-bottom: 100vh;
 }
 
 .preview.on {
@@ -25,7 +22,7 @@
 /* titles */
 
 .preview h1, .preview h2, .preview h3, .preview h4, .preview h5, .preview h6 {
-    width: calc(100% - 20px);
+    width: 100%;
     font-family: var(--font-title);
     color: var(--title-color);
     padding-top: 15px;
@@ -39,7 +36,7 @@
 .preview hr {
     border: 0;
     border-bottom: 1px solid var(--border-light-color);
-    width: calc(100% - 20px);
+    width: 100%;
     margin-top: 30px;
     margin-bottom: 30px;
 }
@@ -134,7 +131,7 @@
     margin: 20px 0;
     border-radius: 10px;
     background-color: var(--background-color-2);
-    max-width: calc(100% - 20px);
+    max-width: 100%;
     overflow-x: auto;
     padding: 0;
 }
@@ -346,8 +343,8 @@
 
 /* tables */
 
-.preview .table-container {
-    width: calc(100% - 20px);
+.preview .table-container, .preview .csv-table-container {
+    width: 100%;
     overflow-x: scroll;
 }
 
@@ -412,7 +409,7 @@
 }
 
 .preview iframe {
-    width: calc(100% - 20px);
+    width: 100%;
     justify-self: center;
     border-radius: 10px;
     min-height: 500px;
@@ -441,7 +438,7 @@
 
 .preview math {
     display: block;
-    max-width: calc(100% - 20px);
+    max-width: 100%;
     padding: 10px;
     border-radius: 10px;
     background-color: var(--background-color-2);
@@ -492,7 +489,6 @@
 }
 
 .preview dt::after {
-    content: " defines";
     opacity: 50%;
     font-style: italic;
 }
@@ -572,38 +568,4 @@
 .preview details .content {
     padding: 12px 15px;
     overflow: scroll;
-}
-
-.preview .table-hover-menu {
-    position: relative;
-}
-
-.preview .table-hover-menu .icon-button {
-    /* background-color: var(--background-color); */
-    border: none;
-    /* border-radius: 10px; */
-    height: 30px;
-    width: 30px;
-    padding: 0;
-}
-
-.preview .table-hover-menu .table-menu {
-    position: absolute;
-    top: 28px;
-    right: 28px;
-    z-index: 2;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s;
-}
-
-.preview .table-hover-menu:hover .table-menu,
-.preview .table-hover-menu .table-menu:focus-within,
-.preview .table-hover-menu .table-menu:active {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.preview .table-hover-menu table {
-    width: 100%;
 }

@@ -86,3 +86,99 @@
 .hljs-deletion {
     color: var(--quote-red);
 }
+
+code.hljs::selection,
+code.hljs *::selection {
+    background-color: var(--text-color);
+    color: var(--background-color);
+}
+
+.hljs-doctag::selection {
+    background-color: var(--title-color) !IMPORTANT;
+    color: var(--background-color) !IMPORTANT;
+}
+.hljs-keyword::selection,
+.hljs-keyword::selection,
+.hljs-template-tag::selection,
+.hljs-template-variable::selection,
+.hljs-type::selection,
+.hljs-variable.language_::selection {
+    background-color: var(--quote-red) !IMPORTANT;
+    color: var(--background-color) !IMPORTANT;
+}
+.hljs-title::selection,
+.hljs-title.class_::selection,
+.hljs-title.class_.inherited__::selection,
+.hljs-title.function_::selection {
+    background-color: var(--quote-purple) !IMPORTANT;
+    color: var(--background-color) !IMPORTANT;
+}
+.hljs-attr::selection,
+.hljs-attribute::selection,
+.hljs-literal::selection,
+.hljs-meta::selection,
+.hljs-number::selection,
+.hljs-operator::selection,
+.hljs-selector-attr::selection,
+.hljs-selector-class::selection,
+.hljs-selector-id::selection,
+.hljs-variable::selection {
+    background-color: var(--quote-blue) !IMPORTANT;
+    color: var(--background-color) !IMPORTANT;
+}
+.hljs-string::selection,
+.hljs-regexp::selection,
+.hljs-strin::selection {
+    background-color: var(--link-color) !IMPORTANT;
+    color: var(--background-color) !IMPORTANT;
+}
+.hljs-built_in::selection,
+.hljs-symbol::selection {
+    background-color: var(--quote-yellow) !IMPORTANT;
+    color: var(--background-color) !IMPORTANT;
+}
+.hljs-code::selection,
+.hljs-comment::selection,
+.hljs-formula::selection {
+    background-color: var(--text-color) !IMPORTANT;
+    color: var(--background-color) !IMPORTANT;
+    opacity: 75% !IMPORTANT;
+}
+.hljs-name::selection,
+.hljs-quote::selection,
+.hljs-selector-pseudo::selection,
+.hljs-selector-tag::selection {
+    background-color: var(--quote-green) !IMPORTANT;
+    color: var(--background-color) !IMPORTANT;
+}
+.hljs-subst::selection {
+    background-color: var(--title-color) !IMPORTANT;
+    color: var(--background-color) !IMPORTANT;
+}
+.hljs-section::selection {
+    background-color: var(--highlight-color) !IMPORTANT;
+    color: var(--background-color) !IMPORTANT;
+    font-weight: 700 !IMPORTANT;
+}
+.hljs-bullet::selection {
+    background-color: var(--quote-yellow) !IMPORTANT;
+    color: var(--background-color) !IMPORTANT;
+}
+.hljs-emphasis::selection {
+    background-color: var(--title-color) !IMPORTANT;
+    color: var(--background-color) !IMPORTANT;
+    font-style: italic !IMPORTANT;
+}
+.hljs-strong::selection {
+    background-color: var(--title-color) !IMPORTANT;
+    color: var(--background-color) !IMPORTANT;
+    font-weight: 700 !IMPORTANT;
+}
+.hljs-addition::selection {
+    background-color: var(--quote-green) !IMPORTANT;
+    color: var(--background-color) !IMPORTANT;
+}
+.hljs-deletion::selection {
+    background-color: var(--quote-red) !IMPORTANT;
+    color: var(--background-color) !IMPORTANT;
+}

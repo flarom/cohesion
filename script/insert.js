@@ -142,9 +142,9 @@ function getMeta() {
 
 
 function insertYouTubeVideo(url) {
-    let prefix = `<!-- YouTube Video Player -->\n<iframe width="100%" allowfullscreen\n    src="`;
+    let prefix = `<!-- YouTube Video -->\n<iframe width="100%" allowfullscreen src="`;
     let value = formatYouTubeEmbed(url);
-    let suffix = `"\n    title="⚠️ PLACE ALT TEXT HERE"\n></iframe>`;
+    let suffix = `"title="⚠️ PLACE ALT TEXT HERE"></iframe>`;
 
     return prefix + value + suffix;
 
@@ -161,9 +161,9 @@ function insertYouTubeVideo(url) {
 }
 
 function insertVimeoVideo(url) {
-    let prefix = `<!-- Vimeo Video Player -->\n<iframe width="100%" allowfullscreen\n    src="`;
+    let prefix = `<!-- Vimeo Video -->\n<iframe width="100%" allowfullscreen src="`;
     let value = formatVimeoEmbed(url);
-    let suffix = `"\n    title="⚠️ PLACE ALT TEXT HERE"\n></iframe>`;
+    let suffix = `"title="⚠️ PLACE ALT TEXT HERE"></iframe>`;
 
     return prefix + value + suffix;
 
@@ -180,9 +180,9 @@ function insertVimeoVideo(url) {
 }
 
 function insertXPost(url) {
-    let prefix = `<!-- X (Twitter) Post Embed -->\n<iframe width="100%" allowfullscreen\n    src="`;
+    let prefix = `<!-- X (Twitter) Post -->\n<iframe width="100%" allowfullscreen src="`;
     let value = formatXEmbed(url);
-    let suffix = `"\n    title="⚠️ PLACE ALT TEXT HERE"\n></iframe>`;
+    let suffix = `"title="⚠️ PLACE ALT TEXT HERE"></iframe>`;
 
     return prefix + value + suffix;
 
@@ -199,9 +199,9 @@ function insertXPost(url) {
 }
 
 function insertBlueskyPost(url) {
-    let prefix = `<!-- Bluesky Post Embed -->\n<iframe width="100%" allowfullscreen\n    src="`;
+    let prefix = `<!-- Bluesky Post -->\n<iframe width="100%" allowfullscreen src="`;
     let value = formatBlueskyEmbed(url);
-    let suffix = `"\n    title="⚠️ PLACE ALT TEXT HERE"\n></iframe>`;
+    let suffix = `"title="⚠️ PLACE ALT TEXT HERE"></iframe>`;
 
     return prefix + value + suffix;
 
@@ -248,7 +248,15 @@ async function handleInsertVideo() {
 }
 
 async function handleInsertBlock() {
-    const blocks = ["<span style='color:var(--quote-blue);'     ><span class=icon translate=no>article       </span>Note         </span>", "<span style='color:var(--quote-green);'    ><span class=icon translate=no>lightbulb     </span>Tip          </span>", "<span style='color:var(--quote-purple);'   ><span class=icon translate=no>priority_high </span>Important    </span>", "<span style='color:var(--quote-yellow);'   ><span class=icon translate=no>warning       </span>Warning      </span>", "<span style='color:var(--quote-red);'      ><span class=icon translate=no>dangerous     </span>Caution      </span>", "<span style='color:var(--quote-purple);'   ><span class=icon translate=no>pending       </span>To-do        </span>", "<span style='color:var(--quote-green);'    ><span class=icon translate=no>lightbulb     </span>Idea         </span>", "<span style='color:var(--quote-blue);'     ><span class=icon translate=no>info          </span>Information  </span>", "<span style='color:var(--quote-red);'      ><span class=icon translate=no>bookmark      </span>Remember     </span>"];
+    const blocks = [
+        "<span style='color:var(--quote-blue);'  ><span class=icon translate=no>article</span>            Note      </span>",
+        "<span style='color:var(--quote-green);' ><span class=icon translate=no>lightbulb</span>          Tip       </span>",
+        "<span style='color:var(--quote-purple);'><span class=icon translate=no>priority_high</span>      Important </span>",
+        "<span style='color:var(--quote-yellow);'><span class=icon translate=no>warning</span>            Warning   </span>",
+        "<span style='color:var(--quote-red);'   ><span class=icon translate=no>dangerous</span>          Caution   </span>",
+        "<span style='color:var(--text-color);'  ><span class=icon translate=no>expand_circle_down</span> Details   </span>",
+        "<span style='color:var(--text-color);'  ><span class=icon translate=no>table</span>              CSV table </span>",
+    ];
 
     const selection = await promptSelect("Select a block", blocks);
 
@@ -269,13 +277,10 @@ async function handleInsertBlock() {
             resolve("CAUTION");
             break;
         case 5:
-            resolve("TODO");
+            resolve("DETAILS:title");
             break;
         case 6:
-            resolve("INFO");
-            break;
-        case 7:
-            resolve("REMEMBER");
+            resolve("CSV");
             break;
     }
 
