@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Settings</title>
+        <style>
+            button.ball {
+                width: 64px;
+                height: 64px;
+                border-radius: 32px;
+                cursor: pointer;
+                border: 0;
+                transition: border-radius 0.3s;
+            }
+
+            button.ball:hover {
+                border-radius: 15px;
+            }
+
+            button.ball.selected {
+                outline: 2px solid var(--highlight-color);
+                border: 4px solid var(--background-color-2);
+                box-shadow: var(--shadow);
+            }
+
+            .settings-body {
+                display: flex;
+                justify-content: space-between;
+                gap: 20px;
+                padding: 10px;
+            }
+
+            .main-page {
+                max-height: 500px;
+                overflow-y: scroll;
+                overflow-x: hidden;
+                flex-grow: 1;
+            }
+
+            .side-nav {
+                padding: 10px;
+                min-width: 150px;
+                position: sticky;
+                top: 0;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .setting {
+                padding: 20px;
+                background-color: var(--background-color-2);
+                border-radius: 15px;
+                margin-bottom: 10px;
+            }
+
+            .setting.box {
+                padding: 0px 20px 0px 20px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            @media screen and (max-width: 800px) {
+                .settings-body {
+                    display: block;
+                }
+
+                .side-nav {
+                    flex-direction: row;
+                    overflow: scroll;
+                }
+            }
+
+            .settings-body textarea {
+                background: var(--field-color);
+                border-radius: 10px;
+                padding: 10px;
+                color: var(--text-color);
+                height: 20ch;
+                border: 1px solid var(--border-field-color);
+                outline: none;
+                font-size: 12pt;
+                resize: vertical;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="settings-body">
+            <nav class="side-nav">
+                <a href="#setting-theme">Theme</a>
+                <a href="#setting-fonts">Fonts</a>
+                <a href="#setting-editor">Editor</a>
+                <a href="#setting-status-bar">Status Bar</a>
+                <a href="#setting-data">My files</a>
+            </nav>
+            <div class="main-page">
+                <div>
+                    <h3 id="setting-theme">Theme</h3>
+                    <div class="setting" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap">
+                        <button id="theme-epaper" class="ball" style="background-color: #ffffff; color: #000000" onclick="setSetting('theme', 'theme-epaper');loadSettings(); updateSelectedTheme()">ePaper</button>
+                        <button id="theme-light" class="ball" style="background-color: #ffffff; color: #3c3c3c" onclick="setSetting('theme', 'theme-light');loadSettings(); updateSelectedTheme()">Light</button>
+                        <button id="theme-cream" class="ball" style="background-color: #f5eacb; color: #4b3a25" onclick="setSetting('theme', 'theme-cream');loadSettings(); updateSelectedTheme()">Cream</button>
+                        <button id="theme-nord" class="ball" style="background-color: #2e3440; color: #d8dee9" onclick="setSetting('theme', 'theme-nord');loadSettings(); updateSelectedTheme()">Nord</button>
+                        <button id="theme-dark" class="ball" style="background-color: #303030; color: #dddddd" onclick="setSetting('theme', 'theme-dark');loadSettings(); updateSelectedTheme()">Dark</button>
+                        <button id="theme-monokai" class="ball" style="background-color: #272822; color: #F8F8F2" onclick="setSetting('theme', 'theme-monokai');loadSettings(); updateSelectedTheme()">Monokai</button>
+                        <button id="theme-cream-dark" class="ball" style="background-color: #1c1a17; color: #e0d6c0" onclick="setSetting('theme', 'theme-cream-dark');loadSettings(); updateSelectedTheme()">Coffee</button>
+                        <button id="theme-oled" class="ball" style="background-color: #000000; color: #888888" onclick="setSetting('theme', 'theme-oled');loadSettings(); updateSelectedTheme()">OLED</button>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 id="setting-fonts">Fonts</h3>
+                    <div class="setting">
+                        <div>
+                            <label>Editor font</label>
+                            <input list="default-fonts" type="text" placeholder="Ubuntu Mono" id="fontEditor" oninput="setSetting('editorFont', this.value); loadSettings();" />
+                        </div>
+                        <div>
+                            <label>Paragraph font</label>
+                            <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontParagraph" oninput="setSetting('paragraphFont', this.value); loadSettings();" />
+                        </div>
+                        <div>
+                            <label>Title font</label>
+                            <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontTitle" oninput="setSetting('titleFont', this.value); loadSettings();" />
+                        </div>
+
+                        <datalist id="default-fonts">
+                            <option value="Ubuntu"></option>
+                            <option value="Ubuntu Mono"></option>
+                            <option value="Sans serif"></option>
+                            <option value="Serif"></option>
+                            <option value="Monospace"></option>
+                            <option value="Cursive"></option>
+                        </datalist>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 id="setting-editor">Editor</h3>
+                    <div class="setting" style="display: flex; flex-direction: column; gap: 5px">
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="editorShowHints" onchange="setSetting('editorShowHints', this.checked);" />
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-text">Auto-complete</span>
+                        </div>
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="editorLineNumbers" onchange="setSetting('editorLineNumbers', this.checked); location.reload()" />
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-text">Line numbers</span>
+                        </div>
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="editorDirection" onchange="if (this.checked) {setSetting('editorDirection', 'rtl')} else {setSetting('editorDirection', 'ltr')} location.reload()" />
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-text">RTL text align</span>
+                        </div>
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="editorWidth" onchange="setSetting('editorWidth', this.checked); location.reload()" />
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-text">Full width</span>
+                        </div>
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="editorHighlightActiveLine" onchange="setSetting('editorHighlightActiveLine', this.checked); location.reload()" />
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-text">Highlight active line</span>
+                        </div>
+                    </div>
+                    <div class="setting">
+                        <h4>Date & Time</h4>
+
+                        <div style="display: flex; align-items: center; gap: 10px">
+                            <input type="text" id="editorDate" value="%d/%m/%Y %H:%M" onchange="setSetting('dateFormat', this.value)" />
+                            <button class="icon-button" translate="no" style="margin-bottom: 15px" title="Reset" onclick="document.getElementById('editorDate').value='%d/%m/%Y %H:%M'; setSetting('dateFormat', document.getElementById('editorDate').value); document.getElementById('editorDate').focus();">refresh</button>
+                            <button class="icon-button" translate="no" style="margin-bottom: 15px" title="Remove" onclick="removeLastDateBlock()">backspace</button>
+                        </div>
+
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px">
+                            <div>
+                                <p>Day</p>
+                                <div style="display: flex; flex-wrap: nowrap; gap: 5px">
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%A')" id="dateTimeBtn2" title="Full weekday name (e.g., 'Sunday')">%A</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%a')" id="dateTimeBtn1" title="Abbreviated weekday name (e.g., 'Sun' for Sunday)">%a</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%d')" id="dateTimeBtn3" title="Day of the month with leading zero (01-31)">%d</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%-d')" id="dateTimeBtn14" title="Day of the month without leading zero (1-31)">%-d</button>
+                                </div>
+                            </div>
+                            <div>
+                                <p>Month</p>
+                                <div style="display: flex; flex-wrap: nowrap; gap: 5px">
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%B')" id="dateTimeBtn5" title="Full month name (e.g., 'September')">%B</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%b')" id="dateTimeBtn4" title="Abbreviated month name (e.g., 'Sep' for September)">%b</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%m')" id="dateTimeBtn6" title="Month as a number with leading zero (01-12)">%m</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%-m')" id="dateTimeBtn15" title="Month as a number without leading zero (1-12)">%-m</button>
+                                </div>
+                            </div>
+                            <div>
+                                <p>Year</p>
+                                <div style="display: flex; flex-wrap: nowrap; gap: 5px">
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%Y')" id="dateTimeBtn8" title="Full year with century (e.g., '2024')">%Y</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%y')" id="dateTimeBtn7" title="Year without century, as two digits (e.g., '24' for 2024)">%y</button>
+                                </div>
+                            </div>
+                            <div>
+                                <p>Hour</p>
+                                <div style="display: flex; flex-wrap: nowrap; gap: 5px">
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%H')" id="dateTimeBtn9" title="Hour (24-hour clock) with leading zero (00-23)">%H</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%-H')" id="dateTimeBtn16" title="Hour (24-hour clock) without leading zero (0-23)">%-H</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%I')" id="dateTimeBtn10" title="Hour (12-hour clock) with leading zero (01-12)">%I</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%-I')" id="dateTimeBtn17" title="Hour (12-hour clock) without leading zero (1-12)">%-I</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%p')" id="dateTimeBtn11" title="AM or PM indicator">%p</button>
+                                </div>
+                            </div>
+                            <div>
+                                <p>Minute</p>
+                                <div style="display: flex; flex-wrap: nowrap; gap: 5px">
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%M')" id="dateTimeBtn12" title="Minute with leading zero (00-59)">%M</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%-M')" id="dateTimeBtn18" title="Minute without leading zero (0-59)">%-M</button>
+                                </div>
+                            </div>
+                            <div>
+                                <p>Second</p>
+                                <div style="display: flex; flex-wrap: nowrap; gap: 5px">
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%S')" id="dateTimeBtn13" title="Second with leading zero (00-59)">%S</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%-S')" id="dateTimeBtn19" title="Second without leading zero (0-59)">%-S</button>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="https://github.com/flarom/cohesion/wiki/Time-Formatting" target="_blank">Learn more about date and time syntax</a>
+                    </div>
+                    <div class="setting">
+                        <h4>Meta</h4>
+                        <div style="display: flex; flex-direction: column; gap: 5px">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <p>Use asterisks to use the default value, you can disable lines by placing # at the start of the line.</p>
+                                <button class="icon-button" translate="no" style="margin-bottom: 15px" title="Reset" onclick="resetEditorMeta();">refresh</button>
+                            </div>
+                            <textarea name="editorMeta" id="editorMeta" onchange="setSetting('editorMeta', this.value)"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 id="setting-status-bar">Status bar</h3>
+                    <div class="setting" style="display: flex; flex-direction: column; gap: 5px">
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="statusShow" onchange="setSetting('statusShow', this.checked); loadSettings()" />
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-text">Status bar</span>
+                        </div>
+                        <div style="padding-left: 20px; display: flex; flex-direction: column; gap: 5px">
+                            <div class="switch-wrapper">
+                                <label class="switch">
+                                    <input type="checkbox" id="statusCursorPos" onchange="setSetting('statusCursorPos', this.checked); loadSettings()" />
+                                    <span class="slider"></span>
+                                </label>
+                                <span class="switch-text">Cursor position</span>
+                            </div>
+                            <div class="switch-wrapper">
+                                <label class="switch">
+                                    <input type="checkbox" id="statusEditorMode" onchange="setSetting('statusEditorMode', this.checked); loadSettings()" />
+                                    <span class="slider"></span>
+                                </label>
+                                <span class="switch-text">Editor mode</span>
+                            </div>
+                            <div class="switch-wrapper">
+                                <label class="switch">
+                                    <input type="checkbox" id="statusDocumentSize" onchange="setSetting('statusDocumentSize', this.checked); loadSettings()" />
+                                    <span class="slider"></span>
+                                </label>
+                                <span class="switch-text">Document size</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 id="setting-data">My files</h3>
+                        <div>
+                            <div class="setting box">
+                                <div>
+                                    <h4>Export package</h4>
+                                    <p>Export your notes as a zip file</p>
+                                </div>
+                                <div>
+                                    <button class="text-button" onclick="exportBook();">Export</button>
+                                </div>
+                            </div>
+
+                            <div class="setting box">
+                                <div>
+                                    <h4>Import package</h4>
+                                    <p>Import files from a zip file</p>
+                                </div>
+                                <div>
+                                    <button class="text-button" onclick="importBook();">Import</button>
+                                </div>
+                            </div>
+
+                            <div class="setting box">
+                                <div>
+                                    <h4>Delete empty files</h4>
+                                    <p>Delete all files without any text or meta.</p>
+                                </div>
+                                <div>
+                                    <button class="text-button danger" onclick="handleDeleteEmptyFiles();">Delete</button>
+                                </div>
+                            </div>
+
+                            <div class="setting box">
+                                <div>
+                                    <h4>Replace with package</h4>
+                                    <p>Import files from a zip file, replacing your files.</p>
+                                </div>
+                                <div>
+                                    <button class="text-button danger" onclick="handleImportDeleteBook();">Replace</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            (() => {
+                // fonts
+                const txtFontEditor = document.getElementById("fontEditor");
+                const txtFontParagraph = document.getElementById("fontParagraph");
+                const txtFontTitle = document.getElementById("fontTitle");
+                txtFontEditor.value = getSetting("editorFont", "Ubuntu Mono");
+                txtFontParagraph.value = getSetting("paragraphFont", "Ubuntu");
+                txtFontTitle.value = getSetting("titleFont", "Ubuntu");
+
+                // editor
+                const cbxEditorShowHints = document.getElementById("editorShowHints");
+                const cbxEditorLineNumbers = document.getElementById("editorLineNumbers");
+                const cbxEditorDirection = document.getElementById("editorDirection");
+                const cbxEditorWidth = document.getElementById("editorWidth");
+                const cbxEditorHighlightActiveLine = document.getElementById('editorHighlightActiveLine');
+                const txtEditorDate = document.getElementById("editorDate");
+                if (getSetting("editorShowHints", "true") === "true") cbxEditorShowHints.checked = "true";
+                if (getSetting("editorLineNumbers", "false") === "true") cbxEditorLineNumbers.checked = "true";
+                if (getSetting("editorDirection", "ltr") === "rtl") cbxEditorDirection.checked = "true";
+                if (getSetting("editorWidth", "false") === "true") cbxEditorWidth.checked = "true";
+                if (getSetting("editorHighlightActiveLine", "true") === "true") cbxEditorHighlightActiveLine.checked = "true";
+                txtEditorDate.value = getSetting("dateFormat", "%d/%m/%Y %H:%M");
+
+                // status bar
+                const cbxStatusShow = document.getElementById("statusShow");
+                const cbxStatusCursorPos = document.getElementById("statusCursorPos");
+                const cbxStatusEditorMode = document.getElementById("statusEditorMode");
+                const cbxStatusDocumentSize = document.getElementById("statusDocumentSize");
+                if (getSetting("statusShow", "true") === "true") cbxStatusShow.checked = "true";
+                if (getSetting("statusCursorPos", "true") === "true") cbxStatusCursorPos.checked = "true";
+                if (getSetting("statusEditorMode", "true") === "true") cbxStatusEditorMode.checked = "true";
+                if (getSetting("statusDocumentSize", "true") === "true") cbxStatusDocumentSize.checked = "true";
+
+                document.getElementById("dateTimeBtn1").innerHTML = strftime("%a");
+                document.getElementById("dateTimeBtn2").innerHTML = strftime("%A");
+                document.getElementById("dateTimeBtn3").innerHTML = strftime("%d");
+                document.getElementById("dateTimeBtn4").innerHTML = strftime("%b");
+                document.getElementById("dateTimeBtn5").innerHTML = strftime("%B");
+                document.getElementById("dateTimeBtn6").innerHTML = strftime("%m");
+                document.getElementById("dateTimeBtn7").innerHTML = strftime("%y");
+                document.getElementById("dateTimeBtn8").innerHTML = strftime("%Y");
+                document.getElementById("dateTimeBtn9").innerHTML = strftime("%H");
+                document.getElementById("dateTimeBtn10").innerHTML = strftime("%I");
+                document.getElementById("dateTimeBtn11").innerHTML = strftime("%p");
+                document.getElementById("dateTimeBtn12").innerHTML = strftime("%M");
+                document.getElementById("dateTimeBtn13").innerHTML = strftime("%S");
+                document.getElementById("dateTimeBtn14").innerHTML = strftime("%-d");
+                document.getElementById("dateTimeBtn15").innerHTML = strftime("%-m");
+                document.getElementById("dateTimeBtn16").innerHTML = strftime("%-H");
+                document.getElementById("dateTimeBtn17").innerHTML = strftime("%-I");
+                document.getElementById("dateTimeBtn18").innerHTML = strftime("%-M");
+                document.getElementById("dateTimeBtn19").innerHTML = strftime("%-S");
+
+                // meta
+                const txtEditorMeta = document.getElementById('editorMeta');
+                txtEditorMeta.value = getSetting('editorMeta', 'title: *\nauthors: *\ndate: *\ntags: *\ndescription: *\ncolor: *\nbanner: *');
+            })();
+
+            function insertDateTimeOption(block) {
+                const txtEditorDate = document.getElementById("editorDate");
+                let value = txtEditorDate.value;
+
+                txtEditorDate.value = value + block;
+                txtEditorDate.focus();
+                setSetting("dateFormat", txtEditorDate.value);
+            }
+
+            function removeLastDateBlock() {
+                const input = document.getElementById("editorDate");
+                let value = input.value;
+
+                const lastPercentIndex = value.lastIndexOf("%");
+
+                if (lastPercentIndex !== -1) {
+                    value = value.substring(0, lastPercentIndex);
+                } else {
+                    value = "";
+                }
+
+                input.value = value;
+                input.focus();
+                setSetting("dateFormat", value);
+            }
+
+            async function handleDeleteEmptyFiles() {
+                if (await promptConfirm("Are you sure you want to delete empty files?", true)) {
+                    deleteEmptyFiles();
+                }
+            }
+
+            async function handleImportDeleteBook() {
+                if (await promptConfirm("Are you sure you want to replace your documents? This action can not be reverted.", true)) {
+                    importDeleteBook();
+                }
+            }
+
+            function resetEditorMeta() {
+                const txtEditorMeta = document.getElementById('editorMeta');
+                txtEditorMeta.value = 'title: *\nauthors: *\ndate: *\ntags: *\ndescription: *\ncolor: *\nbanner: *';
+                setSetting('editorMeta', txtEditorMeta.value);
+            }
+
+            updateSelectedTheme();
+
+            function updateSelectedTheme() {
+                const theme = getSetting("theme", "theme-dark");
+                document.querySelectorAll("button.ball").forEach(btn => btn.classList.remove("selected"));
+                const selectedBtn = document.getElementById(theme);
+                if (selectedBtn) selectedBtn.classList.add("selected");
+            }
+        </script>
+    </body>
+</html>

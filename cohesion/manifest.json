@@ -1,0 +1,20 @@
+{
+  "name": "Cohesion Text Editor",
+  "short_name": "Cohesion",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#3584e4",
+  "background_color": "#303030",
+  "icons": [
+    {
+      "src": "/cohesion/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/cohesion/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
