@@ -1226,13 +1226,21 @@
             "EMBED": {
                 allowHtml: true,
                 render: function (title, contentText) {
-                    const safeUrl = contentText.replace(/"/g, "&quot;");
-                    return `<iframe 
-                        src="${safeUrl}" 
-                        sandbox="allow-same-origin allow-forms allow-popups allow-scripts" 
-                        allowfullscreen
-                        style="width:100%;height:400px;border:none;border-radius:5px;">
-                    </iframe>`;
+                    const urls = contentText
+                        .split(/\r?\n/)
+                        .map(line => line.trim())
+                        .filter(line => line.length > 0);
+
+                    const iframes = urls.map(url => {
+                        const safeUrl = url.replace(/"/g, "&quot;");
+                        return `<iframe 
+                            src="${safeUrl}" 
+                            sandbox="allow-same-origin allow-forms allow-popups allow-scripts" 
+                            allowfullscreen>    
+                        </iframe>`;
+                    }).join("\n");
+
+                    return `<div class="embed-container">\n${iframes}\n</div>`;
                 }
             },
             "CSV": {
