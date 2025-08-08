@@ -1217,12 +1217,26 @@
 
         const customBlockMap = {
             "DETAILS": {
+                allowHtml: false,
                 render: function (title, contentHtml) {
                     return `<details><summary title="Click to expand"><span>${title}</span></summary>\n` +
                         `<div class="content">\n${contentHtml}\n</div>\n</details>`;
                 }
             },
+            "EMBED": {
+                allowHtml: true,
+                render: function (title, contentText) {
+                    const safeUrl = contentText.replace(/"/g, "&quot;");
+                    return `<iframe 
+                        src="${safeUrl}" 
+                        sandbox="allow-same-origin allow-forms allow-popups allow-scripts" 
+                        allowfullscreen
+                        style="width:100%;height:400px;border:none;border-radius:5px;">
+                    </iframe>`;
+                }
+            },
             "CSV": {
+                allowHtml: true,
                 render: function (sepOrTitle, contentText) {
                     let separator = ",";
                     let data = contentText;
@@ -1260,15 +1274,14 @@
                     lines.shift();
                     let content = lines.join("\n").replace(/¨0/g, "").replace(/^[ \t]+$/gm, "");
 
-                    if (blockType === "CSV") {
-                        const html = customBlockMap[blockType].render(blockTitle, content);
-                        return showdown.subParser("makehtml.hashBlock")(html, options, globals);
+                    const block = customBlockMap[blockType];
+
+                    if (!block.allowHtml) {
+                        content = showdown.subParser("makehtml.githubCodeBlocks")(content, options, globals);
+                        content = showdown.subParser("makehtml.blockGamut")(content, options, globals);
                     }
 
-                    content = showdown.subParser("makehtml.githubCodeBlocks")(content, options, globals);
-                    content = showdown.subParser("makehtml.blockGamut")(content, options, globals);
-
-                    const html = customBlockMap[blockType].render(blockTitle, content);
+                    const html = block.render(blockTitle, content);
                     return showdown.subParser("makehtml.hashBlock")(html, options, globals);
                 }
             }
