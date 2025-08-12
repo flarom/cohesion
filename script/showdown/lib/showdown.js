@@ -153,6 +153,11 @@
                 describe: "Replaces three dots with the ellipsis unicode character",
                 type: "boolean",
             },
+            dash: {
+                defaultValue: true,
+                describe: "Replaces two minus signs with the dash unicode character",
+                type: "boolean",
+            },
             completeHTMLDocument: {
                 defaultValue: false,
                 describe: "Outputs a complete html document, including `<html>`, `<head>` and `<body>` tags",
@@ -1551,6 +1556,22 @@
         return text;
     });
 
+    showdown.subParser("makehtml.dash", function (text, options, globals) {
+        "use strict";
+
+        if (!options.dash) {
+            return text;
+        }
+
+        text = globals.converter._dispatch("makehtml.dash.before", text, options, globals).getText();
+
+        text = text.replace(/--/g, "—");
+
+        text = globals.converter._dispatch("makehtml.dash.after", text, options, globals).getText();
+
+        return text;
+    });
+
     /**
      * Turn emoji codes into emojis
      *
@@ -2408,6 +2429,7 @@
             text = showdown.subParser("makehtml.italicsAndBold")(text, options, globals);
             text = showdown.subParser("makehtml.strikethrough")(text, options, globals);
             text = showdown.subParser("makehtml.ellipsis")(text, options, globals);
+            text = showdown.subParser("makehtml.dash")(text, options, globals);
             text = showdown.subParser("makehtml.hashHTMLSpans")(text, options, globals);
 
             //evt = createEvent(rgx, evtRootName + '.captureEnd', wholeMatch, text, id, url, title, options, globals);
@@ -3141,6 +3163,7 @@
         text = showdown.subParser("makehtml.italicsAndBold")(text, options, globals);
         text = showdown.subParser("makehtml.strikethrough")(text, options, globals);
         text = showdown.subParser("makehtml.ellipsis")(text, options, globals);
+        text = showdown.subParser("makehtml.dash")(text, options, globals);
 
         // we need to hash HTML tags inside spans
         text = showdown.subParser("makehtml.hashHTMLSpans")(text, options, globals);

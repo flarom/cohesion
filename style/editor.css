@@ -271,7 +271,11 @@
     margin: 0px;
 }
 
-/* checklists */
+/* lists */
+
+.preview li {
+    margin-bottom: 10px;
+}
 
 .preview input[type="checkbox"] {
     font-family: "Material Symbols Outlined";
