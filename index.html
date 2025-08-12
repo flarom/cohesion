@@ -190,6 +190,7 @@
             </div>
             <hr id="contextual-selection-separator" style="display: none" />
             <button class="text-button" onmouseup="formatTable(); editor.focus()" id="formatTable" style="display: none">Format table</button>
+            <button class="text-button" onmouseup="window.open(editor.getSelection()); editor.focus()" id="openSelectedURL" style="display: none">Open URL</button>
             <hr />
             <button class="text-button" onmouseup="cutText()">
                 Cut
@@ -255,7 +256,8 @@
                 lineNumbers: getSetting("editorLineNumbers", false) === "true",
                 theme: "default",
                 lineWrapping: true,
-                autoCloseBrackets: true,
+                autoCloseBrackets: getSetting("editorAutoCloseBrackets", "true") === "true" ,
+                autoCloseTags: getSetting("editorAutoCloseTags", "true") === "true" ,
                 extraKeys: {
                     Enter: "newlineAndIndentContinueMarkdownList",
                     "Ctrl-Space": "autocomplete",
@@ -263,7 +265,6 @@
                 keyMap: "sublime",
                 direction: getSetting("editorDirection", "ltr"),
                 showCursorWhenSelecting: true,
-                autoCloseTags: true,
                 styleActiveLine: getSetting("editorHighlightActiveLine", "true") === "true",
             });
 
@@ -274,6 +275,7 @@
             const editorMenu = document.getElementById("editorMenu");
             const hrContextualSeparator = document.getElementById("contextual-selection-separator");
             const btnFormatTable = document.getElementById("formatTable");
+            const btnOpenURL = document.getElementById("openSelectedURL");
 
             editor.getWrapperElement().addEventListener("contextmenu", function (e) {
                 e.preventDefault();
@@ -284,6 +286,14 @@
                 } else {
                     hrContextualSeparator.style.display = "none";
                     btnFormatTable.style.display = "none";
+                }
+
+                if (hasURLSelected()) {
+                    hrContextualSeparator.style.display = "block";
+                    btnOpenURL.style.display = "flex";
+                } else {
+                    hrContextualSeparator.style.display = "none";
+                    btnOpenURL.style.display = "none";
                 }
 
                 const rect = editor.getWrapperElement().getBoundingClientRect();

@@ -193,3 +193,10 @@ function hasTableSelected() {
     
     return tableLines.length >= 2;
 }
+
+function hasURLSelected() {
+    const selection = editor.getSelection();
+    const urlPattern = /\b(?:https?:\/\/|www\.)\S+/i;
+
+    return urlPattern.test(selection);
+}

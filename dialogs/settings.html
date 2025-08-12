@@ -151,6 +151,20 @@
                         </div>
                         <div class="switch-wrapper">
                             <label class="switch">
+                                <input type="checkbox" id="editorAutoCloseBrackets" onchange="setSetting('editorAutoCloseBrackets', this.checked); location.reload()">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-text">Auto-close brackets</span>
+                        </div>
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="editorAutoCloseTags" onchange="setSetting('editorAutoCloseTags', this.checked); location.reload()">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-text">Auto-close ML tags</span>
+                        </div>
+                        <div class="switch-wrapper">
+                            <label class="switch">
                                 <input type="checkbox" id="editorLineNumbers" onchange="setSetting('editorLineNumbers', this.checked); location.reload()" />
                                 <span class="slider"></span>
                             </label>
@@ -351,12 +365,16 @@
                 const cbxEditorDirection = document.getElementById("editorDirection");
                 const cbxEditorWidth = document.getElementById("editorWidth");
                 const cbxEditorHighlightActiveLine = document.getElementById('editorHighlightActiveLine');
+                const cbxEditorAutoCloseBrackets = document.getElementById('editorAutoCloseBrackets');
+                const cbxEditorAutoCloseTags = document.getElementById('editorAutoCloseTags');
                 const txtEditorDate = document.getElementById("editorDate");
                 if (getSetting("editorShowHints", "true") === "true") cbxEditorShowHints.checked = "true";
                 if (getSetting("editorLineNumbers", "false") === "true") cbxEditorLineNumbers.checked = "true";
                 if (getSetting("editorDirection", "ltr") === "rtl") cbxEditorDirection.checked = "true";
                 if (getSetting("editorWidth", "false") === "true") cbxEditorWidth.checked = "true";
                 if (getSetting("editorHighlightActiveLine", "true") === "true") cbxEditorHighlightActiveLine.checked = "true";
+                if (getSetting("editorAutoCloseBrackets", "true") === "true") cbxEditorAutoCloseBrackets.checked = "true";
+                if (getSetting("editorAutoCloseTags", "true") === "true") cbxEditorAutoCloseTags.checked = "true";
                 txtEditorDate.value = getSetting("dateFormat", "%d/%m/%Y %H:%M");
 
                 // status bar

@@ -142,11 +142,7 @@ function getMeta() {
 
 
 function insertYouTubeVideo(url) {
-    let prefix = `<!-- YouTube Video -->\n<iframe width="100%" allowfullscreen src="`;
-    let value = formatYouTubeEmbed(url);
-    let suffix = `"title="⚠️ PLACE ALT TEXT HERE"></iframe>`;
-
-    return prefix + value + suffix;
+    return embedBlock(formatYouTubeEmbed(url));
 
     function formatYouTubeEmbed(url) {
         let regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/;
@@ -161,11 +157,7 @@ function insertYouTubeVideo(url) {
 }
 
 function insertVimeoVideo(url) {
-    let prefix = `<!-- Vimeo Video -->\n<iframe width="100%" allowfullscreen src="`;
-    let value = formatVimeoEmbed(url);
-    let suffix = `"title="⚠️ PLACE ALT TEXT HERE"></iframe>`;
-
-    return prefix + value + suffix;
+    return embedBlock(formatVimeoEmbed(url));
 
     function formatVimeoEmbed(url) {
         let regex = /(?:https?:\/\/)?(?:www\.)?(?:vimeo\.com\/(?:video\/)?)(\d+)/;
@@ -180,11 +172,7 @@ function insertVimeoVideo(url) {
 }
 
 function insertXPost(url) {
-    let prefix = `<!-- X (Twitter) Post -->\n<iframe width="100%" allowfullscreen src="`;
-    let value = formatXEmbed(url);
-    let suffix = `"title="⚠️ PLACE ALT TEXT HERE"></iframe>`;
-
-    return prefix + value + suffix;
+    return embedBlock(formatXEmbed(url));
 
     function formatXEmbed(url) {
         let regex = /(?:https?:\/\/)?(?:www\.)?(?:twitter\.com|x\.com)\/[a-zA-Z0-9_]+\/status\/(\d+)/;
@@ -199,11 +187,7 @@ function insertXPost(url) {
 }
 
 function insertBlueskyPost(url) {
-    let prefix = `<!-- Bluesky Post -->\n<iframe width="100%" allowfullscreen src="`;
-    let value = formatBlueskyEmbed(url);
-    let suffix = `"title="⚠️ PLACE ALT TEXT HERE"></iframe>`;
-
-    return prefix + value + suffix;
+    return embedBlock(formatBlueskyEmbed(url));
 
     function formatBlueskyEmbed(url) {
         let regex = /(?:https?:\/\/)?(?:www\.)?bsky\.app\/profile\/[^\/]+\/post\/[a-zA-Z0-9]+/;
@@ -216,6 +200,12 @@ function insertBlueskyPost(url) {
         }
     }
 }
+
+// Função utilitária para gerar o bloco no formato simplificado
+function embedBlock(embedUrl) {
+    return `> [!EMBED]\n> ${embedUrl}`;
+}
+
 
 async function handleInsertImage() {
     try {
