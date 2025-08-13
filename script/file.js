@@ -80,7 +80,7 @@ function importFile() {
             <div id="drop-area" class="drop-area">
                 <div class="drop-area-text">
                     <p>Drag & Drop a file here</p>
-                    <p class="subtitle">Markdown or plain text</p>
+                    <p class="subtitle">Or click to choose a file</p>
                 </div>
             </div>
         `;
@@ -118,21 +118,12 @@ function importFile() {
             e.preventDefault();
             dropArea.classList.remove("dragover");
             const file = e.dataTransfer.files[0];
-            if (file && (
-                file.type === "text/markdown" ||
-                file.type === "text/plain" ||
-                file.name.endsWith(".md")
-            )) {
-                handleFile(file);
-            } else {
-                showToast("Invalid file. Please use .md or .txt", "warning");
-            }
+            handleFile(file);
         });
 
         dropArea.addEventListener("click", () => {
             const input = document.createElement("input");
             input.type = "file";
-            input.accept = ".md,text/markdown,text/plain";
             input.onchange = (event) => {
                 handleFile(event.target.files[0]);
             };

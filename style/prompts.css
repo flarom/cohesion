@@ -341,8 +341,26 @@
     border-radius: 15px;
     cursor: pointer;
     padding: 20px;
+    transition: all .3s;
 }
 
 .prompt-dialog .drop-area:hover {
     background-color: var(--hover-color);
+}
+
+.prompt-dialog .drop-area.dragover {
+    background-color: var(--selection-color);
+    border-color: var(--highlight-color);
+}
+
+.prompt-dialog .drop-area-text {
+    text-align: center;
+
+    .subtitle {
+        font-size: 0.9em;
+    }
+}
+
+.prompt-dialog + .drop-area:hover {
+    padding: 0;
 }
