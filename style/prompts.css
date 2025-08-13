@@ -335,3 +335,14 @@
     font-size: 14px;
     color: var(--text-color);
 }
+
+.prompt-dialog .drop-area {
+    border: 2px dashed var(--border-light-color);
+    border-radius: 15px;
+    cursor: pointer;
+    padding: 20px;
+}
+
+.prompt-dialog .drop-area:hover {
+    background-color: var(--hover-color);
+}

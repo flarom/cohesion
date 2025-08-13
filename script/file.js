@@ -74,30 +74,71 @@ function deleteEmptyFiles() {
     renderEditor();
 }
 
-/**
- * Shows a open file dialog, adds the context of a file into the fileList
- */
 function importFile() {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".md, text/markdown, text/plain";
-    input.onchange = (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
+    return new Promise((resolve) => {
+        const html = `
+            <div id="drop-area" class="drop-area">
+                <div class="drop-area-text">
+                    <p>Drag & Drop a file here</p>
+                    <p class="subtitle">Markdown or plain text</p>
+                </div>
+            </div>
+        `;
 
-        const reader = new FileReader();
-        reader.onload = () => {
-            files.unshift(reader.result);
-            saveFilesToStorage();
-            renderFiles("files");
-            index = 0;
-            localStorage.setItem('lastIndex', index);
-            renderEditor();
-            editor.focus();
-        };
-        reader.readAsText(file);
-    };
-    input.click();
+        promptMessage(html, true, false).then(resolve);
+
+        const dropArea = document.getElementById("drop-area");
+
+        function handleFile(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                files.unshift(reader.result);
+                saveFilesToStorage();
+                renderFiles("files");
+                index = 0;
+                localStorage.setItem('lastIndex', index);
+                renderEditor();
+                editor.focus();
+            };
+            reader.readAsText(file);
+            closeAllDialogs();
+        }
+
+        dropArea.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropArea.classList.add("dragover");
+        });
+
+        dropArea.addEventListener("dragleave", () => {
+            dropArea.classList.remove("dragover");
+        });
+
+        dropArea.addEventListener("drop", (e) => {
+            e.preventDefault();
+            dropArea.classList.remove("dragover");
+            const file = e.dataTransfer.files[0];
+            if (file && (
+                file.type === "text/markdown" ||
+                file.type === "text/plain" ||
+                file.name.endsWith(".md")
+            )) {
+                handleFile(file);
+            } else {
+                showToast("Invalid file. Please use .md or .txt", "warning");
+            }
+        });
+
+        dropArea.addEventListener("click", () => {
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = ".md,text/markdown,text/plain";
+            input.onchange = (event) => {
+                handleFile(event.target.files[0]);
+            };
+            input.click();
+        });
+    });
 }
 
 /**
