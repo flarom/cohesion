@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            box-sizing: border-box;
+            padding-left: 30px;
+            padding-right: 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero {
+            display: flex;
+            align-items: center;
+            height: 90vh;
+            padding-left: 100px;
+            padding-right: 100px;
+            justify-content: space-between;
+        }
+
+        .hero img {
+            border-radius: 15px;
+            max-width: 900px;
+            width: 100%;
+            height: auto;
+            box-shadow: 0px 40px 30px -20px #00000077;
+        }
+
+        .note {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100vw;
+            text-align: center;
+            font-family: var(--font-editor);
+        }
+
+        button.primary {
+            border-radius: 10px;
+            padding: 4px 8px 4px 8px;
+            border: 1px solid var(--highlight-color);
+            background: var(--selection-color);
+            color: var(--title-color);
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 200px;
+            cursor: pointer;
+            transition: all 0.5s;
+        }
+
+        button.primary:hover {
+            background-color: var(--highlight-color);
+            box-shadow: 0px 0px 30px var(--highlight-color);
+        }
+
+        button.secondary {
+            border-radius: 10px;
+            padding: 4px 8px 4px 8px;
+            color: var(--text-color);
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            min-height: 32px;
+            font-size: 0.9em;
+            transition: all 0.3s
+        }
+
+        button.secondary:hover {
+            background: var(--background-color-3);
+        }
+
+        .hero.button.primary:hover .icon {
+            animation: pencil_move 0.5s;
+        }
+
+        @keyframes pencil_move {
+            0%   { transform: rotate(0deg); }
+            20%  { transform: rotate(-10deg); }
+            50%  { transform: rotate(10deg); }
+            80%  { transform: rotate(-10deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        @media screen and (max-width: 800px) {
+            .hero {
+                flex-direction: column;
+                align-items: initial;
+                padding: 0;
+                justify-content: initial;
+                padding-top: 100px;
+            }
+
+            .note {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <a href="index.html" style="display: inline-flex; align-items: center; color: var(--text-color); text-decoration: none;">
+                <img src="cohesion/favicon.png" alt="" width="48">
+                <h2>Cohesion</h2>
+            </a>
+        </div>
+        <div style="display: flex; gap: 5px;">
+            <button class="secondary" onclick="fadeOutAllDialogs()">Editor</button>
+            <button class="secondary" onclick="window.open('https://github.com/flarom/cohesion/wiki')">Documentation</button>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div>
+            <h1>Bring clarity to your ideas.</h1>
+            <p>Cohesion is a minimal, beautiful, Extended Markdown editor<br>designed for clarity and expression.</p>
+            <div style="margin-top: 40px; margin-bottom: 40px; display: flex; gap: 5px;">
+                <button class="primary" onclick="fadeOutAllDialogs()">
+                    <span class="icon" style="font-size: 1.5em;">edit</span>
+                    <span id="primary-button-text">
+                        Start creating...
+                    </span>
+                </button>
+                <button class="secondary">
+                    Learn more
+                </button>
+            </div>
+        </div>
+        <img src="cohesion/scrshot.png" alt="">
+    </section>
+
+    <div class="note">
+        <p>Start writing now — you can return here anytime from the 'Learn' menu.</p>
+    </div>
+    <script>
+        const btnText = document.getElementById('primary-button-text');
+        let showCursor = false;
+        setInterval(() => {
+            showCursor = !showCursor;
+            btnText.textContent = showCursor ? 'Start creating... |' : 'Start creating...';
+        }, 600);
+    </script>
+</body>
+</html>

@@ -11,6 +11,20 @@
     animation: blackout 0.5s ease-in-out forwards;
 }
 
+.prompt-overlay.no-bg {
+    animation: none;
+    background-color: var(--background-color);
+}
+
+.prompt-overlay.fade-out {
+    animation: fadeOut 0.3s ease-in-out forwards !important;
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+
 @keyframes blackout {
     0% {
         background-color: rgba(0, 0, 0, 0);
@@ -46,6 +60,13 @@
     height: calc(100vh - 20px - 60px);
     margin: 20px;
     animation: showdialogBig 0.5s ease-in-out forwards;
+}
+
+.prompt-dialog.no-animation,
+.prompt-big-dialog.no-animation {
+    border: 0;
+    box-shadow: none;
+    animation: none !important;
 }
 
 @keyframes showdialog {

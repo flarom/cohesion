@@ -116,6 +116,13 @@ function closeAllDialogs() {
     document.querySelectorAll(".prompt-overlay").forEach((el) => el.remove());
 }
 
+function fadeOutAllDialogs() {
+    document.querySelectorAll(".prompt-overlay").forEach((el) => {
+        el.classList.add("fade-out");
+        setTimeout(() => el.remove(), 300);
+    });
+}
+
 function promptString(title, defaultText = "", warn = false) {
     return new Promise((resolve) => {
         // overlay
@@ -231,7 +238,7 @@ function promptMessage(htmlContent, showCloseButton = true, useBigDialog = false
     });
 }
 
-function showMessageFromFile(filePath, showCloseButton = true, useBigDialog = false, width = 400) {
+function showMessageFromFile(filePath, showCloseButton = true, useBigDialog = false, showAnimation = true, showBg = true, width = 400) {
     fetch(filePath)
         .then((response) => {
             if (!response.ok) {
@@ -242,6 +249,9 @@ function showMessageFromFile(filePath, showCloseButton = true, useBigDialog = fa
         .then((htmlContent) => {
             const overlay = document.createElement("div");
             overlay.className = "prompt-overlay";
+            if (!showBg) {
+                overlay.classList.add("no-bg");
+            }
 
             const dialog = document.createElement("div");
             if (useBigDialog) {
@@ -249,6 +259,10 @@ function showMessageFromFile(filePath, showCloseButton = true, useBigDialog = fa
             } else {
                 dialog.className = "prompt-dialog";
                 dialog.style.maxWidth = `${width}px`;
+            }
+
+            if (!showAnimation) {
+                dialog.classList.add("no-animation");
             }
 
             const okButton = document.createElement("button");

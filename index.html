@@ -108,13 +108,13 @@
                             Resources
                             <kbd>Alt+P</kbd>
                         </button>
-                        <button class="text-button" onmouseup="showMessageFromFile('dialogs/settings.html', true, false, 900); hideAllMenus()">
+                        <button class="text-button" onmouseup="showMessageFromFile('dialogs/settings.html', true, false, true, true, 900); hideAllMenus()">
                             Settings
                             <kbd>Ctrl+,</kbd>
                         </button>
                         <hr />
-                        <button class="text-button" onmouseup="window.open('https://github.com/flarom/cohesion/wiki'); hideAllMenus()">Learn</button>
-                        <button class="text-button" onmouseup="showMessageFromFile('dialogs/shortcuts.html', true, false, 600); hideAllMenus();">
+                        <button class="text-button" onmouseup="showMessageFromFile('landing.html', false, true, false, false);">Learn</button>
+                        <button class="text-button" onmouseup="showMessageFromFile('dialogs/shortcuts.html', true, false, true, true, 600); hideAllMenus();">
                             Keyboard shortcuts
                             <kbd>Ctrl+?</kbd>
                         </button>
@@ -367,14 +367,19 @@
             }
 
             if (files.length < 1) {
-                fetch("cohesion/intro.md")
-                    .then((res) => res.text())
-                    .then((text) => {
-                        createFile(text);
-                        togglePreview("preview");
-                    })
-                    .catch((e) => console.error(e));
+                showMessageFromFile('landing.html', false, true, false, false);
+
+                const landingKeyHandler = (event) => {
+                    if (/^[a-zA-Z0-9]$/.test(event.key)) {
+                        fadeOutAllDialogs();
+                        editor.focus();
+                        document.removeEventListener("keydown", landingKeyHandler);
+                    }
+                };
+
+                document.addEventListener("keydown", landingKeyHandler);
             }
+
             try {
             renderFiles("files");
             } catch (err) {
@@ -883,13 +888,13 @@
                 //// Show settings screen (ctrl ,)
                 else if (event.ctrlKey && event.key === ",") {
                     event.preventDefault();
-                    showMessageFromFile("dialogs/settings.html", true, false, 900);
+                    showMessageFromFile("dialogs/settings.html", true, false, true, true, 900);
                     hideAllMenus();
                 }
                 //// Show shortcuts screen (ctrl ? || ctrl shift ?)
                 else if (event.ctrlKey && event.key === "?") {
                     event.preventDefault();
-                    showMessageFromFile("dialogs/shortcuts.html", true, false, 600);
+                    showMessageFromFile("dialogs/shortcuts.html", true, false, true, true, 600);
                     hideAllMenus();
                 }
                 //// Show resources screen (alt p)
