@@ -27,6 +27,7 @@
             padding-left: 100px;
             padding-right: 100px;
             justify-content: space-between;
+            margin-bottom: 30px;
         }
 
         .hero img {
@@ -37,11 +38,18 @@
             box-shadow: 0px 40px 30px -20px #00000077;
         }
 
+        section.normal {
+            max-width: 1200px;
+            margin: 0 auto;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
         .note {
             position: fixed;
-            left: 0;
+            left: 50%;
             bottom: 0;
-            width: 100vw;
+            transform: translate(-50%, 0%);
             text-align: center;
             font-family: var(--font-editor);
         }
@@ -107,6 +115,28 @@
                 display: none;
             }
         }
+
+        .feature-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .feature-container img {
+            border-radius: 5px;
+            max-width: 500px;
+            width: 100%;
+            height: auto;
+        }
+
+        .feature-container.left {
+            flex-direction: row;
+        }
+
+        .feature-container.right {
+            flex-direction: row-reverse;
+            text-align: end;
+        }
     </style>
 </head>
 <body>
@@ -120,6 +150,7 @@
         <div style="display: flex; gap: 5px;">
             <button class="secondary" onclick="fadeOutAllDialogs()">Editor</button>
             <button class="secondary" onclick="window.open('https://github.com/flarom/cohesion/wiki')">Documentation</button>
+            <button class="secondary" onclick="window.open('https://github.com/flarom/cohesion')">GitHub</button>
         </div>
     </header>
 
@@ -142,16 +173,45 @@
         <img src="cohesion/scrshot.png" alt="">
     </section>
 
+    <section class="normal">
+        <h2>Features</h2>
+        <p>this section is a work in progress with anime girls</p>
+        <div class="feature-container left">
+            <img src="https://placewaifu.com/image/1920/1080" alt="">
+            <div>
+                <h3>Markdown-Based</h3>
+                <p>dummy text</p>
+            </div>
+        </div>
+        <div class="feature-container right">
+            <img src="https://placewaifu.com/image/1920/1080" alt="">
+            <div>
+                <h3>In-browser local storage</h3>
+                <p>Your files are not sent to us, Cohesion saves your files in your browser data, you can also create backups of all your data in one single click.</p>
+            </div>
+        </div>
+        <div class="feature-container left">
+            <img src="https://placewaifu.com/image/1920/1080" alt="">
+            <div>
+                <h3>Themes</h3>
+                <p>Cohesion has 8 themes in your disposal by default!</p>
+            </div>
+        </div>
+    </section>
+
     <div class="note">
         <p>Start writing now — you can return here anytime from the 'Learn' menu.</p>
     </div>
+
     <script>
-        const btnText = document.getElementById('primary-button-text');
-        let showCursor = false;
-        setInterval(() => {
-            showCursor = !showCursor;
-            btnText.textContent = showCursor ? 'Start creating... |' : 'Start creating...';
-        }, 600);
+        (() => {
+            const btnText = document.getElementById('primary-button-text');
+            let showCursor = false;
+            setInterval(() => {
+                showCursor = !showCursor;
+                btnText.textContent = showCursor ? 'Start creating... |' : 'Start creating...';
+            }, 600);
+        })();
     </script>
 </body>
 </html>
