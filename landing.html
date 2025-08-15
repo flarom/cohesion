@@ -18,6 +18,7 @@
             align-items: center;
             gap: 20px;
             backdrop-filter: blur(10px);
+            justify-content: space-between;
         }
 
         .hero {
@@ -87,7 +88,7 @@
         }
 
         button.secondary:hover {
-            background: var(--background-color-3);
+            background: var(--field-color);
         }
 
         .hero.button.primary:hover .icon {
@@ -151,6 +152,7 @@
             <button class="secondary" onclick="fadeOutAllDialogs()">Editor</button>
             <button class="secondary" onclick="window.open('https://github.com/flarom/cohesion/wiki')">Documentation</button>
             <button class="secondary" onclick="window.open('https://github.com/flarom/cohesion')">GitHub</button>
+            <button class="secondary" onclick="changeTheme();" style="font-size: large;"><span class="icon">routine</span></button>
         </div>
     </header>
 
@@ -212,6 +214,16 @@
                 btnText.textContent = showCursor ? 'Start creating... |' : 'Start creating...';
             }, 600);
         })();
+
+        function changeTheme() {
+            let current = getSetting ? getSetting('theme') : document.body.className;
+            if (current === 'theme-dark') {
+                setSetting('theme', 'theme-light');
+            } else {
+                setSetting('theme', 'theme-dark');
+            }
+            loadSettings();
+        }
     </script>
 </body>
 </html>
