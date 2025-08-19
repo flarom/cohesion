@@ -162,123 +162,62 @@
 }
 
 /* DEFAULT THEME */
-
-.cm-s-default {
-    background-color: transparent;
-    color: var(--text-color);
+.cm-comment {
+    color: var(--hljs-comment);
 }
 
-.cm-s-default .cm-header {
-    color: var(--text-color);
-}
-
+.cm-s-default,
 .cm-s-default .cm-quote {
-    color: var(--text-color);
+    color: var(--text-color) !important;
+    opacity: 1;
 }
 
-.cm-negative {
-    color: var(--text-color);
+.cm-s-default .cm-keyword {
+    color: var(--hljs-keyword) !important;
+    font-weight: bold;
 }
 
-.cm-positive {
-    color: var(--text-color);
+.cm-s-default .cm-def,
+.cm-s-default .cm-type {
+    color: var(--hljs-function) !important;
 }
 
-.cm-header,
-.cm-strong {
+.cm-s-default .cm-string,
+.cm-s-default .cm-string-2,
+.cm-s-default .cm-meta,
+.cm-s-default .cm-qualifier {
+    color: var(--hljs-string) !important;
+}
+
+.cm-s-default .cm-number,
+.cm-s-default .cm-atom {
+    color: var(--hljs-number) !important;
+}
+
+.cm-s-default .cm-variable,
+.cm-s-default .cm-property,
+.cm-s-default .cm-operator,
+.cm-s-default .cm-punctuation {
+    color: var(--hljs-variable) !important;
+}
+
+.cm-s-default .cm-builtin,
+.cm-s-default .cm-tag,
+.cm-s-default .cm-attribute {
+    color: var(--hljs-title) !important;
     font-weight: bold;
 }
 
 .cm-em {
-    font-style: italic;
+    font-style: italic !important;
+}
+.cm-strong {
+    font-weight: bold !important;
 }
 
 .cm-link {
-    color: var(--text-color);
-}
-
-.cm-strikethrough {
-    text-decoration: line-through;
-}
-
-.cm-s-default .cm-keyword {
-    color: var(--text-color);
-}
-
-.cm-s-default .cm-atom {
-    color: var(--text-color);
-}
-
-.cm-s-default .cm-number {
-    color: var(--text-color);
-}
-
-.cm-s-default .cm-def {
-    color: var(--text-color);
-}
-
-.cm-s-default .cm-variable,
-.cm-s-default .cm-punctuation,
-.cm-s-default .cm-property,
-.cm-s-default .cm-operator {
-    color: var(--text-color);
-}
-
-.cm-s-default .cm-variable-2 {
-    color: var(--text-color);
-}
-
-.cm-s-default .cm-variable-3,
-.cm-s-default .cm-type {
-    color: var(--text-color);
-}
-
-.cm-s-default .cm-comment {
-    color: var(--title-color);
-    opacity: 75%;
-}
-
-.cm-s-default .cm-string {
-    color: var(--text-color);
-}
-
-.cm-s-default .cm-string-2 {
-    color: var(--text-color);
-}
-
-.cm-s-default .cm-meta,
-.cm-s-default .cm-qualifier {
-    color: var(--text-color);
-}
-
-.cm-s-default .cm-builtin {
-    color: var(--text-color);
-}
-
-.cm-s-default .cm-bracket {
-    color: var(--text-color);
-}
-
-.cm-s-default .cm-tag {
-    color: var(--text-color);
-}
-
-.cm-s-default .cm-attribute {
-    color: var(--text-color);
-}
-
-.cm-s-default .cm-hr {
-    color: var(--text-color);
-}
-
-.cm-s-default .cm-link {
-    color: var(--text-color);
-}
-
-.cm-s-default .cm-error,
-.cm-invalidchar {
-    color: var(--text-color);
-    background-color: var(--text-color);
+    color: var(--hljs-link) !important;
+    text-decoration: underline;
 }
 
 .CodeMirror-composing {

@@ -104,7 +104,7 @@
     {name: "Perl", mime: "text/x-perl", mode: "perl", ext: ["pl", "pm"]},
     {name: "PHP", mimes: ["text/x-php", "application/x-httpd-php", "application/x-httpd-php-open"], mode: "php", ext: ["php", "php3", "php4", "php5", "php7", "phtml"]},
     {name: "Pig", mime: "text/x-pig", mode: "pig", ext: ["pig"]},
-    {name: "Plain Text", mime: "text/plain", mode: "null", ext: ["txt", "text", "conf", "def", "list", "log"]},
+    {name: "Plain Text", mime: "text/plain", mode: /*"null"*/"plain", ext: ["txt", "text", "conf", "def", "list", "log"]},
     {name: "PLSQL", mime: "text/x-plsql", mode: "sql", ext: ["pls"]},
     {name: "PostgreSQL", mime: "text/x-pgsql", mode: "sql"},
     {name: "PowerShell", mime: "application/x-powershell", mode: "powershell", ext: ["ps1", "psd1", "psm1"]},

@@ -132,7 +132,7 @@
     border-radius: 10px;
     background-color: var(--background-color-2);
     max-width: 100%;
-    overflow-x: auto;
+    overflow-x: scroll;
     padding: 0;
 }
 

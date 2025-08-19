@@ -44,6 +44,17 @@
     --quote-green-bg:       #9aff8133; 
     --quote-yellow-bg:      #fff78133;
     --quote-red-bg:         #ff888133;
+
+    --hljs-bg:              #23272e;
+    --hljs-text:            #e0e0e0;
+    --hljs-comment:         #6a9955;
+    --hljs-keyword:         #569cd6;
+    --hljs-function:        #dcdcaa;
+    --hljs-string:          #ce9178;
+    --hljs-number:          #b5cea8;
+    --hljs-variable:        #9cdcfe;
+    --hljs-title:           #4ec9b0;
+    --hljs-link:            #d7ba7d;
 }
 
 .theme-light {
@@ -85,7 +96,18 @@
     --quote-blue-bg:        #2178ca33; 
     --quote-green-bg:       #2fca2133; 
     --quote-yellow-bg:      #caa32133;
-    --quote-red-bg:         #ca212133; 
+    --quote-red-bg:         #ca212133;
+
+    --hljs-bg:              #f8f8f8;
+    --hljs-text:            #2d2d2d;
+    --hljs-comment:         #4b7c2f;
+    --hljs-keyword:         #0184bc;
+    --hljs-function:        #795e26;
+    --hljs-string:          #50a14f;
+    --hljs-number:          #986801;
+    --hljs-variable:        #4078f2;
+    --hljs-title:           #c18401;
+    --hljs-link:            #4078f2;
 }
 
 .theme-cream {
@@ -127,7 +149,18 @@
     --quote-blue-bg:        #325ba833; 
     --quote-green-bg:       #36a83233; 
     --quote-yellow-bg:      #a88d3233; 
-    --quote-red-bg:         #a8323233; 
+    --quote-red-bg:         #a8323233;
+
+    --hljs-bg:              #fdf6e3;
+    --hljs-text:            #4b3a25;
+    --hljs-comment:         #5b7c36;
+    --hljs-keyword:         #b58900;
+    --hljs-function:        #6c71c4;
+    --hljs-string:          #859900;
+    --hljs-number:          #2aa198;
+    --hljs-variable:        #cb4b16;
+    --hljs-title:           #268bd2;
+    --hljs-link:            #b58900;
 }
 
 .theme-cream-dark {
@@ -169,7 +202,18 @@
     --quote-blue-bg:        #6b8eff33; 
     --quote-green-bg:       #89ff6b33; 
     --quote-yellow-bg:      #ffe46b33; 
-    --quote-red-bg:         #ff6b6b33; 
+    --quote-red-bg:         #ff6b6b33;
+
+    --hljs-bg:              #232017;
+    --hljs-text:            #e0d6c0;
+    --hljs-comment:         #7fb36a;
+    --hljs-keyword:         #ffcc66;
+    --hljs-function:        #ffe46b;
+    --hljs-string:          #89ff6b;
+    --hljs-number:          #ffb86b;
+    --hljs-variable:        #d06bff;
+    --hljs-title:           #6b8eff;
+    --hljs-link:            #ffc966;
 }
 
 .theme-epaper {
@@ -212,6 +256,17 @@
     --quote-green-bg:       #00000000; 
     --quote-yellow-bg:      #00000000; 
     --quote-red-bg:         #00000000; 
+
+    --hljs-bg:              #ffffff;
+    --hljs-text:            #000000;
+    --hljs-comment:         #888888;
+    --hljs-keyword:         #000000;
+    --hljs-function:        #222222;
+    --hljs-string:          #444444;
+    --hljs-number:          #222222;
+    --hljs-variable:        #000000;
+    --hljs-title:           #000000;
+    --hljs-link:            #000000;
 
     img {
         filter: grayscale(100);
@@ -269,6 +324,17 @@
     --quote-green-bg:       #9aff8133; 
     --quote-yellow-bg:      #fff78133;
     --quote-red-bg:         #ff888133;
+
+    --hljs-bg:              #000000;
+    --hljs-text:            #cecece;
+    --hljs-comment:         #6a9955;
+    --hljs-keyword:         #3584e4;
+    --hljs-function:        #fff781;
+    --hljs-string:          #9aff81;
+    --hljs-number:          #ff8881;
+    --hljs-variable:        #99c1f1;
+    --hljs-title:           #d781ff;
+    --hljs-link:            #fff781;
 }
 
 .theme-monokai {
@@ -311,6 +377,17 @@
     --quote-green-bg:       #a6e22e33;
     --quote-yellow-bg:      #e6db7433;
     --quote-red-bg:         #f9267233;
+
+    --hljs-bg:              #272822;
+    --hljs-text:            #f8f8f2;
+    --hljs-comment:         #a59e8c;
+    --hljs-keyword:         #f92672;
+    --hljs-function:        #a6e22e;
+    --hljs-string:          #e6db74;
+    --hljs-number:          #ae81ff;
+    --hljs-variable:        #fd971f;
+    --hljs-title:           #66d9ef;
+    --hljs-link:            #a6e22e;
 }
 
 .theme-nord {
@@ -353,4 +430,15 @@
     --quote-green-bg:       #a3be8c33;
     --quote-yellow-bg:      #ebcb8b33;
     --quote-red-bg:         #bf616a33;
+
+    --hljs-bg:              #2e3440;
+    --hljs-text:            #d8dee9;
+    --hljs-comment:         #7c8ca7;
+    --hljs-keyword:         #81a1c1;
+    --hljs-function:        #8fbcbb;
+    --hljs-string:          #a3be8c;
+    --hljs-number:          #b48ead;
+    --hljs-variable:        #ebcb8b;
+    --hljs-title:           #88c0d0;
+    --hljs-link:            #8fbcbb;
 }
