@@ -1,5 +1,5 @@
 .preview {
-    max-height: calc(100vh - 48px - 30px);
+    max-height: calc(100vh - 48px);
     max-width: 900px;
     padding: 15px;
     margin: 0 auto;
