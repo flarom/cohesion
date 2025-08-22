@@ -383,7 +383,7 @@
                 document.title = getFileTitle(index) || "New document - Cohesion";
             }
 
-            if (files.length < 1) {
+            if (files.length < 1 || new URLSearchParams(window.location.search).get('intro') === 'true') {
                 showMessageFromFile('landing.html', false, true, false, false);
 
                 const landingKeyHandler = (event) => {
