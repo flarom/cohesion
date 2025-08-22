@@ -243,6 +243,11 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
     border: 1px solid var(--background-color);
 }
 
+.CodeMirror-activeline .CodeMirror-linenumber {
+    color: var(--title-color);
+    opacity: 100%;
+}
+
 /* STOP */
 
 /* The rest of this file contains styles related to the mechanics of
