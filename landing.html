@@ -22,6 +22,10 @@
             z-index: 9999;
         }
 
+        header button.secondary {
+            text-shadow: 0px 0px 5px var(--background-color);
+        }
+
         footer {
             display: flex;
         }
@@ -33,6 +37,10 @@
         footer a {
             color: var(--link-color);
             text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
         }
 
         .hero {
@@ -115,6 +123,7 @@
             transform: translate(-50%, 0%);
             text-align: center;
             font-family: var(--font-editor);
+            text-shadow: 0px 0px 5px var(--background-color);
         }
 
         button.primary {
@@ -349,12 +358,10 @@
     </section>
 
     <footer>
-        <div>
-            <b>Cohesion</b>
-            <ul style="list-style: none;">
-                <li><a href="https://github.com/flarom/cohesion">GitHub</a></li>
-                <li><a href="https://github.com/flarom/cohesion">GitHub</a></li>
-            </li>
+        <div style="display: flex; gap: 10px;">
+            <a target="_blank" href="https://github.com/flarom/cohesion">GitHub</a>
+            <a target="_blank" href="https://github.com/flarom/cohesion/wiki">Documentation</a>
+            <a target="_blank" href="https://ko-fi.com/flarom">Support us</a>
         </div>
     </footer>
     
