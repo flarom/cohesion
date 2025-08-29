@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown Table Editor - Cohesion</title>
+    
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="Markdown Table Editor - Cohesion">
+    <meta name="description" content="Create and edit Markdown tables online with a clean and easy-to-use interface. Export your table instantly and try the Cohesion Markdown editor for free.">
+    <meta name="keywords" content="markdown table generator, markdown table editor, online markdown table, create markdown tables, markdown table tool">
+    <meta name="author" content="Cohesion Team">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://flarom.github.io/cohesion/tools/markdown-table-editor">
+    <meta property="og:title" content="Markdown Table Editor - Cohesion">
+    <meta property="og:description" content="Free online Markdown table editor with instant preview. Build tables effortlessly and try the Cohesion Markdown editor.">
+    <meta property="og:image" content="https://flarom.github.io/cohesion/tools/markdown-table-editor">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://flarom.github.io/cohesion/tools/markdown-table-editor">
+    <meta property="twitter:title" content="Markdown Table Editor - Cohesion">
+    <meta property="twitter:description" content="Free online Markdown table editor with instant preview. Build tables effortlessly and try the Cohesion Markdown editor.">
+    <meta property="twitter:image" content="https://flarom.github.io/cohesion/tools/markdown-table-editor">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://flarom.github.io/cohesion/tools/markdown-table-editor">
+
+    <link rel="stylesheet" href="../style/palette.css">
+    <link rel="stylesheet" href="../style/share.css">
+    <link rel="stylesheet" href="../style/landing.css">
+</head>
+<body>
+    <header>
+        <div>
+            <a href="../index.html" style="display: inline-flex; align-items: center; color: var(--text-color); text-decoration: none;">
+                <img src="../cohesion/favicon.png" alt="" width="48">
+                <h2 translate="no" class="header-text">Cohesion</h2>
+            </a>
+        </div>
+        <div style="display: flex; gap: 5px;">
+            <button class="secondary" onclick="window.open('../index.html', '_self')">Editor</button>
+            <button class="secondary" onclick="window.open('https://github.com/flarom/cohesion/wiki')">Documentation</button>
+            <button class="secondary" onclick="window.open('https://github.com/flarom/cohesion')">GitHub</button>
+            <button class="secondary" onclick="changeTheme();" style="font-size: large;" translate="no"><span class="icon">routine</span></button>
+        </div>
+    </header>
+
+<!-- ...existing code... -->
+<section class="main" style="margin-top: 100px;">
+    <div>
+        <button onclick="addRow()">+ Line</button>
+        <button onclick="addColumn()">+ Column</button>
+    </div>
+    <div id="table-editor"></div>
+    <div>
+        <label for="markdown-output">Markdown</label>
+        <textarea id="markdown-output" style="width:100%;height:200px;" readonly></textarea>
+    </div>
+    <script>
+        let table = {
+            headers: [
+                { text: "", align: "center" }
+            ],
+            rows: [
+                [""],
+            ]
+        };
+
+        function renderTableEditor() {
+            const container = document.getElementById('table-editor');
+            container.innerHTML = '';
+            const tableEl = document.createElement('table');
+            // Header
+            const thead = document.createElement('thead');
+            const tr = document.createElement('tr');
+            table.headers.forEach((header, colIdx) => {
+                const th = document.createElement('th');
+                const input = document.createElement('input');
+                input.value = header.text;
+                input.oninput = (e) => {
+                    table.headers[colIdx].text = e.target.value;
+                    updateMarkdown();
+                };
+                th.appendChild(input);
+                // Align
+                ['left','center','right'].forEach(align => {
+                    const btn = document.createElement('button');
+                    btn.textContent = align[0];
+                    btn.onclick = () => {
+                        table.headers[colIdx].align = align;
+                        renderTableEditor();
+                        updateMarkdown();
+                    };
+                    th.appendChild(btn);
+                });
+                // Column: move/rename
+                const left = document.createElement('button');
+                left.textContent = '<';
+                left.disabled = colIdx === 0;
+                left.onclick = () => moveColumn(colIdx, -1);
+                th.appendChild(left);
+                const right = document.createElement('button');
+                right.textContent = '>';
+                right.disabled = colIdx === table.headers.length - 1;
+                right.onclick = () => moveColumn(colIdx, 1);
+                th.appendChild(right);
+                const rem = document.createElement('button');
+                rem.textContent = 'x';
+                rem.disabled = table.headers.length <= 1;
+                rem.onclick = () => removeColumn(colIdx);
+                th.appendChild(rem);
+                tr.appendChild(th);
+            });
+            thead.appendChild(tr);
+            tableEl.appendChild(thead);
+            // Body
+            const tbody = document.createElement('tbody');
+            table.rows.forEach((row, rowIdx) => {
+                const tr = document.createElement('tr');
+                row.forEach((cell, colIdx) => {
+                    const td = document.createElement('td');
+                    const input = document.createElement('input');
+                    input.value = cell;
+                    input.oninput = (e) => {
+                        table.rows[rowIdx][colIdx] = e.target.value;
+                        updateMarkdown();
+                    };
+                    td.appendChild(input);
+                    tr.appendChild(td);
+                });
+                // Line: move/remove
+                const td = document.createElement('td');
+                const up = document.createElement('button');
+                up.textContent = '↑';
+                up.disabled = rowIdx === 0;
+                up.onclick = () => moveRow(rowIdx, -1);
+                td.appendChild(up);
+                const down = document.createElement('button');
+                down.textContent = '↓';
+                down.disabled = rowIdx === table.rows.length - 1;
+                down.onclick = () => moveRow(rowIdx, 1);
+                td.appendChild(down);
+                const rem = document.createElement('button');
+                rem.textContent = 'x';
+                rem.disabled = table.rows.length <= 1;
+                rem.onclick = () => removeRow(rowIdx);
+                td.appendChild(rem);
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+            });
+            tableEl.appendChild(tbody);
+            container.appendChild(tableEl);
+        }
+
+        function addRow() {
+            table.rows.push(Array(table.headers.length).fill(''));
+            renderTableEditor();
+            updateMarkdown();
+        }
+        function removeRow(idx) {
+            if(table.rows.length > 1) {
+                table.rows.splice(idx, 1);
+                renderTableEditor();
+                updateMarkdown();
+            }
+        }
+        function moveRow(idx, dir) {
+            const newIdx = idx + dir;
+            if(newIdx >= 0 && newIdx < table.rows.length) {
+                const temp = table.rows[idx];
+                table.rows[idx] = table.rows[newIdx];
+                table.rows[newIdx] = temp;
+                renderTableEditor();
+                updateMarkdown();
+            }
+        }
+        function addColumn() {
+            table.headers.push({ text: "Coluna " + (table.headers.length+1), align: "left" });
+            table.rows.forEach(row => row.push(''));
+            renderTableEditor();
+            updateMarkdown();
+        }
+        function removeColumn(idx) {
+            if(table.headers.length > 1) {
+                table.headers.splice(idx, 1);
+                table.rows.forEach(row => row.splice(idx, 1));
+                renderTableEditor();
+                updateMarkdown();
+            }
+        }
+        function moveColumn(idx, dir) {
+            const newIdx = idx + dir;
+            if(newIdx >= 0 && newIdx < table.headers.length) {
+                const tempHeader = table.headers[idx];
+                table.headers[idx] = table.headers[newIdx];
+                table.headers[newIdx] = tempHeader;
+                table.rows.forEach(row => {
+                    const tempCell = row[idx];
+                    row[idx] = row[newIdx];
+                    row[newIdx] = tempCell;
+                });
+                renderTableEditor();
+                updateMarkdown();
+            }
+        }
+        function updateMarkdown() {
+            const md = generateMarkdownTable(table);
+            document.getElementById('markdown-output').value = md;
+        }
+        function generateMarkdownTable(table) {
+            const colCount = table.headers.length;
+            const allRows = [
+                table.headers.map(h => h.text),
+                ...table.rows
+            ];
+            const colWidths = [];
+            for (let c = 0; c < colCount; c++) {
+                let maxLen = 0;
+                for (let r = 0; r < allRows.length; r++) {
+                    const cell = (allRows[r][c] ?? '').toString();
+                    if (cell.length > maxLen) maxLen = cell.length;
+                }
+                let alignSep = '';
+                const align = table.headers[c].align;
+                if (align === 'left') alignSep = ':---';
+                else if (align === 'center') alignSep = ':---:';
+                else if (align === 'right') alignSep = '---:';
+                else alignSep = '---';
+                if (alignSep.length > maxLen) maxLen = alignSep.length;
+                colWidths[c] = maxLen;
+            }
+
+            function padCell(text, width, align) {
+                text = text ?? '';
+                const len = text.length;
+                if (len >= width) return text;
+                const diff = width - len;
+                if (align === 'right') return ' '.repeat(diff) + text;
+                if (align === 'center') {
+                    const left = Math.floor(diff / 2);
+                    const right = diff - left;
+                    return ' '.repeat(left) + text + ' '.repeat(right);
+                }
+                return text + ' '.repeat(diff);
+            }
+
+            const headerRow = '| ' + table.headers.map((h, i) => padCell(h.text, colWidths[i], h.align)).join(' | ') + ' |';
+
+            const alignRow = '| ' + table.headers.map((h, i) => {
+                let align = h.align;
+                let sep = '';
+                if (align === 'left') sep = ':' + '-'.repeat(colWidths[i] - 1);
+                else if (align === 'center') {
+                    if (colWidths[i] < 3) sep = ':--:';
+                    else sep = ':' + '-'.repeat(colWidths[i] - 2) + ':';
+                }
+                else if (align === 'right') sep = '-'.repeat(colWidths[i] - 1) + ':';
+                else sep = '-'.repeat(colWidths[i]);
+                return sep;
+            }).join(' | ') + ' |';
+
+            const rows = table.rows.map(row =>
+                '| ' + row.map((cell, i) => padCell(cell.replace(/\|/g, '\\|'), colWidths[i], table.headers[i].align)).join(' | ') + ' |'
+            );
+            return [headerRow, alignRow, ...rows].join('\n');
+        }
+        renderTableEditor();
+        updateMarkdown();
+    </script>
+</section>
+
+    <section class="filler">
+        <div class="infinite-scroll left">
+            <div class="scroll-content">
+                Cohesion Cohesion Cohesion Cohesion Cohesion Cohesion Cohesion Cohesion Cohesion Cohesion Cohesion
+            </div>
+        </div>
+        <button class="primary filler-start-now" onclick="fadeOutAllDialogs()">
+            <span class="icon" style="font-size: 1.5em;">edit</span>
+            <span id="primary-button-text">
+                Use the Cohesion Markdown editor for free!
+            </span>
+        </button>
+    </section>
+    
+    <script src="../script/settings.js"></script>
+    <script>
+        // load settings
+        function loadSettings(){
+            const theme = getSetting("theme");
+            if (theme) document.body.className = theme;
+
+            const root = document.documentElement;
+
+            const editorFont = getSetting("editorFont");
+            const paragraphFont = getSetting("paragraphFont");
+            const titleFont = getSetting("titleFont");
+
+            if (editorFont) root.style.setProperty("--font-editor", editorFont);
+            if (paragraphFont) root.style.setProperty("--font-text", paragraphFont);
+            if (titleFont) root.style.setProperty("--font-title", titleFont);
+        }
+
+        function changeTheme() {
+            let current = getSetting('theme');
+            if (current === 'theme-dark') {
+                setSetting('theme', 'theme-light');
+            } else {
+                setSetting('theme', 'theme-dark');
+            }
+            loadSettings();
+        }
+
+        loadSettings();
+    </script>
+</body>
+</html>

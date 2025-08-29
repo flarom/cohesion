@@ -28,9 +28,9 @@
     padding-top: 15px;
 }
 
-.preview h1, .preview h2 {
+/* .preview h1, .preview h2 {
     border-bottom: 1px solid var(--border-light-color);
-}
+} */
 
 /* rules */
 .preview hr {
