@@ -194,6 +194,14 @@
     font-size: medium;
 }
 
+.preview .colorSwatch {
+    display: inline-block;
+    width: .7em;
+    height: .7em;
+    vertical-align: middle;
+    border-radius: 30px;
+}
+
 /* images */
 
 .preview .media-container {

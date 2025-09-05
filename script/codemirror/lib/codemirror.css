@@ -163,7 +163,7 @@
 
 /* DEFAULT THEME */
 .cm-comment {
-    color: var(--hljs-comment);
+    font-weight: bold;
 }
 
 .cm-s-default,
@@ -217,7 +217,6 @@
 
 .cm-link {
     color: var(--hljs-link) !important;
-    text-decoration: underline;
 }
 
 .CodeMirror-composing {

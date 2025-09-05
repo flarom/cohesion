@@ -1434,7 +1434,17 @@
             c = c.replace(/^([ \t]*)/g, ""); // leading whitespace
             c = c.replace(/[ \t]*$/g, ""); // trailing whitespace
             c = showdown.subParser("makehtml.encodeCode")(c, options, globals);
-            c = m1 + "<code>" + c + "</code>";
+
+            // detects color: #hex, rgb(), hsv()
+            var colorMatch = c.match(/^#([0-9a-f]{3,8})$/i) ||
+                            c.match(/^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/i) ||
+                            c.match(/^hsv\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/i);
+
+            if (colorMatch) {
+                c = m1 + '<span class="colorSwatch" data-color="' + c + '" style="background-color:' + c + ';"></span><code>' + c + '</code>';
+            } else {
+                c = m1 + "<code>" + c + "</code>";
+            }
             c = showdown.subParser("makehtml.hashHTMLSpans")(c, options, globals);
             return c;
         });
