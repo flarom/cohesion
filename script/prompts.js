@@ -757,7 +757,7 @@ function promptSelect(title, options) {
     });
 }
 
-function promptSaveFile(fileId) {
+async function promptSaveFile(fileId) {
     const overlay = document.createElement("div");
     overlay.className = "prompt-overlay";
 
@@ -802,7 +802,7 @@ function promptSaveFile(fileId) {
     saveButton.addEventListener("click", () => closePrompt(false));
     cancelButton.addEventListener("click", () => closePrompt(true));
 
-    function closePrompt(returnNull) {
+    async function closePrompt(returnNull) {
         document.body.removeChild(overlay);
 
         if (returnNull) return;
@@ -819,6 +819,30 @@ function promptSaveFile(fileId) {
                 pdfContainer.style.maxWidth = "900px";
                 pdfContainer.style.margin = "0 auto";
                 pdfContainer.style.fontFamily = "sans-serif";
+
+                // Convert all images to Data URLs
+                const imgEls = pdfContainer.querySelectorAll("img");
+                await Promise.all(Array.from(imgEls).map(async (img) => {
+                    const src = img.getAttribute("src");
+                    if (!src) return;
+                    if (src.startsWith("resources/")) {
+                        const fileName = src.slice(10);
+                        const dataUrl = await resolveFSItem(fileName);
+                        if (dataUrl) img.src = dataUrl;
+                    } else if (/^https?:\/\//.test(src)) {
+                        try {
+                            const response = await fetch(src);
+                            const blob = await response.blob();
+                            const reader = new FileReader();
+                            img.src = await new Promise((resolve) => {
+                                reader.onload = () => resolve(reader.result);
+                                reader.readAsDataURL(blob);
+                            });
+                        } catch (e) {
+                            // If fetch fails, leave as is
+                        }
+                    }
+                }));
 
                 document.body.appendChild(pdfContainer);
                 html2pdf()
@@ -839,32 +863,94 @@ function promptSaveFile(fileId) {
                     });
                 break;
             case "html":
+                // Find all resources used
+                const htmlContent = converter.makeHtml(getFileText(fileId));
+                const metadata = converter.getMetadata();
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = htmlContent;
+                const usedResources = Array.from(tempDiv.querySelectorAll("img,audio,video,iframe"))
+                    .map(el => el.getAttribute("src"))
+                    .filter(src => src && src.startsWith("resources/"))
+                    .map(src => src.slice(10));
+                // Replace src with resources/filename
+                usedResources.forEach(async (fileName) => {
+                    tempDiv.querySelectorAll(`[src="resources/${fileName}"]`).forEach(el => {
+                        el.setAttribute("src", "resources/" + fileName);
+                    });
+                });
+
+                // defualt metadata values
+                const defaultMeta = {
+                    title: "New document",
+                    authors: "*",
+                    date: "*",
+                    tags: "uncategorized",
+                    description: "*",
+                };
+
+                const meta = { ...defaultMeta, ...metadata };
+
+                // HTML meta
+                const metaTags = `
+                    <meta name="title" content="${meta.title}">
+                    <meta name="author" content="${meta.authors}">
+                    <meta name="date" content="${meta.date}">
+                    <meta name="keywords" content="${meta.tags}">
+                    <meta name="description" content="${meta.description}">
+                `;
+
+                // Build HTML file
                 const htmlContainer = document.createElement("html");
                 htmlContainer.lang = "en";
                 htmlContainer.innerHTML = `
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <title>${fileNameField.value}</title>
-                        <style>
-                            body {
-                                max-width: 900px;
-                                margin: 0 auto;
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        ${converter.makeHtml(getFileText(fileId))}
-                    </body>
-                `;
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>${fileNameField.value}</title>
+            ${metaTags}
+            <!-- cohesion basic style for md documents -->
+            <style>
+                body {
+                    max-width: 900px;
+                    margin: 0 auto;
+                    * { max-width: 900px; }
+                }
+                table { border-collapse: collapse; }
+                table, th, td { border: 1px solid black; }
+                th, td { padding: 5px; text-align: left; }
+            </style>
+        </head>
+        <body>
+            ${tempDiv.innerHTML}
+        </body>
+    `;
 
-                const blob = new Blob(["<!DOCTYPE html>\n" + htmlContainer.outerHTML], { type: "text/html" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = fileNameField.value + ".html";
-                a.click();
-                URL.revokeObjectURL(url);
+                // Create ZIP
+                const zip = new JSZip();
+                zip.file("index.html", "<!DOCTYPE html>\n" + htmlContainer.outerHTML);
+
+                // Add resources
+                await Promise.all(usedResources.map(async (fileName) => {
+                    const dataUrl = await resolveFSItem(fileName);
+                    if (dataUrl) {
+                        // Extract base64 data and mime type
+                        const matches = dataUrl.match(/^data:(.+);base64,(.+)$/);
+                        if (matches) {
+                            const mime = matches[1];
+                            const base64 = matches[2];
+                            zip.folder("resources").file(fileName, base64, { base64: true });
+                        }
+                    }
+                }));
+
+                zip.generateAsync({ type: "blob" }).then((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = fileNameField.value + ".zip";
+                    a.click();
+                    URL.revokeObjectURL(url);
+                });
                 break;
         }
     }
