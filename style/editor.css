@@ -563,7 +563,7 @@
 
 .preview details summary::before {
     content: "expand_more";
-    font-family: "Material Symbols Outlined";
+    font-family: "Material Symbols Rounded";
     font-size: 24px;
     transform: rotate(-90deg);
     transition: transform 0.3s;

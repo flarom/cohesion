@@ -246,6 +246,7 @@ async function handleInsertBlock() {
         "<span style='color:var(--quote-red);'   ><span class=icon translate=no>dangerous</span>          Caution   </span>",
         "<span style='color:var(--text-color);'  ><span class=icon translate=no>expand_circle_down</span> Details   </span>",
         "<span style='color:var(--text-color);'  ><span class=icon translate=no>table</span>              CSV table </span>",
+        "<span style='color:var(--text-color);'  ><span class=icon translate=no>iframe</span>             Embed     </span>"
     ];
 
     const selection = await promptSelect("Select a block", blocks);
@@ -271,6 +272,9 @@ async function handleInsertBlock() {
             break;
         case 6:
             resolve("CSV");
+            break;
+        case 7:
+            resolve("EMBED");
             break;
     }
 
