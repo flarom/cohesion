@@ -286,7 +286,7 @@
 }
 
 .preview input[type="checkbox"] {
-    font-family: "Material Symbols Outlined";
+    font-family: "Material Symbols Rounded";
     appearance: none;
     min-width: 18px;
     width: 18px;
