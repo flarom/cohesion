@@ -32,6 +32,97 @@
     <link rel="stylesheet" href="../style/palette.css">
     <link rel="stylesheet" href="../style/share.css">
     <link rel="stylesheet" href="../style/landing.css">
+
+    <style>
+        #table-editor {
+            margin-bottom: 50px;
+            overflow-x: scroll;
+        }
+
+        thead input {
+            background: var(--background-color-3);
+            color: var(--text-color);
+            height: 35px;
+            padding: 0px 20px;
+            border: 1px solid var(--border-field-color);
+            outline: none;
+            border-radius: 5px;
+        }
+        
+        tbody input {
+            background: var(--background-color-2);
+            color: var(--text-color);
+            height: 35px;
+            padding: 0px 20px;
+            border: 1px solid var(--border-field-color);
+            outline: none;
+            border-radius: 5px;
+        }
+
+        thead th:first-child input {
+            border-top-left-radius: 10px;
+        }
+
+        thead th:last-child input {
+            border-top-right-radius: 10px;
+        }
+
+        tbody tr:last-child input:first-child {
+            border-bottom-left-radius: 10px;
+        }
+
+        tbody tr:last-child input:last-child {
+            border-bottom-right-radius: 10px;
+        }
+
+        .tools-td {
+            opacity: 0;
+            transition: opacity .1s;
+        }
+
+        tr:hover .tools-td {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .tools-td {
+                opacity: 1;
+            }
+        }
+
+        .move-row-up {
+            animation: moveRowUp .2s;
+        }
+        .move-row-down {
+            animation: moveRowDown .2s;
+        }
+        @keyframes moveRowUp {
+            0% { transform: translateY(0); }
+            99.99% { transform: translateY(-100%); }
+            100% { transform: translateY(0); }
+        }
+        @keyframes moveRowDown {
+            0% { transform: translateY(0); }
+            99.99% { transform: translateY(100%); }
+            100% { transform: translateY(0); }
+        }
+        .move-col-left {
+            animation: moveColLeft .2s;
+        }
+        .move-col-right {
+            animation: moveColRight .2s;
+        }
+        @keyframes moveColLeft {
+            0% { transform: translateX(0); }
+            99.99% { transform: translateX(-100%); }
+            100% { transform: translateX(0); }
+        }
+        @keyframes moveColRight {
+            0% { transform: translateX(0); }
+            99.99% { transform: translateX(100%); }
+            100% { transform: translateX(0); }
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -43,80 +134,122 @@
         </div>
         <div style="display: flex; gap: 5px;">
             <button class="secondary" onclick="window.open('../index.html', '_self')">Editor</button>
+            <button class="secondary" onclick="window.open('../tools.html', '_self')">Tools</button>
             <button class="secondary" onclick="window.open('https://github.com/flarom/cohesion/wiki')">Documentation</button>
             <button class="secondary" onclick="window.open('https://github.com/flarom/cohesion')">GitHub</button>
             <button class="secondary" onclick="changeTheme();" style="font-size: large;" translate="no"><span class="icon">routine</span></button>
         </div>
     </header>
 
-<!-- ...existing code... -->
-<section class="main" style="margin-top: 100px;">
+<section class="main" style="max-width: 1200px; margin: 0 auto; margin-top: 100px; ">
     <div>
-        <button onclick="addRow()">+ Line</button>
-        <button onclick="addColumn()">+ Column</button>
+        <button onclick="addRow()" class="text-button">Add row</button>
+        <button onclick="addColumn()"class="text-button">Add colunm</button>
     </div>
     <div id="table-editor"></div>
     <div>
-        <label for="markdown-output">Markdown</label>
-        <textarea id="markdown-output" style="width:100%;height:200px;" readonly></textarea>
+        <textarea id="markdown-output" style="width:90%;height:50vh; background-color: transparent; color:var(--text-color); border:none; outline:none;" readonly></textarea>
     </div>
     <script>
         let table = {
             headers: [
-                { text: "", align: "center" }
+                { text: "Column 1", align: "center" },
+                { text: "Column 2", align: "center" }
             ],
             rows: [
-                [""],
+                ["", ""],
+                ["", ""],
             ]
         };
 
         function renderTableEditor() {
-            const container = document.getElementById('table-editor');
-            container.innerHTML = '';
-            const tableEl = document.createElement('table');
-            // Header
-            const thead = document.createElement('thead');
-            const tr = document.createElement('tr');
-            table.headers.forEach((header, colIdx) => {
-                const th = document.createElement('th');
-                const input = document.createElement('input');
-                input.value = header.text;
-                input.oninput = (e) => {
-                    table.headers[colIdx].text = e.target.value;
-                    updateMarkdown();
-                };
-                th.appendChild(input);
-                // Align
-                ['left','center','right'].forEach(align => {
-                    const btn = document.createElement('button');
-                    btn.textContent = align[0];
-                    btn.onclick = () => {
-                        table.headers[colIdx].align = align;
-                        renderTableEditor();
-                        updateMarkdown();
-                    };
-                    th.appendChild(btn);
-                });
-                // Column: move/rename
-                const left = document.createElement('button');
-                left.textContent = '<';
-                left.disabled = colIdx === 0;
-                left.onclick = () => moveColumn(colIdx, -1);
-                th.appendChild(left);
-                const right = document.createElement('button');
-                right.textContent = '>';
-                right.disabled = colIdx === table.headers.length - 1;
-                right.onclick = () => moveColumn(colIdx, 1);
-                th.appendChild(right);
-                const rem = document.createElement('button');
-                rem.textContent = 'x';
-                rem.disabled = table.headers.length <= 1;
-                rem.onclick = () => removeColumn(colIdx);
-                th.appendChild(rem);
-                tr.appendChild(th);
-            });
-            thead.appendChild(tr);
-            tableEl.appendChild(thead);
+        const container = document.getElementById('table-editor');
+        container.innerHTML = '';
+        const tableEl = document.createElement('table');
+        // Header
+        const thead = document.createElement('thead');
+        const tr = document.createElement('tr');
+        table.headers.forEach((header, colIdx) => {
+            const th = document.createElement('th');
+            // --- BEGIN: Controls on top ---
+            const controlsDiv = document.createElement('div');
+            controlsDiv.style.display = 'flex';
+            controlsDiv.style.justifyContent = 'center';
+            controlsDiv.style.gap = '2px';
+            controlsDiv.style.marginBottom = '4px';
+
+            // Align buttons
+            const leftBtn = document.createElement('button');
+            leftBtn.className = 'icon-button';
+            leftBtn.textContent = 'align_horizontal_left';
+            leftBtn.title = 'Align to the left';
+            leftBtn.onclick = () => {
+                table.headers[colIdx].align = 'left';
+                renderTableEditor();
+                updateMarkdown();
+            };
+            controlsDiv.appendChild(leftBtn);
+
+            const centerBtn = document.createElement('button');
+            centerBtn.className = 'icon-button';
+            centerBtn.textContent = 'align_horizontal_center';
+            centerBtn.title = 'Center';
+            centerBtn.onclick = () => {
+                table.headers[colIdx].align = 'center';
+                renderTableEditor();
+                updateMarkdown();
+            };
+            controlsDiv.appendChild(centerBtn);
+
+            const rightBtn = document.createElement('button');
+            rightBtn.className = 'icon-button';
+            rightBtn.textContent = 'align_horizontal_right';
+            rightBtn.title = 'Align to the right';
+            rightBtn.onclick = () => {
+                table.headers[colIdx].align = 'right';
+                renderTableEditor();
+                updateMarkdown();
+            };
+            controlsDiv.appendChild(rightBtn);
+
+            // Column: move/rename
+            const left = document.createElement('button');
+            left.className = 'icon-button'
+            left.textContent = 'arrow_left_alt';
+            left.title = 'Move column left'
+            left.disabled = colIdx === 0;
+            left.onclick = () => moveColumn(colIdx, -1);
+            controlsDiv.appendChild(left);
+            const right = document.createElement('button');
+            right.className = 'icon-button'
+            right.textContent = 'arrow_right_alt';
+            right.title = 'Move column right'
+            right.disabled = colIdx === table.headers.length - 1;
+            right.onclick = () => moveColumn(colIdx, 1);
+            controlsDiv.appendChild(right);
+            const rem = document.createElement('button');
+            rem.className = 'icon-button'
+            rem.textContent = 'remove';
+            rem.title = 'Remove column'
+            rem.disabled = table.headers.length <= 1;
+            rem.onclick = () => removeColumn(colIdx);
+            controlsDiv.appendChild(rem);
+
+            th.appendChild(controlsDiv);
+            // --- END: Controls on top ---
+
+            const input = document.createElement('input');
+            input.value = header.text;
+            input.oninput = (e) => {
+                table.headers[colIdx].text = e.target.value;
+                updateMarkdown();
+            };
+            th.appendChild(input);
+
+            tr.appendChild(th);
+        });
+        thead.appendChild(tr);
+        tableEl.appendChild(thead);
             // Body
             const tbody = document.createElement('tbody');
             table.rows.forEach((row, rowIdx) => {
@@ -134,18 +267,25 @@
                 });
                 // Line: move/remove
                 const td = document.createElement('td');
+                td.className = 'tools-td'
                 const up = document.createElement('button');
-                up.textContent = '↑';
+                up.className = 'icon-button';
+                up.textContent = 'arrow_upward_alt';
+                up.title = 'Move line upward';
                 up.disabled = rowIdx === 0;
                 up.onclick = () => moveRow(rowIdx, -1);
                 td.appendChild(up);
                 const down = document.createElement('button');
-                down.textContent = '↓';
+                down.className = 'icon-button';
+                down.textContent = 'arrow_downward_alt';
+                down.title = 'Move line downward'
                 down.disabled = rowIdx === table.rows.length - 1;
                 down.onclick = () => moveRow(rowIdx, 1);
                 td.appendChild(down);
                 const rem = document.createElement('button');
-                rem.textContent = 'x';
+                rem.className = 'icon-button';
+                rem.textContent = 'remove';
+                rem.title = 'Remove row';
                 rem.disabled = table.rows.length <= 1;
                 rem.onclick = () => removeRow(rowIdx);
                 td.appendChild(rem);
@@ -170,16 +310,25 @@
         }
         function moveRow(idx, dir) {
             const newIdx = idx + dir;
-            if(newIdx >= 0 && newIdx < table.rows.length) {
-                const temp = table.rows[idx];
-                table.rows[idx] = table.rows[newIdx];
-                table.rows[newIdx] = temp;
-                renderTableEditor();
-                updateMarkdown();
+            if (newIdx >= 0 && newIdx < table.rows.length) {
+                // Add animation classes
+                const tbody = document.querySelector('#table-editor tbody');
+                if (tbody) {
+                    const trs = tbody.querySelectorAll('tr');
+                    if (trs[idx]) trs[idx].classList.add(dir < 0 ? 'move-row-up' : 'move-row-down');
+                    if (trs[newIdx]) trs[newIdx].classList.add(dir < 0 ? 'move-row-down' : 'move-row-up');
+                }
+                setTimeout(() => {
+                    const temp = table.rows[idx];
+                    table.rows[idx] = table.rows[newIdx];
+                    table.rows[newIdx] = temp;
+                    renderTableEditor();
+                    updateMarkdown();
+                }, 250);
             }
         }
         function addColumn() {
-            table.headers.push({ text: "Coluna " + (table.headers.length+1), align: "left" });
+            table.headers.push({ text: "Column " + (table.headers.length+1), align: "left" });
             table.rows.forEach(row => row.push(''));
             renderTableEditor();
             updateMarkdown();
@@ -194,17 +343,34 @@
         }
         function moveColumn(idx, dir) {
             const newIdx = idx + dir;
-            if(newIdx >= 0 && newIdx < table.headers.length) {
-                const tempHeader = table.headers[idx];
-                table.headers[idx] = table.headers[newIdx];
-                table.headers[newIdx] = tempHeader;
-                table.rows.forEach(row => {
-                    const tempCell = row[idx];
-                    row[idx] = row[newIdx];
-                    row[newIdx] = tempCell;
-                });
-                renderTableEditor();
-                updateMarkdown();
+            if (newIdx >= 0 && newIdx < table.headers.length) {
+                // Add animation classes
+                const tableEl = document.querySelector('#table-editor table');
+                if (tableEl) {
+                    // Animate header
+                    const ths = tableEl.querySelectorAll('thead th');
+                    if (ths[idx]) ths[idx].classList.add(dir < 0 ? 'move-col-left' : 'move-col-right');
+                    if (ths[newIdx]) ths[newIdx].classList.add(dir < 0 ? 'move-col-right' : 'move-col-left');
+                    // Animate cells
+                    const trs = tableEl.querySelectorAll('tbody tr');
+                    trs.forEach(tr => {
+                        const tds = tr.querySelectorAll('td');
+                        if (tds[idx]) tds[idx].classList.add(dir < 0 ? 'move-col-left' : 'move-col-right');
+                        if (tds[newIdx]) tds[newIdx].classList.add(dir < 0 ? 'move-col-right' : 'move-col-left');
+                    });
+                }
+                setTimeout(() => {
+                    const tempHeader = table.headers[idx];
+                    table.headers[idx] = table.headers[newIdx];
+                    table.headers[newIdx] = tempHeader;
+                    table.rows.forEach(row => {
+                        const tempCell = row[idx];
+                        row[idx] = row[newIdx];
+                        row[newIdx] = tempCell;
+                    });
+                    renderTableEditor();
+                    updateMarkdown();
+                }, 250);
             }
         }
         function updateMarkdown() {
