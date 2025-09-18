@@ -144,17 +144,20 @@
 <section class="main" style="max-width: 1200px; margin: 0 auto; margin-top: 100px; ">
     <div>
         <button onclick="addRow()" class="text-button">Add row</button>
-        <button onclick="addColumn()"class="text-button">Add colunm</button>
+        <button onclick="addColumn()" class="text-button">Add colunm</button>
+        <button onclick="copyMarkdown()" class="text-button">Copy markdown</button>
     </div>
     <div id="table-editor"></div>
     <div>
         <textarea id="markdown-output" style="width:90%;height:50vh; background-color: transparent; color:var(--text-color); border:none; outline:none;" readonly></textarea>
     </div>
     <script>
+        let animationTimer = 50;
+
         let table = {
             headers: [
-                { text: "Column 1", align: "center" },
-                { text: "Column 2", align: "center" }
+                { text: "", align: "center" },
+                { text: "", align: "center" }
             ],
             rows: [
                 ["", ""],
@@ -240,6 +243,7 @@
 
             const input = document.createElement('input');
             input.value = header.text;
+            input.placeholder = `Column ${colIdx + 1}`;
             input.oninput = (e) => {
                 table.headers[colIdx].text = e.target.value;
                 updateMarkdown();
@@ -258,10 +262,125 @@
                     const td = document.createElement('td');
                     const input = document.createElement('input');
                     input.value = cell;
+                    input.placeholder = `Cell ${rowIdx + 1}, ${colIdx + 1}`;
                     input.oninput = (e) => {
                         table.rows[rowIdx][colIdx] = e.target.value;
                         updateMarkdown();
                     };
+                    input.onfocus = (e) => {
+                        // select all text on focus
+                        setTimeout(() => input.select(), 0);
+                    };
+                    input.addEventListener('keydown', (e) => {
+                        // navigation with tab and shift+tab
+                        if (e.key === 'Tab') {
+                            e.preventDefault();
+                            let nextRow = rowIdx, nextCol = colIdx;
+                            if (!e.shiftKey) {
+                                // next cell
+                                if (colIdx < table.headers.length - 1) {
+                                    nextCol++;
+                                } else if (rowIdx < table.rows.length - 1) {
+                                    nextRow++;
+                                    nextCol = 0;
+                                }
+                            } else {
+                                // previous cell
+                                if (colIdx > 0) {
+                                    nextCol--;
+                                } else if (rowIdx > 0) {
+                                    nextRow--;
+                                    nextCol = table.headers.length - 1;
+                                }
+                            }
+                            const nextInput = document.querySelector(
+                                `#table-editor tbody tr:nth-child(${nextRow + 1}) td:nth-child(${nextCol + 1}) input`
+                            );
+                            if (nextInput) {
+                                nextInput.focus();
+                            }
+                        }
+                        // alt+arrows to move rows and columns
+                        if (e.altKey) {
+                            if (e.key === 'ArrowLeft') {
+                                e.preventDefault();
+                                if (colIdx > 0) {
+                                    moveColumn(colIdx, -1);
+                                    setTimeout(() => {
+                                        const movedInput = document.querySelector(
+                                            `#table-editor tbody tr:nth-child(${rowIdx + 1}) td:nth-child(${colIdx}) input`
+                                        );
+                                        if (movedInput) movedInput.focus();
+                                    }, animationTimer);
+                                }
+                            }
+                            if (e.key === 'ArrowRight') {
+                                e.preventDefault();
+                                if (colIdx < table.headers.length - 1) {
+                                    moveColumn(colIdx, 1);
+                                    setTimeout(() => {
+                                        const movedInput = document.querySelector(
+                                            `#table-editor tbody tr:nth-child(${rowIdx + 1}) td:nth-child(${colIdx + 2}) input`
+                                        );
+                                        if (movedInput) movedInput.focus();
+                                    }, animationTimer);
+                                }
+                            }
+                            if (e.key === 'ArrowUp') {
+                                e.preventDefault();
+                                if (rowIdx > 0) {
+                                    moveRow(rowIdx, -1);
+                                    setTimeout(() => {
+                                        const movedInput = document.querySelector(
+                                            `#table-editor tbody tr:nth-child(${rowIdx}) td:nth-child(${colIdx + 1}) input`
+                                        );
+                                        if (movedInput) movedInput.focus();
+                                    }, animationTimer);
+                                }
+                            }
+                            if (e.key === 'ArrowDown') {
+                                e.preventDefault();
+                                if (rowIdx < table.rows.length - 1) {
+                                    moveRow(rowIdx, 1);
+                                    setTimeout(() => {
+                                        const movedInput = document.querySelector(
+                                            `#table-editor tbody tr:nth-child(${rowIdx + 2}) td:nth-child(${colIdx + 1}) input`
+                                        );
+                                        if (movedInput) movedInput.focus();
+                                    }, animationTimer);
+                                }
+                            }
+                        }
+                        // Insert para adicionar coluna à direita
+                        if (e.key === 'Insert' && !e.shiftKey) {
+                            e.preventDefault();
+                            table.headers.splice(colIdx + 1, 0, { text: ''/*"Column " + (table.headers.length + 1)*/, align: "center" });
+                            table.rows.forEach(row => row.splice(colIdx + 1, 0, ''));
+                            renderTableEditor();
+                            updateMarkdown();
+                            // Foca na nova célula
+                            setTimeout(() => {
+                                const newInput = document.querySelector(
+                                    `#table-editor tbody tr:nth-child(${rowIdx + 1}) td:nth-child(${colIdx + 2}) input`
+                                );
+                                if (newInput) newInput.focus();
+                            }, 0);
+                        }
+                        // Shift+Insert para adicionar linha abaixo
+                        if (e.key === 'Insert' && e.shiftKey) {
+                            e.preventDefault();
+                            table.rows.splice(rowIdx + 1, 0, Array(table.headers.length).fill(''));
+                            renderTableEditor();
+                            updateMarkdown();
+                            // Foca na célula correspondente da nova linha
+                            setTimeout(() => {
+                                const newInput = document.querySelector(
+                                    `#table-editor tbody tr:nth-child(${rowIdx + 2}) td:nth-child(${colIdx + 1}) input`
+                                );
+                                if (newInput) newInput.focus();
+                            }, 0);
+                        }
+                    });
                     td.appendChild(input);
                     tr.appendChild(td);
                 });
@@ -324,11 +443,11 @@
                     table.rows[newIdx] = temp;
                     renderTableEditor();
                     updateMarkdown();
-                }, 250);
+                }, animationTimer);
             }
         }
         function addColumn() {
-            table.headers.push({ text: "Column " + (table.headers.length+1), align: "left" });
+            table.headers.push({ text: ""/*"Column " + (table.headers.length+1)*/, align: "center" });
             table.rows.forEach(row => row.push(''));
             renderTableEditor();
             updateMarkdown();
@@ -370,7 +489,7 @@
                     });
                     renderTableEditor();
                     updateMarkdown();
-                }, 250);
+                }, animationTimer);
             }
         }
         function updateMarkdown() {
@@ -434,6 +553,16 @@
             );
             return [headerRow, alignRow, ...rows].join('\n');
         }
+
+        function copyMarkdown() {
+            var copyText = document.getElementById("markdown-output");
+
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // mobile
+
+            navigator.clipboard.writeText(copyText.value);
+        }
+
         renderTableEditor();
         updateMarkdown();
     </script>
