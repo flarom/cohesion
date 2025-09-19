@@ -39,14 +39,21 @@
             background-color: var(--background-color-2);
             overflow: hidden;
             border-radius: 15px;
+            border: 1px solid var(--border-light-color);
 
             img {
                 max-width: 100%;
+                border-bottom: 1px solid var(--border-light-color);
+                transition: filter .3s;
             }
 
             .tool-description {
                 padding: 0px 10px 10px 10px;
             }
+        }
+
+        .tool-item img:hover {
+            filter: brightness(1.1);
         }
     </style>
 </head>
@@ -79,6 +86,20 @@
                     <p>Create and edit Markdown tables with ease.</p>
                     <div style="display: flex; align-items: center; justify-content: end;">
                         <button class="text-button" onclick="window.open('tools/markdown-table-editor.html', '_self')">Try it out</button>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <div class="tool-item">
+                    <div>
+                        <a href="tools/"><img src="cohesion/landing/tasklist.png" alt=""></a>
+                    </div>
+                    <div class="tool-description">
+                        <h2>[WIP] Task list editor</h2>
+                        <p>Create and edit Markdown task lists with ease.</p>
+                        <div style="display: flex; align-items: center; justify-content: end;">
+                            <button class="text-button" onclick="window.open('tools/', '_self')">Try it out</button>
+                        </div>
                     </div>
                 </div>
             </div>
