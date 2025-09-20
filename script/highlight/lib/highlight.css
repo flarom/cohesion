@@ -3,12 +3,11 @@ pre {
     overflow-x: scroll;
     box-sizing: border-box;
     
-    background-color: var(--hljs-bg);
+    /* background-color: var(--hljs-bg); */
     color: var(--hljs-text);
     
     font-size: medium;
     padding: 1em;
-    border-radius: 12px;
     line-height: 1.5;
 }
 

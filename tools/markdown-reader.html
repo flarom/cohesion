@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown Reader - Cohesion</title>
+    
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="Markdown Reader - Cohesion">
+    <meta name="description" content="Read Markdown Documents without distractions and try the Cohesion Markdown editor for free.">
+    <meta name="keywords" content="markdown table generator, markdown table editor, online markdown table, create markdown tables, markdown table tool">
+    <meta name="author" content="Cohesion Team">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://flarom.github.io/cohesion/tools/markdown-table-editor">
+    <meta property="og:title" content="Markdown Reader - Cohesion">
+    <meta property="og:description" content="Read Markdown Documents without distractions and try the Cohesion Markdown editor.">
+    <meta property="og:image" content="https://flarom.github.io/cohesion/cohesion/landing/reader.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://flarom.github.io/cohesion/tools/markdown-table-editor">
+    <meta property="twitter:title" content="Markdown Reader - Cohesion">
+    <meta property="twitter:description" content="Read Markdown Documents without distractions and try the Cohesion Markdown editor.">
+    <meta property="twitter:image" content="https://flarom.github.io/cohesion/cohesion/landing/reader.png">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://flarom.github.io/cohesion/tools/markdown-table-editor">
+
+    <link rel="stylesheet" href="../style/palette.css">
+    <link rel="stylesheet" href="../style/share.css">
+    <link rel="stylesheet" href="../style/landing.css">
+    <link rel="stylesheet" href="../style/editor.css">
+    <link rel="stylesheet" href="../script/highlight/lib/highlight.css">
+
+    <style>
+        .drag-drop-decorator {
+            max-height: 200px;
+            background-color: var(--background-color-2);
+            overflow: hidden;
+            border-radius: 15px;
+            border: 1px solid var(--border-light-color);
+            display: flex;
+
+            img {
+                max-height: 200px;
+                max-width: 100%;
+                border: 0;
+                border-right: 1px solid var(--border-light-color);
+            }
+
+            .description {
+                padding: 10px 0px 10px 10px;
+            }
+        }
+
+        .file {
+            display: flex;
+            flex-direction: column;
+            border-radius: 15px;
+            padding: 15px;
+
+            span {
+                max-width: 128px;
+                text-align: center;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+
+        .file:hover {
+            background-color: var(--background-color-2);
+        }
+
+        @media screen and (max-width: 800px) {
+            .drag-drop-decorator {
+                max-height: max-content;
+                max-width: 391px;
+                display: block;
+
+                img {
+                    max-height: max-content;
+                    border: 0;
+                    border-bottom: 1px solid var(--border-light-color);
+                }
+
+                .description {
+                    padding: 0px 10px 10px 10px;
+                }
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <a href="../index.html" style="display: inline-flex; align-items: center; color: var(--text-color); text-decoration: none;">
+                <img src="../cohesion/favicon.png" alt="" width="48">
+                <h2 translate="no" class="header-text">Cohesion</h2>
+            </a>
+        </div>
+        <div style="display: flex; gap: 5px;">
+            <button class="secondary" onclick="window.open('../index.html', '_self')">Editor</button>
+            <button class="secondary" onclick="window.open('../tools.html', '_self')">Tools</button>
+            <button class="secondary" onclick="window.open('https://github.com/flarom/cohesion/wiki')">Documentation</button>
+            <button class="secondary" onclick="window.open('https://github.com/flarom/cohesion')">GitHub</button>
+            <button class="secondary" onclick="changeTheme();" style="font-size: large;" translate="no"><span class="icon">routine</span></button>
+        </div>
+    </header>
+
+    <div id="preview" class="preview" style="max-width: 1200px; margin: 0 auto; margin-top: 100px; margin-bottom: 100px; padding: 10px; display: block; max-height: initial; overflow: visible;"></div>
+    
+    <input type="file" id="fileInput" accept=".md,.markdown,.txt,text/markdown,text/plain" style="display:none" />
+
+    <script src="../script/file.js"></script>
+    <script src="../script/settings.js"></script>
+    <script src="../script/prompts.js"></script>
+    <script src="../script/highlight/lib/highlight.min.js"></script>
+    <script src="../script/resources.js"></script>
+    <script src="../script/showdown/lib/showdown.js"></script>
+    <script src="../script/showdown/extension/definitionList.js"></script>
+    <script src="../script/showdown/extension/abbreviation.js"></script>
+    <script src="../script/showdown/extension/rubyText.js"></script>
+    <script src="../script/editorTools.js"></script>
+    <script>
+        loadFilesFromStorage();
+        window.addEventListener("dragover", (e) => { e.preventDefault(); });
+
+        // load settings
+        function loadSettings(){
+            const theme = getSetting("theme");
+            if (theme) document.body.className = theme;
+
+            const root = document.documentElement;
+
+            const editorFont = getSetting("editorFont");
+            const paragraphFont = getSetting("paragraphFont");
+            const titleFont = getSetting("titleFont");
+
+            if (editorFont) root.style.setProperty("--font-editor", editorFont);
+            if (paragraphFont) root.style.setProperty("--font-text", paragraphFont);
+            if (titleFont) root.style.setProperty("--font-title", titleFont);
+        }
+
+        function changeTheme() {
+            let current = getSetting('theme');
+            if (current === 'theme-dark') {
+                setSetting('theme', 'theme-light');
+            } else {
+                setSetting('theme', 'theme-dark');
+            }
+            loadSettings();
+        }
+
+        loadSettings();
+
+        const constMarkdown = `
+<div class='drag-drop-decorator' id='drag-drop-decorator'>
+    <div class='image'>
+        <img src='../cohesion/landing/markdown.png'>
+    </div>
+    <div class='description'>
+        <h1>Drag & Drop your document here</h1>
+        <p>Supported formats: Markdown (*.md)</p>
+    </div>
+</div>
+
+<div class='gallery' id='gallery'>
+    <h2>Recently edited documents</h2>
+    <div class='recent-documents' id='recent-documents'>
+        <!-- Recent files will be rendered here -->
+    </div>
+</div>
+        `
+
+        let markdown = constMarkdown;
+
+        const converter = new showdown.Converter({
+            extensions: ['definitionList', 'abbreviation', 'rubyText'],
+        });
+
+        const preview = document.getElementById("preview");
+
+        document.addEventListener("drop", dropHandler);
+
+        async function dropHandler(ev) {
+            ev.preventDefault();
+
+            let result = "";
+
+            const items = [...ev.dataTransfer.items];
+            for (const item of items) {
+                if (item.kind === "file") {
+                    const file = item.getAsFile();
+                    if (file) {
+                    result += await file.text();
+                    }
+                }
+            }
+
+            markdown = result;
+            preview.innerHTML = converter.makeHtml(markdown);
+
+            preview.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        }
+
+        async function loadMarkdownFromURLParams() {
+            const params = new URLSearchParams(window.location.search);
+
+            if (params.has('id')) {
+                markdown = getFileText(params.get('id'));
+                preview.innerHTML = converter.makeHtml(markdown)
+                return;
+            }
+
+            if (params.has('c')) {
+                markdown = params.get('c');
+                preview.innerHTML = converter.makeHtml(markdown);
+                showToast(`Loaded file through URL parameter`, 'settings_applications')
+                return;
+            }
+
+            if (params.has('url')) {
+                try {
+                    const url = params.get('url');
+                    const resp = await fetch(url);
+                    if (!resp.ok) throw new Error('Failed fetch remote file');
+                    markdown = await resp.text();
+                    preview.innerHTML = converter.makeHtml(markdown);
+                    showToast(`Loaded file through remote`, 'cell_tower')
+                } catch (e) {
+                    showToast(`Failed fetch remote file: ${e.message}`, 'error');
+                }
+                return;
+            }
+
+            preview.innerHTML = converter.makeHtml(markdown);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const fileInput = document.getElementById('fileInput');
+            setTimeout(() => {
+                const decorator = document.getElementById('drag-drop-decorator');
+                if (decorator) {
+                    decorator.style.cursor = "pointer";
+                    decorator.title = "Click to select a file";
+                    decorator.addEventListener('click', () => {
+                        fileInput.click();
+                    });
+                }
+            }, 0);
+
+            fileInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const text = await file.text();
+                    markdown = text;
+                    preview.innerHTML = converter.makeHtml(markdown);
+                    preview.querySelectorAll('pre code').forEach((block) => {
+                        hljs.highlightElement(block);
+                    });
+                }
+                fileInput.value = '';
+            });
+        });
+
+        function renderRecentDocuments() {
+            const recentContainer = document.getElementById('recent-documents');
+            if (!recentContainer) return;
+            recentContainer.innerHTML = '';
+
+            if (!files || files.length === 0) {
+                const span = document.createElement('span');
+                span.innerHTML = `No recent documents yet. <a href="../index.html">Start writing in the Cohesion Editor!</a>`;
+                recentContainer.appendChild(span);
+                return;
+            }
+
+            const maxRecent = 5;
+            const start = Math.max(0, files.length - maxRecent);
+            for (let i = files.length - 1; i >= start; i--) {
+                const title = getFileTitle(i) || "Untitled";
+                const a = document.createElement('a');
+                a.href = `markdown-reader.html?id=${i}`;
+                a.className = 'file';
+
+                const img = document.createElement('img');
+                img.src = '../cohesion/file-icons/text-x-generic.svg';
+                img.alt = 'Markdown file';
+
+                const span = document.createElement('span');
+                span.textContent = title;
+
+                a.appendChild(img);
+                a.appendChild(span);
+                recentContainer.appendChild(a);
+            }
+        }
+
+        loadMarkdownFromURLParams();
+        renderRecentDocuments();
+    </script>
+</body>
+</html>

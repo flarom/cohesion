@@ -189,7 +189,7 @@
     padding: 2px;
     padding-left: 10px;
     padding-right: 10px;
-    border-radius: 30px;
+    border-radius: 8px;
     font-family: var(--font-editor);
     font-size: medium;
 }
