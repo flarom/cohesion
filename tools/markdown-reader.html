@@ -207,6 +207,19 @@
             preview.querySelectorAll('pre code').forEach((block) => {
                 hljs.highlightElement(block);
             });
+
+            const selectors = ["img", "audio", "video", "iframe"];
+            for (const tag of selectors) {
+                const elements = preview.querySelectorAll(tag);
+                for (const el of elements) {
+                    const src = el.getAttribute("src");
+                    if (src && src.startsWith("resources/")) {
+                        const fileName = src.slice(10);
+                        const dataUrl = await resolveFSItem(fileName);
+                        if (dataUrl) el.src = dataUrl;
+                    }
+                }
+            }
         }
 
         async function loadMarkdownFromURLParams() {
@@ -215,6 +228,19 @@
             if (params.has('id')) {
                 markdown = getFileText(params.get('id'));
                 preview.innerHTML = converter.makeHtml(markdown)
+
+                const selectors = ["img", "audio", "video", "iframe"];
+                for (const tag of selectors) {
+                    const elements = preview.querySelectorAll(tag);
+                    for (const el of elements) {
+                        const src = el.getAttribute("src");
+                        if (src && src.startsWith("resources/")) {
+                            const fileName = src.slice(10);
+                            const dataUrl = await resolveFSItem(fileName);
+                            if (dataUrl) el.src = dataUrl;
+                        }
+                    }
+                }
                 return;
             }
 
@@ -222,6 +248,19 @@
                 markdown = params.get('c');
                 preview.innerHTML = converter.makeHtml(markdown);
                 showToast(`Loaded file through URL parameter`, 'settings_applications')
+
+                const selectors = ["img", "audio", "video", "iframe"];
+                for (const tag of selectors) {
+                    const elements = preview.querySelectorAll(tag);
+                    for (const el of elements) {
+                        const src = el.getAttribute("src");
+                        if (src && src.startsWith("resources/")) {
+                            const fileName = src.slice(10);
+                            const dataUrl = await resolveFSItem(fileName);
+                            if (dataUrl) el.src = dataUrl;
+                        }
+                    }
+                }
                 return;
             }
 
@@ -233,6 +272,19 @@
                     markdown = await resp.text();
                     preview.innerHTML = converter.makeHtml(markdown);
                     showToast(`Loaded file through remote`, 'cell_tower')
+
+                    const selectors = ["img", "audio", "video", "iframe"];
+                for (const tag of selectors) {
+                    const elements = preview.querySelectorAll(tag);
+                    for (const el of elements) {
+                        const src = el.getAttribute("src");
+                        if (src && src.startsWith("resources/")) {
+                            const fileName = src.slice(10);
+                            const dataUrl = await resolveFSItem(fileName);
+                            if (dataUrl) el.src = dataUrl;
+                        }
+                    }
+                }
                 } catch (e) {
                     showToast(`Failed fetch remote file: ${e.message}`, 'error');
                 }
