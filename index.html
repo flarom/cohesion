@@ -383,18 +383,26 @@
                 document.title = getFileTitle(index) || "New document - Cohesion";
             }
 
-            if (files.length < 1 || new URLSearchParams(window.location.search).get('intro') === 'true') {
-                showMessageFromFile('landing.html', false, true, false, false);
+            const urlParams = new URLSearchParams(window.location.search);
+            const introParam = urlParams.get('intro');
+            if (
+                files.length < 1 ||
+                (introParam === 'true') ||
+                (introParam === null && files.length < 1)
+            ) {
+                if (introParam !== 'false') {
+                    showMessageFromFile('landing.html', false, true, false, false);
 
-                const landingKeyHandler = (event) => {
-                    if (/^[a-zA-Z0-9]$/.test(event.key)) {
-                        fadeOutAllDialogs();
-                        editor.focus();
-                        document.removeEventListener("keydown", landingKeyHandler);
-                    }
-                };
+                    const landingKeyHandler = (event) => {
+                        if (/^[a-zA-Z0-9]$/.test(event.key)) {
+                            fadeOutAllDialogs();
+                            editor.focus();
+                            document.removeEventListener("keydown", landingKeyHandler);
+                        }
+                    };
 
-                document.addEventListener("keydown", landingKeyHandler);
+                    document.addEventListener("keydown", landingKeyHandler);
+                }
             }
 
             try {

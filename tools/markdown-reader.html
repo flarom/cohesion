@@ -92,6 +92,10 @@
                 }
             }
         }
+
+        header button.off {
+            display: none;
+        }
     </style>
 </head>
 <body class="theme-dark">
@@ -103,7 +107,8 @@
             </a>
         </div>
         <div style="display: flex; gap: 5px;">
-            <button class="secondary" onclick="window.open('../index.html', '_self')">Editor</button>
+            <button class="secondary off" onclick="editOnCohesion()" id="editor-import">Edit on Cohesion</button>
+            <button class="secondary" onclick="window.open('../index.html', '_self')" id="editor-simple">Editor</button>
             <button class="secondary" onclick="window.open('../tools.html', '_self')">Tools</button>
             <button class="secondary" onclick="window.open('https://github.com/flarom/cohesion/wiki')">Documentation</button>
             <button class="secondary" onclick="window.open('https://github.com/flarom/cohesion')">GitHub</button>
@@ -111,8 +116,8 @@
         </div>
     </header>
 
-    <div id="preview" class="preview" style="max-width: 1200px; margin: 0 auto; margin-top: 100px; margin-bottom: 100px; padding: 10px; display: block; max-height: initial; overflow: visible;"></div>
-    
+    <div id="preview" class="preview" style="max-width: 1200px; margin: 0 auto; margin-top: 100px; padding: 10px; display: block; max-height: initial; overflow: visible;"></div>
+
     <input type="file" id="fileInput" accept=".md,.markdown,.txt,text/markdown,text/plain" style="display:none" />
 
     <script src="../script/file.js"></script>
@@ -128,6 +133,9 @@
     <script>
         loadFilesFromStorage();
         window.addEventListener("dragover", (e) => { e.preventDefault(); });
+
+        const btnEditorSimple = document.getElementById('editor-simple');
+        const btnEditorImport = document.getElementById('editor-import');
 
         // load settings
         function loadSettings(){
@@ -208,6 +216,9 @@
                 hljs.highlightElement(block);
             });
 
+            btnEditorSimple.classList.add('off');
+            btnEditorImport.classList.remove('off');
+
             const selectors = ["img", "audio", "video", "iframe"];
             for (const tag of selectors) {
                 const elements = preview.querySelectorAll(tag);
@@ -226,28 +237,39 @@
             const params = new URLSearchParams(window.location.search);
 
             if (params.has('id')) {
-                markdown = getFileText(params.get('id'));
-                preview.innerHTML = converter.makeHtml(markdown)
+                const id = params.get('id');
+                if (!isNaN(id) && files[Number(id)] !== undefined) {
+                    markdown = getFileText(Number(id));
+                    preview.innerHTML = converter.makeHtml(markdown);
 
-                const selectors = ["img", "audio", "video", "iframe"];
-                for (const tag of selectors) {
-                    const elements = preview.querySelectorAll(tag);
-                    for (const el of elements) {
-                        const src = el.getAttribute("src");
-                        if (src && src.startsWith("resources/")) {
-                            const fileName = src.slice(10);
-                            const dataUrl = await resolveFSItem(fileName);
-                            if (dataUrl) el.src = dataUrl;
+                    btnEditorSimple.classList.add('off');
+                    btnEditorImport.classList.remove('off');
+
+                    const selectors = ["img", "audio", "video", "iframe"];
+                    for (const tag of selectors) {
+                        const elements = preview.querySelectorAll(tag);
+                        for (const el of elements) {
+                            const src = el.getAttribute("src");
+                            if (src && src.startsWith("resources/")) {
+                                const fileName = src.slice(10);
+                                const dataUrl = await resolveFSItem(fileName);
+                                if (dataUrl) el.src = dataUrl;
+                            }
                         }
                     }
+                    return;
+                } else {
+                    showToast(`'${id}' is an invalid/missing file ID`, 'warning');
                 }
-                return;
             }
 
             if (params.has('c')) {
                 markdown = params.get('c');
                 preview.innerHTML = converter.makeHtml(markdown);
                 showToast(`Loaded file through URL parameter`, 'settings_applications')
+
+                btnEditorSimple.classList.add('off');
+                btnEditorImport.classList.remove('off');
 
                 const selectors = ["img", "audio", "video", "iframe"];
                 for (const tag of selectors) {
@@ -273,18 +295,21 @@
                     preview.innerHTML = converter.makeHtml(markdown);
                     showToast(`Loaded file through remote`, 'cell_tower')
 
+                    btnEditorSimple.classList.add('off');
+                    btnEditorImport.classList.remove('off');
+
                     const selectors = ["img", "audio", "video", "iframe"];
-                for (const tag of selectors) {
-                    const elements = preview.querySelectorAll(tag);
-                    for (const el of elements) {
-                        const src = el.getAttribute("src");
-                        if (src && src.startsWith("resources/")) {
-                            const fileName = src.slice(10);
-                            const dataUrl = await resolveFSItem(fileName);
-                            if (dataUrl) el.src = dataUrl;
+                    for (const tag of selectors) {
+                        const elements = preview.querySelectorAll(tag);
+                        for (const el of elements) {
+                            const src = el.getAttribute("src");
+                            if (src && src.startsWith("resources/")) {
+                                const fileName = src.slice(10);
+                                const dataUrl = await resolveFSItem(fileName);
+                                if (dataUrl) el.src = dataUrl;
+                            }
                         }
                     }
-                }
                 } catch (e) {
                     showToast(`Failed fetch remote file: ${e.message}`, 'error');
                 }
@@ -352,6 +377,31 @@
                 a.appendChild(span);
                 recentContainer.appendChild(a);
             }
+        }
+
+        function editOnCohesion() {
+            const params = new URLSearchParams(window.location.search);
+
+            if (params.has('id')) {
+                const id = params.get('id');
+
+                if (!isNaN(id) && files[Number(id)] !== undefined) {
+                    index = id;
+                    localStorage.setItem('lastIndex', index);
+                    window.open('../index.html', '_self')
+
+                    return;
+                }else {
+                    showToast(`'${id}' is an invalid/missing file ID`, 'error');
+                    return;
+                }
+            }
+
+            index = 0;
+            localStorage.setItem('lastIndex', index);
+            files.unshift(markdown);
+            saveFilesToStorage();
+            window.open('../index.html', '_self')
         }
 
         loadMarkdownFromURLParams();
