@@ -1220,281 +1220,489 @@
             "[!CAUTION]":    { class: "quote-red", label: "Caution", icon: "dangerous" }
         };
 
+        // Custom block types for blockquotes, e.g. [!DETAILS], [!EMBED], [!CSV], [!FLOWCHART]
         const customBlockMap = {
             "DETAILS": {
-                allowHtml: false,
-                render: function (title, contentHtml) {
-                    return `<details><summary title="Click to expand"><span>${title}</span></summary>\n` +
-                        `<div class="content">\n${contentHtml}\n</div>\n</details>`;
-                }
+            allowHtml: false,
+            render: function (title, contentHtml) {
+                return `<details><summary title="Click to expand"><span>${title}</span></summary>\n` +
+                `<div class="content">\n${contentHtml}\n</div>\n</details>`;
+            }
             },
             "EMBED": {
-                allowHtml: true,
-                render: function (title, contentText) {
-                    const urls = contentText
-                        .split(/\r?\n/)
-                        .map(line => line.trim())
-                        .filter(line => line.length > 0);
+            allowHtml: true,
+            render: function (title, contentText) {
+                // Each non-empty line is treated as an embed URL
+                const urls = contentText
+                .split(/\r?\n/)
+                .map(line => line.trim())
+                .filter(line => line.length > 0);
 
-                    const iframes = urls.map(url => {
-                        const safeUrl = url.replace(/"/g, "&quot;");
-                        return `<iframe 
-                            src="${safeUrl}" 
-                            sandbox="allow-same-origin allow-forms allow-popups allow-scripts" 
-                            allowfullscreen>    
-                        </iframe>`;
-                    }).join("\n");
+                const iframes = urls.map(url => {
+                const safeUrl = url.replace(/"/g, "&quot;");
+                return `<iframe 
+                    src="${safeUrl}" 
+                    sandbox="allow-same-origin allow-forms allow-popups allow-scripts" 
+                    allowfullscreen>    
+                    </iframe>`;
+                }).join("\n");
 
-                    return `<div class="embed-container">\n${iframes}\n</div>`;
-                }
+                return `<div class="embed-container">\n${iframes}\n</div>`;
+            }
             },
             "CSV": {
-                allowHtml: true,
-                render: function (sepOrTitle, contentText) {
-                    let separator = ",";
-                    let data = contentText;
+            allowHtml: true,
+            render: function (sep, contentText) {
+                // CSV block: sep is the separator, contentText is the CSV data
+                let separator = ",";
+                let data = contentText;
 
-                    if (sepOrTitle.length === 1 || sepOrTitle.length === 0) {
-                        separator = sepOrTitle || ",";
-                    }
-
-                    const lines = data.split(/\r?\n/).filter(line => line.trim() !== "");
-                    if (lines.length === 0) return "";
-
-                    const rows = lines.map(line => line.split(separator).map(cell => cell.trim()));
-
-                    let tbody = "";
-                    for (let i = 0; i < rows.length; i++) {
-                        tbody += "<tr>" + rows[i].map(cell => `<td>${wrapCell(cell)}</td>`).join("") + "</tr>\n";
-                    }
-
-                    return `<div class="csv-table-container">\n<table class="csv-table">\n<tbody>\n${tbody}</tbody>\n</table>\n</div>`;
+                if (sep.length === 1 || sep.length === 0) {
+                separator = sep || ",";
                 }
+
+                const lines = data.split(/\r?\n/).filter(line => line.trim() !== "");
+                if (lines.length === 0) return "";
+
+                const rows = lines.map(line => line.split(separator).map(cell => cell.trim()));
+
+                let tbody = "";
+                for (let i = 0; i < rows.length; i++) {
+                tbody += "<tr>" + rows[i].map(cell => `<td>${wrapCell(cell)}</td>`).join("") + "</tr>\n";
+                }
+
+                return `<div class="csv-table-container">\n<table class="csv-table">\n<tbody>\n${tbody}</tbody>\n</table>\n</div>`;
+            }
             },
             "FLOWCHART": {
                 allowHtml: true,
                 render: function (title, contentText) {
-                    // normalize lines
+                    // FLOWCHART block: parses a simple flowchart DSL and renders SVG
+                    let direction = "LR";
+                    let actualTitle = title;
+                    // Extract direction from title if present
+                    if (title) {
+                        // [!FLOWCHART:lr] or [!FLOWCHART:tb]
+                        const dirMatch = title.match(/^\s*([a-z]{2})\s*$/i);
+                        if (dirMatch) {
+                            direction = dirMatch[1].toUpperCase();
+                            actualTitle = "";
+                        } else {
+                            // [!FLOWCHART:lr]
+                            const colonDir = title.match(/^(.*?):\s*([a-z]{2})\s*$/i);
+                            if (colonDir) {
+                                actualTitle = colonDir[1].trim();
+                                direction = colonDir[2].toUpperCase();
+                            }
+                        }
+                    }
+                    // Map to valid values
+                    const dirMap = {
+                        TB: "TB", TD: "TB", // Top to bottom
+                        LR: "LR",           // Left to right
+                    };
+                    direction = dirMap[direction] || "LR";
+
+                    // Normalize lines
                     const lines = contentText.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+
+                    const outlineColor = 'var(--text-color)';
+                    const outlineRed = 'var(--quote-red)';
+                    const bgRed = 'var(--quote-red-bg)';
+                    const outlineGreen = 'var(--quote-green)';
+                    const bgGreen = 'var(--quote-green-bg)';
+                    const outlineYellow = 'var(--quote-yellow)'
+                    const bgYellow = 'var(--quote-yellow-bg)';
+                    const textColor = 'var(--title-color)';
 
                     const nodes = {}; // id -> { id, label, shape }
                     const edges = []; // { from, to, label }
 
-                    // regexes to define nodes and edges
+                    // Regex for nodes and edges
                     const nodeDefPar = /^([\w-]+)\((.+)\)$/;  // ellipse (start/end)
                     const nodeDefDia = /^([\w-]+)\[(.+)\]$/;  // diamond (decision)
-                    const nodeDefRec = /^([\w-]+)\{(.+)\}$/;  // rect (process)
+                    const nodeDefRec = /^([\w-]+)\{(.+)\}$/;  // rectangle (process)
                     const edgeRegex = /^([\w-]+)(?:\(([^)]+)\))?\s*->\s*([\w-]+)(?:\(([^)]+)\))?$/;
 
-                    // first pass: capture explicit node definitions and edges
+                    // First pass: capture nodes and edges
                     lines.forEach(line => {
-                    let m;
-                    if (m = line.match(nodeDefPar)) {
-                        nodes[m[1]] = { id: m[1], label: m[2], shape: "ellipse" };
-                        return;
-                    }
-                    if (m = line.match(nodeDefDia)) {
-                        nodes[m[1]] = { id: m[1], label: m[2], shape: "diamond" };
-                        return;
-                    }
-                    if (m = line.match(nodeDefRec)) {
-                        nodes[m[1]] = { id: m[1], label: m[2], shape: "rect" };
-                        return;
-                    }
-                    // edge
-                    if (m = line.match(edgeRegex)) {
-                        const from = m[1], label = (m[2] || "").trim(), to = m[3];
-                        const tailLabel = (m[4] || "").trim();
-                        // if there is a label on the destination (m[4]) we consider it as the edge label as well (fallback)
-                        edges.push({ from, to, label: label || tailLabel || "" });
-                        // create "empty" nodes if not declared
-                        if (!nodes[from]) nodes[from] = { id: from, label: from, shape: "rect" };
-                        if (!nodes[to]) nodes[to] = { id: to, label: to, shape: "rect" };
-                        return;
-                    }
-                    // if the line doesn't match, it may be isolated text: create node with auto id
-                    const autoId = "n" + Math.random().toString(36).slice(2, 8);
-                    nodes[autoId] = { id: autoId, label: line, shape: "rect" };
+                        let m;
+                        if (m = line.match(nodeDefPar)) {
+                            nodes[m[1]] = { id: m[1], label: m[2], shape: "ellipse" };
+                            return;
+                        }
+                        if (m = line.match(nodeDefDia)) {
+                            nodes[m[1]] = { id: m[1], label: m[2], shape: "diamond" };
+                            return;
+                        }
+                        if (m = line.match(nodeDefRec)) {
+                            nodes[m[1]] = { id: m[1], label: m[2], shape: "rect" };
+                            return;
+                        }
+                        if (m = line.match(edgeRegex)) {
+                            const from = m[1], label = (m[2] || "").trim(), to = m[3];
+                            const tailLabel = (m[4] || "").trim();
+                            edges.push({ from, to, label: label || tailLabel || "" });
+                            if (!nodes[from]) nodes[from] = { id: from, label: from, shape: "rect" };
+                            if (!nodes[to]) nodes[to] = { id: to, label: to, shape: "rect" };
+                            return;
+                        }
+                        // If not matched, create automatic node
+                        const autoId = "n" + Math.random().toString(36).slice(2, 8);
+                        nodes[autoId] = { id: autoId, label: line, shape: "rect" };
                     });
 
-                    // simple layout based on DAG ranks (nodes without dependencies = layer 0)
-                    // build adj/indegree
+                    // Layout: define layers
                     const adj = {};
                     const indeg = {};
                     Object.keys(nodes).forEach(id => { adj[id] = []; indeg[id] = 0; });
                     edges.forEach(e => {
-                    if (adj[e.from]) adj[e.from].push(e.to);
-                    if (indeg[e.to] !== undefined) indeg[e.to] += 1;
-                    else indeg[e.to] = 1;
+                        if (adj[e.from]) adj[e.from].push(e.to);
+                        if (indeg[e.to] !== undefined) indeg[e.to] += 1;
+                        else indeg[e.to] = 1;
                     });
 
-                    // Kahn-like to assign layers (longest-parent + 1)
-                    const layers = {}; // nodeId -> layer (number)
-                    // start with nodes that have indeg 0 (sources)
+                    // Kahn-like for layers
+                    const layers = {};
                     const queue = [];
                     Object.keys(indeg).forEach(id => { if ((indeg[id] || 0) === 0) queue.push(id); });
-                    // nodes possibly in cycles: handle later
                     queue.forEach(id => layers[id] = 0);
-
-                    // propagate: for each node, children.layer = max(children.layer, node.layer+1)
                     const visited = new Set();
                     while (queue.length) {
-                    const u = queue.shift();
-                    visited.add(u);
-                    const baseLayer = layers[u] || 0;
-                    adj[u].forEach(v => {
-                        const newLayer = baseLayer + 1;
-                        if (layers[v] === undefined || newLayer > layers[v]) layers[v] = newLayer;
-                        indeg[v] -= 1;
-                        if (indeg[v] === 0) queue.push(v);
-                    });
-                    }
-
-                    // if there are nodes not visited (cycles or isolated), put them in next layers
-                    Object.keys(nodes).forEach(id => {
-                    if (layers[id] === undefined) {
-                        // try to find the highest layer among known parents
-                        let best = 0;
-                        Object.keys(nodes).forEach(p => {
-                        if (adj[p].includes(id) && layers[p] !== undefined) best = Math.max(best, layers[p] + 1);
+                        const u = queue.shift();
+                        visited.add(u);
+                        const baseLayer = layers[u] || 0;
+                        adj[u].forEach(v => {
+                            const newLayer = baseLayer + 1;
+                            if (layers[v] === undefined || newLayer > layers[v]) layers[v] = newLayer;
+                            indeg[v] -= 1;
+                            if (indeg[v] === 0) queue.push(v);
                         });
-                        layers[id] = best;
                     }
+                    Object.keys(nodes).forEach(id => {
+                        if (layers[id] === undefined) {
+                            let best = 0;
+                            Object.keys(nodes).forEach(p => {
+                                if (adj[p].includes(id) && layers[p] !== undefined) best = Math.max(best, layers[p] + 1);
+                            });
+                            layers[id] = best;
+                        }
                     });
 
-                    // group by layer
+                    // Group by layer
                     const byLayer = {};
                     Object.entries(layers).forEach(([id, layer]) => {
-                    byLayer[layer] = byLayer[layer] || [];
-                    byLayer[layer].push(id);
+                        byLayer[layer] = byLayer[layer] || [];
+                        byLayer[layer].push(id);
                     });
 
-                    // node size and spacing parameters
-                    const nodeW = 140, nodeH = 54;
-                    const spacingX = 220, spacingY = 120;
-                    const margin = 40;
-
+                    // Size and spacing parameters
+                    const nodeW = 140, nodeH = 54, spacingX = 220, spacingY = 120, margin = 40;
                     const layerIndices = Object.keys(byLayer).map(n => parseInt(n, 10)).sort((a, b) => a - b);
-                    const positions = {}; // id -> { x, y, w, h }
+                    const positions = {};
 
+                    // Compute SVG dimensions
                     const maxLayer = Math.max(...layerIndices);
-                    const width = margin * 2 + (maxLayer + 1) * spacingX;
                     const maxInLayer = Math.max(...layerIndices.map(i => byLayer[i].length));
-                    const height = margin * 2 + Math.max(maxInLayer * spacingY + nodeH, 300);
+                    let width, height;
 
+                    // Orientation
+                    let isVertical = direction === "TB" || direction === "TD" || direction === "BT";
+                    let isReverse = direction === "RL" || direction === "BT";
+
+                    // Position nodes according to direction
                     layerIndices.forEach((layerIdx, li) => {
                         const col = byLayer[layerIdx];
                         const colCount = col.length;
-                        const colHeight = (colCount - 1) * spacingY + nodeH;
-                        const startY = margin + (height - 2 * margin - colHeight) / 2;
-                        col.forEach((id, idx) => {
-                            const x = margin + li * spacingX;
-                            const y = startY + idx * spacingY;
-                            positions[id] = { x, y, w: nodeW, h: nodeH };
-                        });
+                        if (isVertical) {
+                            const colWidth = (colCount - 1) * spacingX + nodeW;
+                            const startX = margin + (Math.max(maxInLayer * spacingX + nodeW, colWidth) - colWidth) / 2;
+                            col.forEach((id, idx) => {
+                                let x = startX + idx * spacingX;
+                                let y = margin + li * spacingY;
+                                positions[id] = { x, y, w: nodeW, h: nodeH };
+                            });
+                        } else {
+                            const colHeight = (colCount - 1) * spacingY + nodeH;
+                            const startY = margin + (Math.max(maxInLayer * spacingY + nodeH, colHeight) - colHeight) / 2;
+                            col.forEach((id, idx) => {
+                                let x = margin + li * spacingX;
+                                let y = startY + idx * spacingY;
+                                positions[id] = { x, y, w: nodeW, h: nodeH };
+                            });
+                        }
                     });
 
-                    // helper to escape HTML in label and add line breaks for long text
+                    // Reverse if RL or BT
+                    if (isReverse) {
+                        const maxX = Math.max(...Object.values(positions).map(p => p.x));
+                        const maxY = Math.max(...Object.values(positions).map(p => p.y));
+                        Object.values(positions).forEach(pos => {
+                            if (direction === "RL") pos.x = maxX - pos.x;
+                            if (direction === "BT") pos.y = maxY - pos.y;
+                        });
+                    }
+
+                    // Escape HTML and break long lines
                     function esc(s) {
-                    s = (s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                    // Add line breaks for long text (every 15 chars, but only at word boundaries)
-                    if (s.length > 15) {
-                        s = s.replace(/(.{15,}?)(\s|$)/g, "$1\n");
-                    }
-                    return s;
+                        s = (s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                        if (s.length > 15) {
+                            s = s.replace(/(.{15,}?)(\s|$)/g, "$1\n");
+                        }
+                        return s;
                     }
 
-                    // generate defs (arrow)
+                    // Arrow marker definition
                     const defs = `
-                    <defs>
-                    <marker id="arrow-flow" viewBox="0 0 10 10" refX="10" refY="5"
-                    markerWidth="7" markerHeight="7" orient="auto">
-                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#555"></path>
-                    </marker>
-                    </defs>`;
+                <defs>
+                <marker id="arrow-flow" viewBox="0 0 10 10" refX="10" refY="5"
+                markerWidth="10" markerHeight="10" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="${outlineColor}"></path>
+                </marker>
+                </defs>`;
 
-                    // draw edges (smooth curves)
+                    // Draw edges
                     const edgeSvgs = edges.map(e => {
-                    const p0 = positions[e.from];
-                    const p1 = positions[e.to];
-                    if (!p0 || !p1) return "";
-                    const x1 = p0.x + p0.w;
-                    const y1 = p0.y + p0.h / 2;
-                    const x2 = p1.x;
-                    const y2 = p1.y + p1.h / 2;
-                    const dx = Math.max(40, Math.abs(x2 - x1) / 2);
-                    // cubic curves with horizontal controls for nice aspect
-                    const cp1x = x1 + dx;
-                    const cp1y = y1;
-                    const cp2x = x2 - dx;
-                    const cp2y = y2;
-                    const path = `M ${x1} ${y1} C ${cp1x} ${cp1y} ${cp2x} ${cp2y} ${x2} ${y2}`;
-                    const labelSvg = e.label ? `<text class="edge-label" x="${(x1 + x2) / 2}" y="${(y1 + y2) / 2 - 8}" font-size="12" text-anchor="middle">${esc(e.label)}</text>` : "";
-                    return `<g class="edge">
-                        <path d="${path}" fill="none" stroke="#777" stroke-width="2" marker-end="url(#arrow-flow)"></path>
-                        ${labelSvg}
-                        </g>`;
+                        const p0 = positions[e.from];
+                        const p1 = positions[e.to];
+                        if (!p0 || !p1) return "";
+                        const x1 = p0.x + p0.w;
+                        const y1 = p0.y + p0.h / 2;
+                        const x2 = p1.x;
+                        const y2 = p1.y + p1.h / 2;
+                        const dx = Math.max(40, Math.abs(x2 - x1) / 2);
+                        // Adjust for vertical orientation
+                        let path, labelSvg;
+                        if (isVertical) {
+                            // vertical: y changes more than x
+                            const yStart = p0.y + p0.h;
+                            const yEnd = p1.y;
+                            const cx = p0.x + p0.w / 2;
+                            const cy = p1.x + p1.w / 2;
+                            const dy = Math.max(40, Math.abs(yEnd - yStart) / 2);
+                            path = `M ${cx} ${yStart} C ${cx} ${yStart + dy} ${cy} ${yEnd - dy} ${cy} ${yEnd}`;
+                            labelSvg = e.label ? `<text class="edge-label" x="${(cx + cy) / 2}" y="${(yStart + yEnd) / 2 - 8}" font-size="12" text-anchor="middle">${esc(e.label)}</text>` : "";
+                        } else {
+                            // horizontal default
+                            path = `M ${x1} ${y1} C ${x1 + dx} ${y1} ${x2 - dx} ${y2} ${x2} ${y2}`;
+                            labelSvg = e.label ? `<text class="edge-label" x="${(x1 + x2) / 2}" y="${(y1 + y2) / 2 - 8}" font-size="12" text-anchor="middle">${esc(e.label)}</text>` : "";
+                        }
+                        return `<g class="edge">
+                <path d="${path}" fill="none" stroke="${outlineColor}" stroke-width="1" marker-end="url(#arrow-flow)"></path>
+                ${labelSvg}
+                </g>`;
                     }).join("\n");
 
-                    // draw nodes
+                    // Draw nodes
                     const nodeSvgs = Object.values(nodes).map(n => {
-                    const pos = positions[n.id];
-                    const x = pos.x;
-                    const y = pos.y;
-                    const cx = x + pos.w / 2;
-                    const cy = y + pos.h / 2;
-                    // Add line breaks to long labels
-                    const label = esc(n.label);
-                    const labelLines = label.split("\n");
-                    const labelSvg = labelLines.map((line, i) =>
-                        `<tspan x="${cx}" y="${cy + 5 + i * 16}">${line}</tspan>`
-                    ).join("");
-                    if (n.shape === "ellipse") {
-                        return `<g class="node" data-id="${n.id}">
-                        <ellipse cx="${cx}" cy="${cy}" rx="${pos.w / 2}" ry="${pos.h / 2}" fill="#ffd5e5" stroke="#333"/>
-                        <text x="${cx}" y="${cy + 5}" font-size="13" text-anchor="middle">${labelSvg}</text>
-                        </g>`;
-                    } else if (n.shape === "diamond") {
-                        // diamond is a rotated square: compute 4 points
-                        const rx = pos.w / 2;
-                        const ry = pos.h / 2;
-                        const points = [
-                        `${cx},${cy - ry}`,
-                        `${cx + rx},${cy}`,
-                        `${cx},${cy + ry}`,
-                        `${cx - rx},${cy}`
-                        ].join(" ");
-                        return `<g class="node" data-id="${n.id}">
-                        <polygon points="${points}" fill="#b8f2e6" stroke="#333"/>
-                        <text x="${cx}" y="${cy + 5}" font-size="13" text-anchor="middle">${labelSvg}</text>
-                        </g>`;
-                    } else {
-                        // rect
-                        return `<g class="node" data-id="${n.id}">
-                        <rect x="${x}" y="${y}" width="${pos.w}" height="${pos.h}" rx="8" fill="#ffefa0" stroke="#333"/>
-                        <text x="${cx}" y="${cy + 5}" font-size="13" text-anchor="middle">${labelSvg}</text>
-                        </g>`;
-                    }
+                        const pos = positions[n.id];
+                        const x = pos.x;
+                        const y = pos.y;
+                        const cx = x + pos.w / 2;
+                        const cy = y + pos.h / 2;
+                        const label = esc(n.label);
+                        const labelLines = label.split("\n");
+                        const labelSvg = labelLines.map((line, i) =>
+                            `<tspan x="${cx}" y="${cy + 5 + i * 16}">${line}</tspan>`
+                        ).join("");
+                        if (n.shape === "ellipse") {
+                            return `<g class="node" data-id="${n.id}">
+                <ellipse cx="${cx}" cy="${cy}" rx="${pos.w / 2}" ry="${pos.h / 2}" fill="${bgRed}" stroke="${outlineRed}"/>
+                <text x="${cx}" y="${cy + 5}" font-size="13" text-anchor="middle">${labelSvg}</text>
+                </g>`;
+                        } else if (n.shape === "diamond") {
+                            const rx = pos.w / 2;
+                            const ry = pos.h / 2;
+                            const points = [
+                                `${cx},${cy - ry}`,
+                                `${cx + rx},${cy}`,
+                                `${cx},${cy + ry}`,
+                                `${cx - rx},${cy}`
+                            ].join(" ");
+                            return `<g class="node" data-id="${n.id}">
+                <polygon points="${points}" fill="${bgGreen}" stroke="${outlineGreen}"/>
+                <text x="${cx}" y="${cy + 5}" font-size="13" text-anchor="middle">${labelSvg}</text>
+                </g>`;
+                        } else {
+                            return `<g class="node" data-id="${n.id}">
+                <rect x="${x}" y="${y}" width="${pos.w}" height="${pos.h}" rx="15" fill="${bgYellow}" stroke="${outlineYellow}"/>
+                <text x="${cx}" y="${cy + 5}" font-size="13" text-anchor="middle">${labelSvg}</text>
+                </g>`;
+                        }
                     }).join("\n");
 
-                    // final assembly
+                    // Compute minimal SVG dimensions
+                    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                    Object.values(positions).forEach(pos => {
+                        minX = Math.min(minX, pos.x);
+                        minY = Math.min(minY, pos.y);
+                        maxX = Math.max(maxX, pos.x + pos.w);
+                        maxY = Math.max(maxY, pos.y + pos.h);
+                    });
+                    // Also consider edges (curves may go outside node bounds)
+                    // For simplicity, add extra margin
+                    const extraMargin = 30;
+                    minX -= extraMargin;
+                    minY -= extraMargin;
+                    maxX += extraMargin;
+                    maxY += extraMargin;
+
+                    // Adjust to avoid negative values
+                    if (minX < 0) { maxX += -minX; minX = 0; }
+                    if (minY < 0) { maxY += -minY; minY = 0; }
+
+                    const svgWidth = Math.ceil(maxX - minX);
+                    const svgHeight = Math.ceil(maxY - minY);
+
+                    // Final SVG
                     const svg = `
-                    <div class="flowchart" style="overflow:auto;">
-                    <svg width="${Math.max(600, width)}" height="${Math.max(300, height)}" xmlns="http://www.w3.org/2000/svg">
-                    ${defs}
-                    <g class="edges">${edgeSvgs}</g>
-                    <g class="nodes">${nodeSvgs}</g>
-                    </svg>
-                    </div>
-                    <style>
-                    .flowchart svg { background: transparent; }
-                    .edge-label { fill: #2b7a78; font-family: sans-serif; }
-                    .node text { font-family: sans-serif; fill: #222; }
-                    </style>
-                    `;
+                <div class="flowchart" style="overflow:auto;">
+                ${actualTitle ? `<div class="flowchart-title">${actualTitle}</div>` : ""}
+                <svg width="${svgWidth}" height="${svgHeight}" viewBox="${minX} ${minY} ${svgWidth} ${svgHeight}" xmlns="http://www.w3.org/2000/svg">
+                ${defs}
+                <g class="edges">${edgeSvgs}</g>
+                <g class="nodes">${nodeSvgs}</g>
+                </svg>
+                </div>
+                <style>
+                .flowchart svg { background: transparent; }
+                .edge-label { fill: ${textColor}; font-family: sans-serif; }
+                .node text { font-family: sans-serif; fill: ${textColor}; }
+                .flowchart-title { font-weight: bold; font-size: 1.1em; margin-bottom: 0.5em; }
+                </style>
+                `;
                     return svg;
                 }
-            }
+            },
+            "GRAPH": {
+                allowHtml: true,
+                render: function (title, contentText) {
+                    // [!GRAPH:bars] (bars, default)
+                    // [!GRAPH:pie] (pie chart)
+                    let type = "pie";
+                    let actualTitle = title;
+                    if (title) {
+                        const typeMatch = title.match(/^\s*(bars|pie|pizza)\s*$/i);
+                        if (typeMatch) {
+                            type = typeMatch[1].toLowerCase() === "pizza" ? "pie" : typeMatch[1].toLowerCase();
+                            actualTitle = "";
+                        } else {
+                            const colonType = title.match(/^(.*?):\s*(bars|pie|pizza)\s*$/i);
+                            if (colonType) {
+                                actualTitle = colonType[1].trim();
+                                type = colonType[2].toLowerCase() === "pizza" ? "pie" : colonType[2].toLowerCase();
+                            }
+                        }
+                    }
+                    // Parse lines: label,value
+                    const lines = contentText.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+                    // Detect if any value ends with %
+                    let hasPercent = false;
+                    const data = lines.map(line => {
+                        // Suporta valores como "Chrome, 60%" ou "Firefox, 25"
+                        const m = line.match(/^(.+?)[,;:\t ]+([0-9.]+)\s*(%)?$/);
+                        if (m) {
+                            if (m[3] === "%") hasPercent = true;
+                            return { label: m[1], value: parseFloat(m[2]) };
+                        }
+                        return null;
+                    }).filter(Boolean);
+                    if (data.length === 0) return "";
+
+                    // Colors
+                    const colors = [
+                        "var(--quote-red)",
+                        "var(--quote-yellow)",
+                        "var(--quote-green)",
+                        "var(--quote-blue)",
+                        "var(--quote-purple)"
+                    ];
+
+                    const colorsBg = [
+                        "var(--quote-red-bg)",
+                        "var(--quote-yellow-bg)",
+                        "var(--quote-green-bg)",
+                        "var(--quote-blue-bg)",
+                        "var(--quote-purple-bg)"
+                    ];
+
+                    // SVG parameters
+                    const width = 480, height = 320, margin = 40;
+                    let svg = "";
+
+                    if (type === "bars") {
+                        // Bar chart (vertical only)
+                        const isVertical = true;
+                        const barCount = data.length;
+                        const maxValue = Math.max(...data.map(d => d.value));
+                        const barThickness = Math.floor((width - 2 * margin) / barCount * 0.6);
+                        const barGap = Math.floor((width - 2 * margin) / barCount * 0.4);
+
+                        svg += `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">`;
+
+                        // Bars
+                        data.forEach((d, i) => {
+                            const color = colors[i % colors.length];
+                            const colorBg = colorsBg[i % colorsBg.length];
+                            // Vertical bars
+                            const x = margin + i * ((width - 2 * margin) / barCount);
+                            const barH = Math.max(2, (d.value / maxValue) * (height - 2 * margin));
+                            const y = height - margin - barH;
+                            svg += `<rect x="${x}" y="${y}" width="${barThickness}" height="${barH}" fill="${colorBg}" stroke="${color}" stroke-width="1" />`;
+                            // Label
+                            svg += `<text x="${x + barThickness / 2}" y="${height - margin + 16}" font-size="13" text-anchor="middle" fill="var(--text-color)">${d.label}</text>`;
+                            // Value
+                            svg += `<text x="${x + barThickness / 2}" y="${y - 6}" font-size="12" text-anchor="middle" fill="var(--text-color)">${d.value}${hasPercent ? "%" : ""}</text>`;
+                        });
+
+                        svg += `</svg>`;
+                    } else if (type === "pie") {
+                        // Pie chart
+                        const cx = width / 2, cy = height / 2, r = Math.min(width, height) / 2 - margin;
+                        const total = data.reduce((sum, d) => sum + d.value, 0);
+                        let angle = 0;
+                        svg += `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">`;
+                        data.forEach((d, i) => {
+                            const color = colors[i % colors.length];
+                            const colorBg = colorsBg[i % colorsBg.length];
+                            const sliceAngle = (d.value / total) * 2 * Math.PI;
+                            const x1 = cx + r * Math.cos(angle);
+                            const y1 = cy + r * Math.sin(angle);
+                            angle += sliceAngle;
+                            const x2 = cx + r * Math.cos(angle);
+                            const y2 = cy + r * Math.sin(angle);
+                            const largeArc = sliceAngle > Math.PI ? 1 : 0;
+                            const path = [
+                                `M ${cx} ${cy}`,
+                                `L ${x1} ${y1}`,
+                                `A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`,
+                                "Z"
+                            ].join(" ");
+                            svg += `<path d="${path}" fill="${colorBg}" stroke="${color}" stroke-width="1"/>`;
+                        });
+                        // Labels
+                        angle = 0;
+                        data.forEach((d, i) => {
+                            const sliceAngle = (d.value / total) * 2 * Math.PI;
+                            const midAngle = angle + sliceAngle / 2;
+                            const lx = cx + (r * 0.6) * Math.cos(midAngle);
+                            const ly = cy + (r * 0.6) * Math.sin(midAngle);
+                            svg += `<text x="${lx}" y="${ly}" font-size="13" text-anchor="middle" fill="var(--text-color)">${d.label} (${d.value}${hasPercent ? "%" : ""})</text>`;
+                            angle += sliceAngle;
+                        });
+                        svg += `</svg>`;
+                    }
+
+                    return `<div class="graph-block" style="overflow:auto;">
+                        ${actualTitle ? `<div class="graph-title" style="color:var(--text-color)">${actualTitle}</div>` : ""}
+                        ${svg}
+                        </div>
+                        <style>
+                        .graph-title { font-weight:bold; font-size:1.1em; margin-bottom:0.5em; }
+                        </style>
+                        `;
+                }
+            },
         };
 
         text = text.replace(rgx, function (bq) {
@@ -3531,6 +3739,19 @@
 
         function parseCells(cell, style) {
             var subText = showdown.subParser("makehtml.spanGamut")(cell, options, globals);
+
+            // Se tasklists estiver ativado, permitir checkboxes também em tabelas
+            if (options.tasklists) {
+                subText = subText.replace(/^\[([xX ])]\s*/m, function (match, checked) {
+                    var otp = '<input type="checkbox" disabled style="margin:0 .4em; vertical-align: middle;"';
+                    if (checked.trim() !== "") {
+                        otp += ' checked';
+                    }
+                    otp += '>';
+                    return otp;
+                });
+            }
+
             return "<td" + style + ">" + subText + "</td>\n";
         }
 
