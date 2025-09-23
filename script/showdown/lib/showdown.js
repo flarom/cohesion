@@ -1268,7 +1268,7 @@
 
                 let tbody = "";
                 for (let i = 0; i < rows.length; i++) {
-                tbody += "<tr>" + rows[i].map(cell => `<td>${wrapCell(cell)}</td>`).join("") + "</tr>\n";
+                tbody += "<tr>" + rows[i].map(cell => `<td>${cell}</td>`).join("") + "</tr>\n";
                 }
 
                 return `<div class="csv-table-container">\n<table class="csv-table">\n<tbody>\n${tbody}</tbody>\n</table>\n</div>`;
