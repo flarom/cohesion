@@ -1306,22 +1306,22 @@
                     // Normalize lines
                     const lines = contentText.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
 
-                    const outlineColor = 'var(--text-color)';
-                    const outlineRed = 'var(--quote-red)';
-                    const bgRed = 'var(--quote-red-bg)';
-                    const outlineGreen = 'var(--quote-green)';
-                    const bgGreen = 'var(--quote-green-bg)';
-                    const outlineYellow = 'var(--quote-yellow)'
-                    const bgYellow = 'var(--quote-yellow-bg)';
-                    const textColor = 'var(--title-color)';
+                    const outlineColor = 'var(--text-color   , #000)';
+                    const outlineRed = 'var(--quote-red      , #000)';
+                    const bgRed = 'var(--quote-red-bg        , transparent)';
+                    const outlineGreen = 'var(--quote-green  , #000)';
+                    const bgGreen = 'var(--quote-green-bg    , transparent)';
+                    const outlineYellow = 'var(--quote-yellow, #000)';
+                    const bgYellow = 'var(--quote-yellow-bg  , transparent)';
+                    const textColor = 'var(--title-color     , #000)';
 
                     const nodes = {}; // id -> { id, label, shape }
                     const edges = []; // { from, to, label }
 
                     // Regex for nodes and edges
                     const nodeDefPar = /^([\w-]+)\((.+)\)$/;  // ellipse (start/end)
-                    const nodeDefDia = /^([\w-]+)\[(.+)\]$/;  // diamond (decision)
-                    const nodeDefRec = /^([\w-]+)\{(.+)\}$/;  // rectangle (process)
+                    const nodeDefDia = /^([\w-]+)\{(.+)\}$/;  // diamond (decision)
+                    const nodeDefRec = /^([\w-]+)\[(.+)\]$/;  // rectangle (process)
                     const edgeRegex = /^([\w-]+)(?:\(([^)]+)\))?\s*->\s*([\w-]+)(?:\(([^)]+)\))?$/;
 
                     // First pass: capture nodes and edges
@@ -1609,21 +1609,23 @@
                     }).filter(Boolean);
                     if (data.length === 0) return "";
 
+                    const textColor = "var(--title-color, #000)";
+
                     // Colors
                     const colors = [
-                        "var(--quote-red)",
-                        "var(--quote-yellow)",
-                        "var(--quote-green)",
-                        "var(--quote-blue)",
-                        "var(--quote-purple)"
+                        "var(--quote-red   , #000)",
+                        "var(--quote-yellow, #000)",
+                        "var(--quote-green , #000)",
+                        "var(--quote-blue  , #000)",
+                        "var(--quote-purple, #000)"
                     ];
 
                     const colorsBg = [
-                        "var(--quote-red-bg)",
-                        "var(--quote-yellow-bg)",
-                        "var(--quote-green-bg)",
-                        "var(--quote-blue-bg)",
-                        "var(--quote-purple-bg)"
+                        "var(--quote-red-bg   , transparent)",
+                        "var(--quote-yellow-bg, transparent)",
+                        "var(--quote-green-bg , transparent)",
+                        "var(--quote-blue-bg  , transparent)",
+                        "var(--quote-purple-bg, transparent)"
                     ];
 
                     // SVG parameters
@@ -1650,9 +1652,9 @@
                             const y = height - margin - barH;
                             svg += `<rect x="${x}" y="${y}" width="${barThickness}" height="${barH}" fill="${colorBg}" stroke="${color}" stroke-width="1" />`;
                             // Label
-                            svg += `<text x="${x + barThickness / 2}" y="${height - margin + 16}" font-size="13" text-anchor="middle" fill="var(--text-color)">${d.label}</text>`;
+                            svg += `<text x="${x + barThickness / 2}" y="${height - margin + 16}" font-size="13" text-anchor="middle" fill="${textColor}">${d.label}</text>`;
                             // Value
-                            svg += `<text x="${x + barThickness / 2}" y="${y - 6}" font-size="12" text-anchor="middle" fill="var(--text-color)">${d.value}${hasPercent ? "%" : ""}</text>`;
+                            svg += `<text x="${x + barThickness / 2}" y="${y - 6}" font-size="12" text-anchor="middle" fill="${textColor}">${d.value}${hasPercent ? "%" : ""}</text>`;
                         });
 
                         svg += `</svg>`;
@@ -1687,14 +1689,14 @@
                             const midAngle = angle + sliceAngle / 2;
                             const lx = cx + (r * 0.6) * Math.cos(midAngle);
                             const ly = cy + (r * 0.6) * Math.sin(midAngle);
-                            svg += `<text x="${lx}" y="${ly}" font-size="13" text-anchor="middle" fill="var(--text-color)">${d.label} (${d.value}${hasPercent ? "%" : ""})</text>`;
+                            svg += `<text x="${lx}" y="${ly}" font-size="13" text-anchor="middle" fill="${textColor}">${d.label} (${d.value}${hasPercent ? "%" : ""})</text>`;
                             angle += sliceAngle;
                         });
                         svg += `</svg>`;
                     }
 
                     return `<div class="graph-block" style="overflow:auto;">
-                        ${actualTitle ? `<div class="graph-title" style="color:var(--text-color)">${actualTitle}</div>` : ""}
+                        ${actualTitle ? `<div class="graph-title" style="color:${textColor}">${actualTitle}</div>` : ""}
                         ${svg}
                         </div>
                         <style>
