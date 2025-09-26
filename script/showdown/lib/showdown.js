@@ -1707,25 +1707,25 @@
 
                     } else if (type === "line") {
                         // === LINE CHART ===
-                        if (lines.length < 2) return "";
-                        const seriesNames = lines[0].split(/[,;|\t]+/).map(s => s.trim()).filter(Boolean);
-                        const seriesCount = seriesNames.length;
 
-                        const rows = lines.slice(1).map(l =>
-                            l.split(/[,;|\t]+/).map(v => v.trim()).filter(Boolean).map(Number)
-                        ).filter(r => r.length === seriesCount);
+                        const seriesData = lines.map(line => {
+                            const match = line.match(/^(.+?)\s*\[(.+?)\]\s*$/);
+                            if (!match) return null;
+                            const name = match[1].trim();
+                            const values = match[2].split(/[,;|\t]+/).map(v => Number(v.trim()));
+                            return { name, values };
+                        }).filter(Boolean);
 
-                        if (rows.length === 0) return "";
+                        if (seriesData.length === 0) return "";
 
-                        const points = rows.map((values, i) => ({
-                            x: i + 1,
-                            values
-                        }));
+                        const pointsCount = seriesData[0].values.length;
+
+                        if (!seriesData.every(s => s.values.length === pointsCount)) return "";
 
                         const xMin = 1;
-                        const xMax = points.length;
+                        const xMax = pointsCount;
                         const yMin = 0;
-                        const yMax = Math.max(...points.flatMap(p => p.values));
+                        const yMax = Math.max(...seriesData.flatMap(s => s.values));
 
                         function scaleX(x) {
                             return margin + ((x - xMin) / (xMax - xMin)) * (width - 2 * margin);
@@ -1738,7 +1738,7 @@
 
                         // Horizontal rules
                         for (let i = 0; i <= 5; i++) {
-                            const yVal = yMin + (i / 5) * (yMax - yMin);
+                            const yVal = (yMin + (i / 5) * (yMax - yMin)).toFixed(2);;
                             const y = scaleY(yVal);
                             if (yVal != 0) svg += `<line x1="${margin}" y1="${y}" x2="${width - margin}" y2="${y}" stroke="${borderColor}"/>`;
                             svg += `<text x="${margin - 5}" y="${y + 4}" font-size="12" text-anchor="end" fill="${textColor}">${yVal}</text>`;
@@ -1749,23 +1749,23 @@
                         svg += `<line x1="${margin}" y1="${margin}" x2="${margin}" y2="${height - margin}" stroke="${textColor}" />`;
 
                         // Lines
-                        seriesNames.forEach((s, si) => {
+                        seriesData.forEach((s, si) => {
                             const color = colors[si % colors.length];
                             let path = "";
-                            points.forEach((p, pi) => {
-                                const x = scaleX(p.x);
-                                const y = scaleY(p.values[si]);
+                            s.values.forEach((v, pi) => {
+                                const x = scaleX(pi + 1);
+                                const y = scaleY(v);
                                 path += (pi === 0 ? "M" : "L") + x + " " + y + " ";
                             });
                             svg += `<path d="${path}" fill="none" stroke="${color}" stroke-width="2"/>`;
 
-                            points.forEach((p) => {
-                                const x = scaleX(p.x);
-                                const y = scaleY(p.values[si]);
+                            s.values.forEach((v, pi) => {
+                                const x = scaleX(pi + 1);
+                                const y = scaleY(v);
                                 svg += `<circle cx="${x}" cy="${y}" r="3" fill="${color}"/>`;
                             });
 
-                            svg += `<text x="${width - margin + 10}" y="${margin + si * 16}" font-size="12" fill="${color}">● ${s}</text>`;
+                            svg += `<text x="${width - margin + 10}" y="${margin + si * 16}" font-size="12" fill="${color}">● ${s.name}</text>`;
                         });
 
                         svg += `</svg>`;
@@ -2260,25 +2260,6 @@
                 wrapper.setAttribute('style','width:100%;height:100%;');
                 wrapper.appendChild(iframe);
                 promptMessage(wrapper.outerHTML,true,true);
-            })(this.closest('.code-container').querySelector('code'))">step_over</button>`,
-
-            csv: `<button class="icon-button" title="Show table" onclick="(function(el){
-                const raw = el.innerText.trim();
-                let sep = ',';
-                const lines = raw.split(/\\r?\\n/);
-                if (/^sep=./i.test(lines[0])) {
-                    sep = lines[0].charAt(4);
-                    lines.shift();
-                }
-                const rows = lines.map(line => line.split(sep));
-                let html = '<table style=\\'width:100%;border-collapse:collapse;text-align:left;\\'><thead><tr>';
-                html += rows[0].map(c=>'<th style=\\'border:1px solid var(--border-light-color);padding:6px;\\'>'+c+'</th>').join('');
-                html += '</tr></thead><tbody>';
-                for(let i=1;i<rows.length;i++){
-                    html += '<tr>' + rows[i].map(c=>'<td style=\\'border:1px solid var(--border-light-color);padding:6px;\\'>'+c+'</td>').join('') + '</tr>';
-                }
-                html += '</tbody></table>';
-                promptMessage(html, true, false);
             })(this.closest('.code-container').querySelector('code'))">step_over</button>`
         };
 
@@ -2372,7 +2353,7 @@
                 var txt = wholeMatch;
                 // check if this html element is marked as markdown
                 // if so, it's contents should be parsed as markdown
-                if (left.search(/\bmarkdown\b/) !== -1) {
+                if (left.search(/\bmarkdown||md\b/) !== -1) {
                     txt = left + globals.converter.makeHtml(match) + right;
                 }
                 return "\n\n¨K" + (globals.gHtmlBlocks.push(txt) - 1) + "K\n\n";
