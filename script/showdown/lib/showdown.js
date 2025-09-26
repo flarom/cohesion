@@ -1575,224 +1575,224 @@
                 }
             },
             "GRAPH": {
-    allowHtml: true,
-    render: function (title, contentText) {
-        // [!GRAPH:bars] (bars, default)
-        // [!GRAPH:pie]  (pie chart)
-        // [!GRAPH:line] (multi-line chart)
+                allowHtml: true,
+                render: function (title, contentText) {
+                    // [!GRAPH:bars] (bars, default)
+                    // [!GRAPH:pie]  (pie chart)
+                    // [!GRAPH:line] (multi-line chart)
 
-        let type = "pie";
-        let actualTitle = title;
-        if (title) {
-            const typeMatch = title.match(/^\s*(bars|pie|pizza|line)\s*$/i);
-            if (typeMatch) {
-                type = typeMatch[1].toLowerCase() === "pizza" ? "pie" : typeMatch[1].toLowerCase();
-                actualTitle = "";
-            } else {
-                const colonType = title.match(/^(.*?):\s*(bars|pie|pizza|line)\s*$/i);
-                if (colonType) {
-                    actualTitle = colonType[1].trim();
-                    type = colonType[2].toLowerCase() === "pizza" ? "pie" : colonType[2].toLowerCase();
+                    let type = "pie";
+                    let actualTitle = title;
+                    if (title) {
+                        const typeMatch = title.match(/^\s*(bars|pie|pizza|line)\s*$/i);
+                        if (typeMatch) {
+                            type = typeMatch[1].toLowerCase() === "pizza" ? "pie" : typeMatch[1].toLowerCase();
+                            actualTitle = "";
+                        } else {
+                            const colonType = title.match(/^(.*?):\s*(bars|pie|pizza|line)\s*$/i);
+                            if (colonType) {
+                                actualTitle = colonType[1].trim();
+                                type = colonType[2].toLowerCase() === "pizza" ? "pie" : colonType[2].toLowerCase();
+                            }
+                        }
+                    }
+
+                    const lines = contentText.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+
+                    const textColor = "var(--title-color, #000)";
+                    const borderColor = "var(--border-light-color, #ccc"
+
+                    const colors = [
+                        "var(--quote-blue  , #3498db)",
+                        "var(--quote-purple, #9b59b6)",
+                        "var(--quote-red   , #e74c3c)",
+                        "var(--quote-yellow, #f1c40f)",
+                        "var(--quote-green , #2ecc71)"
+                    ];
+
+                    const colorsBg = [
+                        "var(--quote-blue-bg  , transparent)",
+                        "var(--quote-purple-bg, transparent)",
+                        "var(--quote-red-bg   , transparent)",
+                        "var(--quote-yellow-bg, transparent)",
+                        "var(--quote-green-bg , transparent)"
+                    ];
+
+                    // SVG parameters
+                    const width = 640, height = 320, margin = 40;
+                    let svg = "";
+
+                    if (type === "bars") {
+                        // === BAR CHART ===
+                        // Parse lines: label,value
+                        let hasPercent = false;
+                        const data = lines.map(line => {
+                            const m = line.match(/^(.+?)[,;:\t ]+([0-9.]+)\s*(%)?$/);
+                            if (m) {
+                                if (m[3] === "%") hasPercent = true;
+                                return { label: m[1], value: parseFloat(m[2]) };
+                            }
+                            return null;
+                        }).filter(Boolean);
+                        if (data.length === 0) return "";
+
+                        const barCount = data.length;
+                        const maxValue = Math.max(...data.map(d => d.value));
+                        const barThickness = Math.floor((width - 2 * margin) / barCount * 0.6);
+
+                        svg += `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">`;
+
+                        data.forEach((d, i) => {
+                            const color = colors[i % colors.length];
+                            const colorBg = colorsBg[i % colorsBg.length];
+                            const x = margin + i * ((width - 2 * margin) / barCount);
+                            const barH = Math.max(2, (d.value / maxValue) * (height - 2 * margin));
+                            const y = height - margin - barH;
+                            svg += `<rect x="${x}" y="${y}" width="${barThickness}" height="${barH}" fill="${colorBg}" stroke="${color}" stroke-width="1" />`;
+                            svg += `<text x="${x + barThickness / 2}" y="${height - margin + 16}" font-size="13" text-anchor="middle" fill="${textColor}">${d.label}</text>`;
+                            svg += `<text x="${x + barThickness / 2}" y="${y - 6}" font-size="12" text-anchor="middle" fill="${textColor}">${d.value}${hasPercent ? "%" : ""}</text>`;
+                        });
+
+                        svg += `</svg>`;
+
+                    } else if (type === "pie") {
+                        // === PIE CHART ===
+                        let hasPercent = false;
+                        const data = lines.map(line => {
+                            const m = line.match(/^(.+?)[,;:\t ]+([0-9.]+)\s*(%)?$/);
+                            if (m) {
+                                if (m[3] === "%") hasPercent = true;
+                                return { label: m[1], value: parseFloat(m[2]) };
+                            }
+                            return null;
+                        }).filter(Boolean);
+                        if (data.length === 0) return "";
+
+                        const cx = width / 2, cy = height / 2, r = Math.min(width, height) / 2 - margin;
+                        const total = data.reduce((sum, d) => sum + d.value, 0);
+                        let angle = 0;
+                        svg += `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">`;
+
+                        data.forEach((d, i) => {
+                            const color = colors[i % colors.length];
+                            const colorBg = colorsBg[i % colorsBg.length];
+                            const sliceAngle = (d.value / total) * 2 * Math.PI;
+                            const x1 = cx + r * Math.cos(angle);
+                            const y1 = cy + r * Math.sin(angle);
+                            angle += sliceAngle;
+                            const x2 = cx + r * Math.cos(angle);
+                            const y2 = cy + r * Math.sin(angle);
+                            const largeArc = sliceAngle > Math.PI ? 1 : 0;
+                            const path = [
+                                `M ${cx} ${cy}`,
+                                `L ${x1} ${y1}`,
+                                `A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`,
+                                "Z"
+                            ].join(" ");
+                            svg += `<path d="${path}" fill="${colorBg}" stroke="${color}" stroke-width="1"/>`;
+                        });
+
+                        // Labels
+                        angle = 0;
+                        data.forEach((d, i) => {
+                            const sliceAngle = (d.value / total) * 2 * Math.PI;
+                            const midAngle = angle + sliceAngle / 2;
+                            const lx = cx + (r * 0.6) * Math.cos(midAngle);
+                            const ly = cy + (r * 0.6) * Math.sin(midAngle);
+                            svg += `<text x="${lx}" y="${ly}" font-size="13" text-anchor="middle" fill="${textColor}">${d.label} (${d.value}${hasPercent ? "%" : ""})</text>`;
+                            angle += sliceAngle;
+                        });
+
+                        svg += `</svg>`;
+
+                    } else if (type === "line") {
+                        // === LINE CHART ===
+                        if (lines.length < 2) return "";
+                        const seriesNames = lines[0].split(/[,;|\t]+/).map(s => s.trim()).filter(Boolean);
+                        const seriesCount = seriesNames.length;
+
+                        const rows = lines.slice(1).map(l =>
+                            l.split(/[,;|\t]+/).map(v => v.trim()).filter(Boolean).map(Number)
+                        ).filter(r => r.length === seriesCount);
+
+                        if (rows.length === 0) return "";
+
+                        const points = rows.map((values, i) => ({
+                            x: i + 1,
+                            values
+                        }));
+
+                        const xMin = 1;
+                        const xMax = points.length;
+                        const yMin = 0;
+                        const yMax = Math.max(...points.flatMap(p => p.values));
+
+                        function scaleX(x) {
+                            return margin + ((x - xMin) / (xMax - xMin)) * (width - 2 * margin);
+                        }
+                        function scaleY(y) {
+                            return height - margin - ((y - yMin) / (yMax - yMin)) * (height - 2 * margin);
+                        }
+
+                        svg += `<svg width="100%" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">`;
+
+                        // Horizontal rules
+                        for (let i = 0; i <= 5; i++) {
+                            const yVal = yMin + (i / 5) * (yMax - yMin);
+                            const y = scaleY(yVal);
+                            if (yVal != 0) svg += `<line x1="${margin}" y1="${y}" x2="${width - margin}" y2="${y}" stroke="${borderColor}"/>`;
+                            svg += `<text x="${margin - 5}" y="${y + 4}" font-size="12" text-anchor="end" fill="${textColor}">${yVal}</text>`;
+                        }
+
+                        // Axys
+                        svg += `<line x1="${margin}" y1="${height - margin}" x2="${width - margin}" y2="${height - margin}" stroke="${textColor}" />`;
+                        svg += `<line x1="${margin}" y1="${margin}" x2="${margin}" y2="${height - margin}" stroke="${textColor}" />`;
+
+                        // Lines
+                        seriesNames.forEach((s, si) => {
+                            const color = colors[si % colors.length];
+                            let path = "";
+                            points.forEach((p, pi) => {
+                                const x = scaleX(p.x);
+                                const y = scaleY(p.values[si]);
+                                path += (pi === 0 ? "M" : "L") + x + " " + y + " ";
+                            });
+                            svg += `<path d="${path}" fill="none" stroke="${color}" stroke-width="2"/>`;
+
+                            points.forEach((p) => {
+                                const x = scaleX(p.x);
+                                const y = scaleY(p.values[si]);
+                                svg += `<circle cx="${x}" cy="${y}" r="3" fill="${color}"/>`;
+                            });
+
+                            svg += `<text x="${width - margin + 10}" y="${margin + si * 16}" font-size="12" fill="${color}">● ${s}</text>`;
+                        });
+
+                        svg += `</svg>`;
+                    }
+
+                    return `<div class="graph-block" style="overflow:auto;">
+                        ${actualTitle ? `<div class="graph-title" style="color:${textColor}">${actualTitle}</div>` : ""}
+                        ${svg}
+                        </div>
+                        <style>
+                        .graph-title { font-weight:bold; font-size:1.1em; margin-bottom:0.5em; }
+                        </style>
+                        `;
                 }
             }
-        }
-
-        const lines = contentText.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-
-        const textColor = "var(--title-color, #000)";
-        const borderColor = "var(--border-light-color, #ccc"
-
-        const colors = [
-            "var(--quote-blue  , #3498db)",
-            "var(--quote-purple, #9b59b6)",
-            "var(--quote-red   , #e74c3c)",
-            "var(--quote-yellow, #f1c40f)",
-            "var(--quote-green , #2ecc71)"
-        ];
-
-        const colorsBg = [
-            "var(--quote-blue-bg  , transparent)",
-            "var(--quote-purple-bg, transparent)",
-            "var(--quote-red-bg   , transparent)",
-            "var(--quote-yellow-bg, transparent)",
-            "var(--quote-green-bg , transparent)"
-        ];
-
-        // SVG parameters
-        const width = 640, height = 320, margin = 40;
-        let svg = "";
-
-        if (type === "bars") {
-            // === BAR CHART ===
-            // Parse lines: label,value
-            let hasPercent = false;
-            const data = lines.map(line => {
-                const m = line.match(/^(.+?)[,;:\t ]+([0-9.]+)\s*(%)?$/);
-                if (m) {
-                    if (m[3] === "%") hasPercent = true;
-                    return { label: m[1], value: parseFloat(m[2]) };
-                }
-                return null;
-            }).filter(Boolean);
-            if (data.length === 0) return "";
-
-            const barCount = data.length;
-            const maxValue = Math.max(...data.map(d => d.value));
-            const barThickness = Math.floor((width - 2 * margin) / barCount * 0.6);
-
-            svg += `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">`;
-
-            data.forEach((d, i) => {
-                const color = colors[i % colors.length];
-                const colorBg = colorsBg[i % colorsBg.length];
-                const x = margin + i * ((width - 2 * margin) / barCount);
-                const barH = Math.max(2, (d.value / maxValue) * (height - 2 * margin));
-                const y = height - margin - barH;
-                svg += `<rect x="${x}" y="${y}" width="${barThickness}" height="${barH}" fill="${colorBg}" stroke="${color}" stroke-width="1" />`;
-                svg += `<text x="${x + barThickness / 2}" y="${height - margin + 16}" font-size="13" text-anchor="middle" fill="${textColor}">${d.label}</text>`;
-                svg += `<text x="${x + barThickness / 2}" y="${y - 6}" font-size="12" text-anchor="middle" fill="${textColor}">${d.value}${hasPercent ? "%" : ""}</text>`;
-            });
-
-            svg += `</svg>`;
-
-        } else if (type === "pie") {
-            // === PIE CHART ===
-            let hasPercent = false;
-            const data = lines.map(line => {
-                const m = line.match(/^(.+?)[,;:\t ]+([0-9.]+)\s*(%)?$/);
-                if (m) {
-                    if (m[3] === "%") hasPercent = true;
-                    return { label: m[1], value: parseFloat(m[2]) };
-                }
-                return null;
-            }).filter(Boolean);
-            if (data.length === 0) return "";
-
-            const cx = width / 2, cy = height / 2, r = Math.min(width, height) / 2 - margin;
-            const total = data.reduce((sum, d) => sum + d.value, 0);
-            let angle = 0;
-            svg += `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">`;
-
-            data.forEach((d, i) => {
-                const color = colors[i % colors.length];
-                const colorBg = colorsBg[i % colorsBg.length];
-                const sliceAngle = (d.value / total) * 2 * Math.PI;
-                const x1 = cx + r * Math.cos(angle);
-                const y1 = cy + r * Math.sin(angle);
-                angle += sliceAngle;
-                const x2 = cx + r * Math.cos(angle);
-                const y2 = cy + r * Math.sin(angle);
-                const largeArc = sliceAngle > Math.PI ? 1 : 0;
-                const path = [
-                    `M ${cx} ${cy}`,
-                    `L ${x1} ${y1}`,
-                    `A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`,
-                    "Z"
-                ].join(" ");
-                svg += `<path d="${path}" fill="${colorBg}" stroke="${color}" stroke-width="1"/>`;
-            });
-
-            // Labels
-            angle = 0;
-            data.forEach((d, i) => {
-                const sliceAngle = (d.value / total) * 2 * Math.PI;
-                const midAngle = angle + sliceAngle / 2;
-                const lx = cx + (r * 0.6) * Math.cos(midAngle);
-                const ly = cy + (r * 0.6) * Math.sin(midAngle);
-                svg += `<text x="${lx}" y="${ly}" font-size="13" text-anchor="middle" fill="${textColor}">${d.label} (${d.value}${hasPercent ? "%" : ""})</text>`;
-                angle += sliceAngle;
-            });
-
-            svg += `</svg>`;
-
-        } else if (type === "line") {
-            // === LINE CHART ===
-            if (lines.length < 2) return "";
-            const seriesNames = lines[0].split(/[,;|\t]+/).map(s => s.trim()).filter(Boolean);
-            const seriesCount = seriesNames.length;
-
-            const rows = lines.slice(1).map(l =>
-                l.split(/[,;|\t]+/).map(v => v.trim()).filter(Boolean).map(Number)
-            ).filter(r => r.length === seriesCount);
-
-            if (rows.length === 0) return "";
-
-            const points = rows.map((values, i) => ({
-                x: i + 1,
-                values
-            }));
-
-            const xMin = 1;
-            const xMax = points.length;
-            const yMin = 0;
-            const yMax = Math.max(...points.flatMap(p => p.values));
-
-            function scaleX(x) {
-                return margin + ((x - xMin) / (xMax - xMin)) * (width - 2 * margin);
-            }
-            function scaleY(y) {
-                return height - margin - ((y - yMin) / (yMax - yMin)) * (height - 2 * margin);
-            }
-
-            svg += `<svg width="100%" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">`;
-
-            // Horizontal rules
-            for (let i = 0; i <= 5; i++) {
-                const yVal = yMin + (i / 5) * (yMax - yMin);
-                const y = scaleY(yVal);
-                if (yVal != 0) svg += `<line x1="${margin}" y1="${y}" x2="${width - margin}" y2="${y}" stroke="${borderColor}"/>`;
-                svg += `<text x="${margin - 5}" y="${y + 4}" font-size="12" text-anchor="end" fill="${textColor}">${yVal}</text>`;
-            }
-
-            // Axys
-            svg += `<line x1="${margin}" y1="${height - margin}" x2="${width - margin}" y2="${height - margin}" stroke="${textColor}" />`;
-            svg += `<line x1="${margin}" y1="${margin}" x2="${margin}" y2="${height - margin}" stroke="${textColor}" />`;
-
-            // Lines
-            seriesNames.forEach((s, si) => {
-                const color = colors[si % colors.length];
-                let path = "";
-                points.forEach((p, pi) => {
-                    const x = scaleX(p.x);
-                    const y = scaleY(p.values[si]);
-                    path += (pi === 0 ? "M" : "L") + x + " " + y + " ";
-                });
-                svg += `<path d="${path}" fill="none" stroke="${color}" stroke-width="2"/>`;
-
-                points.forEach((p) => {
-                    const x = scaleX(p.x);
-                    const y = scaleY(p.values[si]);
-                    svg += `<circle cx="${x}" cy="${y}" r="3" fill="${color}"/>`;
-                });
-
-                svg += `<text x="${width - margin + 10}" y="${margin + si * 16}" font-size="12" fill="${color}">● ${s}</text>`;
-            });
-
-            svg += `</svg>`;
-        }
-
-        return `<div class="graph-block" style="overflow:auto;">
-            ${actualTitle ? `<div class="graph-title" style="color:${textColor}">${actualTitle}</div>` : ""}
-            ${svg}
-            </div>
-            <style>
-            .graph-title { font-weight:bold; font-size:1.1em; margin-bottom:0.5em; }
-            </style>
-            `;
-    }
-}
-
         };
 
         text = text.replace(rgx, function (bq) {
             let lines = bq.split("\n").map((line) => line.replace(/^ {0,3}>[ \t]?/, ""));
             let firstLine = lines[0].trim();
 
-            const customBlockRegex = /^\[\!(\w+)(?::(.*?))?\]$/i;
+            const customBlockRegex = /^\[\!(\w+)(?::(.*?))?\](?:\((.+?)\))?$/i;
             const matchCustom = firstLine.match(customBlockRegex);
             if (matchCustom) {
                 const blockType = matchCustom[1].toUpperCase();
                 const blockTitle = (matchCustom[2] || "").trim();
+                const blockId = (matchCustom[3] || "").trim();
 
                 if (customBlockMap[blockType]) {
                     lines.shift();
@@ -1805,27 +1805,37 @@
                         content = showdown.subParser("makehtml.blockGamut")(content, options, globals);
                     }
 
-                    const html = block.render(blockTitle, content);
+                    const innerHtml = block.render(blockTitle, content);
+                    const html = `<div class="custom-block custom-${blockType.toLowerCase()}"${blockId ? ` id="${blockId}"` : ""}>${innerHtml}</div>`;
                     return showdown.subParser("makehtml.hashBlock")(html, options, globals);
                 }
             }
 
-            const labelIdRegex = /^\[\!(.+?)\](?:\((.+?)\))?$/;
+            const labelIdRegex = /^\[\!(.+?)(?::(.*?))?\](?:\((.+?)\))?$/;
             let match = firstLine.match(labelIdRegex);
 
             let badgeClass = null;
             let badgeLabel = null;
             let blockId = null;
+            let customColor = null;
 
             if (match) {
                 let label = match[1];
-                blockId = match[2] || null;
+                let colorCandidate = match[2] || "";
+                blockId = match[3] || null;
+
+                if (/^(#([0-9a-f]{3}|[0-9a-f]{6})|rgba?\(.*\)|[a-z]+)$/i.test(colorCandidate)) {
+                    customColor = colorCandidate;
+                } else if (colorCandidate) {
+                    label = `${label}:${colorCandidate}`;
+                }
+
                 const badgeKey = `[!${label.toUpperCase()}]`;
 
                 if (badgeMap[badgeKey]) {
                     let badge = badgeMap[badgeKey];
                     badgeClass = badge.class;
-                    badgeLabel = `<label class='${badgeClass}-label quote-label'><span class='icon' translate='no'>${badge.icon}</span>${badge.label}</label>\n`;
+                    badgeLabel = `<label class='${badgeClass}-label quote-label'><span class='icon'>${badge.icon}</span>${badge.label}</label>\n`;
                 } else {
                     badgeClass = "quote-generic";
                     badgeLabel = `<label class='${badgeClass}-label quote-label'>${label}</label>\n`;
@@ -1838,20 +1848,24 @@
             bq = showdown.subParser("makehtml.githubCodeBlocks")(bq, options, globals);
             bq = showdown.subParser("makehtml.blockGamut")(bq, options, globals);
 
-            bq = bq.replace(/(^|\n)/g, "$1  ");
-            bq = bq.replace(/(\s*<pre>[^\r]+?<\/pre>)/gm, function (wholeMatch, m1) {
-                return m1.replace(/^  /gm, "¨0").replace(/¨0/g, "");
-            });
+            let styleAttr = "";
+            if (customColor) {
+                let bgColor = customColor;
+                if (/^#([0-9a-f]{6})$/i.test(customColor)) {
+                    bgColor = customColor + "33";
+                } else if (/^#([0-9a-f]{3})$/i.test(customColor)) {
+                    let c = customColor.replace("#", "").split("");
+                    bgColor = `#${c[0]}${c[0]}${c[1]}${c[1]}${c[2]}${c[2]}33`;
+                } else if (/^rgba?\(/i.test(customColor)) {
+                    bgColor = customColor.replace(/rgba?\((.+)\)/i, "rgba($1,0.2)");
+                } else {
+                    bgColor = customColor;
+                }
+                styleAttr = ` style="border:1px solid ${customColor}; background:${bgColor};"`;
+            }
 
-            let blockquoteTag = "<blockquote";
-            if (badgeClass) blockquoteTag += ` class="${badgeClass}"`;
-            if (blockId) blockquoteTag += ` id="${blockId}"`;
-            blockquoteTag += ">\n";
-
-            if (badgeLabel) blockquoteTag += badgeLabel;
-            blockquoteTag += bq + "\n</blockquote>";
-
-            return showdown.subParser("makehtml.hashBlock")(blockquoteTag, options, globals);
+            let html = `<blockquote class="custom-block ${badgeClass}"${blockId ? ` id="${blockId}"` : ""}${styleAttr}>${badgeLabel}<div class="quote-content">${bq}</div></blockquote>`;
+            return showdown.subParser("makehtml.hashBlock")(html, options, globals);
         });
 
         text = globals.converter._dispatch("makehtml.blockQuotes.after", text, options, globals).getText();
