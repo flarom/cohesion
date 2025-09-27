@@ -14,48 +14,70 @@
                 insertDate();
             }
         },
-        "note": {
-            description: "Note block",
+        "admonition": {
+            description: "Insert an admonition",
             exec: function(arg) {
-                insertBlock("> [!NOTE]\n> \n> \n> ");
-            }
-        },
-        "todo": {
-            description: "To-Do block",
-            exec: function(arg) {
-                insertBlock("> [!TODO]\n> \n> \n> ");
+                selectFromMenu(editor, ["Note", "Tip", "Important", "Warning", "Caution"], function(selectedIndex) {
+                    switch (selectedIndex) {
+                        case 0:
+                            insertBlock("> [!NOTE]\n> ");
+                            break;
+                        case 1:
+                            insertBlock("> [!TIP]\n> ");
+                            break;
+                        case 2:
+                            insertBlock("> [!IMPORTANT]\n> ");
+                            break;
+                        case 3:
+                            insertBlock("> [!WARNING]\n> ");
+                            break;
+                        case 4:
+                            insertBlock("> [!CAUTION]\n> ");
+                            break;
+                    }
+                });
             }
         },
         "list": {
-            description: "Unordered list",
+            description: "Insert a list",
             exec: function(arg) {
-                let count = parseInt(arg, 10) || 3;
-                let items = Array.from({length: count}, () => '- ').join('\n');
-                insertBlock(items);
+                selectFromMenu(editor, ["Ordered", "Unordered", "Task list"], function(selectedIndex) {
+                    selectFromMenu(editor, [1,2,3,4,5,6,7,8,9,10].map(String), function(countIndex) {
+                        let count = countIndex + 1;
+                        let items = "";
+
+                        switch (selectedIndex) {
+                            case 0: // ordered
+                                items = Array.from({length: count}, (_, i) => `${i+1}. `).join("\n");
+                                break;
+                            case 1: // unordered
+                                items = Array.from({length: count}, () => `- `).join("\n");
+                                break;
+                            case 2: // task
+                                items = Array.from({length: count}, () => `- [ ] `).join("\n");
+                                break;
+                        }
+
+                        insertBlock(items);
+                    });
+                });
             }
         },
-        "unorderedlist": {
-            description: "Unordered list",
+        "field": {
+            description: "Create an input field",
             exec: function(arg) {
-                let count = parseInt(arg, 10) || 3;
-                let items = Array.from({length: count}, () => '- ').join('\n');
-                insertBlock(items);
-            }
-        },
-        "orderedlist": {
-            description: "Ordered list",
-            exec: function(arg) {
-                let count = parseInt(arg, 10) || 3;
-                let items = Array.from({length: count}, (_, i) => `${i+1}. `).join('\n');
-                insertBlock(items);
-            }
-        },
-        "checklist": {
-            description: "Check list",
-            exec: function(arg) {
-                let count = parseInt(arg, 10) || 3;
-                let items = Array.from({length: count}, () => '- [ ] ').join('\n');
-                insertBlock(items);
+                selectFromMenu(editor, ["Textbox", "Slider", "Spinner", "Date", "Time"], function(selectedIndex) {
+                    switch(selectedIndex) {
+                        case 0: //text
+                            insertAt(`<input id="" value="" type="text">`, 11,11);
+                            break;
+                        case 1: //range
+                            insertAt(`<input id="" value="50" min="0" max="100" step="1" type="range">`, 11,11);
+                            break;
+                        case 2: //number
+                            insertAt(`<input id="" value="0" min="0" max="100" step="1" type="number">`,11,11);
+                    }
+                }); 
             }
         },
         "summary": {
@@ -71,40 +93,105 @@
                 insertBlock(getTable(count, 2));
             }
         },
-        "image": {
-            description: "Insert an image",
-            exec: function(arg) {
-                insertAt("![ALT TEXT](URL)", 12, 15);
-            }
-        },
-        "url": {
-            description: "Insert an URL",
-            exec: function(arg) {
-                insertAt("[TITLE](URL)", 8, 11);
+        "resources": {
+            description: "Insert a media file",
+            exec: async function(arg) {
+                const options = ["Upload", "Select", "Manage Resources"];
+
+                selectFromMenu(editor, options, async (selectedIndex) => {
+                    switch (selectedIndex) {
+                        case 0: // Upload
+                            try {
+                                const file = await uploadFSFile("*/*");
+                                const filePath = `resources/${file.name}`;
+
+                                let markdown = `![ALT TEXT](${filePath})`;
+                                insertAt(markdown, 2, 10);
+                                showToast(`Archived ${file.name}`, "archive");
+                            } catch (err) {
+                                showToast("Failed to upload file.", "error");
+                                console.error(err);
+                            }
+                            break;
+
+                        case 1: // Open existing
+                            try {
+                                const files = await getFSFiles();
+                                if (files.length === 0) {
+                                    showToast("No files in resources.", "info");
+                                    return;
+                                }
+                                const fileOptions = files.map(f => f.name);
+                                selectFromMenu(editor, fileOptions, (fileIndex) => {
+                                    const file = files[fileIndex];
+                                    const filePath = `resources/${file.name}`;
+                                    let markdown = `![ALT TEXT](${filePath})`;
+                                    insertAt(markdown, 2, 10);
+                                });
+                            } catch (err) {
+                                showToast("Failed to list resources.", "error");
+                                console.error(err);
+                            }
+                            break;
+
+                        case 2: // Manage Resources
+                            showMessageFromFile('dialogs/resources.html', true, true);
+                            hideAllMenus();
+                            break;
+                    }
+                });
             }
         },
         "link": {
             description: "Insert an URL",
             exec: function(arg) {
-                insertAt("[TITLE](URL)", 8, 11);
+                selectFromMenu(editor, ["Website", "Document"], function(selectedIndex) {
+                    switch(selectedIndex) {
+                        case 0: // Website
+                            insertAt("[TITLE](URL)", 8, 11);
+                            break;
+
+                        case 1: // Document
+                            loadFilesFromStorage();
+
+                            if (files.length === 0) {
+                                showToast("No documents available.", "info");
+                                return;
+                            }
+
+                            const docTitles = files.map((_, i) => getFileTitle(i) || `Untitled ${i+1}`);
+
+                            selectFromMenu(editor, docTitles, function(docIndex) {
+                                const title = docTitles[docIndex];
+                                insertAt(`[[${title}]]`, 2, 2 + title.length + 4);
+                            });
+                            break;
+                    }
+                });
             }
         },
-        "anchor": {
-            description: "Insert an URL",
+        "graph": {
+            description: "Insert a graph",
             exec: function(arg) {
-                insertAt("[TITLE](URL)", 8, 11);
-            }
-        },
-        "details": {
-            description: "Insert a detail block",
-            exec: function(arg) {
-                insertAt("> [!DETAILS:title here]", 12, 22);
+                selectFromMenu(editor, ["pizza", "bars", "lines"], function(selectedIndex) {
+                    switch (selectedIndex) {
+                        case 0:
+                            insertAt("> [!graph:pizza]\n> Label 1, value", 28,33);
+                            break;
+                        case 1:
+                            insertAt("> [!graph:bars]\n> Label 1, value", 27,32);
+                            break;
+                        case 2:
+                            insertAt("> [!graph:lines]\n> Label 1, [value, array]", 29, 41);
+                            break;
+                    }
+                });
             }
         }
     };
 
     function fuzzyMatch(str, pattern) {
-        pattern = pattern.replace(/:/g, "");
+        pattern = pattern.replace(/-/g, "");
         if (!pattern) return true;
         let patternIdx = 0,
             strIdx = 0;
@@ -115,6 +202,29 @@
             strIdx++;
         }
         return patternIdx === pattern.length;
+    }
+
+    function selectFromMenu(editor, options, callback) {
+        let list = options.map((opt, index) => ({
+            text: opt,
+            displayText: opt,
+            hint: function(cm, data, completion) {
+                let cur = cm.getCursor();
+                let line = cm.getLine(cur.line);
+                let start = cur.ch - completion.text.length;
+                cm.replaceRange("", { line: cur.line, ch: start }, cur);
+
+                callback(index);
+            }
+        }));
+
+        editor.showHint({
+            hint: () => ({
+                list: list,
+                from: editor.getCursor(),
+                to: editor.getCursor()
+            })
+        });
     }
 
     CodeMirror.registerHelper("hint", "command", function (editor, options) {

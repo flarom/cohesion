@@ -658,17 +658,17 @@
                 document.addEventListener("click", function (e) {
                     if (e.target.classList.contains("internal-link")) {
                         e.preventDefault();
+
                         const titleToFind = e.target.dataset.title;
-                    
+                        loadFilesFromStorage();
+
                         for (let i = 0; i < files.length; i++) {
                             const text = getFileText(i);
                             if (!text) continue;
-                        
-                            const conv = new showdown.Converter({ metadata: true });
-                            conv.makeHtml(text);
-                            const fileMetadata = conv.getMetadata();
-                        
-                            if (fileMetadata.title === titleToFind) {
+
+                            const fileTitle = getFileTitle(i);
+
+                            if (fileTitle === titleToFind) {
                                 index = i;
                                 localStorage.setItem("lastIndex", index);
                                 renderFiles("files");

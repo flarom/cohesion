@@ -1705,7 +1705,7 @@
 
                         svg += `</svg>`;
 
-                    } else if (type === "line") {
+                    } else if (type === "lines") {
                         // === LINE CHART ===
 
                         const seriesData = lines.map(line => {
