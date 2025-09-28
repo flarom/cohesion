@@ -333,22 +333,27 @@
 .preview table {
     margin: 20px 0;
     font-size: 1rem;
+    border-spacing: 0;
+    border-radius: 10px;
     overflow: hidden;
+    border-bottom: 1px solid var(--border-light-color);
+    border-right: 1px solid var(--border-light-color);
 }
 
 .preview th,
 .preview td {
     padding: 12px 15px;
     text-align: left;
-    background-color: var(--background-color-2);
-    border-radius: 5px;
     transition: 0.3s;
+    border: 1px solid var(--border-light-color);
+    border-bottom: 0;
+    border-right: 0;
 }
 
 .preview thead th {
-    background-color: var(--background-color-3);
+    background-color: var(--background-color-2);
     color: var(--text-color);
-    font-weight: 400;
+    font-weight: bold;
 }
 
 .preview thead th:first-child {
@@ -364,7 +369,8 @@
     border-bottom-right-radius: 10px;
 }
 
-.preview tr:hover td {
+.preview tr:hover td,
+.preview tr:hover th {
     background-color: var(--background-color-3);
 }
 
