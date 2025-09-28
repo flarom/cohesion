@@ -116,7 +116,24 @@
         </div>
     </header>
 
-    <div id="preview" class="preview" style="max-width: 1200px; margin: 0 auto; margin-top: 100px; padding: 10px; display: block; max-height: initial; overflow: visible;"></div>
+    <div id="preview" class="preview" style="max-width: 1200px; margin: 0 auto; margin-top: 100px; padding: 10px; display: block; max-height: initial; overflow: visible;">
+        <div class='drag-drop-decorator' id='drag-drop-decorator'>
+            <div class='image'>
+                <img src='../cohesion/landing/markdown.png'>
+            </div>
+            <div class='description'>
+                <h1>Drag & Drop your document here</h1>
+                <p>Supported formats: Markdown (*.md)</p>
+            </div>
+        </div>
+
+        <div class='gallery' id='gallery'>
+            <h2>Recently edited documents</h2>
+            <div class='recent-documents' id='recent-documents'>
+                <!-- Recent files will be rendered here -->
+            </div>
+        </div>
+    </div>
 
     <input type="file" id="fileInput" accept=".md,.markdown,.txt,text/markdown,text/plain" style="display:none" />
 
@@ -165,24 +182,7 @@
 
         loadSettings();
 
-        const constMarkdown = `
-<div class='drag-drop-decorator' id='drag-drop-decorator'>
-    <div class='image'>
-        <img src='../cohesion/landing/markdown.png'>
-    </div>
-    <div class='description'>
-        <h1>Drag & Drop your document here</h1>
-        <p>Supported formats: Markdown (*.md)</p>
-    </div>
-</div>
-
-<div class='gallery' id='gallery'>
-    <h2>Recently edited documents</h2>
-    <div class='recent-documents' id='recent-documents'>
-        <!-- Recent files will be rendered here -->
-    </div>
-</div>
-        `
+        const constMarkdown = ``
 
         let markdown = constMarkdown;
 
@@ -316,7 +316,7 @@
                 return;
             }
 
-            preview.innerHTML = converter.makeHtml(markdown);
+            if (markdown) preview.innerHTML = converter.makeHtml(markdown);
         }
 
         document.addEventListener("DOMContentLoaded", () => {
