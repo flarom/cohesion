@@ -59,6 +59,7 @@
     top: 0px;
     right: 0px;
     left: 0px;
+    pointer-events: none;
 }
 
 .prompt-big-dialog .toolbar .icon-button,
@@ -75,6 +76,7 @@
 .prompt-dialog .toolbar .toolbar-center,
 .prompt-dialog .toolbar .toolbar-right{
     display: flex; gap: 15px;
+    pointer-events: visible;
 }
 
 .icon-button.dialog-window-control {
