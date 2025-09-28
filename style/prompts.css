@@ -39,7 +39,6 @@
 .prompt-dialog {
     color: var(--text-color);
     background-color: var(--background-color);
-    padding: 20px;
     border: 1px solid var(--border-light-color);
     border-radius: 15px;
     max-width: 400px;
@@ -47,6 +46,51 @@
     box-shadow: var(--shadow);
     margin: 10px;
     animation: showdialog 0.5s ease-in-out forwards;
+    overflow: hidden;
+}
+
+.prompt-big-dialog .toolbar,
+.prompt-dialog .toolbar {
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    left: 0px;
+}
+
+.prompt-big-dialog .toolbar .icon-button,
+.prompt-dialog .toolbar .icon-button {
+    width: 32px;
+    height: 32px;
+    font-size: x-large;
+}
+
+.prompt-big-dialog .toolbar .toolbar-left,
+.prompt-big-dialog .toolbar .toolbar-center,
+.prompt-big-dialog .toolbar .toolbar-right,
+.prompt-dialog .toolbar .toolbar-left,
+.prompt-dialog .toolbar .toolbar-center,
+.prompt-dialog .toolbar .toolbar-right{
+    display: flex; gap: 15px;
+}
+
+.icon-button.dialog-window-control {
+    background-color: var(--field-color);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: large !important;
+}
+
+.icon-button.dialog-window-control:hover {
+    border-radius: 25%;
+}
+
+.icon-button.dialog-window-control:focus {
+    outline: none;
 }
 
 .prompt-dialog.warn {
@@ -57,7 +101,7 @@
     overflow: scroll;
     max-width: 100vw;
     width: 100vw;
-    height: calc(100vh - 20px - 60px);
+    height: calc(100vh - 20px);
     margin: 20px;
     animation: showdialogBig 0.5s ease-in-out forwards;
 }
@@ -257,6 +301,7 @@
     display: flex;
     flex-direction: column;
     gap: 1px;
+    margin-top: 50px;
 }
 
 .prompt-button-list button,
@@ -268,6 +313,7 @@
     display: flex;
     align-items: center;
     gap: 3px;
+    border-radius: 0px;
 }
 
 .prompt-button-list .icon {
@@ -358,11 +404,16 @@
 }
 
 .prompt-dialog .drop-area {
-    border: 2px dashed var(--border-light-color);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
     border-radius: 15px;
     cursor: pointer;
     padding: 20px;
     transition: all .3s;
+    height: 300px;
+    border: 2px dashed transparent;
 }
 
 .prompt-dialog .drop-area:hover {
@@ -372,6 +423,8 @@
 .prompt-dialog .drop-area.dragover {
     background-color: var(--selection-color);
     border-color: var(--highlight-color);
+    margin: 10px;
+    border: 2px dashed var(--highlight-color);
 }
 
 .prompt-dialog .drop-area-text {

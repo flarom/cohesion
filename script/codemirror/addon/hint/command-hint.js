@@ -135,8 +135,20 @@
                             break;
 
                         case 2: // Manage Resources
-                            showMessageFromFile('dialogs/resources.html', true, true);
-                            hideAllMenus();
+                            let leftPane =
+                            `<button class='icon-button' onclick='uploadFSFile().then(() => renderFSFiles());' translate='no' title='Upload file'>add</button>`
+
+                            let rightpane =
+                            `<button class='icon-button' translate='no' title='Search'>search</button>
+                            <div class='dropdown'>
+                                <button class='icon-button' onmousedown='toggleDropdown("resources-more-menu")' translate='no' title='More options'>more_vert</button>
+                                <div class='dropdown-content menu' id='resources-more-menu'>
+                                    <button class='text-button'>About Resources</button>
+                                    <button class='text-button danger' onmouseup='promptDeleteAllFS()'>Delete all data</button>
+                                </div>
+                            </div>`
+
+                            showMessageFromFile("dialogs/resources.html", true, false, true, true, 800, leftPane, "", rightpane);
                             break;
                     }
                 });

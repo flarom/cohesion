@@ -28,49 +28,47 @@
                 display: flex;
                 justify-content: space-between;
                 gap: 20px;
-                padding: 10px;
+                padding: 0px 48px 0px 48px;
             }
 
             .main-page {
-                max-height: 500px;
+                max-height: 90vh;
                 overflow-y: scroll;
                 overflow-x: hidden;
                 flex-grow: 1;
             }
 
-            .side-nav {
-                padding: 10px;
-                min-width: 150px;
-                position: sticky;
-                top: 0;
-                height: 100%;
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-            }
-
             .setting {
-                padding: 20px;
+                padding: 10px;
                 background-color: var(--background-color-2);
-                border-radius: 15px;
-                margin-bottom: 10px;
-            }
-
-            .setting.box {
-                padding: 0px 20px 0px 20px;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
+                margin-bottom: 1px;
+            }
+
+            .setting.top {
+                border-radius: 15px 15px 0px 0px;
+            }
+
+            .setting.bottom {
+                border-radius: 0px 0px 15px 15px;
+                margin-bottom: 10px;
+            }
+
+            .setting input {
+                max-width: 300px;
+                margin: 0;
+            }
+
+            .setting.switch-wrapper {
+                display: flex;
             }
 
             @media screen and (max-width: 800px) {
                 .settings-body {
                     display: block;
-                }
-
-                .side-nav {
-                    flex-direction: row;
-                    overflow: scroll;
+                    padding: 10px;
                 }
             }
 
@@ -90,17 +88,10 @@
 
     <body>
         <div class="settings-body">
-            <nav class="side-nav">
-                <a href="#setting-theme">Theme</a>
-                <a href="#setting-fonts">Fonts</a>
-                <a href="#setting-editor">Editor</a>
-                <a href="#setting-status-bar">Status Bar</a>
-                <a href="#setting-data">My files</a>
-            </nav>
             <div class="main-page">
                 <div>
-                    <h3 id="setting-theme">Theme</h3>
-                    <div class="setting" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap">
+                    <h4>Appearence</h4>
+                    <div class="setting top" style="gap: 10px; flex-wrap: wrap; justify-content: flex-start;">
                         <button id="theme-epaper" class="ball" style="background-color: #ffffff; color: #000000" onclick="setSetting('theme', 'theme-epaper');loadSettings(); updateSelectedTheme()">ePaper</button>
                         <button id="theme-light" class="ball" style="background-color: #ffffff; color: #3c3c3c" onclick="setSetting('theme', 'theme-light');loadSettings(); updateSelectedTheme()">Light</button>
                         <button id="theme-cream" class="ball" style="background-color: #f5eacb; color: #4b3a25" onclick="setSetting('theme', 'theme-cream');loadSettings(); updateSelectedTheme()">Cream</button>
@@ -112,96 +103,89 @@
                     </div>
                 </div>
 
-                <div>
-                    <h3 id="setting-fonts">Fonts</h3>
-                    <div class="setting">
-                        <div>
-                            <label>Editor font</label>
-                            <input list="default-fonts" type="text" placeholder="Ubuntu Mono" id="fontEditor" oninput="setSetting('editorFont', this.value); loadSettings();" />
-                        </div>
-                        <div>
-                            <label>Paragraph font</label>
-                            <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontParagraph" oninput="setSetting('paragraphFont', this.value); loadSettings();" />
-                        </div>
-                        <div>
-                            <label>Title font</label>
-                            <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontTitle" oninput="setSetting('titleFont', this.value); loadSettings();" />
-                        </div>
-
-                        <datalist id="default-fonts">
-                            <option value="Ubuntu"></option>
-                            <option value="Ubuntu Mono"></option>
-                            <option value="Sans serif"></option>
-                            <option value="Serif"></option>
-                            <option value="Monospace"></option>
-                            <option value="Cursive"></option>
-                        </datalist>
-                    </div>
+                <div class="setting">
+                    <label>Editor font</label>
+                    <input list="default-fonts" type="text" placeholder="Ubuntu Mono" id="fontEditor" oninput="setSetting('editorFont', this.value); loadSettings();" />
+                </div>
+                <div class="setting">
+                    <label>Paragraph font</label>
+                    <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontParagraph" oninput="setSetting('paragraphFont', this.value); loadSettings();" />
+                </div>
+                <div class="setting bottom">
+                    <label>Title font</label>
+                    <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontTitle" oninput="setSetting('titleFont', this.value); loadSettings();" />
                 </div>
 
+                <datalist id="default-fonts">
+                    <option value="Ubuntu"></option>
+                    <option value="Ubuntu Mono"></option>
+                    <option value="Sans serif"></option>
+                    <option value="Serif"></option>
+                    <option value="Monospace"></option>
+                    <option value="Cursive"></option>
+                </datalist>
+
                 <div>
-                    <h3 id="setting-editor">Editor</h3>
-                    <div class="setting" style="display: flex; flex-direction: column; gap: 5px">
-                        <div class="switch-wrapper">
-                            <label class="switch">
-                                <input type="checkbox" id="editorShowHints" onchange="setSetting('editorShowHints', this.checked);" />
-                                <span class="slider"></span>
-                            </label>
-                            <span class="switch-text">Auto-complete</span>
-                        </div>
-                        <div class="switch-wrapper">
-                            <label class="switch">
-                                <input type="checkbox" id="editorAutoCloseBrackets" onchange="setSetting('editorAutoCloseBrackets', this.checked); location.reload()">
-                                <span class="slider"></span>
-                            </label>
-                            <span class="switch-text">Auto-close brackets</span>
-                        </div>
-                        <div class="switch-wrapper">
-                            <label class="switch">
-                                <input type="checkbox" id="editorAutoCloseTags" onchange="setSetting('editorAutoCloseTags', this.checked); location.reload()">
-                                <span class="slider"></span>
-                            </label>
-                            <span class="switch-text">Auto-close ML tags</span>
-                        </div>
-                        <div class="switch-wrapper">
-                            <label class="switch">
-                                <input type="checkbox" id="editorLineNumbers" onchange="setSetting('editorLineNumbers', this.checked); location.reload()" />
-                                <span class="slider"></span>
-                            </label>
-                            <span class="switch-text">Line numbers</span>
-                        </div>
-                        <div class="switch-wrapper">
-                            <label class="switch">
-                                <input type="checkbox" id="editorDirection" onchange="if (this.checked) {setSetting('editorDirection', 'rtl')} else {setSetting('editorDirection', 'ltr')} location.reload()" />
-                                <span class="slider"></span>
-                            </label>
-                            <span class="switch-text">RTL text align</span>
-                        </div>
-                        <div class="switch-wrapper">
-                            <label class="switch">
-                                <input type="checkbox" id="editorWidth" onchange="setSetting('editorWidth', this.checked); location.reload()" />
-                                <span class="slider"></span>
-                            </label>
-                            <span class="switch-text">Full width</span>
-                        </div>
-                        <div class="switch-wrapper">
-                            <label class="switch">
-                                <input type="checkbox" id="editorHighlightActiveLine" onchange="setSetting('editorHighlightActiveLine', this.checked); location.reload()" />
-                                <span class="slider"></span>
-                            </label>
-                            <span class="switch-text">Highlight active line</span>
-                        </div>
+                    <h4>Behaviour</h4>
+                    <div class="setting top switch-wrapper">
+                        <span class="switch-text">Auto-complete</span>
+                        <label class="switch">
+                            <input type="checkbox" id="editorShowHints" onchange="setSetting('editorShowHints', this.checked);" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>                        
+                    <div class="setting switch-wrapper">
+                        <span class="switch-text">Auto-close brackets</span>
+                        <label class="switch">
+                            <input type="checkbox" id="editorAutoCloseBrackets" onchange="setSetting('editorAutoCloseBrackets', this.checked); location.reload()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting switch-wrapper">
+                        <span class="switch-text">Auto-close ML tags</span>
+                        <label class="switch">
+                            <input type="checkbox" id="editorAutoCloseTags" onchange="setSetting('editorAutoCloseTags', this.checked); location.reload()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting switch-wrapper">
+                        <span class="switch-text">Line numbers</span>
+                        <label class="switch">
+                            <input type="checkbox" id="editorLineNumbers" onchange="setSetting('editorLineNumbers', this.checked); location.reload()" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting switch-wrapper">
+                        <span class="switch-text">RTL text align</span>
+                        <label class="switch">
+                            <input type="checkbox" id="editorDirection" onchange="if (this.checked) {setSetting('editorDirection', 'rtl')} else {setSetting('editorDirection', 'ltr')} location.reload()" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting switch-wrapper">
+                        <span class="switch-text">Full width</span>
+                        <label class="switch">
+                            <input type="checkbox" id="editorWidth" onchange="setSetting('editorWidth', this.checked); location.reload()" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting bottom switch-wrapper">
+                        <span class="switch-text">Highlight active line</span>
+                        <label class="switch">
+                            <input type="checkbox" id="editorHighlightActiveLine" onchange="setSetting('editorHighlightActiveLine', this.checked); location.reload()" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <h4>Date & Time</h4>
+                    <div class="setting top" style="display: flex; align-items: center; gap: 10px; justify-content: start;">
+                        <input type="text" id="editorDate" style="max-width: 100%;" value="%d/%m/%Y %H:%M" onchange="setSetting('dateFormat', this.value)" />
+                        <button class="icon-button" translate="no" title="Reset" onclick="document.getElementById('editorDate').value='%d/%m/%Y %H:%M'; setSetting('dateFormat', document.getElementById('editorDate').value); document.getElementById('editorDate').focus();">refresh</button>
+                        <button class="icon-button" translate="no" title="Remove" onclick="removeLastDateBlock()">backspace</button>
                     </div>
                     <div class="setting">
-                        <h4>Date & Time</h4>
-
-                        <div style="display: flex; align-items: center; gap: 10px">
-                            <input type="text" id="editorDate" value="%d/%m/%Y %H:%M" onchange="setSetting('dateFormat', this.value)" />
-                            <button class="icon-button" translate="no" style="margin-bottom: 15px" title="Reset" onclick="document.getElementById('editorDate').value='%d/%m/%Y %H:%M'; setSetting('dateFormat', document.getElementById('editorDate').value); document.getElementById('editorDate').focus();">refresh</button>
-                            <button class="icon-button" translate="no" style="margin-bottom: 15px" title="Remove" onclick="removeLastDateBlock()">backspace</button>
-                        </div>
-
-                        <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px">
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                             <div>
                                 <p>Day</p>
                                 <div style="display: flex; flex-wrap: nowrap; gap: 5px">
@@ -252,96 +236,93 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="https://github.com/flarom/cohesion/wiki/Time-Formatting" target="_blank">Learn more about date and time syntax</a>
                     </div>
-                    <div class="setting">
-                        <h4>Meta</h4>
-                        <div style="display: flex; flex-direction: column; gap: 5px">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <p>Use asterisks to use the default value, you can disable lines by placing # at the start of the line.</p>
-                                <button class="icon-button" translate="no" style="margin-bottom: 15px" title="Reset" onclick="resetEditorMeta();">refresh</button>
-                            </div>
-                            <textarea name="editorMeta" id="editorMeta" onchange="setSetting('editorMeta', this.value)"></textarea>
-                        </div>
+                    <div class="setting bottom">
+                        <span style="display: flex; align-items: center; gap: 5px;"><span class="icon">info</span> <a href="https://github.com/flarom/cohesion/wiki/Time-Formatting" target="_blank">Learn more about date and time syntax</a></span>
+                    </div>
+                </div>
+                <div>
+                    <h4>Document metadata</h4>
+                    <div class="setting top">
+                        <p>Use asterisks to use the default value, you can disable lines by placing # at the start of the line.</p>
+                        <button class="icon-button" translate="no" title="Reset" onclick="resetEditorMeta();">refresh</button>
+                    </div>
+                    <div class="setting bottom">
+                        <textarea name="editorMeta" id="editorMeta" onchange="setSetting('editorMeta', this.value)"></textarea>
                     </div>
                 </div>
 
                 <div>
-                    <h3 id="setting-status-bar">Status bar</h3>
-                    <div class="setting" style="display: flex; flex-direction: column; gap: 5px">
-                        <div class="switch-wrapper">
-                            <label class="switch">
-                                <input type="checkbox" id="statusShow" onchange="setSetting('statusShow', this.checked); loadSettings()" />
-                                <span class="slider"></span>
-                            </label>
-                            <span class="switch-text">Status bar</span>
-                        </div>
-                        <div style="padding-left: 20px; display: flex; flex-direction: column; gap: 5px">
-                            <div class="switch-wrapper">
-                                <label class="switch">
-                                    <input type="checkbox" id="statusCursorPos" onchange="setSetting('statusCursorPos', this.checked); loadSettings()" />
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="switch-text">Cursor position</span>
-                            </div>
-                            <div class="switch-wrapper">
-                                <label class="switch">
-                                    <input type="checkbox" id="statusEditorMode" onchange="setSetting('statusEditorMode', this.checked); loadSettings()" />
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="switch-text">Editor mode</span>
-                            </div>
-                            <div class="switch-wrapper">
-                                <label class="switch">
-                                    <input type="checkbox" id="statusDocumentSize" onchange="setSetting('statusDocumentSize', this.checked); loadSettings()" />
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="switch-text">Document size</span>
-                            </div>
-                        </div>
+                    <h4 id="setting-status-bar">Status bar</h4>
+                    <div class="setting top switch-wrapper">
+                        <span class="switch-text">Status bar</span>
+                        <label class="switch">
+                            <input type="checkbox" id="statusShow" onchange="setSetting('statusShow', this.checked); loadSettings()" />
+                            <span class="slider"></span>
+                        </label>
                     </div>
-
+                    <div class="setting switch-wrapper">
+                        <span class="switch-text">Cursor position</span>
+                        <label class="switch">
+                            <input type="checkbox" id="statusCursorPos" onchange="setSetting('statusCursorPos', this.checked); loadSettings()" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting switch-wrapper">
+                        <span class="switch-text">Editor mode</span>
+                        <label class="switch">
+                            <input type="checkbox" id="statusEditorMode" onchange="setSetting('statusEditorMode', this.checked); loadSettings()" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting bottom switch-wrapper">
+                        <span class="switch-text">Document size</span>
+                        <label class="switch">
+                            <input type="checkbox" id="statusDocumentSize" onchange="setSetting('statusDocumentSize', this.checked); loadSettings()" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div>
                     <div>
-                        <h3 id="setting-data">My files</h3>
-                        <div>
-                            <div class="setting box">
-                                <div>
-                                    <h4>Export package</h4>
-                                    <p>Export your notes as a zip file</p>
-                                </div>
-                                <div>
-                                    <button class="text-button" onclick="exportBook();">Export</button>
-                                </div>
+                        <h4 id="setting-data">My files</h4>
+                        <div class="setting top">
+                            <div>
+                                <h4>Export package</h4>
+                                <p>Export your notes as a zip file</p>
                             </div>
-
-                            <div class="setting box">
-                                <div>
-                                    <h4>Import package</h4>
-                                    <p>Import files from a zip file</p>
-                                </div>
-                                <div>
-                                    <button class="text-button" onclick="importBook();">Import</button>
-                                </div>
+                            <div>
+                                <button class="text-button" onclick="exportBook();">Export</button>
                             </div>
+                        </div>
 
-                            <div class="setting box">
-                                <div>
-                                    <h4>Delete empty files</h4>
-                                    <p>Delete all files without any text or meta.</p>
-                                </div>
-                                <div>
-                                    <button class="text-button danger" onclick="handleDeleteEmptyFiles();">Delete</button>
-                                </div>
+                        <div class="setting">
+                            <div>
+                                <h4>Import package</h4>
+                                <p>Import files from a zip file</p>
                             </div>
+                            <div>
+                                <button class="text-button" onclick="importBook();">Import</button>
+                            </div>
+                        </div>
 
-                            <div class="setting box">
-                                <div>
-                                    <h4>Replace with package</h4>
-                                    <p>Import files from a zip file, replacing your files.</p>
-                                </div>
-                                <div>
-                                    <button class="text-button danger" onclick="handleImportDeleteBook();">Replace</button>
-                                </div>
+                        <div class="setting">
+                            <div>
+                                <h4>Delete empty files</h4>
+                                <p>Delete all files without any text or meta.</p>
+                            </div>
+                            <div>
+                                <button class="text-button danger" onclick="handleDeleteEmptyFiles();">Delete</button>
+                            </div>
+                        </div>
+
+                        <div class="setting bottom">
+                            <div>
+                                <h4>Replace with package</h4>
+                                <p>Import files from a zip file, replacing your files.</p>
+                            </div>
+                            <div>
+                                <button class="text-button danger" onclick="handleImportDeleteBook();">Replace</button>
                             </div>
                         </div>
                     </div>

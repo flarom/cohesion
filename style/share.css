@@ -154,24 +154,6 @@ button.danger:hover {
     background-color: var(--danger-bg);
 }
 
-.icon-button.dialog-window-control {
-    background-color: var(--field-color);
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-}
-
-.icon-button.dialog-window-control:hover {
-    border-radius: 25%;
-}
-
-.icon-button.dialog-window-control:focus {
-    outline: none;
-}
-
 .button-on {
     background-color: var(--background-color-3);
 }

@@ -66,6 +66,10 @@ async function renameFSFile(index, newName) {
     const oldFile = files[index];
     if (!oldFile) throw new Error("File not found");
 
+    if (/\s/.test(newName)) {
+        throw new Error("File names cannot contain spaces");
+    }
+
     const existingNames = files.map(f => f.name);
     if (existingNames.includes(newName)) {
         throw new Error("There's already a file with this name");
@@ -108,9 +112,11 @@ async function uploadFSFile(accept = "*/*") {
 
             reader.onload = async () => {
                 try {
+                    showToast('Copying file...','hard_drive');
+
                     const content = reader.result;
                     const files = await getFSFiles();
-                    let name = file.name;
+                    let name = file.name.replace(/\s+/g, "_");
 
                     const baseName = name.replace(/\.[^/.]+$/, "");
                     const ext = name.split('.').pop();
