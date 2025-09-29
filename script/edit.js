@@ -196,7 +196,14 @@ function hasTableSelected() {
 
 function hasURLSelected() {
     const selection = editor.getSelection();
-    const urlPattern = /\b(?:https?:\/\/|www\.)\S+/i;
+    const urlPattern = /\b(?:https?:\/\/|www\.)\S+\b/i;
 
     return urlPattern.test(selection);
+}
+
+function hasMediaSelected() {
+    const selection = editor.getSelection();
+    const mediaPattern = /!\[[^\]]*\]\([^)\s]+\)/;
+
+    return mediaPattern.test(selection);
 }

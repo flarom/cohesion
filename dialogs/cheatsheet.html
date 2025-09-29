@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown cheat sheet</title>
+    <style>
+        .content-body {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 0px 48px 0px 48px;
+        }
+
+        .main-content {
+            max-height: 90vh;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            flex-grow: 1;
+        }
+
+        .item {
+            padding: 10px;
+            background-color: var(--background-color-2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1px;
+        }
+
+        .item.top {
+            border-radius: 15px 15px 0px 0px;
+        }
+
+        .item.bottom {
+            border-radius: 0px 0px 15px 15px;
+            margin-bottom: 10px;
+        }
+
+        .item.both {
+            border-radius: 15px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="content-body">
+        <div class="main-content">
+            <div>
+                <h4 id="cheatsheet-headers">Headers</h4>
+                <div class="item top">
+                    <h1 style="margin:0">#<span style="opacity: 50%;"> Header 1</span></h1>
+                </div>
+                <div class="item">
+                    <h2 style="margin:0">#<span style="opacity: 50%;"> Header 2</span></h2>
+                </div>
+                <div class="item bottom">
+                    <h3 style="margin:0">#<span style="opacity: 50%;"> Header 3</span></h3>
+                </div>
+            </div>
+
+            <div>
+                <h4 id="cheatsheet-styling">Styling</h4>
+                <div class="item top">
+                    <span>*<em style="opacity: 50%;">Emphasize.</em>*</span>
+                </div>
+                <div class="item">
+                    <span>**<strong style="opacity: 50%;">Strong.</strong>**</span>
+                </div>
+                <div class="item">
+                    <span>==<mark style="opacity: 50%;">Marked text.</mark>==</span>
+                </div>
+                <div class="item">
+                    <span>~~<del style="opacity: 50%;">Mistaken text.</del>~~</span>
+                </div>
+                <div class="item">
+                    <span>__<u style="opacity: 50%;">Underlined text.</u>__</span>
+                </div>
+                <div class="item">
+                    <span style="display: flex; align-items: center;">> <blockquote style="opacity: 50%; margin: 0; padding: 20px; border-left: 2px solid var(--border-light-color);">Quoted text.</blockquote></span>
+                </div>
+                <div class="item">
+                    <span><span style="opacity: 50%;">H</span>~<sub style="opacity: 50%;">2</sub>~<span style="opacity: 50%;">O is a liquid.</span></span>
+                </div>
+                <div class="item bottom">
+                    <span><span style="opacity: 50%;">2</span>^<sup style="opacity: 50%;">10</sup>^<span style="opacity: 50%;"> is 1024.</span></span>
+                </div>
+            </div>
+
+            <div>
+                <h4 id="cheatsheet-lists">Lists</h4>
+                <div class="item top">
+                    <span>
+                        - <span style="opacity: 50%;">Item</span><br>
+                        * <span style="opacity: 50%;">Item</span><br>
+                        + <span style="opacity: 50%;">Item</span>
+                    </span>
+                </div>
+                <div class="item">
+                    <span>
+                        1. <span style="opacity: 50%;">Item 1</span><br>
+                        2. <span style="opacity: 50%;">Item 2</span><br>
+                        3. <span style="opacity: 50%;">Item 3</span>
+                    </span>
+                </div>
+                <div class="item bottom">
+                    <span>
+                        - [ ] <span style="opacity: 50%;">Incomplete item</span><br>
+                        - [x] <span style="opacity: 50%;">Complete item</span>
+                    </span>
+                </div>
+            </div>
+
+            <div>
+                <h4 id="cheatsheet-links">Links</h4>
+                <div class="item top">
+                    <span><span style="opacity: 50%;">Visit</span> &lt;https://example.com&gt;<span style="opacity: 50%;">.</span></span>
+                </div>
+                <div class="item">
+                    <span><span style="opacity: 50%;">A</span> [link](https://example.com)<span style="opacity: 50%;">.</span></span>
+                </div>
+                <div class="item">
+                    <span><span style="opacity: 50%;">An email address:</span> &lt;mail@example.com&gt;<span style="opacity: 50%;">.</span></span>
+                </div>
+                <div class="item bottom">
+                    <span><span style="opacity: 50%;">An image:</span> ![Alt](resources/image.png)<span style="opacity: 50%;">.</span></span>
+                </div>
+            </div>
+
+            <div>
+                <h4 id="cheatsheet-code">Code</h4>
+                <div class="item top">
+                    <span><span style="opacity: 50%;">Some </span>`<code style="opacity: 50%;">inline code</code>`<span style="opacity: 50%;">.</span></span>
+                </div>
+                <div class="item">
+                    <span>
+                        ```<br>
+                        <code style="opacity: 50%;">// A code block</code><br>
+                        <code style="opacity: 50%;">var foo = 'bar';</code><br>
+                        ```
+                    </span>
+                </div>
+                <div class="item bottom">
+                    <span>
+                        ```javascript<br>
+                        <code style="opacity: 50%;">// An highlighted block</code><br>
+                        <code style="opacity: 50%;"><span style="color: var(--hljs-keyword);">var</span> <span style="color: var(--hljs-function);">foo</span> <span style="color: var(--hljs-variable);">=</span> <span style="color: var(--hljs-string);">'bar'</span>;</code><br>
+                        ```
+                    </span>
+                </div>
+            </div>
+
+            <div>
+                <h4 id="cheatsheet-tables">Tables</h4>
+                <div class="item top">
+                    <pre><code>Item     | Value
+-------- | -----
+Computer | $1600
+Phone    | $12
+Pipe     | $1</code></pre>
+                </div>
+                <div class="item bottom">
+                    <pre><code>| Column 1 | Column 2      |
+|:--------:| -------------:|
+| centered | right-aligned |</code></pre>
+                </div>
+            </div>
+
+            <div>
+                <h4 id="cheatsheet-definition-lists">Definition lists</h4>
+                <div class="item both">
+                    <span>
+                        <span style="opacity: 50%;">Markdown</span><br>
+                        : <span style="opacity: 50%;">Text-to-HTML conversion tool</span>
+                    </span>
+                </div>
+            </div>
+
+            <div>
+                <h4 id="cheatsheet-abbreviations">Abbreviations</h4>
+                <div class="item both">
+                    <span>
+                        <span style="opacity: 50%;">Markdown converts text to</span> <abbr title="HyperText Markup Language">HTML</abbr><span style="opacity: 50%;">.</span><br>
+
+                        *[HTML]: HyperText Markup Language
+                    </span>
+                </div>
+            </div>
+
+            <p>Visit the <a href="https://github.com/flarom/cohesion/wiki">Cohesion Wiki</a> to learn more.</p>
+        </div>
+    </div>
+    <script>
+        async function searchTopics() {
+            let selected = await promptSelect('Topics', ['Headers', 'Styling', 'Lists', 'Links', 'Code', 'Tables', 'Definition lists', 'Abbreviations'])
+
+            switch (selected) {
+                case 0: 
+                    window.open('#cheatsheet-headers', '_self')
+                    break;
+                case 1: 
+                    window.open('#cheatsheet-styling', '_self')
+                    break;                
+                case 2: 
+                    window.open('#cheatsheet-lists', '_self')
+                    break;                
+                case 3: 
+                    window.open('#cheatsheet-links', '_self')
+                    break;                
+                case 4: 
+                    window.open('#cheatsheet-code', '_self')
+                    break;                
+                case 5: 
+                    window.open('#cheatsheet-tables', '_self')
+                    break;                
+                case 6: 
+                    window.open('#cheatsheet-definition-lists', '_self')
+                    break;                
+                case 7: 
+                    window.open('#cheatsheet-abbreviations', '_self')
+                    break;                    
+            }
+        }
+    </script>
+</body>
+</html>

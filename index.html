@@ -130,10 +130,17 @@
                             <kbd>Ctrl+,</kbd>
                         </button>
                         <hr />
-                        <button class="text-button" onmouseup="showMessageFromFile('landing.html', false, true, false, false);">Learn</button>
-                        <button class="text-button" onmouseup="showMessageFromFile('dialogs/shortcuts.html', true, false, true, true, 600); hideAllMenus();">
+                        <button class="text-button" onmouseup="showMessageFromFile('landing.html', false, true, false, false); hideAllMenus()">Learn</button>
+                        <!-- <button class="text-button" onmouseup="showMessageFromFile('dialogs/shortcuts.html', true, false, true, true, 600); hideAllMenus();">
                             Keyboard shortcuts
                             <kbd>Ctrl+?</kbd>
+                        </button> -->
+                        <button class="text-button" onmouseup="window.open('https://github.com/flarom/cohesion/wiki/Keyboard-shortcuts', '_blank'); hideAllMenus();">
+                            Keyboard shortcuts
+                            <kbd>Ctrl+?</kbd>
+                        </button>
+                        <button class="text-button" onmouseup="showCheatSheet();">
+                            Markdown Cheat Sheet
                         </button>
                         <button class="text-button" onmouseup="showMessageFromFile('about.html'); hideAllMenus();">
                             About Cohesion
@@ -208,6 +215,7 @@
             <hr id="contextual-selection-separator" style="display: none" />
             <button class="text-button" onmouseup="formatTable(); editor.focus()" id="formatTable" style="display: none">Format table</button>
             <button class="text-button" onmouseup="window.open(editor.getSelection()); editor.focus()" id="openSelectedURL" style="display: none">Open URL</button>
+            <button class="text-button" onmouseup="peekSelectedMedia();" id="peekmedia" style="display: none">Peek</button>
             <hr />
             <button class="text-button" onmouseup="cutText()">
                 Cut
@@ -293,25 +301,32 @@
             const hrContextualSeparator = document.getElementById("contextual-selection-separator");
             const btnFormatTable = document.getElementById("formatTable");
             const btnOpenURL = document.getElementById("openSelectedURL");
+            const btnPeek = document.getElementById("peekmedia");
 
             editor.getWrapperElement().addEventListener("contextmenu", function (e) {
                 e.preventDefault();
 
-                if (hasTableSelected()) {
-                    hrContextualSeparator.style.display = "block";
-                    btnFormatTable.style.display = "flex";
-                } else {
-                    hrContextualSeparator.style.display = "none";
-                    btnFormatTable.style.display = "none";
-                }
-
-                if (hasURLSelected()) {
-                    hrContextualSeparator.style.display = "block";
-                    btnOpenURL.style.display = "flex";
-                } else {
-                    hrContextualSeparator.style.display = "none";
-                    btnOpenURL.style.display = "none";
-                }
+            if (hasTableSelected()) {
+                hrContextualSeparator.style.display = "block";
+                btnFormatTable.style.display = "flex";
+                btnOpenURL.style.display = "none";
+                btnPeek.style.display = "none";
+            } else if (hasMediaSelected()) {
+                hrContextualSeparator.style.display = "block";
+                btnFormatTable.style.display = "none";
+                btnOpenURL.style.display = "none";
+                btnPeek.style.display = "flex";
+            } else if (hasURLSelected()) {
+                hrContextualSeparator.style.display = "block";
+                btnFormatTable.style.display = "none";
+                btnOpenURL.style.display = "flex";
+                btnPeek.style.display = "none";
+            } else {
+                hrContextualSeparator.style.display = "none";
+                btnFormatTable.style.display = "none";
+                btnOpenURL.style.display = "none";
+                btnPeek.style.display = "none";
+            }
 
                 const rect = editor.getWrapperElement().getBoundingClientRect();
                 editorMenu.style.top = e.clientY + "px";
@@ -919,7 +934,8 @@
                 //// Show shortcuts screen (ctrl ? || ctrl shift ?)
                 else if (event.ctrlKey && event.key === "?") {
                     event.preventDefault();
-                    showMessageFromFile("dialogs/shortcuts.html", true, false, true, true, 600);
+                    // showMessageFromFile("dialogs/shortcuts.html", true, false, true, true, 600);
+                    window.open('https://github.com/flarom/cohesion/wiki/Keyboard-shortcuts', '_blank');
                     hideAllMenus();
                 }
                 //// Show resources screen (alt r)
@@ -1097,6 +1113,27 @@
                 </div>`
 
                 showMessageFromFile("dialogs/resources.html", true, false, true, true, 800, leftPane, "", rightpane);
+            }
+
+            function showCheatSheet() {
+                let leftPane = 
+                `
+                <button class=icon-button onclick="searchTopics()">search</button>
+                `
+
+                showMessageFromFile('dialogs/cheatsheet.html', true, false, true, true, 1080, leftPane);
+                hideAllMenus()
+            }
+
+            function peekSelectedMedia() {
+                const selection = editor.getSelection();
+                const mediaPattern = /!\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)/;
+
+                const match = selection.match(mediaPattern);
+                if (match) {
+                    const mediaURL = match[1]; 
+                    showMedia(mediaURL);
+                }
             }
         </script>
     </body>

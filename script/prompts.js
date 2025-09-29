@@ -132,7 +132,7 @@ function promptString(title, defaultText = "", warn = false) {
         // dialog
         const dialog = document.createElement("div");
         dialog.className = "prompt-dialog";
-        dialog.style.padding="20px";
+        dialog.style.padding = "20px";
         if (warn) dialog.classList.add("warn");
 
         // title
@@ -260,7 +260,7 @@ function promptMessage(htmlContent, showCloseButton = true, useBigDialog = false
         document.body.appendChild(overlay);
 
         function cleanup() {
-            try { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); } catch (e) {}
+            try { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); } catch (e) { }
             overlay.removeEventListener("keydown", onKeyDown);
             if (closeButton) closeButton.removeEventListener("click", onCloseClick);
         }
@@ -1093,4 +1093,138 @@ async function promptSaveFile(fileId) {
     fileNameField.focus();
     fileNameField.selectionStart = 0;
     fileNameField.selectionEnd = fileNameField.value.length;
+}
+
+async function showMedia(filePath) {
+    closeAllDialogs();
+
+    const overlay = document.createElement("div");
+    overlay.className = "prompt-overlay";
+    overlay.tabIndex = 0; // necessário para capturar keydown
+
+    const dialog = document.createElement("div");
+    dialog.className = "prompt-dialog";
+    dialog.style.maxHeight = "90%";
+    dialog.style.maxWidth = "800px";
+    dialog.style.display = "flex";
+    dialog.style.flexDirection = "column";
+
+    const toolbar = document.createElement("div");
+    toolbar.className = "toolbar";
+
+    const leftDiv = document.createElement("div");
+    leftDiv.className = "toolbar-left";
+
+    const rightDiv = document.createElement("div");
+    rightDiv.className = "toolbar-right";
+
+    // Botão de tela cheia
+    const fullscreenButton = document.createElement("button");
+    fullscreenButton.textContent = "open_in_full";
+    fullscreenButton.className = "icon-button";
+    leftDiv.appendChild(fullscreenButton);
+
+    // Botão de download (agora no painel direito)
+    const downloadButton = document.createElement("a");
+    downloadButton.textContent = "download";
+    downloadButton.className = "icon-button";
+    downloadButton.setAttribute("href", filePath);
+    downloadButton.setAttribute("download", "");
+    downloadButton.style.textDecoration = "none";
+    downloadButton.style.color = "var(--text-color)";
+    rightDiv.appendChild(downloadButton);
+
+    // Botão de close
+    const closeButton = document.createElement("button");
+    closeButton.textContent = "close";
+    closeButton.className = "icon-button dialog-window-control";
+    rightDiv.appendChild(closeButton);
+
+    toolbar.appendChild(leftDiv);
+    toolbar.appendChild(document.createElement("div"));
+    toolbar.appendChild(rightDiv);
+
+    const content = document.createElement("div");
+    content.className = "prompt-content";
+    content.style.flex = "1";
+    content.style.display = "flex";
+    content.style.justifyContent = "center";
+    content.style.overflow = "scroll";
+
+    let mediaEl;
+    let src = filePath;
+
+    if (filePath.startsWith("resources/")) {
+        const fileName = filePath.slice(10);
+        const dataUrl = await resolveFSItem(fileName);
+        if (dataUrl) {
+            src = dataUrl;
+            downloadButton.setAttribute("href", dataUrl);
+        }
+    }
+
+    if (/\.(png|jpe?g|gif|webp|svg)$/i.test(filePath)) {
+        mediaEl = document.createElement("img");
+        mediaEl.src = src;
+        mediaEl.style.maxWidth = "100%";
+        mediaEl.style.maxHeight = "100%";
+    } else if (/\.(mp4|webm|ogg)$/i.test(filePath)) {
+        mediaEl = document.createElement("video");
+        mediaEl.src = src;
+        mediaEl.controls = true;
+        mediaEl.style.maxWidth = "100%";
+        mediaEl.style.maxHeight = "100%";
+    } else if (/\.(mp3|wav|ogg)$/i.test(filePath)) {
+        mediaEl = document.createElement("audio");
+        mediaEl.src = src;
+        mediaEl.controls = true;
+        mediaEl.style.width = "100%";
+    } else if (/\.pdf$/i.test(filePath)) {
+        mediaEl = document.createElement("embed");
+        mediaEl.src = src;
+        mediaEl.type = "application/pdf";
+        mediaEl.style.width = "100%";
+        mediaEl.style.height = "100%";
+    } else {
+        mediaEl = document.createElement("img");
+        mediaEl.src = src;
+        mediaEl.style.maxWidth = "100%";
+        mediaEl.style.maxHeight = "100%";
+        mediaEl.onerror = () => {
+            mediaEl.replaceWith(Object.assign(document.createElement("p"), {
+                textContent: "Unsupported media type: " + filePath
+            }));
+        };
+    }
+
+    content.appendChild(mediaEl);
+
+    dialog.appendChild(toolbar);
+    dialog.appendChild(content);
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
+
+    // Eventos
+    closeButton.addEventListener("click", () => overlay.remove());
+
+    fullscreenButton.addEventListener("click", () => {
+        if (!document.fullscreenElement) {
+            dialog.requestFullscreen?.();
+        } else {
+            document.exitFullscreen?.();
+        }
+    });
+
+    overlay.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            if (document.fullscreenElement) {
+                document.exitFullscreen?.();
+            } else {
+                overlay.remove();
+            }
+        }
+    });
+
+    overlay.focus();
+    closeButton.focus();
 }
