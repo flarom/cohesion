@@ -44,3 +44,18 @@ Cohesion provides support for the following Markdown elements.
 
 ## About
 Cohesion is heavily inspired by the [Apostrophe](https://apps.gnome.org/en/Apostrophe/) text editor, by [Manuel Genovés](https://gitlab.gnome.org/somas), but built for a web environment and with extra features! It uses [CodeMirror 5](https://codemirror.net/) to render syntax highlighting and [Showdownjs](https://showdownjs.com/) to parse Markdown.
+
+| **Libraries**                                                                                      |                     |
+| :------------------------------------------------------------------------------------------------- | ------------------- |
+| [CodeMirror](https://codemirror.net/)                                                              | Text editor field   |
+| [Showdownjs](https://showdownjs.com/)                                                              | Markdown processor  |
+| [JSZip](https://stuk.github.io/jszip/)                                                             | Folder compressor   |
+| [html2pdf.js](https://ekoopmans.github.io/html2pdf.js/)                                            | HTML to PDF parser  |
+| [highlight.js](https://highlightjs.org/)                                                           | Syntax highlighting |
+| **Graphics**                                                                                       |                     |
+| [Google Material Symbols & Icons](https://fonts.google.com/icons)                                  | Symbolic icons      |
+| [Papirus icons](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme/)                     | Colored icons       |
+| **General inspiration**                                                                            |                     |
+| [GNOME Text Editor](https://apps.gnome.org/TextEditor/)                                            | Original app icon   |
+| [Apostrophe](https://apps.gnome.org/Apostrophe/)                                                   | Layout and design   |
+| [GNOME Human Interface Guidelines](https://developer.gnome.org/hig/)                               | Design language     |
