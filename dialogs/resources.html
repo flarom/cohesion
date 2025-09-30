@@ -268,7 +268,7 @@
 
         async function promptDeleteAllFS() {
             hideAllMenus();
-            if (await promptConfirm("Are you sure you want to delete all files?", true)) {
+            if (await promptConfirm("Are you sure you want to delete all resources?", true)) {
                 deleteAllFS().then(renderFSFiles());
             }
         }
