@@ -2353,7 +2353,7 @@
                 var txt = wholeMatch;
                 // check if this html element is marked as markdown
                 // if so, it's contents should be parsed as markdown
-                if (left.search(/\bmarkdown||md\b/) !== -1) {
+                if (left.search(/\bmarkdown\b/) !== -1) {
                     txt = left + globals.converter.makeHtml(match) + right;
                 }
                 return "\n\n¨K" + (globals.gHtmlBlocks.push(txt) - 1) + "K\n\n";

@@ -9,92 +9,209 @@
 
     var COMMANDS = {
         "today": {
-            description: "Today's date",
+            description: "Today's date and time",
             exec: function(arg) {
                 insertDate();
             }
         },
-        "admonition": {
-            description: "Insert an admonition",
+        "summary": {
+            description: "Document summary",
             exec: function(arg) {
-                selectFromMenu(editor, ["Note", "Tip", "Important", "Warning", "Caution"], function(selectedIndex) {
-                    switch (selectedIndex) {
-                        case 0:
-                            insertBlock("> [!NOTE]\n> ");
+                insertBlock(getSummary(editor.getValue()));
+            }
+        },
+        "link": {
+            description: "Website URL or internal link",
+            exec: function(arg) {
+                selectFromMenu(editor, ["Website", "Document"], function(selectedIndex) {
+                    switch(selectedIndex) {
+                        case 0: // Website
+                            insertAt("[TITLE](URL)", 8, 11);
                             break;
-                        case 1:
-                            insertBlock("> [!TIP]\n> ");
-                            break;
-                        case 2:
-                            insertBlock("> [!IMPORTANT]\n> ");
-                            break;
-                        case 3:
-                            insertBlock("> [!WARNING]\n> ");
-                            break;
-                        case 4:
-                            insertBlock("> [!CAUTION]\n> ");
+
+                        case 1: // Document
+                            loadFilesFromStorage();
+
+                            if (files.length === 0) {
+                                showToast("No documents available.", "info");
+                                return;
+                            }
+
+                            const docTitles = files.map((_, i) => getFileTitle(i) || `Untitled ${i+1}`);
+
+                            selectFromMenu(editor, docTitles, function(docIndex) {
+                                const title = docTitles[docIndex];
+                                insertAt(`[[${title}]]`, 2, 2 + title.length + 4);
+                            });
                             break;
                     }
                 });
             }
         },
         "list": {
-            description: "Insert a list",
+            description: "Ordered, unordered, or task list",
             exec: function(arg) {
-                selectFromMenu(editor, ["Ordered", "Unordered", "Task list"], function(selectedIndex) {
-                    selectFromMenu(editor, [1,2,3,4,5,6,7,8,9,10].map(String), function(countIndex) {
-                        let count = countIndex + 1;
-                        let items = "";
+                let cm = editor;
+                let state = {
+                    type: null,
+                    indentCounters: {}
+                };
 
-                        switch (selectedIndex) {
-                            case 0: // ordered
-                                items = Array.from({length: count}, (_, i) => `${i+1}. `).join("\n");
-                                break;
-                            case 1: // unordered
-                                items = Array.from({length: count}, () => `- `).join("\n");
-                                break;
-                            case 2: // task
-                                items = Array.from({length: count}, () => `- [ ] `).join("\n");
-                                break;
-                        }
+                selectFromMenu(editor, ["Ordered list", "Unordered list", "Task list"], function(selectedIndex) {
+                    switch(selectedIndex) {
+                        case 0: state.type = "ordered"; break;
+                        case 1: state.type = "unordered"; break;
+                        case 2: state.type = "task"; break;
+                    }
 
-                        insertBlock(items);
-                    });
+                    function openMenu() {
+                        selectFromMenu(editor, [
+                            "Add line",
+                            "Remove line",
+                            "Add indent",
+                            "Remove indent",
+                            "Done"
+                        ], function(selectedIndex) {
+                            const cursor = cm.getCursor();
+                            const lineIndex = cursor.line > 0 ? cursor.line - 1 : cursor.line;
+
+                            switch(selectedIndex) {
+                                case 0: { // Add line
+                                    let indent = "";
+                                    if (lineIndex >= 0) {
+                                        const prevLine = cm.getLine(lineIndex);
+                                        const match = prevLine.match(/^\t*/);
+                                        if (match) indent = match[0];
+                                    }
+
+                                    let lineContent = "";
+                                    const level = indent.length;
+
+                                    switch(state.type) {
+                                        case "ordered":
+                                            if (!state.indentCounters[level]) state.indentCounters[level] = 1;
+                                            lineContent = `${state.indentCounters[level]}. `;
+                                            state.indentCounters[level]++;
+                                            break;
+                                        case "unordered":
+                                            lineContent = "- ";
+                                            break;
+                                        case "task":
+                                            lineContent = "- [ ] ";
+                                            break;
+                                    }
+
+                                    cm.replaceRange(indent + lineContent + "\n", cursor);
+                                    break;
+                                }
+
+                                case 1: { // Remove line
+                                    if (lineIndex >= 0) {
+                                        const lineText = cm.getLine(lineIndex);
+                                        const level = (lineText.match(/^\t*/)[0] || "").length;
+
+                                        if (state.type === "ordered" && state.indentCounters[level] > 1) {
+                                            state.indentCounters[level]--;
+                                        }
+
+                                        cm.replaceRange("", {line: lineIndex, ch: 0}, {line: lineIndex + 1, ch: 0});
+                                    }
+                                    break;
+                                }
+
+                                case 2: { // Add indent
+                                    if (lineIndex >= 0) {
+                                        cm.replaceRange("\t", {line: lineIndex, ch: 0});
+                                    }
+                                    break;
+                                }
+
+                                case 3: { // Remove indent
+                                    if (lineIndex >= 0) {
+                                        const lineText = cm.getLine(lineIndex);
+                                        if (lineText.startsWith("\t")) {
+                                            cm.replaceRange("", {line: lineIndex, ch: 0}, {line: lineIndex, ch: 1});
+                                        }
+                                    }
+                                    break;
+                                }
+
+                                case 4: // Done
+                                    return;
+                            }
+
+                            setTimeout(openMenu, 10);
+                        });
+                    }
+
+                    openMenu();
                 });
             }
         },
-        "field": {
-            description: "Create an input field",
-            exec: function(arg) {
-                selectFromMenu(editor, ["Textbox", "Slider", "Spinner", "Date", "Time"], function(selectedIndex) {
-                    switch(selectedIndex) {
-                        case 0: //text
-                            insertAt(`<input id="" value="" type="text">`, 11,11);
-                            break;
-                        case 1: //range
-                            insertAt(`<input id="" value="50" min="0" max="100" step="1" type="range">`, 11,11);
-                            break;
-                        case 2: //number
-                            insertAt(`<input id="" value="0" min="0" max="100" step="1" type="number">`,11,11);
-                    }
-                }); 
-            }
-        },
-        "summary": {
-            description: "Create a summary",
-            exec: function(arg) {
-                insertBlock(getSummary(editor.getValue()));
-            }
-        },
         "table": {
-            description: "Insert table",
+            description: "Insert a table",
             exec: function(arg) {
-                let count = parseInt(arg, 10) || 3;
-                insertBlock(getTable(count, 2));
+                let cm = editor;
+                let state = {
+                    cols: 3,
+                    rows: 3,
+                    width: 12,
+                    from: null,
+                    to: null
+                };
+
+                function updateTable() {
+                    const table = getTable(state.cols, state.rows, state.width);
+
+                    if (state.from && state.to) {
+                        cm.replaceRange(table, state.from, state.to);
+                        state.to = {
+                            line: state.from.line + table.split("\n").length - 1,
+                            ch: table.split("\n").slice(-1)[0].length
+                        };
+                    } else {
+                        const cursor = cm.getCursor();
+                        cm.replaceRange(table, cursor);
+                        state.from = { line: cursor.line, ch: 0 };
+                        state.to = {
+                            line: cursor.line + table.split("\n").length - 1,
+                            ch: table.split("\n").slice(-1)[0].length
+                        };
+                    }
+                }
+
+                function openMenu() {
+                    selectFromMenu(editor, [
+                        "Add column",
+                        "Add row",
+                        "Remove column",
+                        "Remove row",
+                        "Done"
+                        // "Increase width",
+                        // "Decrease width"
+                    ], function(selectedIndex) {
+                        switch (selectedIndex) {
+                            case 0: state.cols++; break;
+                            case 1: state.rows++; break;
+                            case 2: state.cols = Math.max(1, state.cols - 1); break;
+                            case 3: state.rows = Math.max(1, state.rows - 1); break;
+                            case 4: return;
+                            // case 4: state.width += 2; break;
+                            // case 5: state.width = Math.max(4, state.width - 2); break;
+                        }
+
+                        updateTable();
+
+                        setTimeout(openMenu, 10);
+                    });
+                }
+
+                updateTable();
+                openMenu();
             }
         },
         "resources": {
-            description: "Insert a media file",
+            description: "Manage your resources folder",
             exec: async function(arg) {
                 const options = ["Upload", "Select", "Manage Resources"];
 
@@ -154,36 +271,104 @@
                 });
             }
         },
-        "link": {
-            description: "Insert an URL",
+        "image": {
+            description: "Insert an image",
+            exec: async function(arg) {
+                try {
+                    const file = await uploadFSFile("image/*");
+                    const filePath = `resources/${file.name}`;
+
+                    let markdown = `![ALT TEXT](${filePath})`;
+                    insertAt(markdown, 2, 10);
+                    showToast(`Archived ${file.name}`, "archive");
+                } catch (err) {
+                    showToast("Failed to upload file.", "error");
+                    console.error(err);
+                }
+            }
+        },
+        "audio": {
+            description: "Insert an audio",
+            exec: async function(arg) {
+                try {
+                    const file = await uploadFSFile("audio/*");
+                    const filePath = `resources/${file.name}`;
+
+                    let markdown = `![ALT TEXT](${filePath})`;
+                    insertAt(markdown, 2, 10);
+                    showToast(`Archived ${file.name}`, "archive");
+                } catch (err) {
+                    showToast("Failed to upload file.", "error");
+                    console.error(err);
+                }
+            }
+        },
+        "video": {
+            description: "Insert a video",
+            exec: async function(arg) {
+                try {
+                    const file = await uploadFSFile("video/*");
+                    const filePath = `resources/${file.name}`;
+
+                    let markdown = `![ALT TEXT](${filePath})`;
+                    insertAt(markdown, 2, 10);
+                    showToast(`Archived ${file.name}`, "archive");
+                } catch (err) {
+                    showToast("Failed to upload file.", "error");
+                    console.error(err);
+                }
+            }
+        },
+        "admonition": {
+            description: "Note, tip, warning, or important section",
             exec: function(arg) {
-                selectFromMenu(editor, ["Website", "Document"], function(selectedIndex) {
-                    switch(selectedIndex) {
-                        case 0: // Website
-                            insertAt("[TITLE](URL)", 8, 11);
+                selectFromMenu(editor, ["Note", "Tip", "Important", "Warning", "Caution"], function(selectedIndex) {
+                    switch (selectedIndex) {
+                        case 0:
+                            insertBlock("> [!NOTE]\n> ");
                             break;
-
-                        case 1: // Document
-                            loadFilesFromStorage();
-
-                            if (files.length === 0) {
-                                showToast("No documents available.", "info");
-                                return;
-                            }
-
-                            const docTitles = files.map((_, i) => getFileTitle(i) || `Untitled ${i+1}`);
-
-                            selectFromMenu(editor, docTitles, function(docIndex) {
-                                const title = docTitles[docIndex];
-                                insertAt(`[[${title}]]`, 2, 2 + title.length + 4);
-                            });
+                        case 1:
+                            insertBlock("> [!TIP]\n> ");
+                            break;
+                        case 2:
+                            insertBlock("> [!IMPORTANT]\n> ");
+                            break;
+                        case 3:
+                            insertBlock("> [!WARNING]\n> ");
+                            break;
+                        case 4:
+                            insertBlock("> [!CAUTION]\n> ");
                             break;
                     }
                 });
             }
         },
+        "field": {
+            description: "Text, number, slider, date, or time input",
+            exec: function(arg) {
+                selectFromMenu(editor, ["Textbox", "Slider", "Spinner", "Date", "Time"], function(selectedIndex) {
+                    switch(selectedIndex) {
+                        case 0: //text
+                            insertAt(`<input id="" value="" type="text">`, 11,11);
+                            break;
+                        case 1: //range
+                            insertAt(`<input id="" value="50" min="0" max="100" step="1" type="range">`, 11,11);
+                            break;
+                        case 2: //number
+                            insertAt(`<input id="" value="0" min="0" max="100" step="1" type="number">`,11,11);
+                            break;
+                        case 3: //date
+                            insertAt(`<input id="" value="" type="date">`,11,11);
+                            break;
+                        case 4: //time
+                            insertAt(`<input id="" value="" type="time">`,11,11);
+                            break;
+                    }
+                }); 
+            }
+        },
         "graph": {
-            description: "Insert a graph",
+            description: "Pie, bar, or line chart",
             exec: function(arg) {
                 selectFromMenu(editor, ["pizza", "bars", "lines"], function(selectedIndex) {
                     switch (selectedIndex) {
@@ -239,6 +424,49 @@
         });
     }
 
+    function showTextMenu(editor, callback, deleteInput = false) {
+        let doneClicked = false;
+        const startCursor = editor.getCursor();
+        const startCh = startCursor.ch;
+
+        function openMenu() {
+            if (doneClicked) return;
+
+            const cur = editor.getCursor();
+            const currentLineText = editor.getLine(cur.line);
+            const typedText = currentLineText.slice(startCh);
+
+            const list = [{
+                text: "Done",
+                displayText: "Done (finish typing)",
+                hint: function(cm, data, completion) {
+                    doneClicked = true;
+
+                    if (deleteInput) {
+                        cm.replaceRange("", {line: startCursor.line, ch: startCh}, {line: startCursor.line, ch: cur.ch});
+                    }
+
+                    callback(typedText);
+                }
+            }];
+
+            editor.showHint({
+                completeSingle: false,
+                hint: () => ({
+                    list: list,
+                    from: {line: cur.line, ch: startCh},
+                    to: {line: cur.line, ch: cur.ch}
+                })
+            });
+
+            if (!doneClicked) {
+                setTimeout(openMenu, 50);
+            }
+        }
+
+        openMenu();
+    }
+
     CodeMirror.registerHelper("hint", "command", function (editor, options) {
         var cur = editor.getCursor(),
             curLine = editor.getLine(cur.line);
@@ -253,12 +481,20 @@
         var cmd = match?.[1] || "";
         var arg = match?.[2] || "";
 
+        let maxNameLength = 0;
+        for (var key in COMMANDS) {
+            if (!cmd || fuzzyMatch(key, cmd)) {
+                if (key.length > maxNameLength) maxNameLength = key.length;
+            }
+        }
+
         for (var key in COMMANDS) {
             if (!cmd || fuzzyMatch(key, cmd)) {
                 (function(commandKey) {
+                    let spaces = " ".repeat(maxNameLength - commandKey.length + 2);
                     list.push({
                         text: "/" + commandKey + (arg ? arg : ""),
-                        displayText: "/" + commandKey + " - " + COMMANDS[commandKey].description,
+                        displayText: commandKey + spaces + COMMANDS[commandKey].description,
                         hint: function(cm, data, completion) {
                             var from = CodeMirror.Pos(cur.line, start - 1);
                             var to = CodeMirror.Pos(cur.line, end);

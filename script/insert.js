@@ -42,14 +42,16 @@ function toggleLineStart(prefix, toggle = false, prefixesToRemove = []) {
     });
 }
 
-function getTable(cols, rows) {
+function getTable(cols, rows, width = 10) {
     let md = "";
-    const headerRow = Array(cols).fill("          ").join("|");
-    const separator = Array(cols).fill(":--------:").join("|");
+    const cell = " ".repeat(width);
+    const headerRow = Array(cols).fill(cell).join("|");
+    const separator = Array(cols).fill(":" + "-".repeat(width - 2) + ":").join("|");
+
     md += `|${headerRow}|\n`;
     md += `|${separator}|\n`;
-    for (let i = 0; i < rows - 1; i++) {
-        md += `|${Array(cols).fill("          ").join("|")}|\n`;
+    for (let i = 0; i < rows; i++) {
+        md += `|${Array(cols).fill(cell).join("|")}|\n`;
     }
     return md;
 }
@@ -82,10 +84,17 @@ function insertAt(text, selectFrom, selectTo) {
 
     doc.replaceRange(text, cursor);
 
-    const from = doc.posFromIndex(index + selectFrom);
-    const to = doc.posFromIndex(index + selectTo);
+    const start = index;
+    const end = index + text.length;
 
-    doc.setSelection(from, to);
+    if (typeof selectFrom === "number" && typeof selectTo === "number") {
+        const from = doc.posFromIndex(start + selectFrom);
+        const to = doc.posFromIndex(start + selectTo);
+        doc.setSelection(from, to);
+    } else {
+        const pos = doc.posFromIndex(end);
+        doc.setCursor(pos);
+    }
 }
 
 function insertAtTop(text) {
