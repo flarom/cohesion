@@ -699,6 +699,9 @@
             function loadSettings() {
                 const theme = getSetting("theme");
                 if (theme) document.body.className = theme;
+                if (getSetting("theme") === "theme-custom") {
+                    applyCustomTheme(getSetting("theme-custom-value", ""));
+                }
 
                 const root = document.documentElement;
 
@@ -732,6 +735,16 @@
                 if (getSetting("editorWidth", "false") === "true") {
                     editor.getWrapperElement().classList.add('CodeMirror-Large');
                 }
+            }
+
+            function applyCustomTheme(cssText) {
+                let styleEl = document.getElementById("custom-theme-style");
+                if (!styleEl) {
+                    styleEl = document.createElement("style");
+                    styleEl.id = "custom-theme-style";
+                    document.head.appendChild(styleEl);
+                }
+                styleEl.textContent = `.theme-custom { ${cssText} }`;
             }
 
             function getCursor(query) {

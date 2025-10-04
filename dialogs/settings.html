@@ -100,6 +100,9 @@
                         <button id="theme-monokai" class="ball" style="background-color: #272822; color: #F8F8F2" onclick="setSetting('theme', 'theme-monokai');loadSettings(); updateSelectedTheme()">Monokai</button>
                         <button id="theme-cream-dark" class="ball" style="background-color: #1c1a17; color: #e0d6c0" onclick="setSetting('theme', 'theme-cream-dark');loadSettings(); updateSelectedTheme()">Coffee</button>
                         <button id="theme-oled" class="ball" style="background-color: #000000; color: #888888" onclick="setSetting('theme', 'theme-oled');loadSettings(); updateSelectedTheme()">OLED</button>
+                        <button id="theme-custom" class="ball" style="background: conic-gradient(var(--quote-purple),var(--quote-blue),var(--quote-green),var(--quote-yellow),var(--quote-red),var(--quote-purple)); color: var(--background-color)" onclick="setSetting('theme', 'theme-custom');loadSettings(); updateSelectedTheme()">Custom</button>
+                        <button id="theme-edit-custom" class="icon-button" onclick="editCustomTheme()" style="font-size: larger;" translate="no" title="Edit custom theme">edit</button>
+                        <button id="theme-delete-custom" class="icon-button" onclick="deleteCustomTheme()" style="font-size: larger;" translate="no" title="Reset custom theme">refresh</button>
                     </div>
                 </div>
 
@@ -443,7 +446,112 @@
                 const theme = getSetting("theme", "theme-dark");
                 document.querySelectorAll("button.ball").forEach(btn => btn.classList.remove("selected"));
                 const selectedBtn = document.getElementById(theme);
+                const editCustomBtn = document.getElementById('theme-edit-custom');
+                const deleteCustomBtn = document.getElementById('theme-delete-custom');
                 if (selectedBtn) selectedBtn.classList.add("selected");
+                if (selectedBtn.id == 'theme-custom') { editCustomBtn.style.display = 'block'; deleteCustomBtn.style.display = 'block'; }
+                else { editCustomBtn.style.display = 'none'; deleteCustomBtn.style.display = 'none'; } 
+            }
+
+            async function editCustomTheme() {
+                const defaultTheme = 
+`/**
+ * This file controls the colors and styles of the "Custom" theme.
+ * Each line defines a CSS variable used by the app to style different parts
+ * of the interface.
+ * 
+ * HOW IT WORKS:
+ * - Every variable starts with two dashes (--) and defines a color or
+ *   a visual property.
+ * - After editing, the theme updates automatically when you select
+ *   "Custom" in the settings.
+ * - You can use color formats like HEX (#ff00ff), RGB (rgb(255,0,255)),
+ *   HSL (hsl(300, 100%, 50%)), or OKLab/OKLCH (oklab(50% 0.1 0.2)).
+ *
+ * Quick example:
+ * --background-color: #202020;    (Main background color)
+ * --text-color: #e0e0e0;          (Text color)
+ * --highlight-color: #3584e4;     (Accent color)
+ * 
+ * You can also write custom CSS instructions at the end of the document.
+ * Feel free to delete this comment
+ *
+ * Have fun customizing your look!
+ */
+
+/** Accent color */
+--highlight-color:      #3584e4; 
+
+/** Background colors */
+--background-color:     #161616;
+--background-color-2:   #222222;
+--background-color-3:   #2e2e2e;
+
+/** Text colors */
+--text-color:           #cccccc;
+--title-color:          #dddddd;
+--button-color:         #ffffff;
+--button-color-2:       #ffffff;
+
+/** Borders */
+--border-dark-color:    #000000;
+--border-light-color:   #636363;
+--border-field-color:   transparent;
+
+/** Misc */
+--active-line:          #222222; /* Cursor active line on the editor */
+--field-color:          #2e2e2e; /* Fields background color, on settings page and forms */
+--hover-color:          #2e2e2e; /* Button hover background color */
+--selection-color:      #3584e433; /* Text selection color */
+--link-color:           #99c1f1; /* Hyperlinks color */
+--danger:               #ff8881; /* Dangerous action text color */
+--danger-bg:            #ff888133; /* Dangerous action background color */
+--shadow:               0px 0px 10px #00000055;
+    
+/** Admonitions, graphs */
+--quote-purple:         #dd92ff; 
+--quote-blue:           #818eff;
+--quote-green:          #9aff81; 
+--quote-yellow:         #fff781;
+--quote-red:            #ff8881;
+
+--quote-purple-bg:      #d781ff33; 
+--quote-blue-bg:        #818ef333;
+--quote-green-bg:       #9aff8133; 
+--quote-yellow-bg:      #fff78133;
+--quote-red-bg:         #ff888133;
+
+/** Codeblocks */
+--hljs-bg:              #23272e;
+--hljs-text:            #e0e0e0;
+--hljs-comment:         #6a9955;
+--hljs-keyword:         #569cd6;
+--hljs-function:        #dcdcaa;
+--hljs-string:          #ce9178;
+--hljs-number:          #b5cea8;
+--hljs-variable:        #9cdcfe;
+--hljs-title:           #4ec9b0;
+--hljs-link:            #d7ba7d;
+
+/** Write your custom CSS here */
+`;
+
+                const saved = getSetting("theme-custom-value", defaultTheme);
+
+                const newValue = await promptCodeEditor(saved, "css");
+
+                if (typeof newValue === "string" && newValue.trim() !== "") {
+                    setSetting("theme-custom-value", newValue.trim());
+                    if (getSetting("theme") === "theme-custom") {
+                        applyCustomTheme(newValue.trim());
+                    }
+                }
+            }
+
+            async function deleteCustomTheme(){
+                if(await promptConfirm('Reset custom theme?')) {
+                    removeSetting('theme-custom-value');
+                }
             }
         </script>
     </body>

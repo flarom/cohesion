@@ -1228,3 +1228,104 @@ async function showMedia(filePath) {
     overlay.focus();
     closeButton.focus();
 }
+
+function promptCodeEditor(initialText = "", mode = "javascript") {
+    return new Promise((resolve) => {
+        // overlay
+        const overlay = document.createElement("div");
+        overlay.className = "prompt-overlay";
+
+        // dialog
+        const dialog = document.createElement("div");
+        dialog.className = "prompt-dialog";
+        dialog.style.display = "flex";
+        dialog.style.flexDirection = "column";
+        dialog.style.maxWidth = "90%";
+
+        // toolbar
+        const toolbar = document.createElement("div");
+        toolbar.className = "toolbar";
+
+        const leftDiv = document.createElement("div");
+        leftDiv.className = "toolbar-left";
+
+        const centerDiv = document.createElement("div");
+        centerDiv.className = "toolbar-center";
+
+        const rightDiv = document.createElement("div");
+        rightDiv.className = "toolbar-right";
+
+        const okButton = document.createElement("button");
+        okButton.textContent = "check";
+        okButton.className = "icon-button";
+        okButton.title = "Confirm";
+
+        const resetButton = document.createElement("button");
+        resetButton.textContent = "refresh";
+        resetButton.className = "icon-button";
+        resetButton.title = "Reset";
+
+        const closeButton = document.createElement("button");
+        closeButton.textContent = "close";
+        closeButton.className = "icon-button dialog-window-control";
+        closeButton.setAttribute("translate", "no");
+
+        leftDiv.appendChild(resetButton);
+        rightDiv.appendChild(okButton);
+        rightDiv.appendChild(closeButton);
+
+        toolbar.appendChild(leftDiv);
+        toolbar.appendChild(centerDiv);
+        toolbar.appendChild(rightDiv);
+
+        // editor container
+        const editorContainer = document.createElement("div");
+        editorContainer.style.overflow = 'hidden';
+
+        dialog.appendChild(toolbar);
+        dialog.appendChild(editorContainer);
+
+        overlay.appendChild(dialog);
+        document.body.appendChild(overlay);
+
+        // CodeMirror instance
+        const cm = CodeMirror(editorContainer, {
+            value: initialText,
+            mode: mode,
+            lineNumbers: false,
+            lineWrapping: true,
+            theme: "default",
+            keyMap: "sublime",
+        });
+
+        const scrollEl = editorContainer.querySelector(".CodeMirror-scroll");
+        if (scrollEl) {
+            scrollEl.style.margin = "0";
+            scrollEl.style.padding = "0";
+        }
+
+        cm.refresh();
+
+        // Helpers
+        function closePrompt(result) {
+            document.body.removeChild(overlay);
+            resolve(result);
+        }
+
+        function resetEditor() {
+            cm.setValue(initialText);
+        }
+
+        okButton.addEventListener("click", () => closePrompt(cm.getValue()));
+        resetButton.addEventListener("click", resetEditor);
+        closeButton.addEventListener("click", () => closePrompt(null));
+
+        overlay.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") closePrompt(null);
+            else if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+                // Ctrl+Enter to confirm
+                closePrompt(cm.getValue());
+            }
+        });
+    });
+}

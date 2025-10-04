@@ -369,7 +369,7 @@
     right: 0;
     bottom: 0;
     background-color: var(--field-color);
-    transition: 0.3s 0.3s;
+    transition: 0.3s;
     border-radius: 12px;
 }
 
@@ -390,7 +390,7 @@
 }
 
 .prompt-dialog input:checked + .slider:before {
-    background-color: white;
+    background-color:var(--button-color-2);
     transform: translateX(20px);
 }
 
