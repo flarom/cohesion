@@ -121,7 +121,7 @@
     <script>
         async function renderFSFiles() {
             const container = document.getElementById("fs-file-container");
-            const files = await getFSFiles();
+            const files = await Resources.getFSFiles();
             container.innerHTML = "";
 
             if (!files || files.length === 0) {
@@ -158,7 +158,7 @@
                                     <button class="text-button" onmouseup="handleRenameFSFile(${index}); hideAllMenus()">Rename</button>
                                     <button class="text-button" onmouseup="downloadFSFile('${file.name}'); hideAllMenus()">Download</button>
                                     <hr>
-                                    <button class="text-button danger" onmouseup="deleteFSFile('${file.name}'); hideAllMenus(); renderFSFiles()">Delete</button>
+                                    <button class="text-button danger" onmouseup="Resources.deleteFSFile('${file.name}'); hideAllMenus(); renderFSFiles()">Delete</button>
                                 </div>
                             </div>
                         </div>
@@ -190,7 +190,7 @@
                             try {
                                 showToast('Copying file...','hard_drive');
                                 const content = reader.result;
-                                await setFSFile({ name: file.name.replace(/\s+/g, "_"), content });
+                                await Resources.setFSFile({ name: file.name.replace(/\s+/g, "_"), content });
                                 await renderFSFiles();
                             } catch (err) {
                                 console.error("Failed to save file:", err);
@@ -207,7 +207,7 @@
         }
 
         async function handleRenameFSFile(index, warn = false) {
-            const files = await getFSFiles();
+            const files = await Resources.getFSFiles();
             const current = files[index];
             if (!current) return;
 
@@ -215,7 +215,7 @@
             if (!newName || newName === current.name) return;
 
             try {
-                await renameFSFile(index, newName);
+                await Resources.renameFSFile(index, newName);
                 await renderFSFiles();
             } catch (err) {
                 console.error(err);
@@ -269,25 +269,18 @@
         async function promptDeleteAllFS() {
             hideAllMenus();
             if (await promptConfirm("Are you sure you want to delete all resources?", true)) {
-                deleteAllFS().then(renderFSFiles());
+                Resources.deleteAllFS().then(renderFSFiles());
             }
         }
 
         async function downloadFSFile(name) {
-            const content = await resolveFSItem(name);
+            const content = await Resources.resolveFSItem(name);
             if (!content) return;
 
             const a = document.createElement("a");
             a.href = content;
             a.download = name;
             a.click();
-        }
-
-        async function deleteFSFile(name) {
-            const db = await openFSDB();
-            const tx = db.transaction("files", "readwrite");
-            tx.objectStore("files").delete(name);
-            await tx.done;
         }
 
         renderFSFiles();

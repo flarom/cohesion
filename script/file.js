@@ -164,7 +164,7 @@ async function exportBook() {
         zip.file(`${title}.md`, file);
     });
 
-    const fsFiles = await getFSFiles();
+    const fsFiles = await Resources.getFSFiles();
     const resourcesFolder = zip.folder("resources");
 
     fsFiles.forEach(file => {
@@ -203,7 +203,7 @@ function importBook() {
                 if (!entry.dir) {
                     if (entry.name.startsWith("resources/")) {
                         const base64 = await entry.async("base64");
-                        await setFSFile({
+                        await Resources.setFSFile({
                             name: entry.name.replace("resources/", ""),
                             content: `data:application/octet-stream;base64,${base64}`
                         });
@@ -240,14 +240,14 @@ function importDeleteBook() {
             const zip = await JSZip.loadAsync(reader.result);
             const newFiles = [];
 
-            await deleteAllFS();
+            await Resources.deleteAllFS();
 
             const entries = Object.values(zip.files);
             for (const entry of entries) {
                 if (!entry.dir) {
                     if (entry.name.startsWith("resources/")) {
                         const base64 = await entry.async("base64");
-                        await setFSFile({
+                        await Resources.setFSFile({
                             name: entry.name.replace("resources/", ""),
                             content: `data:application/octet-stream;base64,${base64}`
                         });

@@ -409,3 +409,20 @@ const network = {
         });
     }
 }
+
+const resources = {
+    write: async function(name, content) {
+        await Resources.setFSFile({ name, content });
+        showToast(`File '${name}' written`, 'save');
+    },
+    read: async function(name) {
+        return await Resources.resolveFSItem(name);
+    },
+    delete: async function(name) {
+        await Resources.deleteFSFile(name);
+        showToast(`File '${name}' deleted`, 'delete');
+    },
+    list: async function() {
+        return await Resources.getFSFiles();
+    }
+};

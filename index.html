@@ -130,7 +130,7 @@
                             <kbd>Ctrl+,</kbd>
                         </button>
                         <hr />
-                        <button class="text-button" onmouseup="window.open('https://github.com/flarom/cohesion/wiki'); hideAllMenus()">Documentation</button>
+                        <button class="text-button" onmouseup="window.open('https://github.com/flarom/cohesion/wiki'); hideAllMenus()">Help</button>
                         <button class="text-button" onmouseup="showCheatSheet();">Markdown Cheat Sheet</button>
                         <!-- <button class="text-button" onmouseup="showMessageFromFile('dialogs/shortcuts.html', true, false, true, true, 600); hideAllMenus();">
                             Keyboard shortcuts
@@ -141,7 +141,7 @@
                             <kbd>Ctrl+?</kbd>
                         </button>
                         <hr>
-                        <button class="text-button" onmouseup="showMessageFromFile('landing.html', false, true, false, false); hideAllMenus()">Home page</button>
+                        <button class="text-button" onmouseup="showMessageFromFile('landing.html', false, true, false, false); hideAllMenus()">Visit home page</button>
                         <button class="text-button" onmouseup="showMessageFromFile('about.html'); hideAllMenus();">
                             About Cohesion
                             <kbd>F1</kbd>
@@ -278,19 +278,21 @@
 
             const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
                 mode: "markdown",
-                lineNumbers: getSetting("editorLineNumbers", false) === "true",
+                lineNumbers: Settings.getSetting("editorLineNumbers", false) === "true",
                 theme: "default",
                 lineWrapping: true,
-                autoCloseBrackets: getSetting("editorAutoCloseBrackets", "true") === "true" ,
-                autoCloseTags: getSetting("editorAutoCloseTags", "false") === "true" ,
+                autoCloseBrackets: Settings.getSetting("editorAutoCloseBrackets", "true") === "true",
+                autoCloseTags: Settings.getSetting("editorAutoCloseTags", "false") === "true",
                 extraKeys: {
                     Enter: "newlineAndIndentContinueMarkdownList",
                     "Ctrl-Space": "autocomplete",
+                    Tab: _snippetTab,
+                    "Shift-Tab": _snippetShiftTab,
                 },
                 keyMap: "sublime",
-                direction: getSetting("editorDirection", "ltr"),
+                direction: Settings.getSetting("editorDirection", "ltr"),
                 showCursorWhenSelecting: true,
-                styleActiveLine: getSetting("editorHighlightActiveLine", "true") === "true",
+                styleActiveLine: Settings.getSetting("editorHighlightActiveLine", "true") === "true",
             });
 
             editor.addOverlay(markOverlay);
@@ -349,7 +351,7 @@
                         const file = item.getAsFile();
                         if (file) {
                             try {
-                                const savedFile = await saveClipboardFile(file);
+                                const savedFile = await Resources.saveClipboardFile(file);
                                 const filePath = `resources/${savedFile.name}`;
 
                                 const ext = savedFile.name.split(".").pop().toLowerCase();
@@ -460,7 +462,7 @@
             });
 
             editor.on("inputRead", function (cm, change) {
-                if (getSetting("editorShowHints", "true") === "false") return;
+                if (Settings.getSetting("editorShowHints", "true") === "false") return;
 
                 var cursor = cm.getCursor();
                 var token = cm.getTokenAt(cursor);
@@ -664,7 +666,7 @@
                         const src = el.getAttribute("src");
                         if (src && src.startsWith("resources/")) {
                             const fileName = src.slice(10);
-                            const dataUrl = await resolveFSItem(fileName);
+                            const dataUrl = await Resources.resolveFSItem(fileName);
                             if (dataUrl) el.src = dataUrl;
                         }
                     }
@@ -697,17 +699,17 @@
             }
 
             function loadSettings() {
-                const theme = getSetting("theme");
+                const theme = Settings.getSetting("theme");
                 if (theme) document.body.className = theme;
-                if (getSetting("theme") === "theme-custom") {
-                    applyCustomTheme(getSetting("theme-custom-value", ""));
+                if (Settings.getSetting("theme") === "theme-custom") {
+                    applyCustomTheme(Settings.getSetting("theme-custom-value", ""));
                 }
 
                 const root = document.documentElement;
 
-                const editorFont = getSetting("editorFont");
-                const paragraphFont = getSetting("paragraphFont");
-                const titleFont = getSetting("titleFont");
+                const editorFont = Settings.getSetting("editorFont");
+                const paragraphFont = Settings.getSetting("paragraphFont");
+                const titleFont = Settings.getSetting("titleFont");
 
                 if (editorFont) root.style.setProperty("--font-editor", editorFont);
                 if (paragraphFont) root.style.setProperty("--font-text", paragraphFont);
@@ -720,19 +722,19 @@
                     metaTag.setAttribute("content", colorValue);
                 }
 
-                if (getSetting("statusShow", "true") != "true") statusBar.style.display = "none";
+                if (Settings.getSetting("statusShow", "true") != "true") statusBar.style.display = "none";
                 else statusBar.style.display = "flex";
 
-                if (getSetting("statusCursorPos", "true") != "true") cursorPosLabel.style.display = "none";
+                if (Settings.getSetting("statusCursorPos", "true") != "true") cursorPosLabel.style.display = "none";
                 else cursorPosLabel.style.display = "flex";
 
-                if (getSetting("statusEditorMode", "true") != "true") editorModeLabel.style.display = "none";
+                if (Settings.getSetting("statusEditorMode", "true") != "true") editorModeLabel.style.display = "none";
                 else editorModeLabel.style.display = "flex";
 
-                if (getSetting("statusDocumentSize", "true") != "true") documentSizeLabel.style.display = "none";
+                if (Settings.getSetting("statusDocumentSize", "true") != "true") documentSizeLabel.style.display = "none";
                 else documentSizeLabel.style.display = "flex";
 
-                if (getSetting("editorWidth", "false") === "true") {
+                if (Settings.getSetting("editorWidth", "false") === "true") {
                     editor.getWrapperElement().classList.add('CodeMirror-Large');
                 }
             }
@@ -1097,7 +1099,7 @@
                 //// Insert date and time with custom syntax (shift f6)
                 else if (event.shiftKey && event.key === "F6") {
                     event.preventDefault();
-                    const strftime = await promptString("Insert date time format", getSetting("dateFormat", "%d/%m/%Y %H:%M"));
+                    const strftime = await promptString("Insert date time format", Settings.getSetting("dateFormat", "%d/%m/%Y %H:%M"));
                     if (strftime){
                     insertDate(strftime);
                     }
@@ -1112,7 +1114,7 @@
 
             function showResourcesDialog(){
                 let leftPane =
-                `<button class='icon-button' onclick='uploadFSFile().then(() => renderFSFiles());' translate='no' title='Upload file'>add</button>`
+                `<button class='icon-button' onclick='Resources.uploadFSFile().then(() => renderFSFiles());' translate='no' title='Upload file'>add</button>`
 
                 let rightpane =
                 `<button class='icon-button' translate='no' title='Search'>search</button>

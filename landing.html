@@ -156,11 +156,11 @@
         })();
 
         function changeTheme() {
-            let current = getSetting('theme');
+            let current = Settings.getSetting('theme');
             if (current === 'theme-dark') {
-                setSetting('theme', 'theme-light');
+                Settings.setSetting('theme', 'theme-light');
             } else {
-                setSetting('theme', 'theme-dark');
+                Settings.setSetting('theme', 'theme-dark');
             }
             loadSettings();
         }

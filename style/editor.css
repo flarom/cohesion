@@ -387,7 +387,7 @@
     color: var(--text-color);
     border: 1px solid var(--border-light-color);
     padding: 5px 10px;
-    border-radius: 100px;
+    border-radius: 8px;
     width: 300px;
     margin: 10px 40px 10px 40px;
 }
@@ -492,24 +492,6 @@
     cursor: help;
 }
 
-/* custom html */
-
-.preview icon {
-    font-family: "Material Symbols Rounded";
-    font-size: x-large;
-}
-
-.preview blank-space {
-    display: block;
-    height: 100vh;
-}
-
-.preview .small {
-    font-size: small;
-    opacity: 50%;
-    display: block;
-}
-
 .preview details {
     border: 1px solid var(--border-light-color);
     border-radius: 15px;
@@ -556,4 +538,104 @@
 .preview details .content {
     padding: 12px 15px;
     overflow: scroll;
+}
+
+.preview input[type="number"] {
+  font-size: 14px;
+  width: 80px;
+}
+
+.preview input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    padding: 0;
+    border: 0;
+    border-radius: 100px;
+}
+
+.preview input[type="range"]:focus {
+    outline: none;
+
+    input[type="range"]::-moz-range-thumb,
+    input[type="range"]::-webkit-slider-thumb {
+        outline: 1px solid var(--highlight-color);
+    }
+}
+
+.preview input[type="range"]::-moz-range-thumb,
+.preview input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 100%;
+    outline: 1px solid var(--border-light-color);
+    background-color: var(--button-color-2);
+}
+.preview input[type="range"]::-moz-range-track {
+    height: 4px;
+    border-radius: 100px;
+}
+.preview input[type="range"]::-moz-range-progress {
+    height: 4px;
+    background-color: var(--highlight-color);
+    border-radius: 100px;
+}
+
+.preview input[type="file"] {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    box-sizing: border-box;
+    margin: 0;
+    border: 2px dashed var(--border-light-color);
+    background-color: var(--background-color);
+    border-radius: 8px;
+    cursor: pointer;
+    padding-top: calc(150px - 2ch);
+    text-align: center;
+}
+
+.preview input[type="file"]::-webkit-file-upload-button,
+.preview input[type="file"]::file-selector-button {
+    visibility: hidden;
+    display: none;
+}
+
+.preview input[type="file"]:hover,
+.preview input[type="file"]:focus {
+    background-color: var(--field-color);
+}
+
+.preview textarea {
+    width: 100%;
+    min-height: 100px;
+    background-color: var(--field-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-light-color);
+    box-sizing: border-box;
+    border-radius: 8px;
+    outline: none;
+    resize: vertical;
+    padding: 8px;
+    box-shadow: var(--shadow);
+}
+
+/* custom html */
+
+.preview icon {
+    font-family: "Material Symbols Rounded";
+    font-size: x-large;
+}
+
+.preview blank-space {
+    display: block;
+    height: 100vh;
+}
+
+.preview .small {
+    font-size: small;
+    opacity: 50%;
+    display: block;
 }

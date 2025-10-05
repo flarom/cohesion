@@ -92,15 +92,15 @@
                 <div>
                     <h4>Appearence</h4>
                     <div class="setting top" style="gap: 10px; flex-wrap: wrap; justify-content: flex-start;">
-                        <button id="theme-epaper" class="ball" style="background-color: #ffffff; color: #000000" onclick="setSetting('theme', 'theme-epaper');loadSettings(); updateSelectedTheme()">ePaper</button>
-                        <button id="theme-light" class="ball" style="background-color: #ffffff; color: #3c3c3c" onclick="setSetting('theme', 'theme-light');loadSettings(); updateSelectedTheme()">Light</button>
-                        <button id="theme-cream" class="ball" style="background-color: #f5eacb; color: #4b3a25" onclick="setSetting('theme', 'theme-cream');loadSettings(); updateSelectedTheme()">Cream</button>
-                        <button id="theme-nord" class="ball" style="background-color: #2e3440; color: #d8dee9" onclick="setSetting('theme', 'theme-nord');loadSettings(); updateSelectedTheme()">Nord</button>
-                        <button id="theme-dark" class="ball" style="background-color: #303030; color: #dddddd" onclick="setSetting('theme', 'theme-dark');loadSettings(); updateSelectedTheme()">Dark</button>
-                        <button id="theme-monokai" class="ball" style="background-color: #272822; color: #F8F8F2" onclick="setSetting('theme', 'theme-monokai');loadSettings(); updateSelectedTheme()">Monokai</button>
-                        <button id="theme-cream-dark" class="ball" style="background-color: #1c1a17; color: #e0d6c0" onclick="setSetting('theme', 'theme-cream-dark');loadSettings(); updateSelectedTheme()">Coffee</button>
-                        <button id="theme-oled" class="ball" style="background-color: #000000; color: #888888" onclick="setSetting('theme', 'theme-oled');loadSettings(); updateSelectedTheme()">OLED</button>
-                        <button id="theme-custom" class="ball" style="background: conic-gradient(var(--quote-purple),var(--quote-blue),var(--quote-green),var(--quote-yellow),var(--quote-red),var(--quote-purple)); color: var(--background-color)" onclick="setSetting('theme', 'theme-custom');loadSettings(); updateSelectedTheme()">Custom</button>
+                        <button id="theme-epaper" class="ball" style="background-color: #ffffff; color: #000000" onclick="Settings.setSetting('theme', 'theme-epaper');loadSettings(); updateSelectedTheme()">ePaper</button>
+                        <button id="theme-light" class="ball" style="background-color: #ffffff; color: #3c3c3c" onclick="Settings.setSetting('theme', 'theme-light');loadSettings(); updateSelectedTheme()">Light</button>
+                        <button id="theme-cream" class="ball" style="background-color: #f5eacb; color: #4b3a25" onclick="Settings.setSetting('theme', 'theme-cream');loadSettings(); updateSelectedTheme()">Cream</button>
+                        <button id="theme-nord" class="ball" style="background-color: #2e3440; color: #d8dee9" onclick="Settings.setSetting('theme', 'theme-nord');loadSettings(); updateSelectedTheme()">Nord</button>
+                        <button id="theme-dark" class="ball" style="background-color: #303030; color: #dddddd" onclick="Settings.setSetting('theme', 'theme-dark');loadSettings(); updateSelectedTheme()">Dark</button>
+                        <button id="theme-monokai" class="ball" style="background-color: #272822; color: #F8F8F2" onclick="Settings.setSetting('theme', 'theme-monokai');loadSettings(); updateSelectedTheme()">Monokai</button>
+                        <button id="theme-cream-dark" class="ball" style="background-color: #1c1a17; color: #e0d6c0" onclick="Settings.setSetting('theme', 'theme-cream-dark');loadSettings(); updateSelectedTheme()">Coffee</button>
+                        <button id="theme-oled" class="ball" style="background-color: #000000; color: #888888" onclick="Settings.setSetting('theme', 'theme-oled');loadSettings(); updateSelectedTheme()">OLED</button>
+                        <button id="theme-custom" class="ball" style="background: conic-gradient(var(--quote-purple),var(--quote-blue),var(--quote-green),var(--quote-yellow),var(--quote-red),var(--quote-purple)); color: var(--background-color)" onclick="Settings.setSetting('theme', 'theme-custom');loadSettings(); updateSelectedTheme()">Custom</button>
                         <button id="theme-edit-custom" class="icon-button" onclick="editCustomTheme()" style="font-size: larger;" translate="no" title="Edit custom theme">edit</button>
                         <button id="theme-delete-custom" class="icon-button" onclick="deleteCustomTheme()" style="font-size: larger;" translate="no" title="Reset custom theme">refresh</button>
                     </div>
@@ -108,15 +108,15 @@
 
                 <div class="setting">
                     <label>Editor font</label>
-                    <input list="default-fonts" type="text" placeholder="Ubuntu Mono" id="fontEditor" oninput="setSetting('editorFont', this.value); loadSettings();" />
+                    <input list="default-fonts" type="text" placeholder="Ubuntu Mono" id="fontEditor" oninput="Settings.setSetting('editorFont', this.value); loadSettings();" />
                 </div>
                 <div class="setting">
                     <label>Paragraph font</label>
-                    <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontParagraph" oninput="setSetting('paragraphFont', this.value); loadSettings();" />
+                    <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontParagraph" oninput="Settings.setSetting('paragraphFont', this.value); loadSettings();" />
                 </div>
                 <div class="setting bottom">
                     <label>Title font</label>
-                    <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontTitle" oninput="setSetting('titleFont', this.value); loadSettings();" />
+                    <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontTitle" oninput="Settings.setSetting('titleFont', this.value); loadSettings();" />
                 </div>
 
                 <datalist id="default-fonts">
@@ -133,49 +133,49 @@
                     <div class="setting top switch-wrapper">
                         <span class="switch-text">Auto-complete</span>
                         <label class="switch">
-                            <input type="checkbox" id="editorShowHints" onchange="setSetting('editorShowHints', this.checked);" />
+                            <input type="checkbox" id="editorShowHints" onchange="Settings.setSetting('editorShowHints', this.checked);" />
                             <span class="slider"></span>
                         </label>
                     </div>                        
                     <div class="setting switch-wrapper">
                         <span class="switch-text">Auto-close brackets</span>
                         <label class="switch">
-                            <input type="checkbox" id="editorAutoCloseBrackets" onchange="setSetting('editorAutoCloseBrackets', this.checked); location.reload()">
+                            <input type="checkbox" id="editorAutoCloseBrackets" onchange="Settings.setSetting('editorAutoCloseBrackets', this.checked); location.reload()">
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting switch-wrapper">
                         <span class="switch-text">Auto-close ML tags</span>
                         <label class="switch">
-                            <input type="checkbox" id="editorAutoCloseTags" onchange="setSetting('editorAutoCloseTags', this.checked); location.reload()">
+                            <input type="checkbox" id="editorAutoCloseTags" onchange="Settings.setSetting('editorAutoCloseTags', this.checked); location.reload()">
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting switch-wrapper">
                         <span class="switch-text">Line numbers</span>
                         <label class="switch">
-                            <input type="checkbox" id="editorLineNumbers" onchange="setSetting('editorLineNumbers', this.checked); location.reload()" />
+                            <input type="checkbox" id="editorLineNumbers" onchange="Settings.setSetting('editorLineNumbers', this.checked); location.reload()" />
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting switch-wrapper">
                         <span class="switch-text">RTL text align</span>
                         <label class="switch">
-                            <input type="checkbox" id="editorDirection" onchange="if (this.checked) {setSetting('editorDirection', 'rtl')} else {setSetting('editorDirection', 'ltr')} location.reload()" />
+                            <input type="checkbox" id="editorDirection" onchange="if (this.checked) {Settings.setSetting('editorDirection', 'rtl')} else {Settings.setSetting('editorDirection', 'ltr')} location.reload()" />
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting switch-wrapper">
                         <span class="switch-text">Full width</span>
                         <label class="switch">
-                            <input type="checkbox" id="editorWidth" onchange="setSetting('editorWidth', this.checked); location.reload()" />
+                            <input type="checkbox" id="editorWidth" onchange="Settings.setSetting('editorWidth', this.checked); location.reload()" />
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting bottom switch-wrapper">
                         <span class="switch-text">Highlight active line</span>
                         <label class="switch">
-                            <input type="checkbox" id="editorHighlightActiveLine" onchange="setSetting('editorHighlightActiveLine', this.checked); location.reload()" />
+                            <input type="checkbox" id="editorHighlightActiveLine" onchange="Settings.setSetting('editorHighlightActiveLine', this.checked); location.reload()" />
                             <span class="slider"></span>
                         </label>
                     </div>
@@ -183,8 +183,8 @@
                 <div>
                     <h4>Date & Time</h4>
                     <div class="setting top" style="display: flex; align-items: center; gap: 10px; justify-content: start;">
-                        <input type="text" id="editorDate" style="max-width: 100%;" value="%d/%m/%Y %H:%M" onchange="setSetting('dateFormat', this.value)" />
-                        <button class="icon-button" translate="no" title="Reset" onclick="document.getElementById('editorDate').value='%d/%m/%Y %H:%M'; setSetting('dateFormat', document.getElementById('editorDate').value); document.getElementById('editorDate').focus();">refresh</button>
+                        <input type="text" id="editorDate" style="max-width: 100%;" value="%d/%m/%Y %H:%M" onchange="Settings.setSetting('dateFormat', this.value)" />
+                        <button class="icon-button" translate="no" title="Reset" onclick="document.getElementById('editorDate').value='%d/%m/%Y %H:%M'; Settings.setSetting('dateFormat', document.getElementById('editorDate').value); document.getElementById('editorDate').focus();">refresh</button>
                         <button class="icon-button" translate="no" title="Remove" onclick="removeLastDateBlock()">backspace</button>
                     </div>
                     <div class="setting">
@@ -251,7 +251,7 @@
                         <button class="icon-button" translate="no" title="Reset" onclick="resetEditorMeta();">refresh</button>
                     </div>
                     <div class="setting bottom">
-                        <textarea name="editorMeta" id="editorMeta" onchange="setSetting('editorMeta', this.value)"></textarea>
+                        <textarea name="editorMeta" id="editorMeta" onchange="Settings.setSetting('editorMeta', this.value)"></textarea>
                     </div>
                 </div>
 
@@ -260,28 +260,28 @@
                     <div class="setting top switch-wrapper">
                         <span class="switch-text">Status bar</span>
                         <label class="switch">
-                            <input type="checkbox" id="statusShow" onchange="setSetting('statusShow', this.checked); loadSettings()" />
+                            <input type="checkbox" id="statusShow" onchange="Settings.setSetting('statusShow', this.checked); loadSettings()" />
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting switch-wrapper">
                         <span class="switch-text">Cursor position</span>
                         <label class="switch">
-                            <input type="checkbox" id="statusCursorPos" onchange="setSetting('statusCursorPos', this.checked); loadSettings()" />
+                            <input type="checkbox" id="statusCursorPos" onchange="Settings.setSetting('statusCursorPos', this.checked); loadSettings()" />
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting switch-wrapper">
                         <span class="switch-text">Editor mode</span>
                         <label class="switch">
-                            <input type="checkbox" id="statusEditorMode" onchange="setSetting('statusEditorMode', this.checked); loadSettings()" />
+                            <input type="checkbox" id="statusEditorMode" onchange="Settings.setSetting('statusEditorMode', this.checked); loadSettings()" />
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting bottom switch-wrapper">
                         <span class="switch-text">Document size</span>
                         <label class="switch">
-                            <input type="checkbox" id="statusDocumentSize" onchange="setSetting('statusDocumentSize', this.checked); loadSettings()" />
+                            <input type="checkbox" id="statusDocumentSize" onchange="Settings.setSetting('statusDocumentSize', this.checked); loadSettings()" />
                             <span class="slider"></span>
                         </label>
                     </div>
@@ -339,9 +339,9 @@
                 const txtFontEditor = document.getElementById("fontEditor");
                 const txtFontParagraph = document.getElementById("fontParagraph");
                 const txtFontTitle = document.getElementById("fontTitle");
-                txtFontEditor.value = getSetting("editorFont", "Ubuntu Mono");
-                txtFontParagraph.value = getSetting("paragraphFont", "Ubuntu");
-                txtFontTitle.value = getSetting("titleFont", "Ubuntu");
+                txtFontEditor.value = Settings.getSetting("editorFont", "Ubuntu Mono");
+                txtFontParagraph.value = Settings.getSetting("paragraphFont", "Ubuntu");
+                txtFontTitle.value = Settings.getSetting("titleFont", "Ubuntu");
 
                 // editor
                 const cbxEditorShowHints = document.getElementById("editorShowHints");
@@ -352,24 +352,24 @@
                 const cbxEditorAutoCloseBrackets = document.getElementById('editorAutoCloseBrackets');
                 const cbxEditorAutoCloseTags = document.getElementById('editorAutoCloseTags');
                 const txtEditorDate = document.getElementById("editorDate");
-                if (getSetting("editorShowHints", "true") === "true") cbxEditorShowHints.checked = "true";
-                if (getSetting("editorLineNumbers", "false") === "true") cbxEditorLineNumbers.checked = "true";
-                if (getSetting("editorDirection", "ltr") === "rtl") cbxEditorDirection.checked = "true";
-                if (getSetting("editorWidth", "false") === "true") cbxEditorWidth.checked = "true";
-                if (getSetting("editorHighlightActiveLine", "true") === "true") cbxEditorHighlightActiveLine.checked = "true";
-                if (getSetting("editorAutoCloseBrackets", "true") === "true") cbxEditorAutoCloseBrackets.checked = "true";
-                if (getSetting("editorAutoCloseTags", "false") === "true") cbxEditorAutoCloseTags.checked = "true";
-                txtEditorDate.value = getSetting("dateFormat", "%d/%m/%Y %H:%M");
+                if (Settings.getSetting("editorShowHints", "true") === "true") cbxEditorShowHints.checked = "true";
+                if (Settings.getSetting("editorLineNumbers", "false") === "true") cbxEditorLineNumbers.checked = "true";
+                if (Settings.getSetting("editorDirection", "ltr") === "rtl") cbxEditorDirection.checked = "true";
+                if (Settings.getSetting("editorWidth", "false") === "true") cbxEditorWidth.checked = "true";
+                if (Settings.getSetting("editorHighlightActiveLine", "true") === "true") cbxEditorHighlightActiveLine.checked = "true";
+                if (Settings.getSetting("editorAutoCloseBrackets", "true") === "true") cbxEditorAutoCloseBrackets.checked = "true";
+                if (Settings.getSetting("editorAutoCloseTags", "false") === "true") cbxEditorAutoCloseTags.checked = "true";
+                txtEditorDate.value = Settings.getSetting("dateFormat", "%d/%m/%Y %H:%M");
 
                 // status bar
                 const cbxStatusShow = document.getElementById("statusShow");
                 const cbxStatusCursorPos = document.getElementById("statusCursorPos");
                 const cbxStatusEditorMode = document.getElementById("statusEditorMode");
                 const cbxStatusDocumentSize = document.getElementById("statusDocumentSize");
-                if (getSetting("statusShow", "true") === "true") cbxStatusShow.checked = "true";
-                if (getSetting("statusCursorPos", "true") === "true") cbxStatusCursorPos.checked = "true";
-                if (getSetting("statusEditorMode", "true") === "true") cbxStatusEditorMode.checked = "true";
-                if (getSetting("statusDocumentSize", "true") === "true") cbxStatusDocumentSize.checked = "true";
+                if (Settings.getSetting("statusShow", "true") === "true") cbxStatusShow.checked = "true";
+                if (Settings.getSetting("statusCursorPos", "true") === "true") cbxStatusCursorPos.checked = "true";
+                if (Settings.getSetting("statusEditorMode", "true") === "true") cbxStatusEditorMode.checked = "true";
+                if (Settings.getSetting("statusDocumentSize", "true") === "true") cbxStatusDocumentSize.checked = "true";
 
                 document.getElementById("dateTimeBtn1").innerHTML = strftime("%a");
                 document.getElementById("dateTimeBtn2").innerHTML = strftime("%A");
@@ -393,7 +393,7 @@
 
                 // meta
                 const txtEditorMeta = document.getElementById('editorMeta');
-                txtEditorMeta.value = getSetting('editorMeta', 'title: *\nauthors: *\ndate: *\ntags: *\ndescription: *\ncolor: *\nbanner: *');
+                txtEditorMeta.value = Settings.getSetting('editorMeta', 'title: *\nauthors: *\ndate: *\ntags: *\ndescription: *\ncolor: *\nbanner: *');
             })();
 
             function insertDateTimeOption(block) {
@@ -402,7 +402,7 @@
 
                 txtEditorDate.value = value + block;
                 txtEditorDate.focus();
-                setSetting("dateFormat", txtEditorDate.value);
+                Settings.setSetting("dateFormat", txtEditorDate.value);
             }
 
             function removeLastDateBlock() {
@@ -419,7 +419,7 @@
 
                 input.value = value;
                 input.focus();
-                setSetting("dateFormat", value);
+                Settings.setSetting("dateFormat", value);
             }
 
             async function handleDeleteEmptyFiles() {
@@ -437,13 +437,13 @@
             function resetEditorMeta() {
                 const txtEditorMeta = document.getElementById('editorMeta');
                 txtEditorMeta.value = 'title: *\nauthors: *\ndate: *\ntags: *\ndescription: *\ncolor: *\nbanner: *';
-                setSetting('editorMeta', txtEditorMeta.value);
+                Settings.setSetting('editorMeta', txtEditorMeta.value);
             }
 
             updateSelectedTheme();
 
             function updateSelectedTheme() {
-                const theme = getSetting("theme", "theme-dark");
+                const theme = Settings.getSetting("theme", "theme-dark");
                 document.querySelectorAll("button.ball").forEach(btn => btn.classList.remove("selected"));
                 const selectedBtn = document.getElementById(theme);
                 const editCustomBtn = document.getElementById('theme-edit-custom');
@@ -536,13 +536,13 @@
 /** Write your custom CSS here */
 `;
 
-                const saved = getSetting("theme-custom-value", defaultTheme);
+                const saved = Settings.getSetting("theme-custom-value", defaultTheme);
 
                 const newValue = await promptCodeEditor(saved, "css");
 
                 if (typeof newValue === "string" && newValue.trim() !== "") {
-                    setSetting("theme-custom-value", newValue.trim());
-                    if (getSetting("theme") === "theme-custom") {
+                    Settings.setSetting("theme-custom-value", newValue.trim());
+                    if (Settings.getSetting("theme") === "theme-custom") {
                         applyCustomTheme(newValue.trim());
                     }
                 }
@@ -550,7 +550,7 @@
 
             async function deleteCustomTheme(){
                 if(await promptConfirm('Reset custom theme?')) {
-                    removeSetting('theme-custom-value');
+                    Settings.removeSetting('theme-custom-value');
                 }
             }
         </script>

@@ -138,14 +138,14 @@
     <script>
         // load settings
         function loadSettings(){
-            const theme = getSetting("theme");
+            const theme = Settings.getSetting("theme");
             if (theme) document.body.className = theme;
 
             const root = document.documentElement;
 
-            const editorFont = getSetting("editorFont");
-            const paragraphFont = getSetting("paragraphFont");
-            const titleFont = getSetting("titleFont");
+            const editorFont = Settings.getSetting("editorFont");
+            const paragraphFont = Settings.getSetting("paragraphFont");
+            const titleFont = Settings.getSetting("titleFont");
 
             if (editorFont) root.style.setProperty("--font-editor", editorFont);
             if (paragraphFont) root.style.setProperty("--font-text", paragraphFont);
@@ -153,11 +153,11 @@
         }
 
         function changeTheme() {
-            let current = getSetting('theme');
+            let current = Settings.getSetting('theme');
             if (current === 'theme-dark') {
-                setSetting('theme', 'theme-light');
+                Settings.setSetting('theme', 'theme-light');
             } else {
-                setSetting('theme', 'theme-dark');
+                Settings.setSetting('theme', 'theme-dark');
             }
             loadSettings();
         }

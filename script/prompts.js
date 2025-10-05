@@ -954,7 +954,7 @@ async function promptSaveFile(fileId) {
                     if (!src) return;
                     if (src.startsWith("resources/")) {
                         const fileName = src.slice(10);
-                        const dataUrl = await resolveFSItem(fileName);
+                        const dataUrl = await Resources.resolveFSItem(fileName);
                         if (dataUrl) img.src = dataUrl;
                     } else if (/^https?:\/\//.test(src)) {
                         try {
@@ -1058,7 +1058,7 @@ async function promptSaveFile(fileId) {
 
                 // Add resources
                 await Promise.all(usedResources.map(async (fileName) => {
-                    const dataUrl = await resolveFSItem(fileName);
+                    const dataUrl = await Resources.resolveFSItem(fileName);
                     if (dataUrl) {
                         // Extract base64 data and mime type
                         const matches = dataUrl.match(/^data:(.+);base64,(.+)$/);
@@ -1156,7 +1156,7 @@ async function showMedia(filePath) {
 
     if (filePath.startsWith("resources/")) {
         const fileName = filePath.slice(10);
-        const dataUrl = await resolveFSItem(fileName);
+        const dataUrl = await Resources.resolveFSItem(fileName);
         if (dataUrl) {
             src = dataUrl;
             downloadButton.setAttribute("href", dataUrl);

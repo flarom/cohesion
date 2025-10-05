@@ -77,6 +77,123 @@ function insertBlock(text) {
     doc.setCursor(newPos);
 }
 
+function insertSnippet(snippet, markerChar = "$") {
+    const doc = editor.getDoc();
+    const cursor = doc.getCursor();
+    const startIdx = doc.indexFromPos(cursor);
+
+    doc.replaceRange(snippet, cursor);
+    const endIdx = startIdx + snippet.length;
+    const fullText = doc.getRange(doc.posFromIndex(startIdx), doc.posFromIndex(endIdx));
+
+    const esc = markerChar.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const re = new RegExp(`${esc}\\{(\\d+):([^}]*)\\}|${esc}0`, "g");
+
+    let cleanText = "";
+    let last = 0;
+    const placeholders = [];
+
+    let match;
+    while ((match = re.exec(fullText)) !== null) {
+        cleanText += fullText.slice(last, match.index);
+
+        if (match[0] === `${markerChar}0`) {
+            // $0 → posição final
+            placeholders.push({ id: 0, start: cleanText.length, end: cleanText.length });
+        } else {
+            const id = parseInt(match[1]);
+            const text = match[2];
+            const s = cleanText.length;
+            cleanText += text;
+            const e = cleanText.length;
+            placeholders.push({ id, start: s, end: e });
+        }
+
+        last = match.index + match[0].length;
+    }
+    cleanText += fullText.slice(last);
+
+    doc.replaceRange(cleanText, doc.posFromIndex(startIdx), doc.posFromIndex(endIdx));
+
+    const groups = {};
+    placeholders.forEach(ph => {
+        if (!groups[ph.id]) groups[ph.id] = [];
+        const from = doc.posFromIndex(startIdx + ph.start);
+        const to = doc.posFromIndex(startIdx + ph.end);
+        const marker = doc.markText(from, to, { inclusiveLeft: true, inclusiveRight: true });
+        groups[ph.id].push(marker);
+    });
+
+    const ids = Object.keys(groups).map(Number);
+    const order = ids.filter(i => i > 0).sort((a, b) => a - b);
+    if (ids.includes(0)) order.push(0);
+
+    const stops = order.map(id => ({ id, markers: groups[id] }));
+
+    editor._snippetStops = stops;
+    editor._snippetIndex = -1;
+
+    const firstIdx = stops.findIndex(s => s.id > 0);
+    const initial = firstIdx !== -1 ? firstIdx : stops.findIndex(s => s.id === 0);
+
+    if (initial !== -1) {
+        editor._snippetIndex = initial;
+        const markers = stops[initial].markers;
+        const ranges = markers.map(m => ({ anchor: m.find().from, head: m.find().to }));
+        doc.setSelections(ranges);
+    } else {
+        doc.setCursor(doc.posFromIndex(startIdx + cleanText.length));
+    }
+}
+
+function _snippetTab(cm) {
+    const stops = cm._snippetStops;
+    if (!stops) return CodeMirror.Pass;
+
+    let idx = cm._snippetIndex ?? -1;
+    idx++;
+
+    if (idx >= stops.length) {
+        cm._snippetStops = null;
+        cm._snippetIndex = -1;
+        return CodeMirror.Pass;
+    }
+
+    cm._snippetIndex = idx;
+    const doc = cm.getDoc();
+    const markers = stops[idx].markers;
+    const ranges = markers.map(m => {
+        const pos = m.find();
+        return pos ? { anchor: pos.from, head: pos.to } : null;
+    }).filter(Boolean);
+
+    doc.setSelections(ranges);
+}
+
+function _snippetShiftTab(cm) {
+    const stops = cm._snippetStops;
+    if (!stops) return CodeMirror.Pass;
+
+    let idx = cm._snippetIndex ?? 0;
+    idx--;
+
+    if (idx < 0) {
+        cm._snippetStops = null;
+        cm._snippetIndex = -1;
+        return CodeMirror.Pass;
+    }
+
+    cm._snippetIndex = idx;
+    const doc = cm.getDoc();
+    const markers = stops[idx].markers;
+    const ranges = markers.map(m => {
+        const pos = m.find();
+        return pos ? { anchor: pos.from, head: pos.to } : null;
+    }).filter(Boolean);
+
+    doc.setSelections(ranges);
+}
+
 function insertAt(text, selectFrom, selectTo) {
     const doc = editor.getDoc();
     const cursor = doc.getCursor();
@@ -120,14 +237,14 @@ function getMeta() {
     const defaultMeta = {
         title,
         authors: "*",
-        date: strftime(getSetting("dateFormat", "%Y/%m/%d %H:%M")),
+        date: strftime(Settings.getSetting("dateFormat", "%Y/%m/%d %H:%M")),
         tags: "uncategorized",
         description: "*",
         color: "*",
         banner: "cohesion/banners/1.png"
     };
 
-    const rawMeta = getSetting(
+    const rawMeta = Settings.getSetting(
         "editorMeta",
         `title: *\nauthors: *\ndate: *\ntags: *\ndescription: *\ncolor: *\nbanner: *`,
         true
@@ -294,7 +411,7 @@ async function handleInsertBlock() {
 }
 
 async function insertFile(prefix, suffix, accept = "*/*") {
-    const file = await uploadFSFile(accept);
+    const file = await Resources.uploadFSFile(accept);
     if (!file || !file.name) throw new Error("No file returned");
 
     const filePath = `resources/${file.name}`;
@@ -303,7 +420,7 @@ async function insertFile(prefix, suffix, accept = "*/*") {
 
 function insertDate(format) {
     if (!format) {
-        format = getSetting("dateFormat", "%d/%m/%Y %H:%M");
+        format = Settings.getSetting("dateFormat", "%d/%m/%Y %H:%M");
     }
 
     const time = strftime(format);

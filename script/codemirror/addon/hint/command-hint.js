@@ -26,7 +26,7 @@
                 selectFromMenu(editor, ["Website", "Document"], function(selectedIndex) {
                     switch(selectedIndex) {
                         case 0: // Website
-                            insertAt("[TITLE](URL)", 8, 11);
+                            insertSnippet("[${1:Website}](${2:URL}) ${3: }");
                             break;
 
                         case 1: // Document
@@ -219,11 +219,11 @@
                     switch (selectedIndex) {
                         case 0: // Upload
                             try {
-                                const file = await uploadFSFile("*/*");
+                                const file = await Resources.uploadFSFile("*/*");
                                 const filePath = `resources/${file.name}`;
 
-                                let markdown = `![ALT TEXT](${filePath})`;
-                                insertAt(markdown, 2, 10);
+                                let markdown = `![\${1:ALT TEXT}](${filePath})\${2: }`;
+                                insertSnippet(markdown);
                                 showToast(`Archived ${file.name}`, "archive");
                             } catch (err) {
                                 showToast("Failed to upload file.", "error");
@@ -233,7 +233,7 @@
 
                         case 1: // Open existing
                             try {
-                                const files = await getFSFiles();
+                                const files = await Resources.getFSFiles();
                                 if (files.length === 0) {
                                     showToast("No files in resources.", "info");
                                     return;
@@ -242,8 +242,8 @@
                                 selectFromMenu(editor, fileOptions, (fileIndex) => {
                                     const file = files[fileIndex];
                                     const filePath = `resources/${file.name}`;
-                                    let markdown = `![ALT TEXT](${filePath})`;
-                                    insertAt(markdown, 2, 10);
+                                    let markdown = `![\${1:ALT TEXT}](${filePath})\${2: }`;
+                                    insertSnippet(markdown);
                                 });
                             } catch (err) {
                                 showToast("Failed to list resources.", "error");
@@ -253,7 +253,7 @@
 
                         case 2: // Manage Resources
                             let leftPane =
-                            `<button class='icon-button' onclick='uploadFSFile().then(() => renderFSFiles());' translate='no' title='Upload file'>add</button>`
+                            `<button class='icon-button' onclick='Resources.uploadFSFile().then(() => renderFSFiles());' translate='no' title='Upload file'>add</button>`
 
                             let rightpane =
                             `<button class='icon-button' translate='no' title='Search'>search</button>
@@ -275,11 +275,11 @@
             description: "Insert an image",
             exec: async function(arg) {
                 try {
-                    const file = await uploadFSFile("image/*");
+                    const file = await Resources.uploadFSFile("image/*");
                     const filePath = `resources/${file.name}`;
 
-                    let markdown = `![ALT TEXT](${filePath})`;
-                    insertAt(markdown, 2, 10);
+                    let markdown = `![\${1:ALT TEXT}](${filePath})\${2: }`;
+                    insertSnippet(markdown);
                     showToast(`Archived ${file.name}`, "archive");
                 } catch (err) {
                     showToast("Failed to upload file.", "error");
@@ -291,11 +291,11 @@
             description: "Insert an audio",
             exec: async function(arg) {
                 try {
-                    const file = await uploadFSFile("audio/*");
+                    const file = await Resources.uploadFSFile("audio/*");
                     const filePath = `resources/${file.name}`;
 
-                    let markdown = `![ALT TEXT](${filePath})`;
-                    insertAt(markdown, 2, 10);
+                    let markdown = `![\${1:ALT TEXT}](${filePath})\${2: }`;
+                    insertSnippet(markdown);
                     showToast(`Archived ${file.name}`, "archive");
                 } catch (err) {
                     showToast("Failed to upload file.", "error");
@@ -307,11 +307,11 @@
             description: "Insert a video",
             exec: async function(arg) {
                 try {
-                    const file = await uploadFSFile("video/*");
+                    const file = await Resources.uploadFSFile("video/*");
                     const filePath = `resources/${file.name}`;
 
-                    let markdown = `![ALT TEXT](${filePath})`;
-                    insertAt(markdown, 2, 10);
+                    let markdown = `![\${1:ALT TEXT}](${filePath})\${2: }`;
+                    insertSnippet(markdown);
                     showToast(`Archived ${file.name}`, "archive");
                 } catch (err) {
                     showToast("Failed to upload file.", "error");
@@ -346,22 +346,25 @@
         "field": {
             description: "Text, number, slider, date, or time input",
             exec: function(arg) {
-                selectFromMenu(editor, ["Textbox", "Slider", "Spinner", "Date", "Time"], function(selectedIndex) {
+                selectFromMenu(editor, ["Textbox", "Multi line textbox", "Slider", "Spinner", "Date", "Time"], function(selectedIndex) {
                     switch(selectedIndex) {
                         case 0: //text
-                            insertAt(`<input id="" value="" type="text">`, 11,11);
+                            insertSnippet('<input id="${1:ID}" value="${2:Text value}" type="text"> ${3: }');
                             break;
-                        case 1: //range
-                            insertAt(`<input id="" value="50" min="0" max="100" step="1" type="range">`, 11,11);
+                        case 1: //textarea
+                            insertSnippet('<textarea id="${1:ID}">${2:Text value}</textarea> ${3: }');
                             break;
-                        case 2: //number
-                            insertAt(`<input id="" value="0" min="0" max="100" step="1" type="number">`,11,11);
+                        case 2: //range
+                            insertSnippet('<input id="${1:ID}" value="${2:50}" min="${3:0}" max="${4:100}" step="${5:1}" type="range"> ${6: }');
                             break;
-                        case 3: //date
-                            insertAt(`<input id="" value="" type="date">`,11,11);
+                        case 3: //number
+                            insertSnippet('<input id="${1:ID}" value="${2:0}" min="${3:0}" max="${4:100}" step="${5:1}" type="number"> ${6: }');
                             break;
-                        case 4: //time
-                            insertAt(`<input id="" value="" type="time">`,11,11);
+                        case 4: //date
+                            insertSnippet(`<input id="\${1:ID}" value="\${2:${strftime('%Y-%m-%d')}}" type="date" >\${3: }`);
+                            break;
+                        case 5: //time
+                            insertSnippet(`<input id="\${1:ID}" value="\${2:${strftime('%H:%M')}}" type="time"> \${3: }`);
                             break;
                     }
                 }); 
