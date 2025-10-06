@@ -14,10 +14,34 @@
                 insertDate();
             }
         },
-        "summary": {
-            description: "Document summary",
+        "toc": {
+            description: "Table of Contents",
             exec: function(arg) {
                 insertBlock(getSummary(editor.getValue()));
+            }
+        },
+        "code": {
+            description: "Create a code block",
+            exec: function(arg) {
+                insertSnippet('```${1:Language}\n${2:Code}\n```');
+            }
+        },
+        "details": {
+            description: "Hidable content block",
+            exec: function(arg) {
+                insertSnippet('> [!DETAILS:${1:Title}]\n> ${2:Content}');
+            }
+        },
+        "embed": {
+            description: "Embeded web content",
+            exec: function(arg) {
+                insertSnippet('> [!EMBED]\n> ${1:https\://example.com}');
+            }
+        },
+        "meta": {
+            description: "Create a meta block at the top",
+            exec: function(arg) {
+                insertAtTop(getMeta());
             }
         },
         "link": {
@@ -155,7 +179,7 @@
                 let state = {
                     cols: 3,
                     rows: 3,
-                    width: 12,
+                    width: 4,
                     from: null,
                     to: null
                 };
@@ -182,19 +206,19 @@
 
                 function openMenu() {
                     selectFromMenu(editor, [
-                        "Add column",
                         "Add row",
-                        "Remove column",
+                        "Add column",
                         "Remove row",
+                        "Remove column",
                         "Done"
                         // "Increase width",
                         // "Decrease width"
                     ], function(selectedIndex) {
                         switch (selectedIndex) {
-                            case 0: state.cols++; break;
-                            case 1: state.rows++; break;
-                            case 2: state.cols = Math.max(1, state.cols - 1); break;
-                            case 3: state.rows = Math.max(1, state.rows - 1); break;
+                            case 0: state.rows++; break;
+                            case 1: state.cols++; break;
+                            case 2: state.rows = Math.max(1, state.rows - 1); break;
+                            case 3: state.cols = Math.max(1, state.cols - 1); break;
                             case 4: return;
                             // case 4: state.width += 2; break;
                             // case 5: state.width = Math.max(4, state.width - 2); break;
@@ -346,7 +370,7 @@
         "field": {
             description: "Text, number, slider, date, or time input",
             exec: function(arg) {
-                selectFromMenu(editor, ["Textbox", "Multi line textbox", "Slider", "Spinner", "Date", "Time"], function(selectedIndex) {
+                selectFromMenu(editor, ["Text box", "Text area", "Slider", "Spinner", "Date", "Time"], function(selectedIndex) {
                     switch(selectedIndex) {
                         case 0: //text
                             insertSnippet('<input id="${1:ID}" value="${2:Text value}" type="text"> ${3: }');
@@ -484,29 +508,26 @@
         var cmd = match?.[1] || "";
         var arg = match?.[2] || "";
 
+        let keys = Object.keys(COMMANDS).filter(key => !cmd || fuzzyMatch(key, cmd));
+        keys.sort();
+
         let maxNameLength = 0;
-        for (var key in COMMANDS) {
-            if (!cmd || fuzzyMatch(key, cmd)) {
-                if (key.length > maxNameLength) maxNameLength = key.length;
-            }
+        for (let key of keys) {
+            if (key.length > maxNameLength) maxNameLength = key.length;
         }
 
-        for (var key in COMMANDS) {
-            if (!cmd || fuzzyMatch(key, cmd)) {
-                (function(commandKey) {
-                    let spaces = " ".repeat(maxNameLength - commandKey.length + 2);
-                    list.push({
-                        text: "/" + commandKey + (arg ? arg : ""),
-                        displayText: commandKey + spaces + COMMANDS[commandKey].description,
-                        hint: function(cm, data, completion) {
-                            var from = CodeMirror.Pos(cur.line, start - 1);
-                            var to = CodeMirror.Pos(cur.line, end);
-                            cm.replaceRange("", from, to);
-                            COMMANDS[commandKey].exec(arg);
-                        }
-                    });
-                })(key);
-            }
+        for (let commandKey of keys) {
+            let spaces = " ".repeat(maxNameLength - commandKey.length + 2);
+            list.push({
+                text: "/" + commandKey + (arg ? arg : ""),
+                displayText: commandKey + spaces + COMMANDS[commandKey].description,
+                hint: function(cm, data, completion) {
+                    var from = CodeMirror.Pos(cur.line, start - 1);
+                    var to = CodeMirror.Pos(cur.line, end);
+                    cm.replaceRange("", from, to);
+                    COMMANDS[commandKey].exec(arg);
+                }
+            });
         }
 
         return {
