@@ -341,6 +341,13 @@
     padding: 6px 10px;
     cursor: pointer;
     border-radius: 500px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.prompt-preview-list li .icon {
+    font-size: large;
 }
 
 .prompt-preview-list li.selected-option {

@@ -118,7 +118,7 @@
                         <hr>
                         <button class="text-button" onmouseup="searchDocuments(); hideAllMenus();">
                             Search documents
-                            <kbd>Ctrl+E</kbd>
+                            <kbd>Ctrl+K</kbd>
                         </button>
                         <hr />
                         <button class="text-button" onmouseup="showResourcesDialog(); hideAllMenus();">
@@ -180,7 +180,7 @@
                     <button id="replace-all-btn" class="text-button button-group-member right">Rep. all</button>
                 </div>
             </header>
-            <textarea id="editor" class="editor"></textarea>
+            <textarea id="editor" class="editor" style="background-color: transparent; color: white; border: none;">Loading editor...</textarea>
             <div id="preview" class="preview"></div>
             <div class="status-bar" id="status">
                 <div class="status-bar-left">
@@ -266,70 +266,128 @@
         <script src="script/edit.js"></script>
         <script src="script/settings.js"></script>
         <script>
+            // if multiple tabs are open, reload when storage changes
             window.addEventListener("storage", (event) => {
                 if (event.key === "markdownFiles") {
                     location.reload();
                 }
             });
 
+            // Load documents from local storage
             loadFilesFromStorage();
 
+            // Search menu actions (Ctrl/Cmd-K)
+            addSearchMenuAction("Settings", "Settings", function() {showMessageFromFile('dialogs/settings.html', true, false, true, true, 900);});
+            addSearchMenuAction("Resources", "Image", function() {showResourcesDialog();});
+
+            // Retrieve last index from local storage, default to 0
             let index = localStorage.getItem("lastIndex") || 0;
 
+            // Show landing page if no files or intro parameter is set
+            const urlParams = new URLSearchParams(window.location.search);
+            const introParam = urlParams.get('intro');
+            if (
+                files.length < 1 ||
+                (introParam === 'true') ||
+                (introParam === null && files.length < 1)
+            ) {
+                if (introParam !== 'false') {
+                    showMessageFromFile('landing.html', false, true, false, false);
+
+                    const landingKeyHandler = (event) => {
+                        if (/^[a-zA-Z0-9]$/.test(event.key)) {
+                            fadeOutAllDialogs();
+                            editor.focus();
+                            document.removeEventListener("keydown", landingKeyHandler);
+                        }
+                    };
+
+                    document.addEventListener("keydown", landingKeyHandler);
+                }
+            }
+
+            //
+            // EDITOR
+            //
+
             const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
-                mode: "markdown",
-                lineNumbers: Settings.getSetting("editorLineNumbers", false) === "true",
-                theme: "default",
-                lineWrapping: true,
-                autoCloseBrackets: Settings.getSetting("editorAutoCloseBrackets", "true") === "true",
-                autoCloseTags: Settings.getSetting("editorAutoCloseTags", "false") === "true",
-                extraKeys: {
-                    Enter: "newlineAndIndentContinueMarkdownList",
-                    "Ctrl-Space": "autocomplete",
-                    Tab: _snippetTab,
-                    "Shift-Tab": _snippetShiftTab,
-                },
-                keyMap: "sublime",
-                direction: Settings.getSetting("editorDirection", "ltr"),
-                showCursorWhenSelecting: true,
-                styleActiveLine: Settings.getSetting("editorHighlightActiveLine", "true") === "true",
+                    mode: "markdown",                                                                       // Set mode to markdown, hardcoded
+                    lineNumbers: Settings.getSetting("editorLineNumbers", "false") === "true",              // Show line numbers based on settings, false as default
+                    theme: "default",                                                                       // Set theme to default, hardcoded
+                    lineWrapping: true,                                                                     // Enable line wrapping, hardcoded
+                    autoCloseBrackets: Settings.getSetting("editorAutoCloseBrackets", "true") === "true",   // Auto close brackets based on settings, true as default
+                    autoCloseTags: Settings.getSetting("editorAutoCloseTags", "false") === "true",          // Auto close tags based on settings, false as default
+                    extraKeys: {
+                        Enter: "newlineAndIndentContinueMarkdownList",  // Pressing Enter continues markdown lists
+                        "Ctrl-Space": "autocomplete",                   // Trigger autocomplete with Ctrl-Space
+                        Tab: _snippetTab,                               // Custom snippet tab function
+                        "Shift-Tab": _snippetShiftTab,                  // Custom snippet shift-tab function
+                        "Ctrl-K": false,                                // Disable default Ctrl-K behavior
+                        "Cmd-K": false                                  // Disable default Cmd-K behavior (for Mac)
+                    },
+                    keyMap: "sublime",                                                                      // Use Sublime Text keymap, hardcoded
+                    direction: Settings.getSetting("editorDirection", "ltr"),                               // Set text direction based on settings, default to left-to-right
+                    showCursorWhenSelecting: true,                                                          // Show cursor when selecting text, hardcoded
+                    styleActiveLine: Settings.getSetting("editorHighlightActiveLine", "true") === "true",   // Highlight active line based on settings, true as default
             });
 
-            editor.addOverlay(markOverlay);
-            editor.addOverlay(htmlEntityOverlay);
-            editor.addOverlay(underlineOverlay);
+            // Add overlays
+            editor.addOverlay(markOverlay); // Overlay for displaying ==highlighted text==
+            editor.addOverlay(underlineOverlay); // Overlay for displaying __underlined text__
 
-            const editorMenu = document.getElementById("editorMenu");
-            const hrContextualSeparator = document.getElementById("contextual-selection-separator");
-            const btnFormatTable = document.getElementById("formatTable");
-            const btnOpenURL = document.getElementById("openSelectedURL");
-            const btnPeek = document.getElementById("peekmedia");
+            const editorMenu = document.getElementById("editorMenu"); // editor context menu
+            const hrContextualSeparator = document.getElementById("contextual-selection-separator"); // horizontal line shown when contextual options are available
+            const btnFormatTable = document.getElementById("formatTable"); // button to format selected text as table
+            const btnOpenURL = document.getElementById("openSelectedURL"); // button to open selected URL
+            const btnPeek = document.getElementById("peekmedia"); // button to peek selected media
 
+            /**
+             * Render the editor content based on the current index
+             */
+            function renderEditor() {
+                if (!files[index]) files[index] = "";
+                editor.setValue(files[index]);
+                document.getElementById("filename").innerText = getFileTitle(index) || "New document";
+                document.title = getFileTitle(index) || "New document - Cohesion";
+            }
+
+            // Handle right-click context menu
             editor.getWrapperElement().addEventListener("contextmenu", function (e) {
                 e.preventDefault();
 
-            if (hasTableSelected()) {
-                hrContextualSeparator.style.display = "block";
-                btnFormatTable.style.display = "flex";
-                btnOpenURL.style.display = "none";
-                btnPeek.style.display = "none";
-            } else if (hasMediaSelected()) {
-                hrContextualSeparator.style.display = "block";
-                btnFormatTable.style.display = "none";
-                btnOpenURL.style.display = "none";
-                btnPeek.style.display = "flex";
-            } else if (hasURLSelected()) {
-                hrContextualSeparator.style.display = "block";
-                btnFormatTable.style.display = "none";
-                btnOpenURL.style.display = "flex";
-                btnPeek.style.display = "none";
-            } else {
-                hrContextualSeparator.style.display = "none";
-                btnFormatTable.style.display = "none";
-                btnOpenURL.style.display = "none";
-                btnPeek.style.display = "none";
-            }
+                // if table selected, show format table option
+                if (hasTableSelected()) {
+                    hrContextualSeparator.style.display = "block";
+                    btnFormatTable.style.display = "flex";
+                    btnOpenURL.style.display = "none";
+                    btnPeek.style.display = "none";
+                }
+                
+                // if media selected, show peek option
+                else if (hasMediaSelected()) {
+                    hrContextualSeparator.style.display = "block";
+                    btnFormatTable.style.display = "none";
+                    btnOpenURL.style.display = "none";
+                    btnPeek.style.display = "flex";
+                }
+                
+                // if URL selected, show open URL option
+                else if (hasURLSelected()) {
+                    hrContextualSeparator.style.display = "block";
+                    btnFormatTable.style.display = "none";
+                    btnOpenURL.style.display = "flex";
+                    btnPeek.style.display = "none";
+                } 
+                
+                // else, hide contextual options
+                else {
+                    hrContextualSeparator.style.display = "none";
+                    btnFormatTable.style.display = "none";
+                    btnOpenURL.style.display = "none";
+                    btnPeek.style.display = "none";
+                }
 
+                // Show context menu at mouse position
                 const rect = editor.getWrapperElement().getBoundingClientRect();
                 editorMenu.style.top = e.clientY + "px";
                 editorMenu.style.left = e.clientX + "px";
@@ -343,6 +401,14 @@
                 editorMenu.addEventListener("keydown", handleActivation);
             });
 
+            // Close context menu on click outside
+            document.addEventListener("click", function () {
+                editorMenu.style.display = "none";
+                editorMenu.removeEventListener("keydown", handleArrowNavigation);
+                editorMenu.removeEventListener("keydown", handleActivation);
+            });
+
+            // Handle paste events
             editor.getWrapperElement().addEventListener("paste", async function (e) {
                 const items = e.clipboardData.items;
                 for (let i = 0; i < items.length; i++) {
@@ -369,85 +435,20 @@
                 }
             });
 
-            document.addEventListener("click", function () {
-                editorMenu.style.display = "none";
-                editorMenu.removeEventListener("keydown", handleArrowNavigation);
-                editorMenu.removeEventListener("keydown", handleActivation);
-            });
-
-            const converter = new showdown.Converter({
-                extensions: ['bannerImage', 'internalLink', 'definitionList', 'abbreviation', 'rubyText'],
-            });
-
-            const preview = document.getElementById("preview");
-
-            const statusBar = document.getElementById("status");
-            const cursorPosLabel = document.getElementById("cursorPosLabel");
-            const documentSizeLabel = document.getElementById("documentSizeLabel");
-            const editorModeLabel = document.getElementById("editorMode");
-
-            const searchField = document.getElementById("search-field");
-            const replaceField = document.getElementById("replace-field");
-            let lastQuery = "";
-            let caseSensitive = false;
-            let useRegex = false;
-            let currentCursor = null;
-
-            function renderEditor() {
-                if (!files[index]) files[index] = "";
-                editor.setValue(files[index]);
-                document.getElementById("filename").innerText = getFileTitle(index) || "New document";
-                document.title = getFileTitle(index) || "New document - Cohesion";
-            }
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const introParam = urlParams.get('intro');
-            if (
-                files.length < 1 ||
-                (introParam === 'true') ||
-                (introParam === null && files.length < 1)
-            ) {
-                if (introParam !== 'false') {
-                    showMessageFromFile('landing.html', false, true, false, false);
-
-                    const landingKeyHandler = (event) => {
-                        if (/^[a-zA-Z0-9]$/.test(event.key)) {
-                            fadeOutAllDialogs();
-                            editor.focus();
-                            document.removeEventListener("keydown", landingKeyHandler);
-                        }
-                    };
-
-                    document.addEventListener("keydown", landingKeyHandler);
-                }
-            }
-
-            try {
-            renderFiles("files");
-            } catch (err) {
-                promptMessage(`
-                    <h1>That's bad...</h1>
-                    <p>Something went wrong while loading the application, and it cannot run safely.</p>
-                `, false);
-            }
-            renderEditor();
-            editor.focus();
-            document.addEventListener("DOMContentLoaded", () => {
-                loadSettings();
-            });
-
             let debounceTimer;
 
+            // Handle editor changes
             editor.on("change", (instance) => {
                 const cursor = instance.getCursor();
                 const content = instance.getValue();
 
-                cursorPosLabel.textContent = `Ln ${cursor.line + 1}, Col ${cursor.ch + 1}`;
+                cursorPosLabel.textContent = `Ln ${cursor.line + 1}, Col ${cursor.ch + 1}`; // Update cursor position label
 
                 const charCount = content.length;
                 const wordCount = content.trim().split(/\s+/).filter(Boolean).length;
-                documentSizeLabel.textContent = `${charCount} Characters, ${wordCount} Words`;
+                documentSizeLabel.textContent = `${charCount} Characters, ${wordCount} Words`; // Update document size label
 
+                // Debounce saving to avoid excessive writes
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(() => {
                     updateFile(content, index);
@@ -461,6 +462,7 @@
                 }, 100);
             });
 
+            // Handle autocomplete on input
             editor.on("inputRead", function (cm, change) {
                 if (Settings.getSetting("editorShowHints", "true") === "false") return;
 
@@ -509,6 +511,58 @@
                 }
             });
 
+            //
+            // MARKDOWN CONVERTER
+            //
+
+            const converter = new showdown.Converter({
+                extensions: [
+                    'bannerImage', // banner image controled by document meta
+                    'internalLink', // internal link support
+                    'definitionList', // definition list support
+                    'abbreviation', // abbreviation support
+                    'rubyText' // ruby text support
+                ],
+            });
+
+            // MD previewer element
+            const preview = document.getElementById("preview");
+
+            // Status bar elements
+            const statusBar = document.getElementById("status");
+            const cursorPosLabel = document.getElementById("cursorPosLabel");
+            const documentSizeLabel = document.getElementById("documentSizeLabel");
+            const editorModeLabel = document.getElementById("editorMode");
+
+            // Search (Ctrl-F) and replace (Ctrl-H) elements
+            const searchField = document.getElementById("search-field");
+            const replaceField = document.getElementById("replace-field");
+            let lastQuery = "";
+            let caseSensitive = false;
+            let useRegex = false;
+            let currentCursor = null;
+
+            // Render files and handle fatal errors by locking the app
+            try {
+            renderFiles("files");
+            } catch (err) {
+                promptMessage(`
+                    <h1>That's bad...</h1>
+                    <p>Something went wrong while loading the application, and it cannot run safely.</p>
+                `, false);
+            }
+
+            renderEditor();
+            editor.focus();
+            
+            document.addEventListener("DOMContentLoaded", () => {
+                loadSettings();
+            });
+
+            /**
+             * Toggle between editor and preview modes
+             * @param {string} forceMode - "preview" to force preview mode, "editor" to force editor mode, or undefined to toggle
+             */
             function togglePreview(forceMode) {
                 const isOn = preview.classList.contains("on");
                 const readBtn = document.getElementById("readbtn");
@@ -545,6 +599,11 @@
                 }
             }
 
+            /**
+             * Toggle the search header visibility
+             * @param {string} text - Text to populate the search field with
+             * @param {boolean|null} force - true to open, false to close, null to toggle
+             */
             function toggleSearchHeader(text = "", force = null) {
                 const mainHeader = document.getElementById("main-header");
                 const searchHeader = document.getElementById("search-header");
@@ -581,6 +640,11 @@
                 }
             }
 
+            /**
+             * Toggle the replace header visibility
+             * @param {string} text - Text to populate the search field with
+             * @param {boolean|null} force - true to open, false to close, null to toggle
+             */
             function toggleReplaceHeader(text = "", force = null) {
                 const mainHeader = document.getElementById("main-header");
                 const searchHeader = document.getElementById("search-header");
@@ -617,25 +681,10 @@
                 }
             }
 
-            function extractMetadata(markdown) {
-                const metaMatch = markdown.match(/«««([\s\S]*?)»»»/);
-                if (!metaMatch) return {};
-
-                const metaText = metaMatch[1];
-                const metaLines = metaText.split('\n').map(line => line.trim()).filter(Boolean);
-
-                const metadata = {};
-                metaLines.forEach(line => {
-                    const [key, ...rest] = line.split(':');
-                    if (key && rest.length) {
-                        metadata[key.trim()] = rest.join(':').trim();
-                    }
-                });
-            
-                return metadata;
-            }
-
-
+            /**
+             * Update the markdown preview
+             * @param {string} markdown - The markdown content to render
+             */
             async function updateMarkdown(markdown) {
                 let codeBlocks = [];
                 const placeholder = "￼";
@@ -698,13 +747,19 @@
                 });
             }
 
+            /**
+             * Load user settings and apply them to the editor and UI
+             * These aren't all settings, only those that need to be applied on load
+             */
             function loadSettings() {
+                // theme
                 const theme = Settings.getSetting("theme");
                 if (theme) document.body.className = theme;
                 if (Settings.getSetting("theme") === "theme-custom") {
                     applyCustomTheme(Settings.getSetting("theme-custom-value", ""));
                 }
 
+                // fonts
                 const root = document.documentElement;
 
                 const editorFont = Settings.getSetting("editorFont");
@@ -715,6 +770,7 @@
                 if (paragraphFont) root.style.setProperty("--font-text", paragraphFont);
                 if (titleFont) root.style.setProperty("--font-title", titleFont);
 
+                // meta theme-color
                 const metaTag = document.querySelector('meta[name="theme-color"]');
                 const colorValue = getComputedStyle(document.body).getPropertyValue("--background-color-2").trim();
 
@@ -722,6 +778,7 @@
                     metaTag.setAttribute("content", colorValue);
                 }
 
+                // status bar
                 if (Settings.getSetting("statusShow", "true") != "true") statusBar.style.display = "none";
                 else statusBar.style.display = "flex";
 
@@ -734,6 +791,7 @@
                 if (Settings.getSetting("statusDocumentSize", "true") != "true") documentSizeLabel.style.display = "none";
                 else documentSizeLabel.style.display = "flex";
 
+                // editor width
                 if (Settings.getSetting("editorWidth", "false") === "true") {
                     editor.getWrapperElement().classList.add('CodeMirror-Large');
                 }
@@ -749,6 +807,15 @@
                 styleEl.textContent = `.theme-custom { ${cssText} }`;
             }
 
+            //
+            // SEARCH AND REPLACE
+            //
+
+            /**
+             * Get a search cursor for the given query
+             * @param {string} query - The search query
+             * @returns {CodeMirror.SearchCursor} - The search cursor
+             */
             function getCursor(query) {
                 const cm = editor;
                 const flags = caseSensitive ? "" : "i";
@@ -769,6 +836,9 @@
                 return cm.getSearchCursor(regex);
             }
 
+            /**
+             * Update the current search cursor based on the search field value
+             */
             function updateCursor() {
                 const query = searchField.value;
                 if (query) {
@@ -903,165 +973,94 @@
                 }
             }
 
-            document.addEventListener("keydown", async function (event) {
-                /** NAVIGATION **/
+            //
+            // KEYBOARD SHORTCUTS
+            //
 
-                //// Focus on editor (esc)
-                if (event.key === "Escape") {
+            const shortcuts = [
+                // NAVIGATION
+                //// close menus/dialogs (Escape)
+                { match: e => e.key === "Escape" && !e.ctrlKey && !e.altKey && !e.shiftKey, handler: async () => {
                     hideAllMenus();
                     closeAllDialogs();
                     editor.focus();
                     editorMenu.style.display = "none";
                     editorMenu.removeEventListener("keydown", handleArrowNavigation);
                     editorMenu.removeEventListener("keydown", handleActivation);
-                }
-                //// Toggle preview (ctrl p)
-                else if (event.ctrlKey && event.key === "p") {
-                    event.preventDefault();
-                    togglePreview();
-                }
-                //// About cohesion (f1)
-                else if (event.key === "F1") {
-                    event.preventDefault();
-                    showMessageFromFile("about.html");
-                }
-                //// Toggle sidebar (f9)
-                else if (event.key === "F9") {
-                    event.preventDefault();
-                    toggleSidebar("files-bar");
-                }
-                //// Toggle main menu (f10)
-                else if (event.key === "F10") {
-                    event.preventDefault();
-                    toggleDropdown("more-menu");
-                }
-                //// Toggle insert menu (ctrl i)
-                else if (event.altKey && event.key === "i") {
-                    event.preventDefault();
-                    toggleDropdown("insert-menu");
-                }
-                //// Show settings screen (ctrl ,)
-                else if (event.ctrlKey && event.key === ",") {
-                    event.preventDefault();
-                    showMessageFromFile("dialogs/settings.html", true, false, true, true, 900);
-                    hideAllMenus();
-                }
-                //// Show shortcuts screen (ctrl ? || ctrl shift ?)
-                else if (event.ctrlKey && event.key === "?") {
-                    event.preventDefault();
-                    // showMessageFromFile("dialogs/shortcuts.html", true, false, true, true, 600);
-                    window.open('https://github.com/flarom/cohesion/wiki/Keyboard-shortcuts', '_blank');
-                    hideAllMenus();
-                }
-                //// Show resources screen (alt r)
-                else if (event.altKey && event.key === "r") {
-                    event.preventDefault();
-                    showResourcesDialog();
-                    hideAllMenus();
-                }
-                //// Switch between the first ten documents (alt 1-0)
-                else if (event.altKey && /^[0-9]$/.test(event.key)) {
-                    event.preventDefault();
-                    const newIndex = event.key === "0" ? 9 : parseInt(event.key) - 1;
+                }, preventDefault: false },
+
+                //// toggle preview (Ctrl+P)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "p", handler: () => togglePreview(), preventDefault: true },
+                //// show about dialog (F1)
+                { match: e => e.key === "F1", handler: () => showMessageFromFile("about.html"), preventDefault: true },
+                //// toggle files sidebar (F9)
+                { match: e => e.key === "F9", handler: () => toggleSidebar("files-bar"), preventDefault: true },
+                //// toggle more menu (F10)
+                { match: e => e.key === "F10", handler: () => toggleDropdown("more-menu"), preventDefault: true },
+                //// toggle insert menu (Alt+I)
+                { match: e => e.altKey && e.key.toLowerCase() === "i", handler: () => toggleDropdown("insert-menu"), preventDefault: true },
+                //// open settings (Ctrl+, [Comma])
+                { match: e => e.ctrlKey && e.key === ",", handler: () => { showMessageFromFile("dialogs/settings.html", true, false, true, true, 900); hideAllMenus(); }, preventDefault: true },
+                //// open keyboard shortcuts wiki (Ctrl+?)
+                { match: e => e.ctrlKey && e.key === "?", handler: () => { window.open('https://github.com/flarom/cohesion/wiki/Keyboard-shortcuts', '_blank'); hideAllMenus(); }, preventDefault: true },
+                //// open resources manager (Alt+R)
+                { match: e => e.altKey && e.key.toLowerCase() === "r", handler: () => { showResourcesDialog(); hideAllMenus(); }, preventDefault: true },
+
+                //// switch first ten docs (Alt+1..0)
+                { match: e => e.altKey && /^[0-9]$/.test(e.key), handler: (e) => {
+                    const newIndex = e.key === "0" ? 9 : parseInt(e.key) - 1;
                     if (newIndex > files.length - 1) return;
                     index = newIndex;
                     renderEditor();
                     editor.focus();
-                }
-                //// Search documents (ctrl e)
-                else if (event.ctrlKey && event.key === "e") {
-                    event.preventDefault();
+                }, preventDefault: true },
 
-                    searchDocuments();
-                }
-
-                /** FILE **/
-
-                //// New file (ctrl n)
-                else if (event.altKey && event.key === "n") {
-                    event.preventDefault();
-                    createFile();
-                }
-                //// Download file (ctrl s)
-                else if (event.ctrlKey && event.key === "s") {
-                    event.preventDefault();
-                    promptSaveFile(index);
-                }
-                //// Upload file (ctrl o)
-                else if (event.ctrlKey && event.key === "o") {
-                    event.preventDefault();
-                    importFile();
-                }
-                //// Delete file (ctrl shift delete)
-                else if (event.shiftKey && event.ctrlKey && event.key === "Delete") {
-                    event.preventDefault();
+                // FILE
+                //// create new file (Alt+N) (I wanted it to be Ctrl+N, but that is reserved by the browser TwT )
+                { match: e => e.altKey && e.key.toLowerCase() === "n", handler: () => createFile(), preventDefault: true },
+                //// export file (CTRL+S)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "s", handler: () => promptSaveFile(index), preventDefault: true },
+                //// import file (CTRL+O)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "o", handler: () => importFile(), preventDefault: true },
+                //// delete current file (Ctrl+Shift+Delete)
+                { match: e => e.ctrlKey && e.shiftKey && e.key === "Delete", handler: async () => {
                     if (!(await promptConfirm("Delete this document?", true))) return;
-
                     deleteFile(index);
                     saveFilesToStorage();
-                    if (files.length === 0) {
-                        createFile();
-                    }
+                    if (files.length === 0) createFile();
                     index = files.length - 1;
                     renderFiles("files");
                     renderEditor();
                     editor.focus();
                     showToast("Deleted", "delete");
-                }
+                }, preventDefault: true },
 
-                /** EDIT **/
+                // EDIT
+                //// **bold** (Ctrl+B)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "b", handler: () => formatBold(), preventDefault: true },
+                //// *italic* (Ctrl+I)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "i", handler: () => formatItalic(), preventDefault: true },
+                //// __underline__ (Ctrl+U)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "u", handler: () => toggleLineStart("- ", true, ["- ", "* ", "+ "]), preventDefault: true },
+                //// # headings (Ctrl+1..6)
+                { match: e => e.ctrlKey && e.key >= "1" && e.key <= "6", handler: (e) => {
+                    const level = parseInt(e.key, 10);
+                    toggleLineStart("#".repeat(level) + " ", true, Array.from({ length: 6 }, (_, i) => "#".repeat(i + 1) + " "));
+                }, preventDefault: true },
+                //// [URL]() (Ctrl+Shift+K)
+                { match: e => e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "k", handler: () => formatUrl(), preventDefault: true },
+                //// Vertical Separator (Ctrl+R)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "r", handler: () => insertAt("\n\n***\n\n", 7, 7), preventDefault: true },
 
-                //// Bold (ctrl b)
-                else if (event.ctrlKey && event.key === "b") {
-                    event.preventDefault();
-                    formatBold();
-                }
-                //// Italic (ctrl i)
-                else if (event.ctrlKey && event.key === "i") {
-                    event.preventDefault();
-                    formatItalic();
-                }
-                //// Unordered list (ctrl u)
-                else if (event.ctrlKey && event.key === "u") {
-                    event.preventDefault();
-                    toggleLineStart("- ", true, ["- ", "* ", "+ "]);
-                }
-                //// Title (ctrl 1-6)
-                else if (event.ctrlKey && event.key >= "1" && event.key <= "6") {
-                    event.preventDefault();
-                    const level = parseInt(event.key, 10);
-                    toggleLineStart(
-                        "#".repeat(level) + " ",
-                        true,
-                        Array.from({ length: 6 }, (_, i) => "#".repeat(i + 1) + " ")
-                    );
-                }
-                //// Link (ctrl shift k)
-                else if (event.shiftKey && event.ctrlKey && event.key === "K") {
-                    event.preventDefault();
-                    formatUrl();
-                }
-                //// Horizontal rule (ctrl r)
-                else if (event.ctrlKey && event.key === "r") {
-                    event.preventDefault();
-                    insertAt("\n\n***\n\n", 7, 7);
-                }
-
-                /** SEARCH **/
-
-                //// Go to line (ctrl g)
-                else if (event.ctrlKey && event.key === "g") {
-                    event.preventDefault();
-                    search();
-
-                    async function search(warn = false) {
-                        const totalLines = editor.lineCount();
-                        const currentLine = editor.getCursor().line + 1;
-
-                        const message = `Type a number between 1 and ${totalLines} to navigate to:`;
+                // SEARCH
+                //// go to line (Ctrl+G)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "g", handler: async () => {
+                    const totalLines = editor.lineCount();
+                    const currentLine = editor.getCursor().line + 1;
+                    const message = `Type a number between 1 and ${totalLines} to navigate to:`;
+                    async function searchInner(warn = false) {
                         const lineStr = await promptString(message, currentLine, warn);
                         if (!lineStr) return;
-
                         const match = /^\s*(\d+)\s*$/.exec(lineStr);
                         if (match) {
                             const line = parseInt(match[1], 10) - 1;
@@ -1070,47 +1069,52 @@
                                 editor.focus();
                             } else {
                                 showToast("Cant navigate to this line", "warning");
-                                search(true);
+                                await searchInner(true);
                             }
                         } else {
                             showToast("Cant navigate to this line", "warning");
-                            search(true);
+                            await searchInner(true);
                         }
                     }
-                }
-                //// Show search bar (ctrl f)
-                else if (event.ctrlKey && event.key === "f") {
-                    event.preventDefault();
-                    toggleSearchHeader(editor.getSelection());
-                }
-                //// Show search and replace bar (ctrl h)
-                else if (event.ctrlKey && event.key === "h") {
-                    event.preventDefault();
-                    toggleReplaceHeader(editor.getSelection());
-                }
+                    await searchInner();
+                }, preventDefault: true },
 
-                /** INSERT **/
-                
-                //// Insert meta block (ctrl ;)
-                else if (event.ctrlKey && event.key === ";") {
-                    event.preventDefault();
-                    insertAtTop(getMeta());
-                }
-                //// Insert date and time with custom syntax (shift f6)
-                else if (event.shiftKey && event.key === "F6") {
-                    event.preventDefault();
+                //// open search (Ctrl+F)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "f", handler: () => toggleSearchHeader(editor.getSelection()), preventDefault: true },
+                //// open replace (Ctrl+H)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "h", handler: () => toggleReplaceHeader(editor.getSelection()), preventDefault: true },
+                //// search documents (Ctrl+K)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "k", handler: () => searchDocuments(), preventDefault: true },
+
+                // INSERT
+                //// Insert metadata (Ctrl+;)
+                { match: e => e.ctrlKey && e.key === ";", handler: () => insertAtTop(getMeta()), preventDefault: true },
+                //// Insert date/time with custom strftime (Shift+F6)
+                { match: e => e.shiftKey && e.key === "F6", handler: async () => {
                     const strftime = await promptString("Insert date time format", Settings.getSetting("dateFormat", "%d/%m/%Y %H:%M"));
-                    if (strftime){
-                    insertDate(strftime);
-                    }
+                    if (strftime) insertDate(strftime);
                     editor.focus();
-                }
-                //// Insert date and time with default syntax (f6)
-                else if(event.key === "F6") {
-                    event.preventDefault();
-                    insertDate();
-                }
-            });
+                }, preventDefault: true },
+                //// Insert date/time with default strftime (F6)
+                { match: e => e.key === "F6", handler: () => { insertDate(); }, preventDefault: true },
+            ];
+
+            function addKeyboardShortcut(s) {
+                document.addEventListener("keydown", async function (event) {
+                    try {
+                        if (s.match(event)) {
+                            if (s.preventDefault) event.preventDefault();
+                            await s.handler(event);
+                        }
+                    } catch (err) {
+                        console.error("Shortcut handler error:", err);
+                    }
+                });
+            }
+
+            for (const s of shortcuts) {
+                addKeyboardShortcut(s);
+            }
 
             function showResourcesDialog(){
                 let leftPane =

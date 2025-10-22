@@ -207,3 +207,21 @@ function hasMediaSelected() {
 
     return mediaPattern.test(selection);
 }
+
+function extractMetadata(markdown) {
+    const metaMatch = markdown.match(/«««([\s\S]*?)»»»/);
+    if (!metaMatch) return {};
+
+    const metaText = metaMatch[1];
+    const metaLines = metaText.split('\n').map(line => line.trim()).filter(Boolean);
+
+    const metadata = {};
+    metaLines.forEach(line => {
+        const [key, ...rest] = line.split(':');
+        if (key && rest.length) {
+            metadata[key.trim()] = rest.join(':').trim();
+        }
+    });
+
+    return metadata;
+}

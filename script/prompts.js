@@ -614,6 +614,12 @@ function promptIframe() {
     });
 }
 
+const searchMenuActions = [];
+
+function addSearchMenuAction(title, icon, fn) {
+    searchMenuActions.push({ title, icon, fn });
+}
+
 async function promptFileSearch() {
     return new Promise((resolve) => {
         const overlay = document.createElement("div");
@@ -624,7 +630,7 @@ async function promptFileSearch() {
         dialog.className = "prompt-dialog";
 
         const title = document.createElement("p");
-        title.textContent = "Search files...";
+        title.textContent = "Search";
         title.className = "prompt-title";
         dialog.appendChild(title);
 
@@ -724,31 +730,70 @@ async function promptFileSearch() {
             return title.includes(lowerQuery);
         }
 
+        async function executeAction(fn) {
+            try {
+                await Promise.resolve(fn());
+            } catch (e) {
+                console.error("Search action error:", e);
+            }
+            closePrompt(null);
+        }
+
         function updatePreview() {
             const query = input.value.trim();
-            filtered = [];
+            const lowerQuery = query.toLowerCase();
 
+            let fileItems = [];
             if (query) {
-                filtered = files
+                fileItems = files
                     .map((_, i) => ({
                         index: i,
                         title: getFileTitle(i) || `New document`,
                     }))
                     .filter((file) => matchFile(query, file.index))
-                    .slice(0, 10);
+                    .slice(0, 10)
+                    .map(f => ({ type: "file", index: f.index, title: f.title }));
             }
+
+            const actionItems = searchMenuActions
+                .filter(a => {
+                    if (!query) return true;
+                    return a.title.toLowerCase().includes(lowerQuery);
+                })
+                .slice(0, 5)
+                .map(a => ({ type: "action", title: a.title, icon: a.icon, fn: a.fn }));
+
+            filtered = [...actionItems, ...fileItems];
+
+            if (selectedIndex >= filtered.length) selectedIndex = Math.max(0, filtered.length - 1);
 
             previewList.innerHTML = "";
             filtered.forEach((item, i) => {
                 const li = document.createElement("li");
-                li.textContent = item.title;
+
+                const iconSpan = document.createElement("span");
+                iconSpan.className = "icon";
+                iconSpan.innerHTML = item.icon || (item.type === "file" ? "draft" : "");
+
+                li.appendChild(iconSpan);
+                li.appendChild(document.createTextNode(" " + item.title));
+
                 li.className = i === selectedIndex ? "selected-option" : "";
+
+                li.addEventListener("click", () => {
+                    if (item.type === "action") {
+                        executeAction(item.fn);
+                    } else if (item.type === "file") {
+                        closePrompt(item.index);
+                    }
+                });
+
                 previewList.appendChild(li);
             });
         }
 
         function closePrompt(result) {
-            document.body.removeChild(overlay);
+            if (overlay.parentNode) document.body.removeChild(overlay);
             resolve(result);
         }
 
@@ -761,7 +806,12 @@ async function promptFileSearch() {
             if (event.key === "Enter") {
                 if (filtered[selectedIndex]) {
                     event.preventDefault();
-                    closePrompt(filtered[selectedIndex].index);
+                    const sel = filtered[selectedIndex];
+                    if (sel.type === "action") {
+                        executeAction(sel.fn);
+                    } else {
+                        closePrompt(sel.index);
+                    }
                 } else {
                     closePrompt(null);
                 }
