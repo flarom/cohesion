@@ -471,8 +471,9 @@
                 var line = cm.getLine(cursor.line);
                 var beforeCursor = line.slice(0, cursor.ch);
 
+                // display command hints 
                 var match = beforeCursor.match(/\/[\w\-]*$/);
-                if (match) {
+                if (match && Settings.getSetting("editorSuggestCommands", "true") === "true") {
                     cm.showHint({
                         hint: CodeMirror.hint.command,
                         completeSingle: false,
@@ -480,8 +481,9 @@
                     return;
                 }
 
+                // display emoji hints
                 var emojiMatch = beforeCursor.match(/:[\w+\-_]*:?$/);
-                if (emojiMatch) {
+                if (emojiMatch && Settings.getSetting("editorSuggestEmojis", "true") === "true") {
                     cm.showHint({
                         hint: CodeMirror.hint.emoji,
                         completeSingle: false,
@@ -489,11 +491,12 @@
                     return;
                 }
 
+                // display anyword + emoji hints
                 if (!change.text[0].match(/\w/)) return;
 
                 var currentWord = token.string;
 
-                if (currentWord.length >= 2) {
+                if (currentWord.length >= 2 && Settings.getSetting("editorSuggestDocWords", "true") === "true") {
                     cm.showHint({
                         hint: function(cm) {
                             var anyword = CodeMirror.hint.anyword(cm) || {from: cm.getCursor(), to: cm.getCursor(), list: []};

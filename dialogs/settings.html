@@ -129,15 +129,32 @@
                 </datalist>
 
                 <div>
-                    <h4>Behaviour</h4>
+                    <h4>Suggestions</h4>
                     <div class="setting top switch-wrapper">
-                        <span class="switch-text">Auto-complete</span>
+                        <span class="switch-text">Suggest document words</span>
                         <label class="switch">
-                            <input type="checkbox" id="editorShowHints" onchange="Settings.setSetting('editorShowHints', this.checked);" />
+                            <input type="checkbox" id="editorSuggestDocWords" onchange="Settings.setSetting('editorSuggestDocWords', this.checked)" />
                             <span class="slider"></span>
                         </label>
-                    </div>                        
+                    </div>
                     <div class="setting switch-wrapper">
+                        <span class="switch-text">Suggest emojis</span>
+                        <label class="switch">
+                            <input type="checkbox" id="editorSuggestEmojis" onchange="Settings.setSetting('editorSuggestEmojis', this.checked)" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting bottom switch-wrapper">
+                        <span class="switch-text">Suggest slash commands</span>
+                        <label class="switch">
+                            <input type="checkbox" id="editorSuggestCommands" onchange="Settings.setSetting('editorSuggestCommands', this.checked)" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <h4>Behavior</h4>
+                    <div class="setting top switch-wrapper">
                         <span class="switch-text">Auto-close brackets</span>
                         <label class="switch">
                             <input type="checkbox" id="editorAutoCloseBrackets" onchange="Settings.setSetting('editorAutoCloseBrackets', this.checked); location.reload()">
@@ -344,7 +361,10 @@
                 txtFontTitle.value = Settings.getSetting("titleFont", "Ubuntu");
 
                 // editor
-                const cbxEditorShowHints = document.getElementById("editorShowHints");
+                // const cbxEditorShowHints = document.getElementById("editorShowHints");
+                const cbxEditorSuggestDocWords = document.getElementById("editorSuggestDocWords");
+                const cbxEditorSuggestEmojis = document.getElementById("editorSuggestEmojis");
+                const cbxEditorSuggestCommands = document.getElementById("editorSuggestCommands");
                 const cbxEditorLineNumbers = document.getElementById("editorLineNumbers");
                 const cbxEditorDirection = document.getElementById("editorDirection");
                 const cbxEditorWidth = document.getElementById("editorWidth");
@@ -352,7 +372,10 @@
                 const cbxEditorAutoCloseBrackets = document.getElementById('editorAutoCloseBrackets');
                 const cbxEditorAutoCloseTags = document.getElementById('editorAutoCloseTags');
                 const txtEditorDate = document.getElementById("editorDate");
-                if (Settings.getSetting("editorShowHints", "true") === "true") cbxEditorShowHints.checked = "true";
+                // if (Settings.getSetting("editorShowHints", "true") === "true") cbxEditorShowHints.checked = "true";
+                if (Settings.getSetting("editorSuggestDocWords", "true") === "true") cbxEditorSuggestDocWords.checked = "true";
+                if (Settings.getSetting("editorSuggestEmojis", "true") === "true") cbxEditorSuggestEmojis.checked = "true";
+                if (Settings.getSetting("editorSuggestCommands", "true") === "true") cbxEditorSuggestCommands.checked = "true";
                 if (Settings.getSetting("editorLineNumbers", "false") === "true") cbxEditorLineNumbers.checked = "true";
                 if (Settings.getSetting("editorDirection", "ltr") === "rtl") cbxEditorDirection.checked = "true";
                 if (Settings.getSetting("editorWidth", "false") === "true") cbxEditorWidth.checked = "true";
