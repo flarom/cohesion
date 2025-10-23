@@ -1814,8 +1814,8 @@
             const labelIdRegex = /^\[\!(.+?)(?::(.*?))?\](?:\((.+?)\))?$/;
             let match = firstLine.match(labelIdRegex);
 
-            let badgeClass = null;
-            let badgeLabel = null;
+            let badgeClass = "";
+            let badgeLabel = "";
             let blockId = null;
             let customColor = null;
 
