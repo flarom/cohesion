@@ -152,6 +152,7 @@ button.primary {
 }
 
 button.primary:hover {
+    color: var(--button-color-2);
     background-color: var(--highlight-color);
     box-shadow: 0px 0px 30px var(--highlight-color);
 }

@@ -329,6 +329,7 @@
                     direction: Settings.getSetting("editorDirection", "ltr"),                               // Set text direction based on settings, default to left-to-right
                     showCursorWhenSelecting: true,                                                          // Show cursor when selecting text, hardcoded
                     styleActiveLine: Settings.getSetting("editorHighlightActiveLine", "true") === "true",   // Highlight active line based on settings, true as default
+                    indentUnit: 4,
             });
 
             // Add overlays
@@ -708,6 +709,7 @@
                 preview.innerHTML = converter.makeHtml(markdown);
 
                 preview.querySelectorAll('pre code').forEach((block) => {
+                    if (!block.classList.length) return;
                     hljs.highlightElement(block);
                 });
             

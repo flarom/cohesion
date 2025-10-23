@@ -6,6 +6,40 @@
     <title>Document</title>
 
     <link rel="stylesheet" href="style/landing.css">
+
+    <style>
+        *::selection {
+            background-color: var(--quote-blue-bg);
+            color: var(--quote-blue);
+            font-weight: bold;
+        }
+
+        .highlight {
+            padding: 0 0px 0px 10px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            overflow: hidden;
+            height: 1.3em;
+            position: relative;
+            box-sizing: content-box;
+            transition: width 260ms, background-color 200ms, border-color 200ms;
+            width: auto;
+        }
+
+        .cycle-item {
+            display: inline-block;
+            transform: translateY(100%);
+            opacity: 0;
+            will-change: transform, opacity;
+            animation: slideUp 450ms ease forwards;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to   { transform: translateY(0%);   opacity: 1; }
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -26,8 +60,9 @@
 
     <section class="hero">
         <div>
-            <h1>Bring clarity to your ideas.</h1>
-            <p>Cohesion is a minimal, beautiful, Extended Markdown editor<br>designed for clarity and expression.</p>
+            <h1>Bring <span id="cycling-word" style="background-color: var(--quote-green-bg); color: var(--quote-green);" class="highlight">clarity</span> to your ideas</h1>
+            
+            <p>Cohesion is a minimal, beautiful, Markdown editor<br>designed for clarity and expression</p>
             <div style="margin-top: 40px; margin-bottom: 40px; display: flex; gap: 5px;" translate="no">
                 <button class="primary" onclick="fadeOutAllDialogs()">
                     <span class="icon" style="font-size: 1.5em;">edit</span>
@@ -153,6 +188,49 @@
                 btnText.textContent = showCursor ? 'Start creating... |' : 'Start creating...';
                 btnText2.textContent = showCursor ? 'Start creating... |' : 'Start creating...';
             }, 600);
+
+            const words = [
+                { text: 'structure', bg: 'var(--quote-yellow-bg)', border: 'var(--quote-yellow)'},
+                { text: 'focus', bg: 'var(--quote-red-bg)', border: 'var(--quote-red)'},
+                { text: 'simplicity', bg: 'var(--quote-purple-bg)', border: 'var(--quote-purple)'},
+                { text: 'cohesion', bg: 'var(--quote-blue-bg)', border: 'var(--quote-blue)'},
+                { text: 'clarity', bg: 'var(--quote-green-bg)', border: 'var(--quote-green)'},
+            ];
+            const element = document.getElementById('cycling-word');
+            let index = 0;
+
+            setTimeout(() => {
+                element.style.width = Math.ceil(element.getBoundingClientRect().width) + 'px';
+            }, 0);
+
+            setInterval(() => {
+                const word = words[index];
+                element.style.backgroundColor = word.bg;
+                element.style.color = word.border;
+
+                const temp = document.createElement('span');
+                temp.className = 'cycle-item';
+                temp.style.position = 'absolute';
+                temp.style.visibility = 'hidden';
+                temp.style.transform = 'none';
+                temp.textContent = word.text;
+                element.appendChild(temp);
+
+                const cs = getComputedStyle(element);
+                const paddingH = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+                const borderH = parseFloat(cs.borderLeftWidth) + parseFloat(cs.borderRightWidth);
+                const newWidth = Math.ceil(temp.getBoundingClientRect().width + paddingH + borderH);
+
+                temp.remove();
+
+                element.style.width = newWidth + 'px';
+
+                requestAnimationFrame(() => {
+                    element.innerHTML = `<span class="cycle-item">${word.text}</span>`;
+                });
+
+                index = (index + 1) % words.length;
+            }, 2000);
         })();
 
         function changeTheme() {

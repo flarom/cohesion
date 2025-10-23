@@ -626,17 +626,33 @@ span.CodeMirror-selectedtext {
     opacity: 50%;
 }
 
-.cm-trailing-space-a,
-.cm-trailing-space-b,
-.cm-trailing-space-new-line {
-    background-color: var(--danger-bg);
-    border-radius: 0;
-}
-
-.CodeMirror-line .cm-trailing-space-a:first-of-type {
-    border-radius: 20px 0px 0px 20px;
+.CodeMirror-line .cm-trailing-space-a:first-of-type,
+.CodeMirror-line .cm-trailing-space-b:first-of-type {
+    border-radius: 4px 0px 0px 4px;
 }
 
 .CodeMirror-line .cm-trailing-space-new-line:last-of-type {
-    border-radius: 0px 20px 20px 0px;
+    border-radius: 0px 4px 4px 0px;
+}
+
+.cm-trailing-space-new-line::after {
+    color: var(--text-color);
+    font-family: "Material Symbols Rounded";
+    content: "keyboard_return";
+    font-size: medium;
+    opacity: 70%;
+}
+
+.CodeMirror-line:hover .cm-trailing-space-a,
+.CodeMirror-line:hover .cm-trailing-space-b,
+.CodeMirror-line:hover .cm-trailing-space-new-line,
+.CodeMirror-activeline .cm-trailing-space-a,
+.CodeMirror-activeline .cm-trailing-space-b,
+.CodeMirror-activeline .cm-trailing-space-new-line {
+    background-color: var(--danger-bg);
+}
+.CodeMirror-line:hover .cm-trailing-space-new-line::after,
+.CodeMirror-activeline .cm-trailing-space-new-line::after {
+    color: var(--danger);
+    opacity: 100%;
 }
