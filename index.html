@@ -70,10 +70,10 @@
                 <button class="icon-button" translate="no" onmousedown="toggleSidebar('files-bar')" ondragenter="toggleSidebar('files-bar')" title="Documents">side_navigation</button>
                 <button class="icon-button hide-on-mobile" translate="no" title="New document" onclick="createFile(); togglePreview('editor');">add_box</button>
                 <hr class="hide-on-mobile" />
-                <button class="icon-button hide-on-mobile" translate="no" title="Un-do" onclick="editor.undo();">undo</button>
-                <button class="icon-button hide-on-mobile" translate="no" title="Re-do" onclick="editor.redo();">redo</button>
-                <hr />
-                <div class="dropdown">
+                <button class="icon-button hide-on-mobile hide-on-read-mode" translate="no" title="Un-do" onclick="editor.undo();">undo</button>
+                <button class="icon-button hide-on-mobile hide-on-read-mode" translate="no" title="Re-do" onclick="editor.redo();">redo</button>
+                <hr class="hide-on-read-mode"/>
+                <div class="dropdown hide-on-read-mode">
                     <button class="icon-button" translate="no" onmousedown="toggleDropdown('insert-menu')" title="Insert">attach_filearrow_drop_down</button>
                     <div class="dropdown-content menu align-left" id="insert-menu">
                         <button class="text-button" onmouseup="insertDate(); hideAllMenus(); editor.focus()">Date and time <kbd>F6</kbd></button>
@@ -93,6 +93,7 @@
                         <button class="text-button" onmouseup="promptIframe().then((markdown) => {if (markdown) {insertBlock(markdown);}}); hideAllMenus()">Web embed</button>
                     </div>
                 </div>
+                <button class="icon-button hide-on-edit-mode" id="highlighter-btn" translate="no" title="Highlighter" onclick="toggleHighlighter()">stylus_highlighter</button>
             </div>
             <div class="header-center hide-on-tablet">
                 <p id="filename">title</p>
@@ -558,10 +559,28 @@
 
             renderEditor();
             editor.focus();
+
+            setModeVisibility(preview.classList.contains("on"));
             
             document.addEventListener("DOMContentLoaded", () => {
                 loadSettings();
             });
+
+            /**
+             * Toggle between editor and preview modes
+             * @param {string} forceMode - "preview" to force preview mode, "editor" to force editor mode, or undefined to toggle
+             */
+            function setModeVisibility(isPreview) {
+                // .hide-on-read-mode deve ficar oculto no modo leitura (preview)
+                document.querySelectorAll('.hide-on-read-mode').forEach(el => {
+                    el.style.display = isPreview ? 'none' : '';
+                });
+
+                // .hide-on-edit-mode deve ficar oculto no modo edição
+                document.querySelectorAll('.hide-on-edit-mode').forEach(el => {
+                    el.style.display = isPreview ? '' : 'none';
+                });
+            }
 
             /**
              * Toggle between editor and preview modes
@@ -588,10 +607,24 @@
                     readBtn.classList.add("button-on");
                     editorModeLabel.innerHTML = "<span class='icon'>import_contacts</span><span>Read mode</span>";
 
+                    setModeVisibility(true);
+
                     requestAnimationFrame(() => {
                         preview.scrollTop = scrollRatio * (preview.scrollHeight - preview.clientHeight);
                     });
                 } else {
+                    // Always disable highlighter when returning to edit mode
+                    if (highlighterActive) {
+                        highlighterActive = false;
+                        const btn = document.getElementById("highlighter-btn");
+                        if (btn) btn.classList.remove("button-on");
+                        document.body.classList.remove("highlighter-active");
+
+                        const wrapper = editor.getWrapperElement();
+                        if (wrapper) wrapper.style.cursor = "";
+                        if (preview) preview.style.cursor = "";
+                    }
+
                     preview.classList.remove("on");
                     editor.getWrapperElement().style.display = "block";
                     editor.focus();
@@ -600,6 +633,8 @@
                     readBtn.classList.remove("button-on");
 
                     editorModeLabel.innerHTML = "<span class='icon'>edit</span><span>Edit mode</span>";
+
+                    setModeVisibility(false);
                 }
             }
 
@@ -1159,6 +1194,86 @@
                     showMedia(mediaURL);
                 }
             }
+
+            // HIGHLIGHTER
+            let highlighterActive = false;
+            const highlighterBtn = document.getElementById("highlighter-btn");
+
+            function toggleHighlighter() {
+                highlighterActive = !highlighterActive;
+                highlighterBtn.classList.toggle("button-on", highlighterActive);
+                document.body.classList.toggle("highlighter-active", highlighterActive);
+            }
+
+            // Apply highlight in editor
+            editor.getWrapperElement().addEventListener("mouseup", function (e) {
+                if (!highlighterActive) return;
+                const sel = editor.getSelection();
+                if (!sel || sel.length === 0) return;
+
+                // Case A: selection itself already contains <mark>...</mark> => remove tags
+                if (sel.startsWith("<mark>") && sel.endsWith("</mark>")) {
+                    const inner = sel.slice(6, sel.length - 7);
+                    editor.replaceSelection(inner);
+                    return;
+                }
+
+                const from = editor.getCursor("from");
+                const to = editor.getCursor("to");
+                const startIdx = editor.indexFromPos(from);
+                const endIdx = editor.indexFromPos(to);
+                const content = editor.getValue();
+
+                // Case B: selection is the inner text and it's surrounded by <mark>...</mark> in the document => unwrap
+                const before = content.slice(Math.max(0, startIdx - 6), startIdx); // "<mark>" length 6
+                const after = content.slice(endIdx, endIdx + 7); // "</mark>" length 7
+                if (before === "<mark>" && after === "</mark>") {
+                    editor.operation(() => {
+                        editor.replaceRange("", editor.posFromIndex(endIdx), editor.posFromIndex(endIdx + 7));
+                        editor.replaceRange("", editor.posFromIndex(startIdx - 6), editor.posFromIndex(startIdx));
+                        editor.setSelection(editor.posFromIndex(startIdx - 6), editor.posFromIndex(endIdx - 6));
+                    });
+                    return;
+                }
+
+                // Default: wrap selection with <mark>
+                editor.replaceSelection("<mark>" + sel + "</mark>");
+            });
+
+            // Apply highlight in preview (read mode)
+            preview.addEventListener("mouseup", function (e) {
+                if (!highlighterActive) return;
+                const sel = window.getSelection();
+                if (!sel || sel.isCollapsed) return;
+
+                try {
+                    const range = sel.getRangeAt(0);
+                    const container = range.commonAncestorContainer.nodeType === 3 ? range.commonAncestorContainer.parentElement : range.commonAncestorContainer;
+                    const markAncestor = container && container.closest ? container.closest("mark") : null;
+
+                    // If selection is fully inside an existing <mark>, unwrap that <mark>
+                    if (markAncestor && markAncestor.contains(range.startContainer) && markAncestor.contains(range.endContainer)) {
+                        const parent = markAncestor.parentNode;
+                        while (markAncestor.firstChild) parent.insertBefore(markAncestor.firstChild, markAncestor);
+                        parent.removeChild(markAncestor);
+                        sel.removeAllRanges();
+                        return;
+                    }
+
+                    // Otherwise wrap selection with a new <mark>
+                    const mark = document.createElement("mark");
+                    range.surroundContents(mark);
+                    sel.removeAllRanges();
+                } catch (err) {
+                    // Fallback: replace first occurrence of selected text inside preview HTML
+                    const text = sel.toString();
+                    if (!text) return;
+                    const escaped = text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+                    const re = new RegExp(escaped);
+                    preview.innerHTML = preview.innerHTML.replace(re, "<mark>" + text + "</mark>");
+                    sel.removeAllRanges();
+                }
+            });
         </script>
     </body>
 </html>

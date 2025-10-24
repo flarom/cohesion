@@ -66,11 +66,11 @@ function handleActivation(e) {
 function toggleSidebar(sidebarId) {
     const sidebar = document.getElementById(sidebarId);
 
-    document.querySelectorAll(".sidebar").forEach((s) => {
-        if (s !== sidebar) {
-            s.classList.remove("show");
-        }
-    });
+    // document.querySelectorAll(".sidebar").forEach((s) => {
+    //     if (s !== sidebar) {
+    //         s.classList.remove("show");
+    //     }
+    // });
 
     sidebar.classList.toggle("show");
 
