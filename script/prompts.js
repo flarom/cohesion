@@ -620,7 +620,7 @@ function addSearchMenuAction(title, icon, fn) {
     searchMenuActions.push({ title, icon, fn });
 }
 
-async function promptFileSearch() {
+async function promptFileSearch(value = '') {
     return new Promise((resolve) => {
         const overlay = document.createElement("div");
         overlay.className = "prompt-overlay";
@@ -637,6 +637,7 @@ async function promptFileSearch() {
         const input = document.createElement("input");
         input.type = "text";
         input.placeholder = 'Search title, ~author, @date, #tag or "text"';
+        input.value = value;
         dialog.appendChild(input);
 
         const previewList = document.createElement("ul");

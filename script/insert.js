@@ -246,7 +246,7 @@ function getMeta() {
 
     const rawMeta = Settings.getSetting(
         "editorMeta",
-        `title: *\nauthors: *\ndate: *\ntags: *\ndescription: *\ncolor: *\nbanner: *`,
+        `title: *\nauthors: *\ndate: *\ntags: *\ndescription: *\ncolor: *\nbanner: *\nicon: *`,
         true
     );
 

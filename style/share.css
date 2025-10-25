@@ -396,8 +396,8 @@ button.danger:hover {
 
 .sidebar .file {
     background-color: var(--background-color-2);
-    border-radius: 15px;
-    padding: 10px;
+    border-radius: 12px;
+    padding: 5px 5px 5px 12px;
     margin-bottom: 5px;
     text-decoration: none;
     color: var(--text-color);
@@ -429,6 +429,22 @@ button.danger:hover {
 
 .sidebar .file p {
     opacity: 75%;
+}
+
+.sidebar .file .icon-button {
+    opacity: 0;
+    transition: .3s opacity;
+}
+
+.sidebar .file.selected .icon-button,
+.sidebar .file:focus .icon-button,
+.sidebar .file:hover .icon-button {
+    opacity: 1;
+}
+@media screen and (max-width: 800px) {
+    .sidebar .file .icon-button {
+        opacity: 1;
+    }
 }
 
 /* toast */

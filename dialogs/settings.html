@@ -416,7 +416,7 @@
 
                 // meta
                 const txtEditorMeta = document.getElementById('editorMeta');
-                txtEditorMeta.value = Settings.getSetting('editorMeta', 'title: *\nauthors: *\ndate: *\ntags: *\ndescription: *\ncolor: *\nbanner: *');
+                txtEditorMeta.value = Settings.getSetting('editorMeta', 'title: *\nauthors: *\ndate: *\ntags: *\ndescription: *\ncolor: *\nbanner: *\nicon: *');
             })();
 
             function insertDateTimeOption(block) {
@@ -459,7 +459,7 @@
 
             function resetEditorMeta() {
                 const txtEditorMeta = document.getElementById('editorMeta');
-                txtEditorMeta.value = 'title: *\nauthors: *\ndate: *\ntags: *\ndescription: *\ncolor: *\nbanner: *';
+                txtEditorMeta.value = 'title: *\nauthors: *\ndate: *\ntags: *\ndescription: *\ncolor: *\nbanner: *\nicon: *';
                 Settings.setSetting('editorMeta', txtEditorMeta.value);
             }
 

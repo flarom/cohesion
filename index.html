@@ -1004,8 +1004,8 @@
                 el.scrollTop = coords.top - 50;
             }
 
-            async function searchDocuments() {
-                const newIndex = await promptFileSearch();
+            async function searchDocuments(value = '') {
+                const newIndex = await promptFileSearch(value);
                 if (newIndex != null) {
                     index = newIndex;
                     renderEditor();
