@@ -361,7 +361,7 @@
             const maxRecent = 5;
             const start = Math.max(0, files.length - maxRecent);
             for (let i = files.length - 1; i >= start; i--) {
-                const title = getFileTitle(i) || "Untitled";
+                const title = getFileTitle(i) || "New document";
                 const a = document.createElement('a');
                 a.href = `markdown-reader.html?id=${i}`;
                 a.className = 'file';

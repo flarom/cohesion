@@ -56,6 +56,10 @@
                 margin-bottom: 10px;
             }
 
+            .setting.top.bottom {
+                border-radius: 15px;
+            }
+
             .setting input {
                 max-width: 300px;
                 margin: 0;
@@ -263,6 +267,13 @@
                 </div>
                 <div>
                     <h4>Document metadata</h4>
+                    <div class="setting top bottom switch-wrapper">
+                        <span class="switch-text">Automatically insert metadata block on new documents</span>
+                        <label class="switch">
+                            <input type="checkbox" id="editorAutoMeta" onchange="Settings.setSetting('editorAutoMeta', this.checked); loadSettings()" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
                     <div class="setting top">
                         <p>Use asterisks to use the default value, you can disable lines by placing # at the start of the line.</p>
                         <button class="icon-button" translate="no" title="Reset" onclick="resetEditorMeta();">refresh</button>
@@ -415,7 +426,9 @@
                 document.getElementById("dateTimeBtn19").innerHTML = strftime("%-S");
 
                 // meta
+                const cbxEditorAutoMeta = document.getElementById('editorAutoMeta');
                 const txtEditorMeta = document.getElementById('editorMeta');
+                if (Settings.getSetting('editorAutoMeta', 'false') === 'true') cbxEditorAutoMeta.checked = 'true';
                 txtEditorMeta.value = Settings.getSetting('editorMeta', 'title: *\nauthors: *\ndate: *\ntags: *\ndescription: *\ncolor: *\nbanner: *\nicon: *');
             })();
 

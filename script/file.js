@@ -27,6 +27,7 @@ function createFile(text = "") {
     saveFilesToStorage();
     renderFiles("files");
     renderEditor();
+    if (Settings.getSetting('editorAutoMeta', 'false') === 'true') {insertAtTop(getMeta());};
 }
 
 /**
