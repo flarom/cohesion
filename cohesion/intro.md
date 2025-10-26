@@ -8,7 +8,7 @@ editor: Cohesion
 »»»
 
 <center>
-<img src=cohesion/favicon.png>
+<img src=cohesion/favicon.svg>
 
 # Welcome to Cohesion
 </center>

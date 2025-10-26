@@ -5,7 +5,7 @@ showdown.extension('bannerImage', function () {
             filter: function (text, converter, options) {
                 const metadata = converter.getMetadata ? converter.getMetadata() : {};
                 const bannerPath = firstString(metadata.banner);
-                const fallback = 'cohesion/favicon.png';
+                const fallback = 'cohesion/favicon.svg';
 
                 function escapeHtml(str) {
                     if (str === undefined || str === null) return '';

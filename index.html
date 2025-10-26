@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>New document</title>
-        <link rel="shortcut icon" href="cohesion/favicon.png" type="image/x-icon" />
+        <link rel="shortcut icon" href="cohesion/favicon.svg" type="image/x-icon" />
 
         <meta content="website" property="og:type" />
 
@@ -67,7 +67,7 @@
     <body class="theme-dark">
         <header class="window-title bottom" id="main-header">
             <div class="header-left">
-                <button class="icon-button" translate="no" onmousedown="toggleSidebar('files-bar')" ondragenter="toggleSidebar('files-bar')" title="Documents">side_navigation</button>
+                <button class="icon-button" translate="no" onmousedown="toggleSidebar('files-bar')" ondragenter="toggleSidebar('files-bar')" title="Toggle sidebar">side_navigation</button>
                 <button class="icon-button hide-on-mobile" translate="no" title="New document" onclick="createFile(); togglePreview('editor');">add_box</button>
                 <hr class="hide-on-mobile" />
                 <button class="icon-button hide-on-mobile hide-on-read-mode" translate="no" title="Un-do" onclick="editor.undo();">undo</button>
@@ -287,24 +287,23 @@
             // Show landing page if no files or intro parameter is set
             const urlParams = new URLSearchParams(window.location.search);
             const introParam = urlParams.get('intro');
-            if (
-                files.length < 1 ||
-                (introParam === 'true') ||
-                (introParam === null && files.length < 1)
-            ) {
-                if (introParam !== 'false') {
-                    showMessageFromFile('landing.html', false, true, false, false);
 
-                    const landingKeyHandler = (event) => {
-                        if (/^[a-zA-Z0-9]$/.test(event.key)) {
-                            fadeOutAllDialogs();
-                            editor.focus();
-                            document.removeEventListener("keydown", landingKeyHandler);
-                        }
-                    };
+            // check if files is empty or only empty strings
+            const allEmpty = files.length === 0 || files.every(f => f.trim() === "");
 
-                    document.addEventListener("keydown", landingKeyHandler);
-                }
+            // show intro if files are empty, or if the intro is set to true
+            if (introParam === 'true' || allEmpty) {
+                showMessageFromFile('landing.html', false, true, false, false);
+
+                const landingKeyHandler = (event) => {
+                    if (/^[a-zA-Z0-9]$/.test(event.key)) {
+                        fadeOutAllDialogs();
+                        editor.focus();
+                        document.removeEventListener("keydown", landingKeyHandler);
+                    }
+                };
+
+                document.addEventListener("keydown", landingKeyHandler);
             }
 
             //
