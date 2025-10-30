@@ -348,8 +348,7 @@
             function renderEditor() {
                 if (!files[index]) files[index] = "";
                 editor.setValue(files[index]);
-                document.getElementById("filename").innerText = getFileTitle(index) || "New document";
-                document.title = getFileTitle(index) || "New document - Cohesion";
+                updateTitle();
             }
 
             // Handle right-click context menu
@@ -455,13 +454,24 @@
                     updateFile(content, index);
                     saveFilesToStorage();
                     renderFiles("files");
-                    document.getElementById("filename").innerText = getFileTitle(index) || "New document";
-                    document.title = getFileTitle(index) || "New document - Cohesion";
+                    updateTitle();
                     if (preview.classList.contains("on")) {
                         updateMarkdown(content);
                     }
                 }, 100);
             });
+
+            function updateTitle() {
+                document.getElementById("filename").innerText = getFileTitle(index) || "New document";
+
+                if(getFileTitle(index)) {
+                    document.title = `${getFileTitle(index)}`;
+
+                    document.title += ` - Cohesion`;
+                } else {
+                    document.title = `Cohesion`;
+                }
+            }
 
             // Handle autocomplete on input
             editor.on("inputRead", function (cm, change) {
@@ -1273,6 +1283,78 @@
                     sel.removeAllRanges();
                 }
             });
+
+            // BACKUP REMINDER BANNER
+            (() => {
+                function parseDateSafe(v) {
+                    if (v === null || v === undefined) return null;
+                    if (typeof v === 'string') {
+                        const s = v.trim();
+                        if (s === '' || s.toLowerCase() === 'null' || s.toLowerCase() === 'undefined') return null;
+                    }
+                    const d = new Date(v);
+                    return isNaN(d.getTime()) ? null : d;
+                }
+
+                const lastLoginRaw = Settings.getSetting('lastLogin', null);
+                const backupReminder = Settings.getSetting('backupReminder', 'true');
+                const now = new Date();
+                const lastLogin = parseDateSafe(lastLoginRaw);
+                const hasFiles = Array.isArray(files) && files.length > 0;
+
+                console.log("lastLogin:", lastLogin, "backupReminder:", backupReminder, "files.length:", hasFiles ? files.length : 0);
+
+                let shouldShowBanner = false;
+                if (backupReminder === 'true' && hasFiles) {
+                    if (!lastLogin) {
+                        shouldShowBanner = true;
+                    } else {
+                        const diffMonths = (now.getFullYear() - lastLogin.getFullYear()) * 12 + (now.getMonth() - lastLogin.getMonth());
+                        if (diffMonths >= 1) {
+                            shouldShowBanner = true;
+                        }
+                    }
+                }
+
+                console.log("Should show backup banner:", shouldShowBanner);
+
+                if (shouldShowBanner) {
+                    showBanner({
+                        message: "<strong>Keep your files safe</strong><br><span style='font-size:small'>Cohesion recommends saving a fresh backup of your files every month.</span>",
+                        buttons: [
+                            {
+                                value: "Download backup",
+                                isPrimary: true,
+                                onclick: (close) => {
+                                    exportBook();
+                                    close && close();
+                                    showToast("Backup downloaded", "download");
+                                }
+                            },
+                            {
+                                value: "Remind me later",
+                                isPrimary: false,
+                                onclick: (close) => {
+                                    Settings.setSetting('lastLogin', null);
+                                    close && close();
+                                }
+                            }
+                        ],
+                        menuButtons: [
+                            {
+                                value: "Don't remind me again",
+                                onclick: (close) => {
+                                    Settings.setSetting('backupReminder', 'false');
+                                    close && close();
+                                }
+                            }
+                        ]
+                    });
+                }
+
+                Settings.setSetting('lastLogin', now.toISOString());
+                console.log("Updated lastLogin to:", now.toISOString());
+            })();
         </script>
     </body>
 </html>

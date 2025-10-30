@@ -447,3 +447,55 @@
 .prompt-dialog + .drop-area:hover {
     padding: 0;
 }
+
+.prompt-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--quote-blue-bg);
+    border-bottom: 1px solid var(--quote-blue);
+    color: var(--text-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    box-sizing: border-box;
+    z-index: 9999;
+    font-family: sans-serif;
+}
+
+/* .prompt-banner-left {
+} */
+
+.prompt-banner-right {
+    display: flex;
+    gap: 8px;
+}
+
+.prompt-text-button {
+    background: transparent;
+    border: none;
+    color: var(--button-color);
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.prompt-text-button:hover {
+    background: var(--hover-color);
+    color: var(--button-color);
+}
+.prompt-primary {
+    background-color: var(--highlight-color);
+    color: var(--button-color-2);
+}
+.prompt-icon-button {
+    font-family: 'Material Symbols Rounded';
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: inherit;
+}

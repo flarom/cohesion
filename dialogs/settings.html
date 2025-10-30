@@ -87,6 +87,14 @@
                 font-size: 12pt;
                 resize: vertical;
             }
+
+            h5.setting-subtitle {
+                margin: 0;
+                margin-bottom: 5px;
+                font-weight: normal;
+                font-size: 1em;
+                color: var(--text-color-secondary);
+            }
         </style>
     </head>
 
@@ -111,15 +119,15 @@
                 </div>
 
                 <div class="setting">
-                    <label>Editor font</label>
+                    <span class="switch-text">Editor font</span>
                     <input list="default-fonts" type="text" placeholder="Ubuntu Mono" id="fontEditor" oninput="Settings.setSetting('editorFont', this.value); loadSettings();" />
                 </div>
                 <div class="setting">
-                    <label>Paragraph font</label>
+                    <span class="switch-text">Paragraph font</span>
                     <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontParagraph" oninput="Settings.setSetting('paragraphFont', this.value); loadSettings();" />
                 </div>
                 <div class="setting bottom">
-                    <label>Title font</label>
+                    <span class="switch-text">Title font</span>
                     <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontTitle" oninput="Settings.setSetting('titleFont', this.value); loadSettings();" />
                 </div>
 
@@ -316,11 +324,19 @@
                 </div>
                 <div>
                     <div>
-                        <h4 id="setting-data">My files</h4>
+                        <h4 id="setting-data">Backups</h4>
+                        <div class="setting top bottom switch-wrapper">
+                            <span class="switch-text">Monthly backup reminders</span>
+                            <label class="switch">
+                                <input type="checkbox" id="backupReminder" onchange="Settings.setSetting('backupReminder', this.checked); loadSettings()" />
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
                         <div class="setting top">
                             <div>
-                                <h4>Export package</h4>
-                                <p>Export your notes as a zip file</p>
+                                <h5 class="setting-subtitle">Download backup</h5>
+                                <span class="switch-text">Export your notes as a zip file</span>
                             </div>
                             <div>
                                 <button class="text-button" onclick="exportBook();">Export</button>
@@ -329,8 +345,8 @@
 
                         <div class="setting">
                             <div>
-                                <h4>Import package</h4>
-                                <p>Import files from a zip file</p>
+                                <h5 class="setting-subtitle">Import backup</h5>
+                                <span class="switch-text">Import files from a zip file</span>
                             </div>
                             <div>
                                 <button class="text-button" onclick="importBook();">Import</button>
@@ -339,8 +355,8 @@
 
                         <div class="setting">
                             <div>
-                                <h4>Delete empty files</h4>
-                                <p>Delete all files without any text or meta.</p>
+                                <h5 class="setting-subtitle">Delete empty files</h5>
+                                <span class="switch-text">Delete all files without any text or meta.</span>
                             </div>
                             <div>
                                 <button class="text-button danger" onclick="handleDeleteEmptyFiles();">Delete</button>
@@ -349,8 +365,8 @@
 
                         <div class="setting bottom">
                             <div>
-                                <h4>Replace with package</h4>
-                                <p>Import files from a zip file, replacing your files.</p>
+                                <h5 class="setting-subtitle">Replace with backup</h5>
+                                <span class="switch-text">Import files from a zip file, replacing your files.</span>
                             </div>
                             <div>
                                 <button class="text-button danger" onclick="handleImportDeleteBook();">Replace</button>
@@ -430,6 +446,10 @@
                 const txtEditorMeta = document.getElementById('editorMeta');
                 if (Settings.getSetting('editorAutoMeta', 'false') === 'true') cbxEditorAutoMeta.checked = 'true';
                 txtEditorMeta.value = Settings.getSetting('editorMeta', 'title: *\nauthors: *\ndate: *\ntags: *\ndescription: *\ncolor: *\nbanner: *\nicon: *');
+
+                // backups
+                const cbxBackupReminder = document.getElementById("backupReminder");
+                if (Settings.getSetting("backupReminder", "true") === "true") cbxBackupReminder.checked = "true";
             })();
 
             function insertDateTimeOption(block) {
@@ -551,11 +571,11 @@
 --quote-yellow:         #fff781;
 --quote-red:            #ff8881;
 
---quote-purple-bg:      #d781ff33; 
---quote-blue-bg:        #818ef333;
---quote-green-bg:       #9aff8133; 
---quote-yellow-bg:      #fff78133;
---quote-red-bg:         #ff888133;
+--quote-purple-bg:      #3d2b45; 
+--quote-blue-bg:        #2b2e42;
+--quote-green-bg:       #30452b; 
+--quote-yellow-bg:      #45432b;
+--quote-red-bg:         #452d2b;
 
 /** Codeblocks */
 --hljs-bg:              #23272e;

@@ -1380,3 +1380,78 @@ function promptCodeEditor(initialText = "", mode = "javascript") {
         });
     });
 }
+
+function showBanner({ message = "", buttons = [], menuButtons = [] }) {
+    // Remove existing banners
+    document.querySelectorAll('.prompt-banner').forEach(b => b.remove());
+
+    // Creates the banner container
+    const banner = document.createElement('div');
+    banner.className = 'prompt-banner';
+
+    /**
+     * Closes the banner
+     */
+    function closeBanner() {
+        banner.remove();
+    }
+
+    // Left side (message)
+    const leftContent = document.createElement('div');
+    leftContent.className = 'prompt-banner-left';
+    leftContent.innerHTML = message;
+    banner.appendChild(leftContent);
+
+    // Right side (actions)
+    const rightContent = document.createElement('div');
+    rightContent.className = 'prompt-banner-right';
+
+    // create buttons (right side)
+    buttons.forEach(btnInfo => {
+        const btn = document.createElement('button');
+        btn.innerHTML = btnInfo.value;
+        btn.className = 'prompt-text-button';
+        if (btnInfo.isPrimary) btn.classList.add('prompt-primary');
+        if (btnInfo.isIcon) btn.classList.add('icon-button');
+
+        // allows button action to close the banner
+        btn.addEventListener('mouseup', () => btnInfo.onclick?.(closeBanner));
+        rightContent.appendChild(btn);
+    });
+
+    // create menu (right side)
+    if (menuButtons.length > 0) {
+        const dropdown = document.createElement('div');
+        dropdown.className = 'dropdown';
+
+        const menuButton = document.createElement('button');
+        menuButton.className = 'icon-button';
+        menuButton.innerHTML = 'more_vert';
+        menuButton.title = 'More options';
+        menuButton.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            dropdown.classList.toggle('show');
+        });
+        dropdown.appendChild(menuButton);
+
+        const menuContent = document.createElement('div');
+        menuContent.className = 'dropdown-content menu';
+
+        menuButtons.forEach(item => {
+            const btn = document.createElement('button');
+            btn.className = 'text-button';
+            btn.innerHTML = item.value;
+            btn.addEventListener('mouseup', () => {
+                item.onclick?.(closeBanner);
+                dropdown.classList.remove('show');
+            });
+            menuContent.appendChild(btn);
+        });
+
+        dropdown.appendChild(menuContent);
+        rightContent.appendChild(dropdown);
+    }
+
+    banner.appendChild(rightContent);
+    document.body.appendChild(banner);
+}
