@@ -393,7 +393,7 @@
 
 .preview tr:hover td,
 .preview tr:hover th {
-    background-color: var(--background-color-3);
+    background-color: var(--hover-color);
 }
 
 .preview table.csv-table tbody tr:first-child td:first-child {
