@@ -116,6 +116,9 @@
                             Save
                             <kbd>Ctrl+S</kbd>
                         </button>
+                        <button class="text-button" onmouseup="handlePrint()">
+                            Print
+                        </button>
                         <hr>
                         <button class="text-button" onmouseup="searchDocuments(); hideAllMenus();">
                             Search documents
@@ -1284,6 +1287,29 @@
                 }
             });
 
+            async function handlePrint() {
+                await updateMarkdown(editor.getValue());  
+
+                const printWindow = window.open('', '_blank', 'width=800,height=600');
+                
+                printWindow.document.write(`
+                    <html>
+                        <head>
+                            <title>Print Preview</title>
+                            <style>
+                                body { font-family: sans-serif; }
+                                pre { padding: 10px; }
+                            </style>
+                        </head>
+                        <body onload="window.print(); window.close();">
+                            ${preview.innerHTML}
+                        </body>
+                    </html>
+                `);
+                
+                printWindow.document.close();
+            }
+
             // BACKUP REMINDER BANNER
             (() => {
                 function parseDateSafe(v) {
@@ -1338,6 +1364,14 @@
                                     Settings.setSetting('lastLogin', null);
                                     close && close();
                                 }
+                            },
+                            {
+                                value: "close",
+                                isPrimary: false,
+                                onclick: (close) => {
+                                    close && close();
+                                },
+                                isIcon: true,
                             }
                         ],
                         menuButtons: [

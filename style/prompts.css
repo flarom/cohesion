@@ -463,6 +463,19 @@
     box-sizing: border-box;
     z-index: 9999;
     font-family: sans-serif;
+    animation: prompt-banner-open 0.5s cubic-bezier(0.25, 1.5, 0.5, 1.5) forwards;
+}
+
+@keyframes prompt-banner-open {
+    0% {
+        transform: translateY(-100%);
+    }
+    70% {
+        transform: translateY(10%);
+    }
+    100% {
+        transform: translateY(0%);
+    }
 }
 
 /* .prompt-banner-left {
