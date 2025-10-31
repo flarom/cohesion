@@ -1326,12 +1326,12 @@
                 const backupReminder = Settings.getSetting('backupReminder', 'true');
                 const now = new Date();
                 const lastLogin = parseDateSafe(lastLoginRaw);
-                const hasFiles = Array.isArray(files) && files.length > 0;
+                const hasFiles = files.length === 0 || files.every(f => f.trim() === "");
 
-                console.log("lastLogin:", lastLogin, "backupReminder:", backupReminder, "files.length:", hasFiles ? files.length : 0);
+                console.log("lastLogin:", lastLogin, "backupReminder:", backupReminder, "hasFiles:", hasFiles);
 
                 let shouldShowBanner = false;
-                if (backupReminder === 'true' && hasFiles) {
+                if (backupReminder === 'true' && !hasFiles) {
                     if (!lastLogin) {
                         shouldShowBanner = true;
                     } else {
