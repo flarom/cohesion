@@ -155,7 +155,12 @@ button.danger:hover {
 }
 
 .button-on {
-    background-color: var(--background-color-3);
+    background-color: var(--selection-color);
+}
+
+.button-on:focus,
+.button-on:hover {
+    background-color: var(--selection-color);
 }
 
 .button-group-member.button-on {

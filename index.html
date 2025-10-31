@@ -125,11 +125,11 @@
                             <kbd>Ctrl+K</kbd>
                         </button>
                         <hr />
-                        <button class="text-button" onmouseup="showResourcesDialog(); hideAllMenus();">
+                        <button class="text-button" onmouseup="closeAllDialogs(); showResourcesDialog(); hideAllMenus();">
                             Resources
                             <kbd>Alt+R</kbd>
                         </button>
-                        <button class="text-button" onmouseup="showMessageFromFile('dialogs/settings.html', true, false, true, true, 900); hideAllMenus()">
+                        <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('dialogs/settings.html', true, false, true, true, 900); hideAllMenus()">
                             Settings
                             <kbd>Ctrl+,</kbd>
                         </button>
@@ -145,8 +145,8 @@
                             <kbd>Ctrl+?</kbd>
                         </button>
                         <hr>
-                        <button class="text-button" onmouseup="showMessageFromFile('landing.html', false, true, false, false); hideAllMenus()">Visit home page</button>
-                        <button class="text-button" onmouseup="showMessageFromFile('about.html'); hideAllMenus();">
+                        <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('landing.html', false, true, false, false); hideAllMenus()">Visit home page</button>
+                        <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('about.html'); hideAllMenus();">
                             About Cohesion
                             <kbd>F1</kbd>
                         </button>
@@ -1044,7 +1044,7 @@
                 //// toggle preview (Ctrl+P)
                 { match: e => e.ctrlKey && e.key.toLowerCase() === "p", handler: () => togglePreview(), preventDefault: true },
                 //// show about dialog (F1)
-                { match: e => e.key === "F1", handler: () => showMessageFromFile("about.html"), preventDefault: true },
+                { match: e => e.key === "F1", handler: () => { closeAllDialogs(); showMessageFromFile("about.html") }, preventDefault: true },
                 //// toggle files sidebar (F9)
                 { match: e => e.key === "F9", handler: () => toggleSidebar("files-bar"), preventDefault: true },
                 //// toggle more menu (F10)
@@ -1052,11 +1052,11 @@
                 //// toggle insert menu (Alt+I)
                 { match: e => e.altKey && e.key.toLowerCase() === "i", handler: () => toggleDropdown("insert-menu"), preventDefault: true },
                 //// open settings (Ctrl+, [Comma])
-                { match: e => e.ctrlKey && e.key === ",", handler: () => { showMessageFromFile("dialogs/settings.html", true, false, true, true, 900); hideAllMenus(); }, preventDefault: true },
+                { match: e => e.ctrlKey && e.key === ",", handler: () => { closeAllDialogs();  showMessageFromFile("dialogs/settings.html", true, false, true, true, 900); hideAllMenus(); }, preventDefault: true },
                 //// open keyboard shortcuts wiki (Ctrl+?)
                 { match: e => e.ctrlKey && e.key === "?", handler: () => { window.open('https://github.com/flarom/cohesion/wiki/Keyboard-shortcuts', '_blank'); hideAllMenus(); }, preventDefault: true },
                 //// open resources manager (Alt+R)
-                { match: e => e.altKey && e.key.toLowerCase() === "r", handler: () => { showResourcesDialog(); hideAllMenus(); }, preventDefault: true },
+                { match: e => e.altKey && e.key.toLowerCase() === "r", handler: () => { closeAllDialogs(); showResourcesDialog(); hideAllMenus(); }, preventDefault: true },
 
                 //// switch first ten docs (Alt+1..0)
                 { match: e => e.altKey && /^[0-9]$/.test(e.key), handler: (e) => {

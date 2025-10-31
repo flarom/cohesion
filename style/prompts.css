@@ -412,6 +412,79 @@
     color: var(--text-color);
 }
 
+.settings-body {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 0px 48px 0px 48px;
+}
+
+.main-page {
+    max-height: 90vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    flex-grow: 1;
+}
+
+.setting {
+    padding: 10px;
+    background-color: var(--background-color-2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1px;
+    box-shadow: var(--shadow-light);
+}
+
+.setting.top {
+    border-radius: 15px 15px 0px 0px;
+}
+
+.setting.bottom {
+    border-radius: 0px 0px 15px 15px;
+    margin-bottom: 10px;
+}
+
+.setting.top.bottom {
+    border-radius: 15px;
+}
+
+.setting input {
+    max-width: 300px;
+    margin: 0;
+}
+
+.setting.switch-wrapper {
+    display: flex;
+}
+
+@media screen and (max-width: 800px) {
+    .settings-body {
+        display: block;
+        padding: 10px;
+    }
+}
+
+.settings-body textarea {
+    background: var(--field-color);
+    border-radius: 10px;
+    padding: 10px;
+    color: var(--text-color);
+    height: 20ch;
+    border: 1px solid var(--border-field-color);
+    outline: none;
+    font-size: 12pt;
+    resize: vertical;
+}
+
+h5.setting-subtitle {
+    margin: 0;
+    margin-bottom: 5px;
+    font-weight: normal;
+    font-size: 1em;
+    color: var(--text-color-secondary);
+}
+
 .prompt-dialog .drop-area {
     display: flex;
     align-items: center;

@@ -32,6 +32,7 @@
     --danger-bg:            #ff888133;
 
     --shadow:               0px 0px 10px #00000055;
+    --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
     
     --quote-purple:         #dd92ff; 
     --quote-blue:           #818eff;
@@ -85,6 +86,7 @@
     --danger-bg:            #ca212133;
 
     --shadow:               0px 0px 8px #00000022;
+    --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
 
     --quote-purple:         #9421ca; 
     --quote-blue:           #2178ca; 
@@ -138,6 +140,7 @@
     --danger-bg:            #a8323233;
 
     --shadow:               0px 0px 6px #00000015;
+    --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
 
     --quote-purple:         #6f32a8; 
     --quote-blue:           #325ba8; 
@@ -191,6 +194,7 @@
     --danger-bg:            #ff6b6b33;
 
     --shadow:               0px 0px 6px #00000055;
+    --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
     
     --quote-purple:         #d06bff; 
     --quote-blue:           #6b8eff; 
@@ -244,6 +248,7 @@
     --danger-bg:            #bbbbbb;
 
     --shadow:               5px 5px 0px #000000, 0px 0px 0px 1px #000000;
+    --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
 
     --quote-purple:         #000000; 
     --quote-blue:           #000000;
@@ -312,6 +317,7 @@
     --danger-bg:            #ff888133;
 
     --shadow:               0px 0px 10px #ffffff11;
+    --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
     
     --quote-purple:         #d781ff; 
     --quote-blue:           #818eff;
@@ -365,6 +371,7 @@
     --danger-bg:            #f9267233;
 
     --shadow:               0px 0px 10px #00000055;
+    --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
 
     --quote-purple:         #ae81ff;
     --quote-blue:           #66d9ef;
@@ -418,6 +425,7 @@
     --danger-bg:            #bf616a33;
 
     --shadow:               0px 0px 10px #00000033;
+    --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
 
     --quote-purple:         #b48ead;
     --quote-blue:           #81a1c1;
@@ -471,6 +479,7 @@
     --danger-bg:            #ff888133;
 
     --shadow:               0px 0px 10px #00000055;
+    --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
     
     --quote-purple:         #dd92ff; 
     --quote-blue:           #818eff;
