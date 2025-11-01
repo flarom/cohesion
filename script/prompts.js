@@ -1151,7 +1151,7 @@ async function showMedia(filePath) {
 
     const overlay = document.createElement("div");
     overlay.className = "prompt-overlay";
-    overlay.tabIndex = 0; // necessário para capturar keydown
+    overlay.tabIndex = 0;
 
     const dialog = document.createElement("div");
     dialog.className = "prompt-dialog";
@@ -1169,23 +1169,23 @@ async function showMedia(filePath) {
     const rightDiv = document.createElement("div");
     rightDiv.className = "toolbar-right";
 
-    // Botão de tela cheia
+    // fullscreen button
     const fullscreenButton = document.createElement("button");
     fullscreenButton.textContent = "open_in_full";
     fullscreenButton.className = "icon-button";
     leftDiv.appendChild(fullscreenButton);
 
-    // Botão de download (agora no painel direito)
+    // download button
     const downloadButton = document.createElement("a");
     downloadButton.textContent = "download";
     downloadButton.className = "icon-button";
     downloadButton.setAttribute("href", filePath);
     downloadButton.setAttribute("download", "");
     downloadButton.style.textDecoration = "none";
-    downloadButton.style.color = "var(--text-color)";
+    downloadButton.style.color = "var(--button-color)";
     rightDiv.appendChild(downloadButton);
 
-    // Botão de close
+    // close button
     const closeButton = document.createElement("button");
     closeButton.textContent = "close";
     closeButton.className = "icon-button dialog-window-control";

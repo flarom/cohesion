@@ -601,6 +601,10 @@ span.CodeMirror-selectedtext {
     margin: 0 auto;
 }
 
+.CodeMirror-line:has(.cm-hr) {
+    background-color: var(--active-line) !important;
+}
+
 .cm-link {
     color: var(--link-color) !important;
 }
