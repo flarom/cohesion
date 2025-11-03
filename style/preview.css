@@ -203,6 +203,7 @@
     border-radius: 0;
     font-size: medium;
     box-shadow: none;
+    user-select: auto;
 }
 
 .preview .code-container .code-head button {
@@ -228,6 +229,7 @@
     font-family: var(--font-editor);
     font-size: medium;
     box-shadow: var(--shadow-light);
+    user-select: all;
 }
 
 .preview .colorSwatch {
