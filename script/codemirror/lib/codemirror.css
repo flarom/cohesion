@@ -464,7 +464,9 @@ div.CodeMirror-dragcursors {
 }
 
 .CodeMirror-selected {
-    background: var(--selection-color);
+    background: var(--active-line);
+    overflow: 30%;
+    border-radius: 4px;
 }
 
 .CodeMirror-focused .CodeMirror-selected {

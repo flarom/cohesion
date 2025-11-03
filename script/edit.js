@@ -1,86 +1,60 @@
-function formatBold() {
-    if (hasSelection()) {
-        wrapSelection("**", "**");
-    } else {
-        insertAt("**Bold text**", 2, 11);
-    }
+function wrapSelectionWith(before, after, defaultText = "") {
+    const doc = editor.getDoc();
+    const selections = doc.listSelections();
+    const texts = selections.map(sel => {
+        const text = doc.getRange(sel.anchor, sel.head);
+        return text ? before + text + after : before + defaultText + after;
+    });
+
+    doc.replaceSelections(texts, "around");
+
     editor.focus();
+}
+
+function formatBold() {
+    wrapSelectionWith("**", "**", "Bold text");
 }
 
 function formatItalic() {
-    if (hasSelection()) {
-        wrapSelection("*", "*");
-    } else {
-        insertAt("*Italic text*", 1, 12);
-    }
-    editor.focus();
+    wrapSelectionWith("*", "*", "Italic text");
 }
 
 function formatUnderline() {
-    if (hasSelection()) {
-        wrapSelection("__", "__");
-    } else {
-        insertAt("__Underlined text__", 2, 17);
-    }
-    editor.focus();
+    wrapSelectionWith("__", "__", "Underlined text");
 }
 
 function formatStrikethrough() {
-    if (hasSelection()) {
-        wrapSelection("~~", "~~");
-    } else {
-        insertAt("~~Stroked text~~", 2, 14);
-    }
-    editor.focus();
+    wrapSelectionWith("~~", "~~", "Stroked text");
 }
 
 function formatPreformatted() {
-    if (hasSelection()) {
-        wrapSelection("`", "`");
-    } else {
-        insertAt("`Preformatted text`", 1, 18);
-    }
-    editor.focus();
+    wrapSelectionWith("`", "`", "Preformatted text");
 }
 
 function formatHighlight() {
-    if (hasSelection()) {
-        wrapSelection("==", "==");
-    } else {
-        insertAt("==Highlighted text==", 2, 18);
-    }
-    editor.focus();
+    wrapSelectionWith("==", "==", "Highlighted text");
 }
 
 function formatUrl() {
     const doc = editor.getDoc();
-    const selection = doc.getSelection();
+    const selections = doc.listSelections();
 
-    if (selection) {
-        const newText = `[${selection}](URL)`;
-        const cursorPos = doc.getCursor();
+    const texts = selections.map(sel => {
+        const text = doc.getRange(sel.anchor, sel.head);
+        return `[${text || "Link title"}](URL)`;
+    });
 
-        doc.replaceSelection(newText);
+    doc.replaceSelections(texts, "around");
 
-        const urlStartCh = cursorPos.ch + newText.indexOf("(URL)") + 1;
-        const urlEndCh = urlStartCh + 3;
+    const firstSel = doc.listSelections()[0];
+    const firstText = doc.getRange(firstSel.anchor, firstSel.head);
+    const urlStartCh = firstSel.anchor.ch + firstText.indexOf("(URL)") + 1;
+    const urlEndCh = urlStartCh + 3;
 
-        doc.setSelection(
-            { line: cursorPos.line, ch: urlStartCh },
-            { line: cursorPos.line, ch: urlEndCh }
-        );
-    } else {
-        const cursor = doc.getCursor();
-        doc.replaceRange("[Link title](URL)", cursor);
-
-        const urlStartCh = cursor.ch + 13;
-        const urlEndCh = urlStartCh + 3;
-
-        doc.setSelection(
-            { line: cursor.line, ch: urlStartCh },
-            { line: cursor.line, ch: urlEndCh }
-        );
-    }
+    doc.setSelection(
+        { line: firstSel.anchor.line, ch: urlStartCh },
+        { line: firstSel.anchor.line, ch: urlEndCh }
+    );
 
     editor.focus();
 }

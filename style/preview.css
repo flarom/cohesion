@@ -11,6 +11,11 @@
     box-sizing: border-box;
 }
 
+.preview *::selection {
+    background: var(--selection-color);
+    border-radius: 4px;
+}
+
 .preview:focus {
     outline:none;
 }
