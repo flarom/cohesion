@@ -3961,7 +3961,10 @@
         }
 
         // escape remaining underscores to prevent them being parsed by italic and bold
-        text = text.replace(/(_)/g, showdown.helper.escapeCharactersCallback);
+        //// text = text.replace(/(_)/g, showdown.helper.escapeCharactersCallback);
+        text = text.replace(/(^|[^_])(_{3,})([^_]|$)/g, function (wm, before, underscores, after) {
+            return before + showdown.helper.escapeCharactersCallback(underscores) + after;
+        });
 
         text = globals.converter._dispatch("makehtml.underline.after", text, options, globals).getText();
 
