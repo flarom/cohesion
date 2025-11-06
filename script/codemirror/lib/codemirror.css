@@ -602,19 +602,27 @@ span.CodeMirror-selectedtext {
     width: 100%;
     margin: 0;
     position: relative;
-    pointer-events: none;
 }
 
 .cm-hr::before {
     content: "";
     position: absolute;
-    left: 4ch;
-    right: 4ch;
+    left: 3ch;
+    right: 3ch;
     top: 50%;
     transform: translateY(-50%);
     height: 1px;
     background: var(--border-light-color);
     z-index: -1;
+    animation: hr-before-show 0.3s;
+}
+
+@keyframes hr-before-show {
+    from {
+        right: 100%;
+    } to {
+        right: 3ch;
+    }
 }
 
 .cm-link {
