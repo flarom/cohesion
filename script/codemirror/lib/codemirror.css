@@ -599,12 +599,22 @@ span.CodeMirror-selectedtext {
 
 .cm-hr {
     display: block;
-    text-align: center;
-    margin: 0 auto;
+    width: 100%;
+    margin: 0;
+    position: relative;
+    pointer-events: none;
 }
 
-.CodeMirror-line:has(.cm-hr) {
-    background-color: var(--active-line) !important;
+.cm-hr::before {
+    content: "";
+    position: absolute;
+    left: 4ch;
+    right: 4ch;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 1px;
+    background: var(--border-light-color);
+    z-index: -1;
 }
 
 .cm-link {

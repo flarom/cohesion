@@ -72,6 +72,21 @@
     margin-bottom: 30px;
 }
 
+.text-hr {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1em 0;
+}
+
+.text-hr::before,
+.text-hr::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border-light-color);
+}
+
 /* text effects */
 
 .preview del:hover {

@@ -86,7 +86,11 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     }
   }
 
-  var hrRE = /^([*\-_])(?:\s*\1){2,}\s*$/
+  // Match horizontal rules. Original supported lines consisting only of
+  // three or more of '*', '-' or '_' (possibly separated by spaces).
+  // Extend to also accept lines like `--- qualquer texto ---` where a
+  // matching run appears at the start and end with arbitrary text between.
+  var hrRE = /^([*\-_])(?:\s*\1){2,}(?:.*?\1(?:\s*\1){2,})?\s*$/
   ,   listRE = /^(?:[*\-+]|^[0-9]+([.)]))\s+/
   ,   taskListRE = /^\[(x| )\](?=\s)/i // Must follow listRE
   ,   atxHeaderRE = modeCfg.allowAtxHeaderWithoutSpace ? /^(#+)/ : /^(#+)(?: |$)/

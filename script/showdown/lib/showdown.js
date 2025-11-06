@@ -2626,10 +2626,27 @@
         "use strict";
         text = globals.converter._dispatch("makehtml.horizontalRule.before", text, options, globals).getText();
 
-        var key = showdown.subParser("makehtml.hashBlock")("<hr />", options, globals);
-        text = text.replace(/^ {0,2}( ?-){3,}[ \t]*$/gm, key);
-        text = text.replace(/^ {0,2}( ?\*){3,}[ \t]*$/gm, key);
-        text = text.replace(/^ {0,2}( ?_){3,}[ \t]*$/gm, key);
+        var hashBlock = showdown.subParser("makehtml.hashBlock");
+
+        text = text.replace(
+            /^ {0,2}([\-*_]{3,})\s+(.+?)\s+\1[ \t]*$/gm,
+            function (match, sep, middle) {
+                var escaped = middle
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;");
+
+                var html = '<div class="text-hr"><span class="text-hr-text">' +
+                    escaped +
+                    '</span></div>';
+
+                return hashBlock(html, options, globals);
+            }
+        );
+
+        text = text.replace(/^ {0,2}( ?-){3,}[ \t]*$/gm, hashBlock("<hr />", options, globals));
+        text = text.replace(/^ {0,2}( ?\*){3,}[ \t]*$/gm, hashBlock("<hr />", options, globals));
+        text = text.replace(/^ {0,2}( ?_){3,}[ \t]*$/gm, hashBlock("<hr />", options, globals));
 
         text = globals.converter._dispatch("makehtml.horizontalRule.after", text, options, globals).getText();
         return text;
