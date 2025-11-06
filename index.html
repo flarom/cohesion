@@ -1103,7 +1103,7 @@
                 { match: e => e.ctrlKey && e.key.toLowerCase() === "b", handler: () => formatBold(), preventDefault: true },
                 //// *italic* (Ctrl+I)
                 { match: e => e.ctrlKey && e.key.toLowerCase() === "i", handler: () => formatItalic(), preventDefault: true },
-                //// __underline__ (Ctrl+U)
+                //// - unordered list (Ctrl+U)
                 { match: e => e.ctrlKey && e.key.toLowerCase() === "u", handler: () => toggleLineStart("- ", true, ["- ", "* ", "+ "]), preventDefault: true },
                 //// # headings (Ctrl+1..6)
                 { match: e => e.ctrlKey && e.key >= "1" && e.key <= "6", handler: (e) => {

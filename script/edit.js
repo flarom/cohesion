@@ -1,6 +1,7 @@
 function wrapSelectionWith(before, after, defaultText = "") {
     const doc = editor.getDoc();
     const selections = doc.listSelections();
+
     const texts = selections.map(sel => {
         const text = doc.getRange(sel.anchor, sel.head);
         return text ? before + text + after : before + defaultText + after;
@@ -8,31 +9,45 @@ function wrapSelectionWith(before, after, defaultText = "") {
 
     doc.replaceSelections(texts, "around");
 
+    const newSelections = doc.listSelections().map(sel => {
+        const { anchor, head } = sel;
+        const anchorIdx = doc.indexFromPos(anchor);
+        const headIdx = doc.indexFromPos(head);
+        const fromIdx = Math.min(anchorIdx, headIdx) + before.length;
+        const toIdx = Math.max(anchorIdx, headIdx) - after.length;
+
+        return {
+            anchor: doc.posFromIndex(fromIdx),
+            head: doc.posFromIndex(toIdx)
+        };
+    });
+
+    doc.setSelections(newSelections);
     editor.focus();
 }
 
 function formatBold() {
-    wrapSelectionWith("**", "**", "Bold text");
+    wrapSelectionWith("**", "**", "bold");
 }
 
 function formatItalic() {
-    wrapSelectionWith("*", "*", "Italic text");
+    wrapSelectionWith("*", "*", "italic");
 }
 
 function formatUnderline() {
-    wrapSelectionWith("__", "__", "Underlined text");
+    wrapSelectionWith("__", "__", "underlined");
 }
 
 function formatStrikethrough() {
-    wrapSelectionWith("~~", "~~", "Stroked text");
+    wrapSelectionWith("~~", "~~", "strokethrough");
 }
 
 function formatPreformatted() {
-    wrapSelectionWith("`", "`", "Preformatted text");
+    wrapSelectionWith("`", "`", "preformatted");
 }
 
 function formatHighlight() {
-    wrapSelectionWith("==", "==", "Highlighted text");
+    wrapSelectionWith("==", "==", "highlighted");
 }
 
 function formatUrl() {
