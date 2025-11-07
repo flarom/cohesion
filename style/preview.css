@@ -874,3 +874,14 @@
 .preview .text-container .banner-meta-subtitle .tags .tag:nth-of-type(5n+3)::before {color: var(--quote-yellow);}
 .preview .text-container .banner-meta-subtitle .tags .tag:nth-of-type(5n+4)::before {color: var(--quote-red);}
 .preview .text-container .banner-meta-subtitle .tags .tag:nth-of-type(5n)::before   {color: var(--quote-purple);}
+
+.preview .comment {
+    display: inline-block;
+    background-color: var(--background-color-2);
+    color: var(--text-color);
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    margin: 0 2px;
+    position: relative;
+}

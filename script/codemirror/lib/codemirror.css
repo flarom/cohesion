@@ -607,8 +607,8 @@ span.CodeMirror-selectedtext {
 .cm-hr::before {
     content: "";
     position: absolute;
-    left: 3ch;
-    right: 3ch;
+    left: 4ch;
+    right: 4ch;
     top: 50%;
     transform: translateY(-50%);
     height: 1px;
@@ -621,7 +621,7 @@ span.CodeMirror-selectedtext {
     from {
         right: 100%;
     } to {
-        right: 3ch;
+        right: 4ch;
     }
 }
 

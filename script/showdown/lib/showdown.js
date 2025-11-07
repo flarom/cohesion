@@ -183,6 +183,11 @@
                 describe: "Prepends a base URL to relative paths",
                 type: "string",
             },
+            renderCommentsAsSpan: {
+                defaultValue: false,
+                describe: "Render HTML comments as <span> elements instead of actual comments",
+                type: "boolean",
+            }
         };
         if (simple === false) {
             return JSON.parse(JSON.stringify(defaultOptions));
@@ -2392,9 +2397,20 @@
         text = text.replace(/(\n {0,3}(<(hr)\b([^<>])*?\/?>)[ \t]*(?=\n{2,}))/g, showdown.subParser("makehtml.hashElement")(text, options, globals));
 
         // Special case for standalone HTML comments
+        // If options.renderCommentsAsSpan is true, replace the comment
+        // with a harmless <span class="comment">...</span> so it is
+        // rendered as visible text instead of a real HTML comment.
         text = showdown.helper.replaceRecursiveRegExp(
             text,
             function (txt) {
+                if (options && options.renderCommentsAsSpan) {
+                    // strip opening <!-- (with up to 3 leading spaces) and closing -->
+                    var inner = txt.replace(/^ {0,3}<!--\s*/m, "").replace(/\s*-->\s*$/m, "");
+                    // escape HTML special chars inside the comment content
+                    inner = inner.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    var span = '<span class="comment">' + inner + '</span>';
+                    return "\n\n¨K" + (globals.gHtmlBlocks.push(span) - 1) + "K\n\n";
+                }
                 return "\n\n¨K" + (globals.gHtmlBlocks.push(txt) - 1) + "K\n\n";
             },
             "^ {0,3}<!--",
@@ -2631,13 +2647,10 @@
         text = text.replace(
             /^ {0,2}([\-*_]{3,})\s+(.+?)\s+\1[ \t]*$/gm,
             function (match, sep, middle) {
-                var escaped = middle
-                    .replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;");
+                var spanHtml = showdown.subParser("makehtml.spanGamut")(middle.trim(), options, globals);
 
                 var html = '<div class="text-hr"><span class="text-hr-text">' +
-                    escaped +
+                    spanHtml +
                     '</span></div>';
 
                 return hashBlock(html, options, globals);

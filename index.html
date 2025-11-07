@@ -95,6 +95,7 @@
                     </div>
                 </div>
                 <button class="icon-button hide-on-edit-mode" id="highlighter-btn" translate="no" title="Highlighter" onclick="toggleHighlighter()">stylus_highlighter</button>
+                <button class="icon-button hide-on-edit-mode" id="comments-btn" translate="no" title="Comments" onclick="toggleComments()">tooltip</button>
             </div>
             <div class="header-center hide-on-tablet">
                 <p id="filename">title</p>
@@ -145,8 +146,6 @@
                             Keyboard shortcuts
                             <kbd>Ctrl+?</kbd>
                         </button>
-                        <hr>
-                        <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('landing.html', false, true, false, false); hideAllMenus()">Visit home page</button>
                         <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('about.html'); hideAllMenus();">
                             About Cohesion
                             <kbd>F1</kbd>
@@ -1216,6 +1215,23 @@
                     const mediaURL = match[1]; 
                     showMedia(mediaURL);
                 }
+            }
+
+            const commentsBtn = document.getElementById("comments-btn");
+
+            function toggleComments () {
+                if (!converter.getOption('renderCommentsAsSpan')) {
+                    converter.setOption('renderCommentsAsSpan', true);
+                    commentsBtn.classList.add("button-on");
+                    commentsBtn.innerText = "tooltip_2";
+
+                } else {
+                    converter.setOption('renderCommentsAsSpan', false);
+                    commentsBtn.classList.remove("button-on");
+                    commentsBtn.innerText = "tooltip";
+                }
+
+                renderEditor();
             }
 
             // HIGHLIGHTER
