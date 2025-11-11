@@ -586,6 +586,36 @@
             
             document.addEventListener("DOMContentLoaded", () => {
                 loadSettings();
+
+                // check for element id on URL, so details blocks can be auto-opened
+                const hash = window.location.hash;
+                if (!hash) return;
+
+                const block = document.querySelector(hash);
+                if (!block) return;
+
+                const details = block.querySelector("details");
+                if (details) {
+                    details.open = true;
+                }
+
+                block.scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+
+            // same check for clicks on internal links
+            document.addEventListener("click", (ev) => {
+                const a = ev.target.closest("a[href^='#']");
+                if (!a) return;
+
+                const target = document.querySelector(a.getAttribute("href"));
+                if (!target) return;
+
+                const details = target.querySelector("details");
+                if (details) {
+                    details.open = true;
+                }
+
+                setTimeout(() => target.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
             });
 
             /**
