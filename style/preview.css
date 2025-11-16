@@ -249,10 +249,19 @@
 
 .preview .colorSwatch {
     display: inline-block;
-    width: .7em;
-    height: .7em;
+    width: 1em;
+    height: 1em;
     vertical-align: middle;
-    border-radius: 30px;
+    border-radius: 12px;
+    margin-right: 2px;
+    box-shadow: var(--shadow-light);
+    cursor: pointer;
+
+    transition: border-radius 0.3s;
+}
+
+.colorSwatch:hover {
+    border-radius: 6px;
 }
 
 /* images */
@@ -685,6 +694,69 @@
     font-size: small;
     opacity: 50%;
     display: block;
+}
+
+.preview progress {
+    background: transparent;
+    border-radius: 6px;
+    padding: 2px;
+    border: 1px solid var(--border-light-color);
+    width: 160px;
+    -webkit-appearance: none;
+    appearance: none;
+    overflow: hidden;
+    height: 16px;
+    box-sizing: content-box;
+}
+
+.preview progress::-moz-progress-bar {
+    background-color: var(--highlight-color);
+    border-radius: 4px;
+}
+
+.preview progress::-webkit-progress-bar {
+    background: transparent;
+    border-radius: 6px;
+}
+
+.preview progress::-webkit-progress-value {
+    background-color: var(--highlight-color);
+    border-radius: 4px;
+}
+
+.preview meter {
+    background: transparent;
+    border-radius: 6px;
+    padding: 2px;
+    border: 1px solid var(--border-light-color);
+    width: 160px;
+    -webkit-appearance: none;
+    appearance: none;
+    overflow: hidden;
+    height: 16px;
+    box-sizing: content-box;
+}
+
+.preview meter::-moz-meter-bar {
+    background: var(--highlight-color);
+    border-radius: 4px;
+}
+
+.preview meter::-webkit-meter-bar {
+    background: transparent;
+    border-radius: 6px;
+}
+
+.preview meter::-webkit-meter-optimum-value,
+.preview meter::-webkit-meter-suboptimum-value,
+.preview meter::-webkit-meter-even-less-good-value {
+    background: var(--highlight-color);
+    border-radius: 4px;
+
+    /* should make the meter value the same height as on firefox, somehow doesn't work, I don't know how to fix it */
+    display: block;
+    height: 100%;
+    box-sizing: border-box;
 }
 
 /* Banner/Header */

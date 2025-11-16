@@ -119,7 +119,7 @@ function closeAllDialogs() {
 function fadeOutAllDialogs() {
     document.querySelectorAll(".prompt-overlay").forEach((el) => {
         el.classList.add("fade-out");
-        setTimeout(() => el.remove(), 300);
+        setTimeout(() => el.remove(), 500);
     });
 }
 
@@ -1454,4 +1454,393 @@ function showBanner({ message = "", buttons = [], menuButtons = [] }) {
 
     banner.appendChild(rightContent);
     document.body.appendChild(banner);
+}
+
+function promptColorInfo(colorString, schemeType = "none") {
+    return new Promise((resolve) => {
+        function parseCssColorToRGBA(input) {
+            // create an offscreen element to get computed color
+            const el = document.createElement("div");
+            el.style.color = input;
+            el.style.position = "absolute";
+            el.style.left = "-9999px";
+            document.body.appendChild(el);
+            const cs = getComputedStyle(el).color;
+            document.body.removeChild(el);
+
+            const m = cs.match(/rgba?\(([\d.\s]+),\s*([\d.\s]+),\s*([\d.\s]+)(?:,\s*([\d.\s]+))?\)/);
+            if (!m) return null;
+            return {
+                r: Math.round(Number(m[1])),
+                g: Math.round(Number(m[2])),
+                b: Math.round(Number(m[3])),
+                a: m[4] !== undefined ? Number(m[4]) : 1
+            };
+        }
+
+        function toHex({ r, g, b, a }) {
+            const h = (v) => v.toString(16).padStart(2, "0");
+            if (a < 1) {
+                const aa = Math.round(a * 255);
+                return `#${h(r)}${h(g)}${h(b)}${h(aa)}`.toLowerCase();
+            }
+            return `#${h(r)}${h(g)}${h(b)}`.toLowerCase();
+        }
+
+        function toRgbString({ r, g, b, a }) {
+            return a < 1 ? `rgba(${r}, ${g}, ${b}, ${+a.toFixed(3)})` : `rgb(${r}, ${g}, ${b})`;
+        }
+
+        function rgbToHsv({ r, g, b }) {
+            const rn = r / 255, gn = g / 255, bn = b / 255;
+            const max = Math.max(rn, gn, bn), min = Math.min(rn, gn, bn);
+            const d = max - min;
+            let h = 0;
+            if (d !== 0) {
+                if (max === rn) h = ((gn - bn) / d) % 6;
+                else if (max === gn) h = (bn - rn) / d + 2;
+                else h = (rn - gn) / d + 4;
+                h = Math.round(h * 60);
+                if (h < 0) h += 360;
+            }
+            const s = max === 0 ? 0 : +(d / max * 100).toFixed(1);
+            const v = +(max * 100).toFixed(1);
+            return { h, s, v };
+        }
+
+        function rgbToHsvString(rgb) {
+            const { h, s, v } = rgbToHsv(rgb);
+            return `hsv(${h}, ${s}%, ${v}%)`;
+        }
+
+        function rgbToHsl({ r, g, b }) {
+            const rn = r / 255, gn = g / 255, bn = b / 255;
+            const max = Math.max(rn, gn, bn), min = Math.min(rn, gn, bn);
+            const d = max - min;
+            const l = (max + min) / 2;
+            let h = 0, s = 0;
+            
+            if (d !== 0) {
+                if (max === rn) h = ((gn - bn) / d) % 6;
+                else if (max === gn) h = (bn - rn) / d + 2;
+                else h = (rn - gn) / d + 4;
+                h = Math.round(h * 60);
+                if (h < 0) h += 360;
+                s = +(d / (1 - Math.abs(2 * l - 1)) * 100).toFixed(1);
+            }
+            
+            return { h, s, l: +(l * 100).toFixed(1) };
+        }
+
+        function rgbToHslString(rgb) {
+            const { h, s, l } = rgbToHsl(rgb);
+            return `hsl(${h}, ${s}%, ${l}%)`;
+        }
+
+        // Oklab conversion
+        function srgbToLinear(c) {
+            c = c / 255;
+            return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+        }
+
+        function linearToOklab(r, g, b) {
+            // linear r,g,b -> XYZ
+            const X = 0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b;
+            const Y = 0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b;
+            const Z = 0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b;
+
+            // XYZ -> LMS
+            const l_ = 0.8189330101 * X + 0.3618667424 * Y - 0.1288597137 * Z;
+            const m_ = 0.0329845436 * X + 0.9293118715 * Y + 0.0361456387 * Z;
+            const s_ = 0.0482003018 * X + 0.2643662691 * Y + 0.6338517070 * Z;
+
+            const l = Math.cbrt(l_);
+            const m = Math.cbrt(m_);
+            const s = Math.cbrt(s_);
+
+            const L = 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s;
+            const a = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
+            const b_ = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
+
+            return { L, a, b: b_ };
+        }
+
+        function rgbToOklabString({ r, g, b }) {
+            const lr = srgbToLinear(r);
+            const lg = srgbToLinear(g);
+            const lb = srgbToLinear(b);
+
+            const { L, a, b: bb } = linearToOklab(lr, lg, lb);
+
+            const Lcss = +(L * 100).toFixed(4);
+            return `oklab(${Lcss}%, ${a.toFixed(4)}, ${bb.toFixed(4)})`;
+        }
+
+        function hsvToRgb({ h, s, v }) {
+            // Normalize s and v from 0-100 to 0-1
+            const sat = s / 100;
+            const val = v / 100;
+            
+            const c = val * sat;
+            const hp = h / 60;
+            const x = c * (1 - Math.abs(hp % 2 - 1));
+            let r = 0, g = 0, b = 0;
+            
+            if (hp >= 0 && hp < 1) { r = c; g = x; b = 0; }
+            else if (hp >= 1 && hp < 2) { r = x; g = c; b = 0; }
+            else if (hp >= 2 && hp < 3) { r = 0; g = c; b = x; }
+            else if (hp >= 3 && hp < 4) { r = 0; g = x; b = c; }
+            else if (hp >= 4 && hp < 5) { r = x; g = 0; b = c; }
+            else if (hp >= 5 && hp < 6) { r = c; g = 0; b = x; }
+            
+            const m = val - c;
+            return {
+                r: Math.round((r + m) * 255),
+                g: Math.round((g + m) * 255),
+                b: Math.round((b + m) * 255),
+                a: 1
+            };
+        }
+
+        function getColorScheme(rgba, scheme) {
+            const hsv = rgbToHsv(rgba);
+            const colors = [rgba]; // include the original color
+            
+            switch (scheme) {
+                case "complementary":
+                    colors.push(hsvToRgb({ h: (hsv.h + 180) % 360, s: hsv.s, v: hsv.v }));
+                    break;
+                case "monochromatic":
+                    colors.push(hsvToRgb({ h: hsv.h, s: hsv.s, v: Math.max(0, hsv.v - 30) }));
+                    colors.push(hsvToRgb({ h: hsv.h, s: hsv.s, v: Math.min(100, hsv.v + 30) }));
+                    break;
+                case "analogous":
+                    colors.push(hsvToRgb({ h: (hsv.h + 30) % 360, s: hsv.s, v: hsv.v }));
+                    colors.push(hsvToRgb({ h: (hsv.h - 30 + 360) % 360, s: hsv.s, v: hsv.v }));
+                    break;
+                case "triadic":
+                    colors.push(hsvToRgb({ h: (hsv.h + 120) % 360, s: hsv.s, v: hsv.v }));
+                    colors.push(hsvToRgb({ h: (hsv.h + 240) % 360, s: hsv.s, v: hsv.v }));
+                    break;
+                case "tetradic":
+                    colors.push(hsvToRgb({ h: (hsv.h + 90) % 360, s: hsv.s, v: hsv.v }));
+                    colors.push(hsvToRgb({ h: (hsv.h + 180) % 360, s: hsv.s, v: hsv.v }));
+                    colors.push(hsvToRgb({ h: (hsv.h + 270) % 360, s: hsv.s, v: hsv.v }));
+                    break;
+            }
+            
+            return colors;
+        }
+
+        function createRow(label, value, aboutColor) {
+            const row = document.createElement("div");
+            row.className = "color-info-row";
+
+            const lbl = document.createElement("div");
+            lbl.className = "color-info-label";
+            lbl.title = aboutColor;
+            lbl.textContent = label;
+
+            const val = document.createElement("input");
+            val.style.marginBottom = "0";
+            val.style.fontFamily = "monospace";
+            val.value = value;
+            val.readOnly = true;
+
+            const copyBtn = document.createElement("button");
+            copyBtn.className = "icon-button";
+            copyBtn.textContent = "content_copy";
+            copyBtn.title = "Copy to clipboard";
+            copyBtn.translate = "no";
+            copyBtn.addEventListener("click", async () => {
+                try {
+                    await navigator.clipboard.writeText(val.value);
+                    showToast("Copied", "check");
+                } catch (e) {
+                    // fallback select
+                    val.select();
+                    document.execCommand && document.execCommand("copy");
+                    showToast("Copied", "check");
+                }
+            });
+
+            row.appendChild(lbl);
+            row.appendChild(val);
+            row.appendChild(copyBtn);
+            return row;
+        }
+
+        function createColorSchemeGrid(colors, scheme, targetContainer) {
+            colors.forEach((color, index) => {
+                const colorBox = document.createElement("div");
+                colorBox.className = "color-scheme-box";
+                colorBox.style.backgroundColor = toHex(color);
+                colorBox.title = toHex(color);
+                
+                colorBox.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    closeAllDialogs();
+                    promptColorInfo(toHex(color), scheme);
+                });
+                
+                targetContainer.appendChild(colorBox);
+            });
+        }
+
+        // build dialog
+        const rgba = parseCssColorToRGBA(colorString) || { r: 0, g: 0, b: 0, a: 1 };
+        const hex = toHex(rgba);
+        const rgbStr = toRgbString(rgba);
+        const hsvStr = rgbToHsvString(rgba);
+        const hslStr = rgbToHslString(rgba);
+        const oklabStr = rgbToOklabString(rgba);
+
+        const overlay = document.createElement("div");
+        overlay.className = "prompt-overlay";
+
+        const dialog = document.createElement("div");
+        dialog.className = "prompt-dialog color-preview-dialog";
+        dialog.style.maxWidth = "420px";
+
+        const toolbar = document.createElement("div");
+        toolbar.className = "toolbar";
+        const left = document.createElement("div"); left.className = "toolbar-left";
+        const center = document.createElement("div"); center.className = "toolbar-center";
+        const right = document.createElement("div"); right.className = "toolbar-right";
+        
+        // Hidden select for scheme value tracking
+        const schemeSelect = document.createElement("select");
+        schemeSelect.style.display = "none";
+        schemeSelect.innerHTML = `
+            <option value="none">None</option>
+            <option value="complementary">Complementary</option>
+            <option value="monochromatic">Monochromatic</option>
+            <option value="analogous">Analogous</option>
+            <option value="triadic">Triadic</option>
+            <option value="tetradic">Tetradic</option>
+        `;
+        schemeSelect.value = schemeType;
+        
+        // Scheme dropdown menu
+        const dropdown = document.createElement("div");
+        dropdown.className = "dropdown";
+        
+        const menuButton = document.createElement("button");
+        menuButton.className = "icon-button";
+        menuButton.setAttribute("translate", "no");
+        menuButton.title = "Color scheme";
+        menuButton.textContent = "more_vert";
+        
+        const dropdownMenuId = "color-scheme-menu-" + Math.random().toString(36).substr(2, 9);
+        
+        const dropdownContent = document.createElement("div");
+        dropdownContent.className = "dropdown-content menu align-left";
+        dropdownContent.id = dropdownMenuId;
+        dropdownContent.style.minWidth = "150px";
+        
+        // Scheme options
+        const schemes = [
+            { value: "none", label: "None" },
+            { value: "complementary", label: "Complementary" },
+            { value: "monochromatic", label: "Monochromatic" },
+            { value: "analogous", label: "Analogous" },
+            { value: "triadic", label: "Triadic" },
+            { value: "tetradic", label: "Tetradic" }
+        ];
+        
+        schemes.forEach((scheme, index) => {
+            const btn = document.createElement("button");
+            btn.className = "text-button";
+            btn.textContent = scheme.label;
+            
+            if (schemeType === scheme.value) {
+                btn.style.backgroundColor = "var(--hover-color)";
+            }
+            
+            btn.addEventListener("mouseup", () => {
+                schemeSelect.value = scheme.value;
+                updateScheme();
+                
+                // Update button styling
+                dropdownContent.querySelectorAll("button").forEach(b => {
+                    b.style.backgroundColor = "";
+                });
+                btn.style.backgroundColor = "var(--hover-color)";
+                
+                dropdown.classList.remove("show");
+                hideAllMenus();
+            });
+            
+            dropdownContent.appendChild(btn);
+        });
+        
+        menuButton.addEventListener("mousedown", (e) => {
+            e.preventDefault();
+            toggleDropdown(dropdownMenuId);
+        });
+        
+        dropdown.appendChild(menuButton);
+        dropdown.appendChild(dropdownContent);
+        left.appendChild(dropdown);
+        
+        const closeButton = document.createElement("button");
+        closeButton.textContent = "close";
+        closeButton.className = "icon-button dialog-window-control";
+        closeButton.setAttribute("translate", "no");
+        right.appendChild(closeButton);
+        toolbar.appendChild(left); toolbar.appendChild(center); toolbar.appendChild(right);
+
+        const preview = document.createElement("div");
+        preview.className = "color-info-preview";
+        preview.style.background = colorString;
+
+        // Scheme colors container
+        const schemeColorsContainer = document.createElement("div");
+        schemeColorsContainer.id = "color-scheme-colors";
+
+        const inputList = document.createElement("div");
+        inputList.className = "color-info-list";
+
+        inputList.appendChild(createRow("Hex", hex, "Hexadecimal color representation"));
+        inputList.appendChild(createRow("RGB", rgbStr, "Red, Green, Blue (and Alpha) color model"));
+        inputList.appendChild(createRow("HSL", hslStr, "Hue, Saturation, Lightness color model"));
+        inputList.appendChild(createRow("HSV", hsvStr, "Hue, Saturation, Value color model"));
+        inputList.appendChild(createRow("OKLab", oklabStr, "Perceptually uniform color space"));
+
+        // Scheme colors container (used for menu)
+        const schemeContainer = document.createElement("div");
+        schemeContainer.id = "color-scheme-container";
+
+        function updateScheme() {
+            schemeColorsContainer.innerHTML = "";
+            if (schemeSelect.value !== "none") {
+                const schemeColors = getColorScheme(rgba, schemeSelect.value);
+                createColorSchemeGrid(schemeColors, schemeSelect.value, schemeColorsContainer);
+            }
+        }
+
+        updateScheme();
+        schemeSelect.addEventListener("change", updateScheme);
+
+        dialog.appendChild(toolbar);
+        dialog.appendChild(preview);
+        dialog.appendChild(schemeColorsContainer);
+        dialog.appendChild(inputList);
+        overlay.appendChild(dialog);
+        document.body.appendChild(overlay);
+
+        function cleanup() {
+            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            resolve();
+        }
+
+        closeButton.addEventListener("click", cleanup);
+        overlay.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") cleanup();
+        });
+
+        // focus first input
+        const firstInput = inputList.querySelector("input");
+        if (firstInput) firstInput.focus();
+    });
 }
