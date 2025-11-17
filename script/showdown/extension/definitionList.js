@@ -1,4 +1,10 @@
 showdown.extension('definition-list', function () {
+    // Add /deflist slash command
+    CommandRegistry.register("deflist", {
+        description: "Insert a definition list",
+        exec: function() { insertSnippet('${1:Term}\n: ${2:Definition}') }
+    });
+
     return [{
         type: 'lang',
         filter: function (text) {

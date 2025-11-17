@@ -348,6 +348,10 @@
 
 /* lists */
 
+.preview ol li::marker {
+    font-family: var(--font-editor);
+}
+
 .preview li {
     margin-bottom: 10px;
 }
@@ -373,7 +377,7 @@
 
 .preview input[type="checkbox"]:checked::after {
     content: "check";
-    color: white;
+    color: var(--button-color-2);
     font-size: 18px;
     font-weight: 900;
     position: absolute;
@@ -709,6 +713,10 @@
     box-sizing: content-box;
 }
 
+.preview progress[value="100"] {
+    border-color: var(--highlight-color);
+}
+
 .preview progress::-moz-progress-bar {
     background-color: var(--highlight-color);
     border-radius: 4px;
@@ -722,29 +730,6 @@
 .preview progress::-webkit-progress-value {
     background-color: var(--highlight-color);
     border-radius: 4px;
-}
-
-.preview meter {
-    background: transparent;
-    border-radius: 6px;
-    padding: 2px;
-    border: 1px solid var(--border-light-color);
-    width: 160px;
-    -webkit-appearance: none;
-    appearance: none;
-    overflow: hidden;
-    height: 16px;
-    box-sizing: content-box;
-}
-
-.preview meter::-moz-meter-bar {
-    background: var(--highlight-color);
-    border-radius: 4px;
-}
-
-.preview meter::-webkit-meter-bar {
-    background: transparent;
-    border-radius: 6px;
 }
 
 .preview meter::-webkit-meter-optimum-value,

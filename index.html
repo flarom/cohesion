@@ -263,6 +263,7 @@
         <script src="script/showdown/extension/definitionList.js"></script>
         <script src="script/showdown/extension/abbreviation.js"></script>
         <script src="script/showdown/extension/rubyText.js"></script>
+        <script src="script/showdown/extension/progress.js"></script>
         <script src="script/editorTools.js"></script>
         <script src="script/insert.js"></script>
         <script src="script/prompts.js"></script>
@@ -273,7 +274,15 @@
             // if multiple tabs are open, reload when storage changes
             window.addEventListener("storage", (event) => {
                 if (event.key === "markdownFiles") {
-                    location.reload();
+                    loadFilesFromStorage(); // update files array
+                    renderFiles("files"); // render files in sidebar
+                    if (index < files.length) {
+                        renderEditor(); // refresh editor if current index is valid
+                    } else {
+                        index = 0;
+                        renderEditor();
+                    }
+                    editor.focus();
                 }
             });
 
@@ -390,11 +399,36 @@
                     btnPeek.style.display = "none";
                 }
 
-                // Show context menu at mouse position
-                const rect = editor.getWrapperElement().getBoundingClientRect();
-                editorMenu.style.top = e.clientY + "px";
-                editorMenu.style.left = e.clientX + "px";
+                // Show context menu at mouse position but keep it inside the viewport
+                // First make it visible (but hidden) so we can measure its size
+                const margin = 8; // minimal gap from the edges
                 editorMenu.style.display = "block";
+                editorMenu.style.visibility = "hidden"; // avoid flicker while measuring
+                // reset position to get correct bounding size
+                editorMenu.style.top = "0px";
+                editorMenu.style.left = "0px";
+
+                const menuRect = editorMenu.getBoundingClientRect();
+
+                // client coordinates are relative to the viewport; convert to document coords
+                let top = e.clientY + window.scrollY;
+                let left = e.clientX + window.scrollX;
+
+                // compute maximum allowed positions (document coordinates)
+                const docWidth = document.documentElement.clientWidth + window.scrollX;
+                const docHeight = document.documentElement.clientHeight + window.scrollY;
+
+                const maxLeft = docWidth - menuRect.width - margin;
+                const maxTop = docHeight - menuRect.height - margin;
+
+                if (left > maxLeft) left = Math.max(margin + window.scrollX, maxLeft);
+                if (top > maxTop) top = Math.max(margin + window.scrollY, maxTop);
+                if (left < window.scrollX + margin) left = window.scrollX + margin;
+                if (top < window.scrollY + margin) top = window.scrollY + margin;
+
+                editorMenu.style.top = top + "px";
+                editorMenu.style.left = left + "px";
+                editorMenu.style.visibility = "";
 
                 const buttons = editorMenu.querySelectorAll("button");
                 if (buttons.length > 0) {
@@ -548,7 +582,8 @@
                     'internalLink', // internal link support
                     'definitionList', // definition list support
                     'abbreviation', // abbreviation support
-                    'rubyText' // ruby text support
+                    'rubyText', // ruby text support
+                    'progress' // progress bar support
                 ],
             });
 
