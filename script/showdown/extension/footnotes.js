@@ -1,20 +1,24 @@
 showdown.extension("footnotes", function () {
-    // Store footnote contents for tooltip use
     const footnoteMap = {};
 
     return [
-        // footnote with block content
         {
             type: "lang",
             filter: function (text) {
-                return text.replace(
+                const codeStore = [];
+                text = text.replace(/(```[\s\S]*?```|`[^`]*`)/g, function(match) {
+                    const placeholder = "@@CODE" + codeStore.length + "@@";
+                    codeStore.push(match);
+                    return placeholder;
+                });
+
+                // block-style footnote
+                text = text.replace(
                     /^\[\^([\d\w]+)\]:\s*((\n+(\s{2,4}|\t).+)+)$/gm,
                     function (str, name, rawContent, _, padding) {
-
                         var cleaned = rawContent.replace(new RegExp("^" + padding, "gm"), "");
                         var htmlContent = converter.makeHtml(cleaned);
 
-                        // save for tooltip
                         footnoteMap[name] = cleaned.trim();
 
                         return (
@@ -26,17 +30,11 @@ showdown.extension("footnotes", function () {
                         );
                     }
                 );
-            },
-        },
 
-        // simple footnote
-        {
-            type: "lang",
-            filter: function (text) {
-                return text.replace(
+                // simple footnote
+                text = text.replace(
                     /^\[\^([\d\w]+)\]:( |\n)((.+\n)*.+)$/gm,
                     function (str, name, _, content) {
-
                         footnoteMap[name] = content.trim();
 
                         return (
@@ -48,15 +46,9 @@ showdown.extension("footnotes", function () {
                         );
                     }
                 );
-            },
-        },
 
-        // document footnote references
-        {
-            type: "lang",
-            filter: function (text) {
-                return text.replace(/\[\^([\d\w]+)\]/gm, function (str, name) {
-
+                // inline references
+                text = text.replace(/\[\^([\d\w]+)\]/gm, function (str, name) {
                     const tooltip = footnoteMap[name]
                         ? footnoteMap[name].replace(/"/g, "&quot;")
                         : "";
@@ -68,7 +60,14 @@ showdown.extension("footnotes", function () {
                         '><sup>[' + name + ']</sup></a>'
                     );
                 });
-            },
-        },
+
+                // restore code blocks
+                text = text.replace(/@@CODE(\d+)@@/g, function(_, index) {
+                    return codeStore[index];
+                });
+
+                return text;
+            }
+        }
     ];
 });
