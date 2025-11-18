@@ -166,58 +166,58 @@
     --hljs-link:            #b58900;
 }
 
-.theme-cream-dark {
-    --active-line:          #25211d;
+.theme-gruvbox-dark {
+    --active-line:          #3c3836;
 
-    --background-color:     #1c1a17;
-    --background-color-2:   #25211d;
-    --background-color-3:   #2f2a24;
+    --background-color:     #282828;
+    --background-color-2:   #32302f;
+    --background-color-3:   #3c3836;
 
-    --field-color:          #3a332b;
+    --field-color:          #3c3836;
 
-    --border-dark-color:    #4a4036;
-    --border-light-color:   #5c5147;
-    --border-field-color:   #3f362e;
+    --border-dark-color:    #1d2021;
+    --border-light-color:   #504945;
+    --border-field-color:   #50494555;
 
-    --hover-color:          #463d32;
+    --hover-color:          #3c3836;
 
-    --title-color:          #f5deb3;
-    --button-color:         #f5deb3;
-    --button-color-2:       #3c342c;
-    --text-color:           #e0d6c0;
+    --title-color:          #ebdbb2;
+    --button-color:         #fbf1c7;
+    --button-color-2:       #3c3836;
+    --text-color:           #d5c4a1;
 
-    --highlight-color:      #ffcc66; 
-    --selection-color:      #ffcc6633;
-    --link-color:           #ffc966;
+    --highlight-color:      #fabd2f;
+    --selection-color:      #fabd2f33;
+    --link-color:           #83a598;
 
-    --danger:               #ff6b6b; 
-    --danger-bg:            #ff6b6b33;
+    --danger:               #fb4934;
+    --danger-bg:            #fb493433;
 
-    --shadow:               0px 0px 6px #00000055;
+    --shadow:               0px 0px 10px #00000055;
     --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
-    
-    --quote-purple:         #d06bff; 
-    --quote-blue:           #6b8eff; 
-    --quote-green:          #89ff6b; 
-    --quote-yellow:         #ffe46b; 
-    --quote-red:            #ff6b6b; 
 
-    --quote-purple-bg:      #402a45; 
-    --quote-blue-bg:        #2c3145; 
-    --quote-green-bg:       #324828; 
-    --quote-yellow-bg:      #494228; 
-    --quote-red-bg:         #492a28;
+    --quote-purple:         #d3869b;
+    --quote-blue:           #83a598;
+    --quote-green:          #b8bb26;
+    --quote-yellow:         #fabd2f;
+    --quote-red:            #fb4934;
 
-    --hljs-bg:              #232017;
-    --hljs-text:            #e0d6c0;
-    --hljs-comment:         #7fb36a;
-    --hljs-keyword:         #ffcc66;
-    --hljs-function:        #ffe46b;
-    --hljs-string:          #89ff6b;
-    --hljs-number:          #ffb86b;
-    --hljs-variable:        #d06bff;
-    --hljs-title:           #6b8eff;
-    --hljs-link:            #ffc966;
+    --quote-purple-bg:      #4a373c;
+    --quote-blue-bg:        #2f3b3c;
+    --quote-green-bg:       #353c28;
+    --quote-yellow-bg:      #4a422c;
+    --quote-red-bg:         #4a2d2c;
+
+    --hljs-bg:              #282828;
+    --hljs-text:            #ebdbb2;
+    --hljs-comment:         #928374;
+    --hljs-keyword:         #fb4934;
+    --hljs-function:        #b8bb26;
+    --hljs-string:          #b8bb26;
+    --hljs-number:          #d3869b;
+    --hljs-variable:        #83a598;
+    --hljs-title:           #fabd2f;
+    --hljs-link:            #83a598;
 }
 
 .theme-epaper {

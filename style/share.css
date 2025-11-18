@@ -3,7 +3,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
 
 * {
-    transition: 0.3s background-color, 0.3s color;
+    transition: 0.3s background-color, 0.3s color, 0.3s border-color, 0.3s box-shadow;
 }
 
 body {
