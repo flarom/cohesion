@@ -194,6 +194,21 @@ button.danger:hover {
     display: inline-block;
 }
 
+.dropdown.show .dropdown-content {
+    animation: dropdown-slide-down 0.2s forwards;
+}
+
+@keyframes dropdown-slide-down {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .dropdown-content {
     display: none;
     position: absolute;

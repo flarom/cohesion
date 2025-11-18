@@ -28,7 +28,7 @@ Cohesion provides support for the following Markdown elements.
 | Tables                | Yes     |       |
 | Fenced Code Blocks    | Yes     | JavaScript can be executed from the document preview.
 | Syntax Highlighting   | Yes     |       |
-| Footnotes             | No      |       |
+| Footnotes             | Yes     |       |
 | Heading IDs           | Partial | Automatically generated. There’s no way to set custom heading IDs. 
 | Definition Lists      | Yes     |       |
 | Strikethrough         | Yes     |       |
