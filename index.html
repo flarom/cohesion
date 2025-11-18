@@ -1,3 +1,5 @@
+<!-- this code sucks btw -->
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -34,8 +36,8 @@
         <script src="script/codemirror/lib/codemirror.js"></script>
         <script src="script/codemirror/keymap/sublime.js"></script>
         <script src="script/codemirror/overlay/markOverlay.js"></script>
-        <script src="script/codemirror/overlay/entityOverlay.js"></script>
         <script src="script/codemirror/overlay/underlineOverlay.js"></script>
+        <script src="script/codemirror/overlay/admonitionOverlay.js"></script>
         <script src="script/codemirror/addon/edit/closebrackets.js"></script>
         <script src="script/codemirror/addon/edit/continuelist.js"></script>
         <script src="script/codemirror/addon/search/searchcursor.js"></script>
@@ -348,6 +350,7 @@
             // Add overlays
             editor.addOverlay(markOverlay); // Overlay for displaying ==highlighted text==
             editor.addOverlay(underlineOverlay); // Overlay for displaying __underlined text__
+            editor.addOverlay(admonitionOverlay); // Overlay for displaying admonition blocks
 
             const editorMenu = document.getElementById("editorMenu"); // editor context menu
             const hrContextualSeparator = document.getElementById("contextual-selection-separator"); // horizontal line shown when contextual options are available

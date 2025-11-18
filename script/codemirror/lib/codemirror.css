@@ -168,7 +168,7 @@
 
 .cm-s-default,
 .cm-s-default .cm-quote {
-    color: var(--text-color) !important;
+    color: var(--text-color);
     opacity: 1;
 }
 
@@ -679,4 +679,14 @@ span.CodeMirror-selectedtext {
 .CodeMirror-activeline .cm-trailing-space-new-line::after {
     color: var(--danger);
     opacity: 100%;
+}
+
+.cm-admonition-note { color: var(--quote-blue) !important; font-weight: bold;}
+.cm-admonition-tip { color: var(--quote-green) !important; font-weight: bold;}
+.cm-admonition-important { color: var(--quote-purple) !important; font-weight: bold;}
+.cm-admonition-warning { color: var(--quote-yellow) !important; font-weight: bold;}
+.cm-admonition-caution { color: var(--quote-red) !important; font-weight: bold;}
+
+.cm-admonition-header {
+    font-weight: normal !important;
 }
