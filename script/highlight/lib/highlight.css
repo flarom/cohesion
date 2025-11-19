@@ -29,7 +29,6 @@ code.hljs {
 .hljs-comment,
 .hljs-quote {
     color: var(--hljs-comment);
-    font-style: italic;
 }
 
 /* Keywords like if, else, return */
@@ -68,7 +67,8 @@ code.hljs {
 .hljs-type,
 .hljs-selector-class,
 .hljs-selector-pseudo,
-.hljs-selector-attr {
+.hljs-selector-attr,
+.hljs-params {
     color: var(--hljs-variable);
 }
 
@@ -95,6 +95,7 @@ code.hljs {
 pre::selection,
 pre code::selection,
 code.hljs::selection,
+.hljs-function::selection, 
 pre code *::selection {
     background: var(--hljs-text);
     color: var(--hljs-bg);
@@ -145,7 +146,8 @@ pre code *::selection {
 .hljs-type::selection,
 .hljs-selector-class::selection,
 .hljs-selector-pseudo::selection,
-.hljs-selector-attr::selection {
+.hljs-selector-attr::selection,
+.hljs-params::selection {
     background: var(--hljs-variable);
     color: var(--hljs-bg);
 }
@@ -156,6 +158,8 @@ pre code *::selection {
     color: var(--hljs-bg);
 }
 
+.hljs-property::selection,
+.hljs-symbol::selection,
 .hljs-emphasis::selection {
     background: var(--hljs-text);
     color: var(--hljs-bg);
@@ -168,7 +172,7 @@ pre code *::selection {
 }
 
 .hljs-link::selection {
-    background: var(--link);
+    background: var(--hljs-link);
     color: var(--hljs-bg);
     text-decoration: underline;
 }

@@ -163,7 +163,11 @@
 
 /* DEFAULT THEME */
 .cm-comment {
-    font-weight: bold;
+    color: var(--hljs-comment)
+}
+
+.cm-inline-code, .cm-code-delimiter {
+    color: var(--text-color)
 }
 
 .cm-s-default,
@@ -179,7 +183,7 @@
 
 .cm-s-default .cm-def,
 .cm-s-default .cm-type {
-    color: var(--hljs-function) !important;
+    color: var(--hljs-title) !important;
 }
 
 .cm-s-default .cm-string,
@@ -198,7 +202,7 @@
 .cm-s-default .cm-property,
 .cm-s-default .cm-operator,
 .cm-s-default .cm-punctuation {
-    color: var(--hljs-variable) !important;
+    color: var(--hljs-title) !important;
 }
 
 .cm-s-default .cm-builtin,
