@@ -50,7 +50,6 @@ code.hljs {
 .hljs-string,
 .hljs-meta .hljs-string,
 .hljs-regexp,
-.hljs-addition,
 .hljs-attribute {
     color: var(--hljs-string);
 }
@@ -92,6 +91,18 @@ code.hljs {
     color: var(--hljs-link);
 }
 
+.hljs-addition {
+    background-color: var(--hljs-positive-bg);
+    color: var(--hljs-positive);
+    font-weight: bold;
+}
+
+.hljs-deletion {
+    background-color: var(--hljs-negative-bg);
+    color: var(--hljs-negative);
+    font-weight: bold;
+}
+
 pre::selection,
 pre code::selection,
 code.hljs::selection,
@@ -129,7 +140,6 @@ pre code *::selection {
 .hljs-string::selection,
 .hljs-meta .hljs-string::selection,
 .hljs-regexp::selection,
-.hljs-addition::selection,
 .hljs-attribute::selection {
     background: var(--hljs-string);
     color: var(--hljs-bg);
@@ -175,4 +185,14 @@ pre code *::selection {
     background: var(--hljs-link);
     color: var(--hljs-bg);
     text-decoration: underline;
+}
+
+.hljs-addition::selection {
+    background-color: var(--hljs-positive);
+    color: var(--hljs-bg);
+}
+
+.hljs-deletion::selection {
+    background-color: var(--hljs-negative);
+    color: var(--hljs-bg);
 }

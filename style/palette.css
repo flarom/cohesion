@@ -56,6 +56,10 @@
     --hljs-variable:        #9cdcfe;
     --hljs-title:           #4ec9b0;
     --hljs-link:            #d7ba7d;
+    --hljs-positive:        #b5cea8;
+    --hljs-positive-bg:     #b5cea833;
+    --hljs-negative:        #f44747;
+    --hljs-negative-bg:     #f4474733;
 }
 
 .theme-light {
@@ -110,6 +114,10 @@
     --hljs-variable:        #4078f2;
     --hljs-title:           #c18401;
     --hljs-link:            #4078f2;
+    --hljs-positive:        #50a14f;
+    --hljs-positive-bg:     #50a14f33;
+    --hljs-negative:        #e45649;
+    --hljs-negative-bg:     #e4564933;
 }
 
 .theme-cream {
@@ -164,6 +172,10 @@
     --hljs-variable:        #cb4b16;
     --hljs-title:           #268bd2;
     --hljs-link:            #b58900;
+    --hljs-positive:        #859900;
+    --hljs-positive-bg:     #85990033;
+    --hljs-negative:        #dc322f;
+    --hljs-negative-bg:     #dc322f33;
 }
 
 .theme-gruvbox-dark {
@@ -218,6 +230,10 @@
     --hljs-variable:        #83a598;
     --hljs-title:           #fabd2f;
     --hljs-link:            #83a598;
+    --hljs-positive:        #b8bb26;
+    --hljs-positive-bg:     #b8bb2633;
+    --hljs-negative:        #fb4934;
+    --hljs-negative-bg:     #fb493433;
 }
 
 .theme-epaper {
@@ -272,6 +288,10 @@
     --hljs-variable:        #000000;
     --hljs-title:           #000000;
     --hljs-link:            #000000;
+    --hljs-positive:        #000000;
+    --hljs-positive-bg:     #00000000;
+    --hljs-negative:        #000000;
+    --hljs-negative-bg:     #00000000;
 
     img {
         filter: grayscale(100);
@@ -341,6 +361,10 @@
     --hljs-variable:        #99c1f1;
     --hljs-title:           #d781ff;
     --hljs-link:            #fff781;
+    --hljs-positive:        #9aff81;
+    --hljs-positive-bg:     #9aff8133;
+    --hljs-negative:        #ff8881;
+    --hljs-negative-bg:     #ff888133;
 }
 
 .theme-monokai {
@@ -395,6 +419,10 @@
     --hljs-variable:        #fd971f;
     --hljs-title:           #66d9ef;
     --hljs-link:            #a6e22e;
+    --hljs-positive:        #a6e22e;
+    --hljs-positive-bg:     #a6e22e33;
+    --hljs-negative:        #f92672;
+    --hljs-negative-bg:     #f9267233;
 }
 
 .theme-nord {
@@ -449,6 +477,10 @@
     --hljs-variable:        #ebcb8b;
     --hljs-title:           #88c0d0;
     --hljs-link:            #8fbcbb;
+    --hljs-positive:        #a3be8c;
+    --hljs-positive-bg:     #a3be8c33;
+    --hljs-negative:        #bf616a;
+    --hljs-negative-bg:     #bf616a33;
 }
 
 .theme-custom {
@@ -503,4 +535,8 @@
     --hljs-variable:        #9cdcfe;
     --hljs-title:           #4ec9b0;
     --hljs-link:            #d7ba7d;
+    --hljs-positive:        #b5cea8;
+    --hljs-positive-bg:     #b5cea833;
+    --hljs-negative:        #f44747;
+    --hljs-negative-bg:     #f4474733;
 }

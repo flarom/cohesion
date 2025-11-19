@@ -212,6 +212,16 @@
     font-weight: bold;
 }
 
+.cm-positive {
+    color: var(--hljs-positive) !important;
+    background-color: var(--hljs-positive-bg) !important;
+}
+
+.cm-negative {
+    color: var(--hljs-negative) !important;
+    background-color: var(--hljs-negative-bg) !important;
+}
+
 .cm-em {
     font-style: italic !important;
 }
