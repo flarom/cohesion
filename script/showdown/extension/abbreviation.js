@@ -2,10 +2,12 @@ showdown.extension('abbreviation', function () {
     const invalidChars = /[{}\[\]()<>\#\*\+\-\.\!\|]/;
 
     // Add /abbr slash command
-    CommandRegistry.register("abbr", {
+    try {
+        CommandRegistry.register("abbr", {
         description: "Insert an abbreviation",
         exec: function() { insertSnippet('*[${1:Abbreviation}]: ${2:Definition}') }
     });
+    } catch (e) {}
 
     return [
         {

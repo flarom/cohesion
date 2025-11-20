@@ -2,10 +2,12 @@
     const progressRegex = /\[!progress\s+([^\]]+)\]/g;
 
     // Add /progress slash command
-    CommandRegistry.register("progress", {
-        description: "Insert a progress bar",
-        exec: function() { insertSnippet('[!progress ${1:value} ${2:min} ${3:max}]') }
-    });
+    try {
+        CommandRegistry.register("progress", {
+            description: "Insert a progress bar",
+            exec: function() { insertSnippet('[!progress ${1:value} ${2:min} ${3:max}]') }
+        });
+    } catch (e) {}
 
     showdown.extension("progress", function() {
         return [
