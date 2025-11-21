@@ -224,12 +224,12 @@ function insertAtTop(text) {
 function getMeta() {
     const rawMeta = Settings.getSetting(
         "editorMeta",
-        `title: \${getFileTitle(index) || "New document"}
-authors: 
+        `title: ~{1:\${getFileTitle(index) || "New document"}}
+authors: ~{2:Author name}
 date: \${strftime(Settings.getSetting("dateFormat", "%Y/%m/%d %H:%M"))}
-tags: uncategorized
-description: 
-color: 
+tags: ~{3:Uncategorized}
+description: ~{4:No description provided}
+color: \${'#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0')}
 banner: cohesion/banners/1.png
 icon: `,
         true
