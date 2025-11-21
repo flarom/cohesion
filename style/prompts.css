@@ -69,6 +69,12 @@
     font-size: x-large;
 }
 
+.prompt-big-dialog .toolbar hr,
+.prompt-dialog .toolbar hr {
+    border: 0;
+    border-left: 1px solid var(--border-light-color)
+}
+
 .prompt-big-dialog .toolbar .toolbar-left,
 .prompt-big-dialog .toolbar .toolbar-center,
 .prompt-big-dialog .toolbar .toolbar-right,
@@ -76,7 +82,16 @@
 .prompt-dialog .toolbar .toolbar-center,
 .prompt-dialog .toolbar .toolbar-right{
     display: flex; gap: 15px;
-    pointer-events: visible;
+    pointer-events: none;
+}
+
+.prompt-big-dialog .toolbar .toolbar-left *,
+.prompt-big-dialog .toolbar .toolbar-center *,
+.prompt-big-dialog .toolbar .toolbar-right *,
+.prompt-dialog .toolbar .toolbar-left *,
+.prompt-dialog .toolbar .toolbar-center *,
+.prompt-dialog .toolbar .toolbar-right *{
+    pointer-events: all;
 }
 
 .icon-button.dialog-window-control {
@@ -655,4 +670,31 @@ h5.setting-subtitle {
 #color-scheme-container {
     margin-top: 15px;
     padding-top: 15px;
+}
+
+.prompt-text-editor {
+    background: var(--background-color);
+    color: var(--text-color);
+    width: 100%;
+    border:none;
+    outline: none;
+    font-family: var(--font-editor), monospace;
+    font-size: 14px;
+    box-sizing: border-box;
+    height: calc(100vh - 30px);
+    padding: 64px 64px calc(50% - 64px) 64px;
+    resize: none;
+    font-size: 1em;
+}
+
+@media screen and (max-width: 800px) {
+    .prompt-text-editor {
+        padding: 64px 1px calc(50% - 64px) 1px;
+    }
+}
+
+.prompt-text-editor::selection {
+    background-color: var(--highlight-color);
+    color: var(--button-color-2);
+    font-weight: bold;
 }

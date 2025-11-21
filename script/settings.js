@@ -17,12 +17,22 @@ const Settings = {
      * @param {boolean} ignoreComments Ignore lines starting with '#'
      * @returns The setting value as string
      */
-    getSetting : function (key, fallback = null, ignoreComments = false) {
+    getSetting: function (key, fallback = null, ignoreComments = false) {
         let value = localStorage.getItem(settingsStorageKey + key);
         if (!value) return fallback;
 
         if (ignoreComments) {
-            value = value.replace(/(\/\/|#).*?(\r?\n|$)/g, "");
+            value = value.replace(
+                /(^|[^\\])\/\*[\s\S]*?\*\//g,
+                "$1"
+            );
+
+            value = value.replace(
+                /(^|[^\\])\/\/.*?(\r?\n|$)/g,
+                "$1"
+            );
+
+            value = value.replace(/\\(\/\/|\/\*|\*\/)/g, "$1");
         }
 
         return value;

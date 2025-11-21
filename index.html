@@ -106,7 +106,7 @@
                         <button class="text-button" onmouseup="handleInsertBlock(); hideAllMenus();">Block</button>
                         <button class="text-button" onmouseup="promptTableSelector().then((markdown) => {if (markdown) {insertBlock(markdown);}}); hideAllMenus()">Table</button>
                         <button class="text-button" onmouseup="insertBlock(getSummary(editor.getValue())); hideAllMenus()">Table of Contents</button>
-                        <button class="text-button" onmouseup="insertAtTop(getMeta()); hideAllMenus();">
+                        <button class="text-button" onmouseup="insertSnippetAtTop(getMeta(), '~'); hideAllMenus();">
                             Document meta
                             <kbd>Ctrl+;</kbd>
                         </button>
@@ -1241,7 +1241,7 @@
 
                 // INSERT
                 //// Insert metadata (Ctrl+;)
-                { match: e => e.ctrlKey && e.key === ";", handler: () => insertAtTop(getMeta()), preventDefault: true },
+                { match: e => e.ctrlKey && e.key === ";", handler: () => insertSnippetAtTop(getMeta(), '~'), preventDefault: true },
                 //// Insert date/time with custom strftime (Shift+F6)
                 { match: e => e.shiftKey && e.key === "F6", handler: async () => {
                     const strftime = await promptString("Insert date time format", Settings.getSetting("dateFormat", "%d/%m/%Y %H:%M"));

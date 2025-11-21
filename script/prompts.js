@@ -1280,7 +1280,7 @@ async function showMedia(filePath) {
     closeButton.focus();
 }
 
-function promptCodeEditor(initialText = "", mode = "javascript") {
+function promptCodeEditor(initialText = "") {
     return new Promise((resolve) => {
         // overlay
         const overlay = document.createElement("div");
@@ -1291,7 +1291,7 @@ function promptCodeEditor(initialText = "", mode = "javascript") {
         dialog.className = "prompt-dialog";
         dialog.style.display = "flex";
         dialog.style.flexDirection = "column";
-        dialog.style.maxWidth = "90%";
+        dialog.style.maxWidth = "80%";
 
         // toolbar
         const toolbar = document.createElement("div");
@@ -1306,22 +1306,29 @@ function promptCodeEditor(initialText = "", mode = "javascript") {
         const rightDiv = document.createElement("div");
         rightDiv.className = "toolbar-right";
 
+        const undoButton = document.createElement("button");
+        undoButton.textContent = "undo";
+        undoButton.className = "icon-button";
+        undoButton.title = "Un-do";
+
+        const redoButton = document.createElement("button");
+        redoButton.textContent = "redo";
+        redoButton.className = "icon-button";
+        redoButton.title = "Re-do";
+
         const okButton = document.createElement("button");
         okButton.textContent = "check";
         okButton.className = "icon-button";
         okButton.title = "Confirm";
-
-        const resetButton = document.createElement("button");
-        resetButton.textContent = "refresh";
-        resetButton.className = "icon-button";
-        resetButton.title = "Reset";
 
         const closeButton = document.createElement("button");
         closeButton.textContent = "close";
         closeButton.className = "icon-button dialog-window-control";
         closeButton.setAttribute("translate", "no");
 
-        leftDiv.appendChild(resetButton);
+        leftDiv.appendChild(undoButton);
+        leftDiv.appendChild(redoButton);
+
         rightDiv.appendChild(okButton);
         rightDiv.appendChild(closeButton);
 
@@ -1329,9 +1336,19 @@ function promptCodeEditor(initialText = "", mode = "javascript") {
         toolbar.appendChild(centerDiv);
         toolbar.appendChild(rightDiv);
 
-        // editor container
+        // textarea container
         const editorContainer = document.createElement("div");
-        editorContainer.style.overflow = 'hidden';
+        editorContainer.style.display = "flex";
+        editorContainer.style.flex = "1";
+        editorContainer.style.padding = "0";
+        editorContainer.style.margin = "0";
+
+        const textarea = document.createElement("textarea");
+        textarea.value = initialText;
+        textarea.style.flex = "1";
+        textarea.className = "prompt-text-editor";
+
+        editorContainer.appendChild(textarea);
 
         dialog.appendChild(toolbar);
         dialog.appendChild(editorContainer);
@@ -1339,47 +1356,34 @@ function promptCodeEditor(initialText = "", mode = "javascript") {
         overlay.appendChild(dialog);
         document.body.appendChild(overlay);
 
-        // CodeMirror instance
-        const cm = CodeMirror(editorContainer, {
-            value: initialText,
-            mode: mode,
-            lineNumbers: false,
-            lineWrapping: true,
-            theme: "default",
-            keyMap: "sublime",
-        });
-
-        const scrollEl = editorContainer.querySelector(".CodeMirror-scroll");
-        if (scrollEl) {
-            scrollEl.style.margin = "0";
-            scrollEl.style.padding = "0";
-        }
-
-        cm.refresh();
-
-        // Helpers
+        // helpers
         function closePrompt(result) {
             document.body.removeChild(overlay);
             resolve(result);
         }
 
-        function resetEditor() {
-            cm.setValue(initialText);
-        }
-
-        okButton.addEventListener("click", () => closePrompt(cm.getValue()));
-        resetButton.addEventListener("click", resetEditor);
+        okButton.addEventListener("click", () => closePrompt(textarea.value));
         closeButton.addEventListener("click", () => closePrompt(null));
+
+        undoButton.addEventListener("click", () => {
+            textarea.focus();
+            document.execCommand("undo");
+        });
+
+        redoButton.addEventListener("click", () => {
+            textarea.focus();
+            document.execCommand("redo");
+        });
 
         overlay.addEventListener("keydown", (event) => {
             if (event.key === "Escape") closePrompt(null);
             else if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
-                // Ctrl+Enter to confirm
-                closePrompt(cm.getValue());
+                closePrompt(textarea.value);
             }
         });
     });
 }
+
 
 function showBanner({ message = "", buttons = [], menuButtons = [] }) {
     // Remove existing banners

@@ -55,7 +55,7 @@
 
     CommandRegistry.register("meta", {
         description: "Create a meta block at the top",
-        exec: function(arg) { insertAtTop(getMeta()); }
+        exec: function(arg) { insertSnippetAtTop(getMeta(), '~'); }
     });
 
     CommandRegistry.register("link", {

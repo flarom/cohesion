@@ -199,24 +199,26 @@
                         </div>
                     </div>
                     <div class="setting bottom">
-                        <span style="display: flex; align-items: center; gap: 5px;"><span class="icon">info</span> <a href="https://github.com/flarom/cohesion/wiki/Time-Formatting" target="_blank">Learn more about date and time syntax</a></span>
+                        <span style="display: flex; align-items: center; gap: 5px;"><span class="icon">info</span>
+                        <a href="https://github.com/flarom/cohesion/wiki/Time-Formatting" target="_blank">Learn more about date and time syntax</a></span>
                     </div>
                 </div>
                 <div>
                     <h4>Document metadata</h4>
+                    <div class="setting top">
+                        <button class="text-button" onclick="editEditorMeta();">Edit metadata</button>
+                        <button class="icon-button" translate="no" title="Reset" onclick="resetEditorMeta();">refresh</button>
+                    </div>
+                    <div class="setting bottom">
+                        <span style="display: flex; align-items: center; gap: 5px;"><span class="icon">info</span>
+                        <a href="https://github.com/flarom/cohesion/wiki/Meta-Formatting" target="_blank">Learn more about the metadata syntax</a></span>
+                    </div>
                     <div class="setting top bottom switch-wrapper">
                         <span class="switch-text">Automatically insert metadata block on new documents</span>
                         <label class="switch">
                             <input type="checkbox" id="editorAutoMeta" onchange="Settings.setSetting('editorAutoMeta', this.checked); loadSettings()" />
                             <span class="slider"></span>
                         </label>
-                    </div>
-                    <div class="setting top">
-                        <p>Use asterisks to use the default value, you can disable lines by placing # at the start of the line.</p>
-                        <button class="icon-button" translate="no" title="Reset" onclick="resetEditorMeta();">refresh</button>
-                    </div>
-                    <div class="setting bottom">
-                        <textarea name="editorMeta" id="editorMeta" onchange="Settings.setSetting('editorMeta', this.value)"></textarea>
                     </div>
                 </div>
 
@@ -372,9 +374,7 @@
 
                 // meta
                 const cbxEditorAutoMeta = document.getElementById('editorAutoMeta');
-                const txtEditorMeta = document.getElementById('editorMeta');
                 if (Settings.getSetting('editorAutoMeta', 'false') === 'true') cbxEditorAutoMeta.checked = 'true';
-                txtEditorMeta.value = Settings.getSetting('editorMeta', 'title: *\nauthors: *\ndate: *\ntags: *\ndescription: *\ncolor: *\nbanner: *\nicon: *');
 
                 // backups
                 const cbxBackupReminder = document.getElementById("backupReminder");
@@ -419,10 +419,27 @@
                 }
             }
 
-            function resetEditorMeta() {
-                const txtEditorMeta = document.getElementById('editorMeta');
-                txtEditorMeta.value = 'title: *\nauthors: *\ndate: *\ntags: *\ndescription: *\ncolor: *\nbanner: *\nicon: *';
-                Settings.setSetting('editorMeta', txtEditorMeta.value);
+            function editEditorMeta() {
+                const defaultMeta = `title: \${getFileTitle(index) || "New document"}
+authors: 
+date: \${strftime(Settings.getSetting("dateFormat", "%Y/%m/%d %H:%M"))}
+tags: uncategorized
+description: 
+color: 
+banner: cohesion/banners/1.png
+icon: `;
+                const savedMeta = Settings.getSetting('editorMeta', defaultMeta);
+                promptCodeEditor(savedMeta).then(newValue => {
+                    if (typeof newValue === 'string' && newValue.trim() !== '') {
+                        Settings.setSetting('editorMeta', newValue.trim());
+                    }
+                });
+            }
+
+            async function resetEditorMeta() {
+                if(await promptConfirm('Reset custom editor meta?', true)) {
+                    Settings.removeSetting('editorMeta');
+                }
             }
 
             updateSelectedTheme();
@@ -527,7 +544,7 @@
 
                 const saved = Settings.getSetting("theme-custom-value", defaultTheme);
 
-                const newValue = await promptCodeEditor(saved, "css");
+                const newValue = await promptCodeEditor(saved);
 
                 if (typeof newValue === "string" && newValue.trim() !== "") {
                     Settings.setSetting("theme-custom-value", newValue.trim());
@@ -538,7 +555,7 @@
             }
 
             async function deleteCustomTheme(){
-                if(await promptConfirm('Reset custom theme?')) {
+                if(await promptConfirm('Reset custom theme?', true)) {
                     Settings.removeSetting('theme-custom-value');
                 }
             }

@@ -222,33 +222,29 @@ function insertAtTop(text) {
 }
 
 function getMeta() {
-    let baseTitle = getFileTitle(index) || "New document";
-    let title = baseTitle;
-    let suffix = 1;
-
-    const existingTitles = files
-        .map((_, i) => (i === index ? null : getFileTitle(i)))
-        .filter(Boolean);
-
-    while (existingTitles.includes(title)) {
-        title = `${baseTitle} (${suffix++})`;
-    }
-
-    const defaultMeta = {
-        title,
-        authors: "*",
-        date: strftime(Settings.getSetting("dateFormat", "%Y/%m/%d %H:%M")),
-        tags: "uncategorized",
-        description: "*",
-        color: "*",
-        banner: "cohesion/banners/1.png"
-    };
-
     const rawMeta = Settings.getSetting(
         "editorMeta",
-        `title: *\nauthors: *\ndate: *\ntags: *\ndescription: *\ncolor: *\nbanner: *\nicon: *`,
+        `title: \${getFileTitle(index) || "New document"}
+authors: 
+date: \${strftime(Settings.getSetting("dateFormat", "%Y/%m/%d %H:%M"))}
+tags: uncategorized
+description: 
+color: 
+banner: cohesion/banners/1.png
+icon: `,
         true
     );
+
+    function evalJS(str) {
+        return str.replace(/\$\{([^}]*)\}/g, (_, code) => {
+            try {
+                return Function(`return (${code});`)();
+            } catch (e) {
+                console.error("Meta JS error:", e);
+                return "";
+            }
+        });
+    }
 
     const metaLines = rawMeta
         .split("\n")
@@ -259,13 +255,11 @@ function getMeta() {
             const trimmedKey = key.trim();
             const value = rest.join(":").trim();
 
-            const resolved = value === "*" ? (defaultMeta[trimmedKey] || "*") : value;
-            return `${trimmedKey}: ${resolved}`;
+            return `${trimmedKey}: ${evalJS(value)}`;
         });
 
     return `«««\n${metaLines.join("\n")}\n»»»`;
 }
-
 
 function insertYouTubeVideo(url) {
     return embedBlock(formatYouTubeEmbed(url));
@@ -327,11 +321,9 @@ function insertBlueskyPost(url) {
     }
 }
 
-// Função utilitária para gerar o bloco no formato simplificado
 function embedBlock(embedUrl) {
     return `> [!EMBED]\n> ${embedUrl}`;
 }
-
 
 async function handleInsertImage() {
     try {
@@ -539,4 +531,100 @@ function getSummary(markdown) {
             return `${indent}- [${title.text}](#${title.id})`;
         })
         .join("\n");
+}
+
+function insertSnippetAtTop(snippet, markerChar = "$") {
+    const doc = editor.getDoc();
+
+    const insertPos = { line: 0, ch: 0 };
+    const startIdx = 0;
+
+    doc.replaceRange(snippet, insertPos);
+
+    const endIdx = snippet.length;
+    const fullText = doc.getRange(
+        doc.posFromIndex(startIdx),
+        doc.posFromIndex(endIdx)
+    );
+
+    const esc = markerChar.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const re = new RegExp(`${esc}\\{(\\d+):([^}]*)\\}|${esc}0`, "g");
+
+    let cleanText = "";
+    let last = 0;
+    const placeholders = [];
+
+    let match;
+    while ((match = re.exec(fullText)) !== null) {
+        cleanText += fullText.slice(last, match.index);
+
+        if (match[0] === `${markerChar}0`) {
+            placeholders.push({
+                id: 0,
+                start: cleanText.length,
+                end: cleanText.length
+            });
+        } else {
+            const id = parseInt(match[1]);
+            const text = match[2];
+            const s = cleanText.length;
+            cleanText += text;
+            const e = cleanText.length;
+            placeholders.push({ id, start: s, end: e });
+        }
+
+        last = match.index + match[0].length;
+    }
+
+    cleanText += fullText.slice(last);
+
+    doc.replaceRange(
+        cleanText,
+        doc.posFromIndex(startIdx),
+        doc.posFromIndex(endIdx)
+    );
+
+    const groups = {};
+    placeholders.forEach(ph => {
+        if (!groups[ph.id]) groups[ph.id] = [];
+        const from = doc.posFromIndex(startIdx + ph.start);
+        const to = doc.posFromIndex(startIdx + ph.end);
+        const marker = doc.markText(from, to, {
+            inclusiveLeft: true,
+            inclusiveRight: true
+        });
+        groups[ph.id].push(marker);
+    });
+
+    const ids = Object.keys(groups).map(Number);
+    const order = ids.filter(i => i > 0).sort((a, b) => a - b);
+    if (ids.includes(0)) order.push(0);
+
+    const stops = order.map(id => ({
+        id,
+        markers: groups[id]
+    }));
+
+    editor._snippetStops = stops;
+    editor._snippetIndex = -1;
+
+    const firstIdx = stops.findIndex(s => s.id > 0);
+    const initial =
+        firstIdx !== -1 ? firstIdx : stops.findIndex(s => s.id === 0);
+
+    if (initial !== -1) {
+        editor._snippetIndex = initial;
+        const markers = stops[initial].markers;
+        const ranges = markers
+            .map(m => {
+                const pos = m.find();
+                return pos
+                    ? { anchor: pos.from, head: pos.to }
+                    : null;
+            })
+            .filter(Boolean);
+        doc.setSelections(ranges);
+    } else {
+        doc.setCursor(doc.posFromIndex(cleanText.length));
+    }
 }
