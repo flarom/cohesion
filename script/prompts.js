@@ -1909,8 +1909,8 @@ async function promptMacroInfo(macro = {}) {
         iconPreview.style.overflow = "hidden";
         iconPreview.textContent = iconInput.value;
 
-        iconRow.appendChild(iconPreview);
         iconRow.appendChild(iconInput);
+        iconRow.appendChild(iconPreview);
 
         iconInput.addEventListener("input", () => {
             iconPreview.textContent = iconInput.value || "";
