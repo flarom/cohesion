@@ -1349,12 +1349,14 @@ function promptCodeEditor(initialText = "") {
         textarea.className = "prompt-text-editor";
 
         editorContainer.appendChild(textarea);
-
+        
         dialog.appendChild(toolbar);
         dialog.appendChild(editorContainer);
-
+        
         overlay.appendChild(dialog);
         document.body.appendChild(overlay);
+
+        textarea.focus();
 
         // helpers
         function closePrompt(result) {
@@ -1846,5 +1848,117 @@ function promptColorInfo(colorString, schemeType = "none") {
         // focus first input
         const firstInput = inputList.querySelector("input");
         if (firstInput) firstInput.focus();
+    });
+}
+
+async function promptMacroInfo(macro = {}) {
+    return new Promise((resolve) => {
+        const overlay = document.createElement("div");
+        overlay.className = "prompt-overlay";
+
+        const dialog = document.createElement("div");
+        dialog.className = "prompt-dialog";
+        dialog.style.padding = "20px";
+
+        const title = document.createElement("p");
+        title.className = "prompt-title";
+        title.textContent = "Edit macro info";
+        dialog.appendChild(title);
+
+        // --- NAME ---
+        const nameLabel = document.createElement("label");
+        nameLabel.textContent = "Name";
+        const nameInput = document.createElement("input");
+        nameInput.type = "text";
+        nameInput.value = macro.name || "";
+        dialog.appendChild(nameLabel);
+        dialog.appendChild(nameInput);
+
+        // --- DESCRIPTION ---
+        const descLabel = document.createElement("label");
+        descLabel.textContent = "Description";
+        const descInput = document.createElement("input");
+        descInput.type = "text";
+        descInput.value = macro.description || "";
+        dialog.appendChild(descLabel);
+        dialog.appendChild(descInput);
+
+        // --- ICON WITH PREVIEW ---
+        const iconLabel = document.createElement("label");
+        iconLabel.textContent = "Icon (Material Symbols Rounded)";
+        dialog.appendChild(iconLabel);
+
+        const iconRow = document.createElement("div");
+        iconRow.style.display = "flex";
+        iconRow.style.alignItems = "center";
+        iconRow.style.gap = "10px";
+        iconRow.style.marginBottom = "20px";
+        dialog.appendChild(iconRow);
+
+        const iconInput = document.createElement("input");
+        iconInput.type = "text";
+        iconInput.value = macro.icon || "action_key";
+        iconInput.style.margin = "0";
+
+        const iconPreview = document.createElement("span");
+        iconPreview.style.fontFamily = "Material Symbols Rounded";
+        iconPreview.style.fontSize = "28px";
+        iconPreview.style.opacity = "0.9";
+        iconPreview.style.maxHeight = "32px";
+        iconPreview.style.maxWidth = "32px";
+        iconPreview.style.overflow = "hidden";
+        iconPreview.textContent = iconInput.value;
+
+        iconRow.appendChild(iconPreview);
+        iconRow.appendChild(iconInput);
+
+        iconInput.addEventListener("input", () => {
+            iconPreview.textContent = iconInput.value || "";
+        });
+
+        // --- BUTTONS ---
+        const buttonContainer = document.createElement("div");
+        buttonContainer.className = "prompt-buttons";
+
+        const cancelButton = document.createElement("button");
+        cancelButton.textContent = "Cancel";
+        cancelButton.className = "prompt-button cancel";
+
+        const submitButton = document.createElement("button");
+        submitButton.textContent = "Save";
+        submitButton.className = "prompt-button submit";
+
+        buttonContainer.appendChild(cancelButton);
+        buttonContainer.appendChild(submitButton);
+        dialog.appendChild(buttonContainer);
+
+        overlay.appendChild(dialog);
+        document.body.appendChild(overlay);
+
+        function close(result) {
+            document.body.removeChild(overlay);
+            resolve(result);
+        }
+
+        cancelButton.onclick = () => close(null);
+        submitButton.onclick = () =>
+            close({
+                name: nameInput.value,
+                description: descInput.value,
+                icon: iconInput.value
+            });
+
+        overlay.addEventListener("keydown", (ev) => {
+            if (ev.key === "Escape") close(null);
+            if (ev.key === "Enter") {
+                close({
+                    name: nameInput.value,
+                    description: descInput.value,
+                    icon: iconInput.value
+                });
+            }
+        });
+
+        nameInput.focus();
     });
 }

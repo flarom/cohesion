@@ -3,6 +3,7 @@ showdown.extension('definition-list', function () {
     try{
         CommandRegistry.register("deflist", {
             description: "Insert a definition list",
+            icon: "action_key",
             exec: function() { insertSnippet('${1:Term}\n: ${2:Definition}') }
         });
     } catch (e) {}

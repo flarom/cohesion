@@ -5,6 +5,7 @@ showdown.extension('abbreviation', function () {
     try {
         CommandRegistry.register("abbr", {
         description: "Insert an abbreviation",
+        icon: "action_key",
         exec: function() { insertSnippet('*[${1:Abbreviation}]: ${2:Definition}') }
     });
     } catch (e) {}

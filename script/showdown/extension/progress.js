@@ -5,6 +5,7 @@
     try {
         CommandRegistry.register("progress", {
             description: "Insert a progress bar",
+            icon: "action_key",
             exec: function() { insertSnippet('[!progress ${1:value} ${2:min} ${3:max}]') }
         });
     } catch (e) {}

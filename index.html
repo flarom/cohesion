@@ -151,6 +151,9 @@
                             Resources
                             <kbd>Alt+R</kbd>
                         </button>
+                        <button class="text-button" onmouseup="closeAllDialogs(); showMacrosDialog(); hideAllMenus()">
+                            Macros
+                        </button>
                         <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('dialogs/settings.html', true, false, true, true, 900); hideAllMenus()">
                             Settings
                             <kbd>Ctrl+,</kbd>
@@ -286,6 +289,7 @@
         <script src="script/showdown/extension/progress.js"></script>
         <script src="script/showdown/extension/kbd.js"></script>
         <script src="script/showdown/extension/footnotes.js"></script>
+        <script src="script/macros.js"></script>
         <script src="script/editorTools.js"></script>
         <script src="script/insert.js"></script>
         <script src="script/prompts.js"></script>
@@ -371,6 +375,9 @@
             editor.addOverlay(underlineOverlay); // Overlay for displaying __underlined text__
             editor.addOverlay(admonitionOverlay); // Overlay for displaying admonition blocks
             editor.addOverlay(fixCodeOverlay); // Overlay to fix fenced code blocks being marked as comments
+
+            // Load macros
+            Macros.updateSlashCommands();
 
             const editorMenu = document.getElementById("editorMenu"); // editor context menu
             const hrContextualSeparator = document.getElementById("contextual-selection-separator"); // horizontal line shown when contextual options are available
@@ -1285,6 +1292,13 @@
                 </div>`
 
                 showMessageFromFile("dialogs/resources.html", true, false, true, true, 800, leftPane, "", rightpane);
+            }
+
+            function showMacrosDialog() {
+                let leftPane = 
+                `<button class='icon-button' onclick='createMacro()' translate='no' title='Create macro'>add</button>`
+
+                showMessageFromFile("dialogs/macros.html", true, false, true, true, 800, leftPane, "");
             }
 
             function showCheatSheet() {

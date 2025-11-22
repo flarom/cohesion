@@ -13,6 +13,13 @@
             register: function(name, obj) {
                 commands[name] = obj;
             },
+            unregisterWhere: function(fn) {
+                for (let name in commands) {
+                    if (fn(commands[name], name)) {
+                        delete commands[name];
+                    }
+                }
+            },
             get: function(name) {
                 return commands[name];
             },
@@ -30,36 +37,43 @@
 
     CommandRegistry.register("today", {
         description: "Today's date and time",
+        icon: "today",
         exec: function(arg) { insertDate(); }
     });
 
     CommandRegistry.register("toc", {
         description: "Table of Contents",
+        icon: "toc",
         exec: function(arg) { insertBlock(getSummary(editor.getValue())); }
     });
 
     CommandRegistry.register("code", {
         description: "Create a code block",
+        icon: "code_blocks",
         exec: function(arg) { insertSnippet('```${1:Language}\n${2:Code}\n```'); }
     });
 
     CommandRegistry.register("details", {
         description: "Hidable content block",
+        icon: "expand_all",
         exec: function(arg) { insertSnippet('> [!DETAILS:${1:Title}]\n> ${2:Content}'); }
     });
 
     CommandRegistry.register("embed", {
         description: "Embeded web content",
+        icon: "iframe",
         exec: function(arg) { insertSnippet('> [!EMBED]\n> ${1:https\://example.com}'); }
     });
 
     CommandRegistry.register("meta", {
         description: "Create a meta block at the top",
+        icon: "sell",
         exec: function(arg) { insertSnippetAtTop(getMeta(), '~'); }
     });
 
     CommandRegistry.register("link", {
         description: "Website URL or internal link",
+        icon: "link",
         exec: function(arg) {
             selectFromMenu(editor, ["Website", "Document"], function(selectedIndex) {
                 switch(selectedIndex) {
@@ -89,6 +103,7 @@
 
     CommandRegistry.register("list", {
         description: "Ordered, unordered, or task list",
+        icon: "list",
         exec: function(arg) {
             let cm = editor;
             let state = { type: null, indentCounters: {} };
@@ -176,6 +191,7 @@
 
     CommandRegistry.register("table", {
         description: "Insert a table",
+        icon: "table",
         exec: function(arg) {
             let cm = editor;
             let state = { cols:3, rows:3, width:4, from:null, to:null };
@@ -216,6 +232,7 @@
 
     CommandRegistry.register("resources", {
         description: "Manage your resources folder",
+        icon: "attach_file",
         exec: async function(arg) {
             const options = ["Upload","Select","Manage Resources"];
 
@@ -258,6 +275,7 @@
 
     CommandRegistry.register("image", {
         description: "Insert an image",
+        icon: "image",
         exec: async function(arg) {
             try {
                 const file = await Resources.uploadFSFile("image/*");
@@ -271,6 +289,7 @@
 
     CommandRegistry.register("audio", {
         description: "Insert an audio",
+        icon: "audio_file",
         exec: async function(arg) {
             try {
                 const file = await Resources.uploadFSFile("audio/*");
@@ -284,6 +303,7 @@
 
     CommandRegistry.register("video", {
         description: "Insert a video",
+        icon: "video_file",
         exec: async function(arg) {
             try {
                 const file = await Resources.uploadFSFile("video/*");
@@ -297,6 +317,7 @@
 
     CommandRegistry.register("admonition", {
         description: "Note, tip, warning, or important section",
+        icon: "warning",
         exec: function(arg) {
             selectFromMenu(editor, ["Note","Tip","Important","Warning","Caution"], function(selectedIndex) {
                 switch (selectedIndex) {
@@ -312,6 +333,7 @@
 
     CommandRegistry.register("field", {
         description: "Text, number, slider, date, or time input",
+        icon: "edit_square",
         exec: function(arg) {
             selectFromMenu(editor, ["Text box","Text area","Slider","Spinner","Date","Time"], function(selectedIndex) {
                 switch(selectedIndex) {
@@ -328,6 +350,7 @@
 
     CommandRegistry.register("graph", {
         description: "Pie, bar, or line chart",
+        icon: "bar_chart",
         exec: function(arg) {
             selectFromMenu(editor, ["pizza","bars","lines"], function(selectedIndex) {
                 switch (selectedIndex) {
@@ -376,7 +399,7 @@
         });
     }
 
-    function showTextMenu(editor, callback, deleteInput = false) {
+    function showTextMenu(callback, deleteInput = false) {
         let doneClicked = false;
         const startCursor = editor.getCursor();
         const startCh = startCursor.ch;
@@ -419,6 +442,9 @@
         openMenu();
     }
 
+    window.selectFromMenu = selectFromMenu;
+    window.showTextMenu = showTextMenu;
+
     CodeMirror.registerHelper("hint", "command", function (editor, options) {
         var cur = editor.getCursor(), curLine = editor.getLine(cur.line);
         var end = cur.ch, start = end;
@@ -447,12 +473,45 @@
                 var spaces = " ".repeat(maxNameLength - commandKey.length + 2);
                 list.push({
                     text: "/" + commandKey + (arg ? arg : ""),
-                    displayText: commandKey + spaces + (cmdObj && cmdObj.description ? cmdObj.description : ""),
+                    displayText: commandKey,
+
+                    render: function(el, data, completion) {
+                        const descr = cmdObj?.description || "";
+                        const icon = cmdObj?.icon || "";
+
+                        el.innerHTML = "";
+                        el.style.display = "flex";
+                        el.style.gap = "6px";
+                        el.style.alignItems = "center";
+
+                        // icon
+                        const iconEl = document.createElement("span");
+                        iconEl.textContent = icon;
+                        iconEl.style.fontFamily = "Material Symbols Rounded";
+                        iconEl.style.opacity = "0.6";
+
+                        // command name
+                        const nameEl = document.createElement("span");
+                        nameEl.textContent = commandKey;
+
+                        // description
+                        const descEl = document.createElement("span");
+                        descEl.textContent = descr;
+                        descEl.style.opacity = "0.6";
+
+                        el.appendChild(iconEl);
+                        el.appendChild(nameEl);
+                        el.appendChild(descEl);
+                    },
+
                     hint: function(cm, data, completion) {
                         var from = CodeMirror.Pos(cur.line, start - 1);
                         var to = CodeMirror.Pos(cur.line, end);
                         cm.replaceRange("", from, to);
-                        if (cmdObj && typeof cmdObj.exec === 'function') cmdObj.exec(arg);
+
+                        if (cmdObj && typeof cmdObj.exec === "function") {
+                            cmdObj.exec(arg);
+                        }
                     }
                 });
             })();
