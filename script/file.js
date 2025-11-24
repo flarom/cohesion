@@ -43,6 +43,25 @@ function updateFile(value, index) {
     }
 }
 
+async function shareFile(index) {
+    const text = files[index];
+    const resp = await fetch("https://tempfiles.flarowom.workers.dev/upload", {
+        method: "POST",
+        body: text,
+    });
+
+    const json = await resp.json();
+
+    const id = json.url.split("/").pop();
+
+    return id;
+}
+
+function createQRCode(link, size = 200) {
+    const encoded = encodeURIComponent(link);
+    return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encoded}`;
+}
+
 /**
  * Deletes a file
  * @param {int} index The file to be deleted
@@ -332,16 +351,27 @@ function getFileStats(index) {
 }
 
 /**
- * Gets an adequate title to a file
- * @param {int} index The file to be returned
- * @returns a title
+ * Gets an adequate title from a file index
+ * @param {number} index The file ID
+ * @returns {string|null} a title
  */
 function getFileTitle(index) {
     const text = getFileText(index);
     if (!text) return null;
 
-    const conv = new showdown.Converter({metadata: true});
-    const html = conv.makeHtml(text);
+    return getFileTitleFromText(text);
+}
+
+/**
+ * Gets an adequate title from raw text
+ * @param {string} text
+ * @returns {string|null} a title
+ */
+function getFileTitleFromText(text) {
+    const conv = new showdown.Converter({ metadata: true });
+
+    conv.makeHtml(text);
+
     const metadata = conv.getMetadata();
     if (metadata.title) return metadata.title;
 
@@ -364,7 +394,6 @@ function getFileTitle(index) {
 
     return null;
 }
-
 
 function formatTitle(title) {
     return title.length > 32 ? title.substring(0, 31) + '…' : title;
