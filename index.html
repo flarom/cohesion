@@ -1560,6 +1560,11 @@
 
                     const qrUrl = createQRCode(link, 240);
 
+                    const expireTimestmp = new Date(Date.now() + 2 * 60 * 60 * 1000);
+                    const hh = expireTimestmp.getHours().toString().padStart(2, "0");
+                    const mm = expireTimestmp.getMinutes().toString().padStart(2, "0");
+                    const expireTime = `${hh}:${mm}`;
+
                     const html = `
                         <div style="text-align:center; padding:10px;">
                             <img src="${qrUrl}" alt="QR Code" style="width:240px; height:240px; border-radius:8px; border: 8px solid white" />
@@ -1568,7 +1573,7 @@
                                 <button id="qr-copy-btn" class='icon-button'>content_copy</button>
                             </div>
                             <p style="opacity:75%">
-                                File will be deleted after 2 hours.
+                                Link is valid until ${expireTime}
                             </p>
                         </div>
                     `;
@@ -1581,7 +1586,7 @@
 
                         if (btn && input) {
                             btn.addEventListener("click", () => {
-                                showToast("Copied to clipboard", "check")
+                                showToast("Copied to clipboard", "check");
                                 input.select();
                                 input.setSelectionRange(0, 99999);
                                 navigator.clipboard.writeText(input.value);
