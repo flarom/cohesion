@@ -1865,7 +1865,7 @@ async function promptMacroInfo(macro = {}) {
         title.textContent = "Edit macro info";
         dialog.appendChild(title);
 
-        // --- NAME ---
+        // NAME
         const nameLabel = document.createElement("label");
         nameLabel.textContent = "Name";
         const nameInput = document.createElement("input");
@@ -1874,7 +1874,7 @@ async function promptMacroInfo(macro = {}) {
         dialog.appendChild(nameLabel);
         dialog.appendChild(nameInput);
 
-        // --- DESCRIPTION ---
+        // DESCRIPTION
         const descLabel = document.createElement("label");
         descLabel.textContent = "Description";
         const descInput = document.createElement("input");
@@ -1883,7 +1883,16 @@ async function promptMacroInfo(macro = {}) {
         dialog.appendChild(descLabel);
         dialog.appendChild(descInput);
 
-        // --- ICON WITH PREVIEW ---
+        // AUTHOR
+        const authLabel = document.createElement("label");
+        authLabel.textContent = "Author";
+        const authInput = document.createElement("input");
+        authInput.type = "text";
+        authInput.value = macro.author || "";
+        dialog.appendChild(authLabel);
+        dialog.appendChild(authInput);
+
+        // ICON
         const iconLabel = document.createElement("label");
         iconLabel.textContent = "Icon (Material Symbols Rounded)";
         dialog.appendChild(iconLabel);
@@ -1916,7 +1925,7 @@ async function promptMacroInfo(macro = {}) {
             iconPreview.textContent = iconInput.value || "";
         });
 
-        // --- BUTTONS ---
+        // BUTTONS 
         const buttonContainer = document.createElement("div");
         buttonContainer.className = "prompt-buttons";
 
@@ -1944,6 +1953,7 @@ async function promptMacroInfo(macro = {}) {
         submitButton.onclick = () =>
             close({
                 name: nameInput.value,
+                author: authInput.value,
                 description: descInput.value,
                 icon: iconInput.value
             });

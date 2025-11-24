@@ -75,7 +75,7 @@
         description: "Website URL or internal link",
         icon: "link",
         exec: function(arg) {
-            selectFromMenu(editor, ["Website", "Document"], function(selectedIndex) {
+            selectFromMenu(["Website", "Document"], function(selectedIndex) {
                 switch(selectedIndex) {
                     case 0: // Website
                         insertSnippet("[${1:Website}](${2:URL}) ${3: }");
@@ -91,7 +91,7 @@
 
                         const docTitles = files.map((_, i) => getFileTitle(i) || `Untitled ${i+1}`);
 
-                        selectFromMenu(editor, docTitles, function(docIndex) {
+                        selectFromMenu(docTitles, function(docIndex) {
                             const title = docTitles[docIndex];
                             insertAt(`[[${title}]]`, 2, 2 + title.length + 4);
                         });
@@ -108,7 +108,7 @@
             let cm = editor;
             let state = { type: null, indentCounters: {} };
 
-            selectFromMenu(editor, ["Ordered list", "Unordered list", "Task list"], function(selectedIndex) {
+            selectFromMenu(["Ordered list", "Unordered list", "Task list"], function(selectedIndex) {
                 switch(selectedIndex) {
                     case 0: state.type = "ordered"; break;
                     case 1: state.type = "unordered"; break;
@@ -116,7 +116,7 @@
                 }
 
                 function openMenu() {
-                    selectFromMenu(editor, ["Add line","Remove line","Add indent","Remove indent","Done"], function(selectedIndex) {
+                    selectFromMenu(["Add line","Remove line","Add indent","Remove indent","Done"], function(selectedIndex) {
                         const cursor = cm.getCursor();
                         const lineIndex = cursor.line > 0 ? cursor.line - 1 : cursor.line;
 
@@ -211,7 +211,7 @@
             }
 
             function openMenu() {
-                selectFromMenu(editor, ["Add row","Add column","Remove row","Remove column","Done"], function(selectedIndex) {
+                selectFromMenu(["Add row","Add column","Remove row","Remove column","Done"], function(selectedIndex) {
                     switch (selectedIndex) {
                         case 0: state.rows++; break;
                         case 1: state.cols++; break;
@@ -236,7 +236,7 @@
         exec: async function(arg) {
             const options = ["Upload","Select","Manage Resources"];
 
-            selectFromMenu(editor, options, async (selectedIndex) => {
+            selectFromMenu(options, async (selectedIndex) => {
                 switch (selectedIndex) {
                     case 0: // Upload
                         try {
@@ -253,7 +253,7 @@
                             const files = await Resources.getFSFiles();
                             if (files.length === 0) { showToast("No files in resources.", "info"); return; }
                             const fileOptions = files.map(f => f.name);
-                            selectFromMenu(editor, fileOptions, (fileIndex) => {
+                            selectFromMenu(fileOptions, (fileIndex) => {
                                 const file = files[fileIndex];
                                 const filePath = `resources/${file.name}`;
                                 let markdown = `![\${1:ALT TEXT}](${filePath})\${2: }`;
@@ -273,53 +273,11 @@
         }
     });
 
-    CommandRegistry.register("image", {
-        description: "Insert an image",
-        icon: "image",
-        exec: async function(arg) {
-            try {
-                const file = await Resources.uploadFSFile("image/*");
-                const filePath = `resources/${file.name}`;
-                let markdown = `![\${1:ALT TEXT}](${filePath})\${2: }`;
-                insertSnippet(markdown);
-                showToast(`Archived ${file.name}`, "archive");
-            } catch (err) { showToast("Failed to upload file.", "error"); console.error(err); }
-        }
-    });
-
-    CommandRegistry.register("audio", {
-        description: "Insert an audio",
-        icon: "audio_file",
-        exec: async function(arg) {
-            try {
-                const file = await Resources.uploadFSFile("audio/*");
-                const filePath = `resources/${file.name}`;
-                let markdown = `![\${1:ALT TEXT}](${filePath})\${2: }`;
-                insertSnippet(markdown);
-                showToast(`Archived ${file.name}`, "archive");
-            } catch (err) { showToast("Failed to upload file.", "error"); console.error(err); }
-        }
-    });
-
-    CommandRegistry.register("video", {
-        description: "Insert a video",
-        icon: "video_file",
-        exec: async function(arg) {
-            try {
-                const file = await Resources.uploadFSFile("video/*");
-                const filePath = `resources/${file.name}`;
-                let markdown = `![\${1:ALT TEXT}](${filePath})\${2: }`;
-                insertSnippet(markdown);
-                showToast(`Archived ${file.name}`, "archive");
-            } catch (err) { showToast("Failed to upload file.", "error"); console.error(err); }
-        }
-    });
-
     CommandRegistry.register("admonition", {
         description: "Note, tip, warning, or important section",
         icon: "warning",
         exec: function(arg) {
-            selectFromMenu(editor, ["Note","Tip","Important","Warning","Caution"], function(selectedIndex) {
+            selectFromMenu(["Note","Tip","Important","Warning","Caution"], function(selectedIndex) {
                 switch (selectedIndex) {
                     case 0: insertBlock("> [!NOTE]\n> "); break;
                     case 1: insertBlock("> [!TIP]\n> "); break;
@@ -335,7 +293,7 @@
         description: "Text, number, slider, date, or time input",
         icon: "edit_square",
         exec: function(arg) {
-            selectFromMenu(editor, ["Text box","Text area","Slider","Spinner","Date","Time"], function(selectedIndex) {
+            selectFromMenu(["Text box","Text area","Slider","Spinner","Date","Time"], function(selectedIndex) {
                 switch(selectedIndex) {
                     case 0: insertSnippet('<input id="${1:ID}" value="${2:Text value}" type="text"> ${3: }'); break;
                     case 1: insertSnippet('<textarea id="${1:ID}">${2:Text value}</textarea> ${3: }'); break;
@@ -352,7 +310,7 @@
         description: "Pie, bar, or line chart",
         icon: "bar_chart",
         exec: function(arg) {
-            selectFromMenu(editor, ["pizza","bars","lines"], function(selectedIndex) {
+            selectFromMenu(["pizza","bars","lines"], function(selectedIndex) {
                 switch (selectedIndex) {
                     case 0: insertAt("> [!graph:pizza]\n> Label 1, value", 28,33); break;
                     case 1: insertAt("> [!graph:bars]\n> Label 1, value", 27,32); break;
@@ -374,29 +332,6 @@
             strIdx++;
         }
         return patternIdx === pattern.length;
-    }
-
-    function selectFromMenu(editor, options, callback) {
-        let list = options.map((opt, index) => ({
-            text: opt,
-            displayText: opt,
-            hint: function(cm, data, completion) {
-                let cur = cm.getCursor();
-                let line = cm.getLine(cur.line);
-                let start = cur.ch - completion.text.length;
-                cm.replaceRange("", { line: cur.line, ch: start }, cur);
-
-                callback(index);
-            }
-        }));
-
-        editor.showHint({
-            hint: () => ({
-                list: list,
-                from: editor.getCursor(),
-                to: editor.getCursor()
-            })
-        });
     }
 
     function showTextMenu(callback, deleteInput = false) {
@@ -442,6 +377,28 @@
         openMenu();
     }
 
+    function selectFromMenu(options, callback) {
+        let list = options.map((opt, index) => ({
+            text: opt,
+            displayText: opt,
+            hint: function(cm, data, completion) {
+                let cur = cm.getCursor();
+                let line = cm.getLine(cur.line);
+                let start = cur.ch - completion.text.length;
+                cm.replaceRange("", { line: cur.line, ch: start }, cur);
+
+                callback(index);
+            }
+        }));
+
+        editor.showHint({
+            hint: () => ({
+                list: list,
+                from: editor.getCursor(),
+                to: editor.getCursor()
+            })
+        });
+    }
     window.selectFromMenu = selectFromMenu;
     window.showTextMenu = showTextMenu;
 

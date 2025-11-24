@@ -24,9 +24,9 @@ const Macros = (() => {
             return load()[index];
         },
 
-        async create({ name, code, description = "", icon = "action_key" }) {
+        async create({ name, code, author, description = "", icon = "action_key" }) {
             const items = load();
-            items.push({ name, code, description, icon });
+            items.push({ name, code, author, description, icon });
             save(items);
             await Macros.updateSlashCommands();
         },
@@ -49,6 +49,73 @@ const Macros = (() => {
 
         async deleteAll() {
             save([]);
+        },
+
+        async export(index) {
+            const macro = await Macros.get(index);
+
+            const data = {
+                name: macro.name || "",
+                description: macro.description || "",
+                author: macro.author || "",
+                icon: macro.icon || "",
+                code: macro.code || ""
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 4)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `${data.name || "macro"}.json`;
+            a.click();
+
+            URL.revokeObjectURL(url);
+        },
+
+        async pickFile() {
+            return new Promise((resolve) => {
+                const input = document.createElement("input");
+                input.type = "file";
+                input.accept = ".json";
+
+                input.onchange = async () => {
+                    const file = input.files[0];
+                    if (!file) return resolve(null);
+
+                    const text = await file.text();
+                    resolve(text);
+                };
+
+                input.click();
+            });
+        },
+
+        async import(text) {
+            let data;
+
+            try {
+                data = JSON.parse(text);
+            } catch (err) {
+                showToast("Invalid JSON file", "error");
+                return null;
+            }
+
+            if (!data.code) {
+                showToast("This file has no macro code", "error");
+                return null;
+            }
+
+            const macro = {
+                name: data.name || "Unnamed macro",
+                description: data.description || "",
+                author: data.author || "",
+                icon: data.icon || "action_key",
+                code: data.code
+            };
+
+            await Macros.create(macro);
+            return macro;
         },
 
         async updateSlashCommands() {

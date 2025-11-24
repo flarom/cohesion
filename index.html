@@ -1322,8 +1322,11 @@
             }
 
             function showMacrosDialog() {
-                let leftPane = 
-                `<button class='icon-button' onclick='createMacro()' translate='no' title='Create macro'>add</button>`
+                let leftPane = `
+                <button class='icon-button' onclick='createMacro()' translate='no' title='Create macro'>add</button>
+                <hr>
+                <button class='icon-button' onclick='importMacro()' translate='no' title='Import macro'>folder_open</button>
+                `
 
                 showMessageFromFile("dialogs/macros.html", true, false, true, true, 800, leftPane, "");
             }

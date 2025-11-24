@@ -13,6 +13,8 @@
             margin-top: 50px;
             border-radius: 15px;
             padding: 2px;
+            transition: all .3s;
+            border: 2px dashed transparent;
         }
 
         .macro-item {
@@ -62,6 +64,12 @@
             padding: 20px;
         }
 
+        .macro-drag-over {
+            background-color: var(--selection-color);
+            margin: 50px 10px 10px 10px;
+            border: 2px dashed var(--highlight-color);
+        }
+
         /* small spacing fix for form dialog */
         .prompt-dialog label {
             margin-top: 10px;
@@ -83,88 +91,6 @@
     <div id="macro-container" class="macro-container"></div>
 
     <script>
-        async function promptMacroInfo(macro = {}) {
-            return new Promise((resolve) => {
-                const overlay = document.createElement("div");
-                overlay.className = "prompt-overlay";
-
-                const dialog = document.createElement("div");
-                dialog.className = "prompt-dialog";
-                dialog.style.padding = "20px";
-
-                const title = document.createElement("p");
-                title.className = "prompt-title";
-                title.textContent = (macro.name ? "Edit macro" : "New macro");
-                dialog.appendChild(title);
-
-                const nameLabel = document.createElement("label");
-                nameLabel.textContent = "Name";
-                const nameInput = document.createElement("input");
-                nameInput.type = "text";
-                nameInput.value = macro.name || "";
-                dialog.appendChild(nameLabel);
-                dialog.appendChild(nameInput);
-
-                const descLabel = document.createElement("label");
-                descLabel.textContent = "Description";
-                const descInput = document.createElement("input");
-                descInput.type = "text";
-                descInput.value = macro.description || "";
-                dialog.appendChild(descLabel);
-                dialog.appendChild(descInput);
-
-                const iconLabel = document.createElement("label");
-                iconLabel.textContent = "Icon (Material Symbols)";
-                const iconInput = document.createElement("input");
-                iconInput.type = "text";
-                iconInput.value = macro.icon || "action_key";
-                dialog.appendChild(iconLabel);
-                dialog.appendChild(iconInput);
-
-                const buttonContainer = document.createElement("div");
-                buttonContainer.className = "prompt-buttons";
-
-                const cancelButton = document.createElement("button");
-                cancelButton.textContent = "Cancel";
-                cancelButton.className = "prompt-button cancel";
-
-                const submitButton = document.createElement("button");
-                submitButton.textContent = "Save";
-                submitButton.className = "prompt-button submit";
-
-                buttonContainer.appendChild(cancelButton);
-                buttonContainer.appendChild(submitButton);
-                dialog.appendChild(buttonContainer);
-
-                overlay.appendChild(dialog);
-                document.body.appendChild(overlay);
-
-                function close(result) {
-                    document.body.removeChild(overlay);
-                    resolve(result);
-                }
-
-                cancelButton.onclick = () => close(null);
-                submitButton.onclick = () =>
-                    close({
-                        name: nameInput.value,
-                        description: descInput.value,
-                        icon: iconInput.value
-                    });
-
-                overlay.addEventListener("keydown", (ev) => {
-                    if (ev.key === "Escape") close(null);
-                    if (ev.key === "Enter") close({
-                        name: nameInput.value,
-                        description: descInput.value,
-                        icon: iconInput.value
-                    });
-                });
-
-                nameInput.focus();
-            });
-        }
-
         async function renderMacros() {
             const container = document.getElementById("macro-container");
             container.innerHTML = "";
@@ -182,17 +108,20 @@
             list.forEach((macro, index) => {
                 const div = document.createElement("div");
                 div.className = "macro-item";
+                div.title = macro.description;
                 div.innerHTML = `
                     <div class="macro-icon">${macro.icon || "action_key"}</div>
                     <div>
                         <div class="macro-title">${macro.name}</div>
-                        <div class="macro-desc">${macro.description || ""}</div>
+                        <div class="macro-desc">by ${macro.author || ""}</div>
                     </div>
 
                     <div class="dropdown" style="position:absolute; top:8px; right:8px;">
                         <button class="icon-button" onclick="toggleDropdown('mac${index}')">more_vert</button>
                         <div class="menu dropdown-content" id="mac${index}">
-                            <button class="text-button" onclick="editMacroCode(${index})">Edit</button>
+                            <button class="text-button" onclick="editMacroCode(${index})">Edit code</button>
+                            <hr>
+                            <button class="text-button" onclick="Macros.export(${index});">Download</button>
                             <hr>
                             <button class="text-button" onclick="editMacroInfo(${index})">Properties</button>
                             <button class="text-button" onclick="runMacro(${index})">Run</button>
@@ -207,6 +136,43 @@
                 container.appendChild(div);
             });
         }
+
+        (function allowDragDrop() {
+            const container = document.getElementById("macro-container");
+
+            ["dragenter", "dragover", "dragleave", "drop"].forEach(evName => {
+                container.addEventListener(evName, (ev) => {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                });
+            });
+
+            container.addEventListener("dragenter", () => {
+                container.classList.add("macro-drag-over");
+            });
+
+            container.addEventListener("dragover", () => {
+                container.classList.add("macro-drag-over");
+            });
+
+            container.addEventListener("dragleave", (ev) => {
+                if (!container.contains(ev.relatedTarget)) {
+                    container.classList.remove("macro-drag-over");
+                }
+            });
+
+            container.addEventListener("drop", async (ev) => {
+                container.classList.remove("macro-drag-over");
+
+                const file = ev.dataTransfer.files[0];
+                if (!file) return;
+
+                const text = await file.text();
+
+                const macro = await Macros.import(text);
+                if (macro) renderMacros();
+            });
+        })();
 
         async function createMacro() {
             const info = await promptMacroInfo({});
@@ -253,6 +219,14 @@
 
             await Macros.update(index, { code });
             renderMacros();
+        }
+
+        async function importMacro() {
+            const text = await Macros.pickFile();
+            if (!text) return;
+
+            const macro = await Macros.import(text);
+            if (macro) renderMacros();
         }
 
         renderMacros();
