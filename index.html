@@ -354,7 +354,10 @@
 
                 fetch(`https://tempfiles.flarowom.workers.dev/${id}`)
                     .then(async res => {
-                        if (!res.ok) return;
+                        if (!res.ok) { 
+                            showToast('File unavailable', "broken_image")
+                            return;
+                        }
 
                         const text = await res.text();
 
@@ -1542,19 +1545,25 @@
                     const expireTime = `${hh}:${mm}`;
 
                     const html = `
-                        <div style="text-align:center; padding:10px;">
-                            <img src="${qrUrl}" alt="QR Code" style="width:240px; height:240px; border-radius:8px; border: 8px solid white" />
-                            <div style="margin-top:12px; display: flex; align-items: center; gap: 6px;">
-                                <input id="qr-link-field" readonly='true' type='text' style='text-align:center;margin:0;width:100%' value='${link}'/>
-                                <button id="qr-copy-btn" class='icon-button'>content_copy</button>
+                        <div style="text-align:center;">
+                            <div style='text-align:center; width:100%; background-color:white; padding:10px'>
+                                <img src="${qrUrl}" alt="QR Code" style="width:240px; height:240px;" />
                             </div>
-                            <p style="opacity:75%">
-                                Link is valid until ${expireTime}
-                            </p>
+                            <div style='padding: 10px'>
+                                <div style="margin-top:12px; display: flex; align-items: center; gap: 6px;">
+                                    <input id="qr-link-field" readonly='true' type='text' style='text-align:center;margin:0;width:100%' value='${link}'/>
+                                    <button id="qr-copy-btn" class='icon-button'>content_copy</button>
+                                </div>
+                                <p style="opacity:75%">
+                                    Link is valid until ${expireTime}
+                                </p>
+                            </div>
                         </div>
                     `;
 
                     promptMessage(html, true, false);
+                    
+                    console.log(`File ${getFileTitle(index)} is now temporarily available on ${link}. This link is valid until ${expireTime}`)
 
                     setTimeout(() => {
                         const input = document.getElementById("qr-link-field");
