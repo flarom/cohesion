@@ -639,6 +639,7 @@ span.CodeMirror-selectedtext {
     }
 }
 
+.cm-string.cm-url,
 .cm-link {
     color: var(--link-color) !important;
 }
