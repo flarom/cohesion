@@ -107,12 +107,12 @@ pre::selection,
 pre code::selection,
 code.hljs::selection,
 .hljs-function::selection, 
+.hljs-punctuation::selection,
+.hljs-attr::selection,
 pre code *::selection {
-    background: var(--hljs-text);
-    color: var(--hljs-bg);
-    font-weight: bold;
+    background-color: var(--text-color);
+    color: var(--background-color);
 }
-
 
 .hljs-comment::selection,
 .hljs-quote::selection {

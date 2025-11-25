@@ -49,7 +49,7 @@
                 type: "boolean",
             },
             simplifiedAutoLink: {
-                defaultValue: true,
+                defaultValue: false,
                 describe: "Turn on/off GFM autolink style",
                 type: "boolean",
             },
@@ -1225,34 +1225,13 @@
             "[!CAUTION]":    { class: "quote-red", label: "Caution", icon: "dangerous" }
         };
 
-        // Custom block types for blockquotes, e.g. [!DETAILS], [!EMBED], [!CSV], [!FLOWCHART]
+        // Custom block types for blockquotes, e.g. [!DETAILS], [!CSV], [!FLOWCHART]
         const customBlockMap = {
             "DETAILS": {
             allowHtml: false,
             render: function (title, contentHtml) {
                 return `<details><summary title="Click to expand"><span>${title}</span></summary>\n` +
                 `<div class="content">\n${contentHtml}\n</div>\n</details>`;
-            }
-            },
-            "EMBED": {
-            allowHtml: true,
-            render: function (title, contentText) {
-                // Each non-empty line is treated as an embed URL
-                const urls = contentText
-                .split(/\r?\n/)
-                .map(line => line.trim())
-                .filter(line => line.length > 0);
-
-                const iframes = urls.map(url => {
-                const safeUrl = url.replace(/"/g, "&quot;");
-                return `<iframe 
-                    src="${safeUrl}" 
-                    sandbox="allow-same-origin allow-forms allow-popups allow-scripts" 
-                    allowfullscreen>    
-                    </iframe>`;
-                }).join("\n");
-
-                return `<div class="embed-container">\n${iframes}\n</div>`;
             }
             },
             "CSV": {

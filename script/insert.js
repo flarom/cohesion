@@ -276,53 +276,8 @@ function insertYouTubeVideo(url) {
     }
 }
 
-function insertVimeoVideo(url) {
-    return embedBlock(formatVimeoEmbed(url));
-
-    function formatVimeoEmbed(url) {
-        let regex = /(?:https?:\/\/)?(?:www\.)?(?:vimeo\.com\/(?:video\/)?)(\d+)/;
-        let match = url.match(regex);
-
-        if (match && match[1]) {
-            return `https://player.vimeo.com/video/${match[1]}`;
-        } else {
-            return "Unknown";
-        }
-    }
-}
-
-function insertXPost(url) {
-    return embedBlock(formatXEmbed(url));
-
-    function formatXEmbed(url) {
-        let regex = /(?:https?:\/\/)?(?:www\.)?(?:twitter\.com|x\.com)\/[a-zA-Z0-9_]+\/status\/(\d+)/;
-        let match = url.match(regex);
-
-        if (match && match[1]) {
-            return `https://twitframe.com/show?url=${encodeURIComponent(url)}`;
-        } else {
-            return "Unknown";
-        }
-    }
-}
-
-function insertBlueskyPost(url) {
-    return embedBlock(formatBlueskyEmbed(url));
-
-    function formatBlueskyEmbed(url) {
-        let regex = /(?:https?:\/\/)?(?:www\.)?bsky\.app\/profile\/[^\/]+\/post\/[a-zA-Z0-9]+/;
-        let match = url.match(regex);
-
-        if (match) {
-            return `https://bsky.app/embed?url=${encodeURIComponent(url)}`;
-        } else {
-            return "Unknown";
-        }
-    }
-}
-
 function embedBlock(embedUrl) {
-    return `> [!EMBED]\n> ${embedUrl}`;
+    return `[!EMBED ${embedUrl}]`;
 }
 
 async function handleInsertImage() {
@@ -363,8 +318,7 @@ async function handleInsertBlock() {
         "<span style='color:var(--quote-yellow);'><span class=icon translate=no>warning</span>            Warning   </span>",
         "<span style='color:var(--quote-red);'   ><span class=icon translate=no>dangerous</span>          Caution   </span>",
         "<span style='color:var(--text-color);'  ><span class=icon translate=no>expand_circle_down</span> Details   </span>",
-        "<span style='color:var(--text-color);'  ><span class=icon translate=no>table</span>              CSV table </span>",
-        "<span style='color:var(--text-color);'  ><span class=icon translate=no>iframe</span>             Embed     </span>"
+        "<span style='color:var(--text-color);'  ><span class=icon translate=no>table</span>              CSV table </span>"
     ];
 
     const selection = await promptSelect("Select a block", blocks);
@@ -390,9 +344,6 @@ async function handleInsertBlock() {
             break;
         case 6:
             resolve("CSV");
-            break;
-        case 7:
-            resolve("EMBED");
             break;
     }
 

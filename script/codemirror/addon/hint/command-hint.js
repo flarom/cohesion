@@ -59,12 +59,6 @@
         exec: function(arg) { insertSnippet('> [!DETAILS:${1:Title}]\n> ${2:Content}'); }
     });
 
-    CommandRegistry.register("embed", {
-        description: "Embeded web content",
-        icon: "iframe",
-        exec: function(arg) { insertSnippet('> [!EMBED]\n> ${1:https\://example.com}'); }
-    });
-
     CommandRegistry.register("meta", {
         description: "Create a meta block at the top",
         icon: "sell",

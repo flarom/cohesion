@@ -289,6 +289,7 @@
         <script src="script/showdown/extension/progress.js"></script>
         <script src="script/showdown/extension/kbd.js"></script>
         <script src="script/showdown/extension/footnotes.js"></script>
+        <script src="script/showdown/extension/embed.js"></script>
         <script src="script/macros.js"></script>
         <script src="script/editorTools.js"></script>
         <script src="script/insert.js"></script>
@@ -646,7 +647,8 @@
                     'rubyText', // ruby text support
                     'progress', // progress bar support
                     'keys', // kbd support
-                    'footnotes' // footnotes support
+                    'footnotes', // footnotes support
+                    'embed' // embed support
                 ],
             });
 
@@ -786,7 +788,15 @@
 
                     setModeVisibility(false);
                 }
+
+                editor.refresh();
+                localStorage.setItem(`lastPreviewState`, shouldShowPreview);
             }
+
+            // Show sidebar if lastfiles-barSidebarState is true
+            if (localStorage.getItem(`lastfiles-barSidebarState`) == "true") toggleSidebar('files-bar');
+
+            if (localStorage.getItem(`lastPreviewState`) == "true") togglePreview('preview');
 
             /**
              * Toggle the search header visibility

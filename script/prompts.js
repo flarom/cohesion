@@ -84,6 +84,8 @@ function toggleSidebar(sidebarId) {
     } else {
         sidebar.removeEventListener("keydown", handleArrowNavigation);
     }
+
+    localStorage.setItem(`last${sidebarId}SidebarState`, sidebar.classList.contains("show"));
 }
 
 function showToast(message, icon = "") {
@@ -549,9 +551,6 @@ function promptIframe() {
         const plataformCbx = document.createElement("select");
         plataformCbx.innerHTML = `
             <option value='pYouTube'>YouTube Video</option>
-            <option value='pVimeo'>Vimeo Video</option>
-            <option value='pBluesky'>Bluesky Post</option>
-            <option value='pX'>X (Twitter) Post</option>
         `;
         dialog.appendChild(plataformCbx);
 
@@ -591,14 +590,6 @@ function promptIframe() {
                 case "pYouTube":
                     resolve(insertYouTubeVideo(contentField.value));
                     break;
-                case "pVimeo":
-                    resolve(insertVimeoVideo(contentField.value));
-                    break;
-                case "pBluesky":
-                    resolve(insertBlueskyPost(contentField.value));
-                    break;
-                case "pX":
-                    resolve(insertXPost(contentField.value));
             }
         }
 

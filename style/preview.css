@@ -222,6 +222,11 @@
     user-select: auto;
 }
 
+.preview .code-container code::selection {
+    background-color: var(--text-color);
+    color: var(--background-color);
+}
+
 .preview .code-container .code-head button {
     border: 0;
     padding: 0;
