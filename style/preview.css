@@ -119,19 +119,15 @@
 .preview blockquote.quote-purple,
 .preview blockquote.quote-yellow,
 .preview blockquote.quote-red {
-    padding: 10px 15px 10px 15px;
-    border-radius: 15px;
-    box-shadow: var(--shadow);
+    padding-left: 15px;
 }
 
 .preview blockquote.quote-generic {
-    border: 1px solid var(--border-light-color);
-    background-color: var(--background-color-3);
+    border-left: 2px solid var(--border-light-color);
 }
 
 .preview blockquote.quote-blue {
-    border: 1px solid var(--quote-blue);
-    background-color: var(--quote-blue-bg);
+    border-left: 2px solid var(--quote-blue);
 }
 
 .preview .quote-blue-label {
@@ -139,8 +135,7 @@
 }
 
 .preview blockquote.quote-green {
-    border: 1px solid var(--quote-green);
-    background-color: var(--quote-green-bg);
+    border-left: 2px solid var(--quote-green);
 }
 
 .preview .quote-green-label {
@@ -148,8 +143,7 @@
 }
 
 .preview blockquote.quote-purple {
-    border: 1px solid var(--quote-purple);
-    background-color: var(--quote-purple-bg);
+    border-left: 2px solid var(--quote-purple);
 }
 
 .preview .quote-purple-label {
@@ -157,8 +151,7 @@
 }
 
 .preview blockquote.quote-yellow {
-    border: 1px solid var(--quote-yellow);
-    background-color: var(--quote-yellow-bg);
+    border-left: 2px solid var(--quote-yellow);
 }
 
 .preview .quote-yellow-label {
@@ -166,8 +159,7 @@
 }
 
 .preview blockquote.quote-red {
-    border: 1px solid var(--quote-red);
-    background-color: var(--quote-red-bg);
+    border-left: 2px solid var(--quote-red);
 }
 
 .preview .quote-red-label {
@@ -328,6 +320,28 @@
 .preview .media-container:hover audio + div {
     display: none !important;
     opacity: 0 !important;
+}
+
+.preview figure {
+    border-radius: 12px;
+    overflow: hidden;
+    max-width: 400px;
+    border: 1px solid var(--border-light-color);
+    box-shadow: var(--shadow);
+    display: inline-flex;
+    flex-direction: column;
+    margin:0;
+}
+
+.preview figure img {
+    max-width: 100%;
+    border-radius: 0 !important;
+}
+
+.preview figure figcaption {
+    background-color: var(--background-color-2);
+    padding: 12px;
+    border-top: 1px solid var(--border-light-color);
 }
 
 /* links */

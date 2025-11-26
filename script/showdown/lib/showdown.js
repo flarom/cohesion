@@ -1802,6 +1802,9 @@
             let badgeLabel = "";
             let blockId = null;
             let customColor = null;
+            let containerStyleAttr = "";
+            let badgeLabelStyleAttr = "";
+            
 
             if (match) {
                 let label = match[1];
@@ -1814,15 +1817,20 @@
                     label = `${label}:${colorCandidate}`;
                 }
 
+                if (customColor) {
+                    containerStyleAttr = ` style="border-left: 2px solid ${customColor};"`;
+                    badgeLabelStyleAttr = ` style="color: ${customColor};"`
+                }
+
                 const badgeKey = `[!${label.toUpperCase()}]`;
 
                 if (badgeMap[badgeKey]) {
                     let badge = badgeMap[badgeKey];
                     badgeClass = badge.class;
-                    badgeLabel = `<label class='${badgeClass}-label quote-label'><span class='icon'>${badge.icon}</span>${badge.label}</label>\n`;
+                    badgeLabel = `<label class='${badgeClass}-label quote-label'${badgeLabelStyleAttr}><span class='icon'>${badge.icon}</span>${badge.label}</label>\n`;
                 } else {
                     badgeClass = "quote-generic";
-                    badgeLabel = `<label class='${badgeClass}-label quote-label'>${label}</label>\n`;
+                    badgeLabel = `<label class='${badgeClass}-label quote-label'${badgeLabelStyleAttr}>${label}</label>\n`;
                 }
 
                 lines.shift();
@@ -1832,23 +1840,9 @@
             bq = showdown.subParser("makehtml.githubCodeBlocks")(bq, options, globals);
             bq = showdown.subParser("makehtml.blockGamut")(bq, options, globals);
 
-            let styleAttr = "";
-            if (customColor) {
-                let bgColor = customColor;
-                if (/^#([0-9a-f]{6})$/i.test(customColor)) {
-                    bgColor = customColor + "33";
-                } else if (/^#([0-9a-f]{3})$/i.test(customColor)) {
-                    let c = customColor.replace("#", "").split("");
-                    bgColor = `#${c[0]}${c[0]}${c[1]}${c[1]}${c[2]}${c[2]}33`;
-                } else if (/^rgba?\(/i.test(customColor)) {
-                    bgColor = customColor.replace(/rgba?\((.+)\)/i, "rgba($1,0.2)");
-                } else {
-                    bgColor = customColor;
-                }
-                styleAttr = ` style="border:1px solid ${customColor}; background:${bgColor};"`;
-            }
+            
 
-            let html = `<blockquote class="custom-block ${badgeClass}"${blockId ? ` id="${blockId}"` : ""}${styleAttr}>${badgeLabel}<div class="quote-content">${bq}</div></blockquote>`;
+            let html = `<blockquote class="custom-block ${badgeClass}"${blockId ? ` id="${blockId}"` : ""}${containerStyleAttr}>${badgeLabel}<div class="quote-content">${bq}</div></blockquote>`;
             return showdown.subParser("makehtml.hashBlock")(html, options, globals);
         });
 

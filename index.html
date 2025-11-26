@@ -151,12 +151,12 @@
                             Resources
                             <kbd>Alt+R</kbd>
                         </button>
-                        <button class="text-button" onmouseup="closeAllDialogs(); showMacrosDialog(); hideAllMenus()">
-                            Macros
-                        </button>
                         <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('dialogs/settings.html', true, false, true, true, 900); hideAllMenus()">
                             Settings
                             <kbd>Ctrl+,</kbd>
+                        </button>
+                        <button class="text-button" onmouseup="closeAllDialogs(); showMacrosDialog(); hideAllMenus()">
+                            Macros
                         </button>
                         <hr />
                         <button class="text-button" onmouseup="window.open('https://github.com/flarom/cohesion/wiki'); hideAllMenus()">Help</button>
@@ -290,6 +290,7 @@
         <script src="script/showdown/extension/kbd.js"></script>
         <script src="script/showdown/extension/footnotes.js"></script>
         <script src="script/showdown/extension/embed.js"></script>
+        <script src="script/showdown/extension/figcaption.js"></script>
         <script src="script/macros.js"></script>
         <script src="script/editorTools.js"></script>
         <script src="script/insert.js"></script>
@@ -648,7 +649,8 @@
                     'progress', // progress bar support
                     'keys', // kbd support
                     'footnotes', // footnotes support
-                    'embed' // embed support
+                    'embed', // embed support
+                    'figureCaption', // figure and figcaption support
                 ],
             });
 

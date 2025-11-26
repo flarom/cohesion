@@ -478,13 +478,17 @@ div.CodeMirror-dragcursors {
 }
 
 .CodeMirror-selected {
-    background: var(--active-line);
+    background: var(--selection-color);
     overflow: 30%;
     border-radius: 4px;
+    box-shadow: var(--shadow-light);
+    border: 1px solid var(--highlight-color);
 }
 
 .CodeMirror-focused .CodeMirror-selected {
     background: var(--selection-color);
+    border: 1px solid transparent;
+    box-shadow: none;
 }
 
 .CodeMirror-crosshair {
