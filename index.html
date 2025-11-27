@@ -183,7 +183,7 @@
             <div id="files"></div>
         </div>
 
-        <div class="main-wrapper">
+        <div class="main-wrapper" onclick="hideAllMenus();">
             <header class="window-title off bottom" id="search-header">
                 <div class="header-center" style="display: flex; align-items: center; gap: 0px">
                     <div class="field-container">
@@ -291,6 +291,7 @@
         <script src="script/showdown/extension/footnotes.js"></script>
         <script src="script/showdown/extension/embed.js"></script>
         <script src="script/showdown/extension/figcaption.js"></script>
+        <script src="script/showdown/extension/style.js"></script>
         <script src="script/macros.js"></script>
         <script src="script/editorTools.js"></script>
         <script src="script/insert.js"></script>
@@ -651,6 +652,7 @@
                     'footnotes', // footnotes support
                     'embed', // embed support
                     'figureCaption', // figure and figcaption support
+                    'style'
                 ],
             });
 
@@ -910,7 +912,7 @@
                     hljs.highlightElement(block);
                 });
             
-                const selectors = ["img", "audio", "video", "iframe"];
+                const selectors = ["img", "audio", "video", "iframe", "embed"];
                 for (const tag of selectors) {
                     const elements = preview.querySelectorAll(tag);
                     for (const el of elements) {
@@ -1547,7 +1549,7 @@
             async function shareFileAndShowQR() {
                 try {
                     const id = await shareFile(index);
-                    const link = `https://flarom.github.io/cohesion?f=${id}`;
+                    const link = `https://flarom.github.io/cohesion/share?f=${id}`;
 
                     const qrUrl = createQRCode(link, 240);
 

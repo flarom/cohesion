@@ -16,20 +16,20 @@
     
     <!-- Open Graph -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://flarom.github.io/cohesion/tools/markdown-table-editor">
+    <meta property="og:url" content="https://flarom.github.io/cohesion/tools/markdown-reader">
     <meta property="og:title" content="Markdown Reader - Cohesion">
     <meta property="og:description" content="Read Markdown Documents without distractions and try the Cohesion Markdown editor.">
     <meta property="og:image" content="https://flarom.github.io/cohesion/cohesion/cards/tools.png">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://flarom.github.io/cohesion/tools/markdown-table-editor">
+    <meta property="twitter:url" content="https://flarom.github.io/cohesion/tools/markdown-reader">
     <meta property="twitter:title" content="Markdown Reader - Cohesion">
     <meta property="twitter:description" content="Read Markdown Documents without distractions and try the Cohesion Markdown editor.">
     <meta property="twitter:image" content="https://flarom.github.io/cohesion/cohesion/cards/tools.png">
 
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://flarom.github.io/cohesion/tools/markdown-table-editor">
+    <link rel="canonical" href="https://flarom.github.io/cohesion/tools/markdown-reader">
 
     <!-- PWA meta tags -->
     <meta name="application-name" content="Cohesion">
@@ -127,14 +127,14 @@
         </div>
     </header>
 
-    <div id="preview" class="preview" style="max-width: 1200px; margin: 0 auto; margin-top: 100px; padding: 10px; display: block; max-height: initial; overflow: visible;">
+    <div id="preview" class="preview" style="padding-top: 100px; display: block; height: 100vh; max-height: 100vh;">
         <div class='drag-drop-decorator' id='drag-drop-decorator'>
             <div class='image'>
                 <img src='../cohesion/landing/markdown.png'>
             </div>
             <div class='description'>
-                <h1>Drag & Drop your document here</h1>
-                <p>Supported formats: Markdown (*.md)</p>
+                <h1>Select a Markdown file</h1>
+                <p>Or drag and drop one here.</p>
             </div>
         </div>
 
@@ -154,9 +154,17 @@
     <script src="../script/highlight/lib/highlight.min.js"></script>
     <script src="../script/resources.js"></script>
     <script src="../script/showdown/lib/showdown.js"></script>
+    <script src="../script/showdown/extension/bannerImage.js"></script>
+    <script src="../script/showdown/extension/internalLink.js"></script>
     <script src="../script/showdown/extension/definitionList.js"></script>
     <script src="../script/showdown/extension/abbreviation.js"></script>
     <script src="../script/showdown/extension/rubyText.js"></script>
+    <script src="../script/showdown/extension/progress.js"></script>
+    <script src="../script/showdown/extension/kbd.js"></script>
+    <script src="../script/showdown/extension/footnotes.js"></script>
+    <script src="../script/showdown/extension/embed.js"></script>
+    <script src="../script/showdown/extension/figcaption.js"></script>
+    <script src="../script/showdown/extension/style.js"></script>
     <script src="../script/editorTools.js"></script>
     <script>
         loadFilesFromStorage();
@@ -198,7 +206,19 @@
         let markdown = constMarkdown;
 
         const converter = new showdown.Converter({
-            extensions: ['definitionList', 'abbreviation', 'rubyText'],
+            extensions: [
+                'bannerImage', // banner image controled by document meta
+                'internalLink', // internal link support
+                'definitionList', // definition list support
+                'abbreviation', // abbreviation support
+                'rubyText', // ruby text support
+                'progress', // progress bar support
+                'keys', // kbd support
+                'footnotes', // footnotes support
+                'embed', // embed support
+                'figureCaption', // figure and figcaption support
+                'style'
+            ],
         });
 
         const preview = document.getElementById("preview");
@@ -230,7 +250,7 @@
             btnEditorSimple.classList.add('off');
             btnEditorImport.classList.remove('off');
 
-            const selectors = ["img", "audio", "video", "iframe"];
+            const selectors = ["img", "audio", "video", "iframe", "embed"];
             for (const tag of selectors) {
                 const elements = preview.querySelectorAll(tag);
                 for (const el of elements) {
@@ -260,7 +280,7 @@
                     btnEditorSimple.classList.add('off');
                     btnEditorImport.classList.remove('off');
 
-                    const selectors = ["img", "audio", "video", "iframe"];
+                    const selectors = ["img", "audio", "video", "iframe", "embed"];
                     for (const tag of selectors) {
                         const elements = preview.querySelectorAll(tag);
                         for (const el of elements) {
@@ -290,7 +310,7 @@
                 btnEditorSimple.classList.add('off');
                 btnEditorImport.classList.remove('off');
 
-                const selectors = ["img", "audio", "video", "iframe"];
+                const selectors = ["img", "audio", "video", "iframe", "embed"];
                 for (const tag of selectors) {
                     const elements = preview.querySelectorAll(tag);
                     for (const el of elements) {
@@ -317,7 +337,7 @@
                     btnEditorSimple.classList.add('off');
                     btnEditorImport.classList.remove('off');
 
-                    const selectors = ["img", "audio", "video", "iframe"];
+                    const selectors = ["img", "audio", "video", "iframe", "embed"];
                     for (const tag of selectors) {
                         const elements = preview.querySelectorAll(tag);
                         for (const el of elements) {

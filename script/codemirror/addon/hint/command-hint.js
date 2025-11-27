@@ -225,47 +225,65 @@
     });
 
     CommandRegistry.register("resources", {
-        description: "Manage your resources folder",
+        description: "Pick items from your resources folder",
         icon: "attach_file",
-        exec: async function(arg) {
-            const options = ["Upload","Select","Manage Resources"];
-
-            selectFromMenu(options, async (selectedIndex) => {
-                switch (selectedIndex) {
-                    case 0: // Upload
-                        try {
-                            const file = await Resources.uploadFSFile("*/*");
-                            const filePath = `resources/${file.name}`;
-                            let markdown = `![\${1:ALT TEXT}](${filePath})\${2: }`;
-                            insertSnippet(markdown);
-                            showToast(`Archived ${file.name}`, "archive");
-                        } catch (err) { showToast("Failed to upload file.", "error"); console.error(err); }
-                        break;
-
-                    case 1: // Open existing
-                        try {
-                            const files = await Resources.getFSFiles();
-                            if (files.length === 0) { showToast("No files in resources.", "info"); return; }
-                            const fileOptions = files.map(f => f.name);
-                            selectFromMenu(fileOptions, (fileIndex) => {
-                                const file = files[fileIndex];
-                                const filePath = `resources/${file.name}`;
-                                let markdown = `![\${1:ALT TEXT}](${filePath})\${2: }`;
-                                insertSnippet(markdown);
-                            });
-                        } catch (err) { showToast("Failed to list resources.", "error"); console.error(err); }
-                        break;
-
-                    case 2: // Manage Resources
-                        let leftPane = `<button class='icon-button' onclick='Resources.uploadFSFile().then(() => renderFSFiles());' translate='no' title='Upload file'>add</button>`;
-                        let rightpane = `<button class='icon-button' translate='no' title='Search'>search</button>\n                            <div class='dropdown'>\n                                <button class='icon-button' onmousedown='toggleDropdown("resources-more-menu")' translate='no' title='More options'>more_vert</button>\n                                <div class='dropdown-content menu' id='resources-more-menu'>\n                                    <button class='text-button'>About Resources</button>\n                                    <button class='text-button danger' onmouseup='promptDeleteAllFS()'>Delete all data</button>\n                                </div>\n                            </div>`;
-
-                        showMessageFromFile("dialogs/resources.html", true, false, true, true, 800, leftPane, "", rightpane);
-                        break;
-                }
-            });
+        exec: async function() {
+            try {
+                const files = await Resources.getFSFiles();
+                if (files.length === 0) { showToast("No files in resources.", "info"); return; }
+                const fileOptions = files.map(f => f.name);
+                selectFromMenu(fileOptions, (fileIndex) => {
+                    const file = files[fileIndex];
+                    const filePath = `resources/${file.name}`;
+                    let markdown = `\${1:${filePath}}`;
+                    insertSnippet(markdown);
+                });
+            } catch (err) { showToast("Failed to list resources.", "error"); console.error(err); }
         }
     });
+
+    // CommandRegistry.register("resources", {
+    //     description: "Manage your resources folder",
+    //     icon: "attach_file",
+    //     exec: async function(arg) {
+    //         const options = ["Upload","Select","Manage Resources"];
+
+    //         selectFromMenu(options, async (selectedIndex) => {
+    //             switch (selectedIndex) {
+    //                 case 0: // Upload
+    //                     try {
+    //                         const file = await Resources.uploadFSFile("*/*");
+    //                         const filePath = `resources/${file.name}`;
+    //                         let markdown = `![\${1:ALT TEXT}](${filePath})\${2: }`;
+    //                         insertSnippet(markdown);
+    //                         showToast(`Archived ${file.name}`, "archive");
+    //                     } catch (err) { showToast("Failed to upload file.", "error"); console.error(err); }
+    //                     break;
+
+    //                 case 1: // Open existing
+    //                     try {
+    //                         const files = await Resources.getFSFiles();
+    //                         if (files.length === 0) { showToast("No files in resources.", "info"); return; }
+    //                         const fileOptions = files.map(f => f.name);
+    //                         selectFromMenu(fileOptions, (fileIndex) => {
+    //                             const file = files[fileIndex];
+    //                             const filePath = `resources/${file.name}`;
+    //                             let markdown = `![\${1:ALT TEXT}](${filePath})\${2: }`;
+    //                             insertSnippet(markdown);
+    //                         });
+    //                     } catch (err) { showToast("Failed to list resources.", "error"); console.error(err); }
+    //                     break;
+
+    //                 case 2: // Manage Resources
+    //                     let leftPane = `<button class='icon-button' onclick='Resources.uploadFSFile().then(() => renderFSFiles());' translate='no' title='Upload file'>add</button>`;
+    //                     let rightpane = `<button class='icon-button' translate='no' title='Search'>search</button>\n                            <div class='dropdown'>\n                                <button class='icon-button' onmousedown='toggleDropdown("resources-more-menu")' translate='no' title='More options'>more_vert</button>\n                                <div class='dropdown-content menu' id='resources-more-menu'>\n                                    <button class='text-button'>About Resources</button>\n                                    <button class='text-button danger' onmouseup='promptDeleteAllFS()'>Delete all data</button>\n                                </div>\n                            </div>`;
+
+    //                     showMessageFromFile("dialogs/resources.html", true, false, true, true, 800, leftPane, "", rightpane);
+    //                     break;
+    //             }
+    //         });
+    //     }
+    // });
 
     CommandRegistry.register("admonition", {
         description: "Note, tip, warning, or important section",

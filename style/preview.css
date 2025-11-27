@@ -1,18 +1,20 @@
 .preview {
+    width: 100%;
+    box-sizing: border-box;
+    padding-block: 15px;
+    padding-inline: max(15px, calc((100% - 1244px) / 2));
     max-height: calc(100vh - 48px);
-    max-width: 1200px;
-    padding: 15px;
-    margin: 0 auto;
+    margin: 0;
     color: var(--text-color);
     background-color: transparent;
     display: none;
-    overflow: scroll;
+    overflow: auto;
     font-family: var(--font-text);
-    box-sizing: border-box;
 }
 
 .preview *::selection {
-    background: var(--selection-color);
+    background: var(--highlight-color);
+    color: var(--button-color-2);
     border-radius: 4px;
 }
 
@@ -31,6 +33,7 @@
     font-family: var(--font-title);
     color: var(--title-color);
     padding-top: 15px;
+    word-break: break-all;
 }
 
 .preview h1 {

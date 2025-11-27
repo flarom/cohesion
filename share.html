@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document on Cohesion</title>
+    <link rel="shortcut icon" href="../cohesion/favicon.svg" type="image/x-icon" />
+    
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="Document on Cohesion">
+    <meta name="description" content="Read Markdown Documents without distractions.">
+    <meta name="keywords" content="markdown table generator, markdown table editor, online markdown table, create markdown tables, markdown table tool">
+    <meta name="language" content="en">
+    <meta name="author" content="Cohesion Team">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://flarom.github.io/cohesion/share">
+    <meta property="og:title" content="Document on Cohesion">
+    <meta property="og:description" content="Read Markdown Documents without distractions.">
+    <meta property="og:image" content="https://flarom.github.io/cohesion/cohesion/cards/editor.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://flarom.github.io/cohesion/share">
+    <meta property="twitter:title" content="Document on Cohesion">
+    <meta property="twitter:description" content="Read Markdown Documents without distractions.">
+    <meta property="twitter:image" content="https://flarom.github.io/cohesion/cohesion/cards/editor.png">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://flarom.github.io/cohesion/share">
+
+    <!-- PWA meta tags -->
+    <meta name="application-name" content="Cohesion">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta content="#303030" name="theme-color" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+
+    <link rel="stylesheet" href="style/palette.css">
+    <link rel="stylesheet" href="style/share.css">
+    <link rel="stylesheet" href="style/landing.css">
+    <link rel="stylesheet" href="style/preview.css">
+    <link rel="stylesheet" href="script/highlight/lib/highlight.css">
+
+<style>
+#intro-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--background-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 1s ease;
+    user-select: none;
+}
+
+#intro-title {
+    visibility: hidden;
+    font-family: var(--font-title);
+    font-size: 3em;
+    color: var(--text-color);
+    display: flex;
+}
+
+#intro-title span {
+    opacity: 0;
+    transform: translateY(-100px);
+    display: inline-block;
+    animation: letterPop 1s ease forwards;
+}
+
+@keyframes letterPop {
+    0% {
+        opacity: 0;
+        transform: translateY(-100px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+</style>
+
+</head>
+<body class="theme-dark">
+    <div id="intro-screen">
+        <div id="intro-title" translate="no">Cohesion</div>
+    </div>
+    <header>
+        <div>
+            <a href="../index.html" style="display: inline-flex; align-items: center; color: var(--text-color); text-decoration: none;">
+                <img src="../cohesion/favicon.svg" alt="" width="48">
+                <h2 translate="no" class="header-text">Cohesion</h2>
+            </a>
+        </div>
+        <div style="display: flex; gap: 5px;">
+            <button class="secondary" onclick="editOnCohesion()" title="Edit this file using the Cohesion Markdown editor">Edit</button>
+            <button class="secondary" onclick="" title="Download a copy of this document">Download</button>
+            <button class="secondary" onclick="window.open('https://github.com/flarom/cohesion/wiki')" title="Cohesion Documentation">Documentation</button>
+            <button class="secondary" onclick="changeTheme();" title="Switch theme" style="font-size: large;" translate="no"><span class="icon">routine</span></button>
+        </div>
+    </header>
+
+    <div id="preview" class="preview" style="padding-top: 50px; display: block; height: 100vh; max-height: 100vh;">
+        
+    </div>
+
+    <input type="file" id="fileInput" accept=".md,.markdown,.txt,text/markdown,text/plain" style="display:none" />
+
+    <script src="script/file.js"></script>
+    <script src="script/settings.js"></script>
+    <script src="script/prompts.js"></script>
+    <script src="script/highlight/lib/highlight.min.js"></script>
+    <script src="script/resources.js"></script>
+    <script src="script/showdown/lib/showdown.js"></script>
+    <script src="script/showdown/extension/bannerImage.js"></script>
+    <script src="script/showdown/extension/internalLink.js"></script>
+    <script src="script/showdown/extension/definitionList.js"></script>
+    <script src="script/showdown/extension/abbreviation.js"></script>
+    <script src="script/showdown/extension/rubyText.js"></script>
+    <script src="script/showdown/extension/progress.js"></script>
+    <script src="script/showdown/extension/kbd.js"></script>
+    <script src="script/showdown/extension/footnotes.js"></script>
+    <script src="script/showdown/extension/embed.js"></script>
+    <script src="script/showdown/extension/figcaption.js"></script>
+    <script src="script/showdown/extension/style.js"></script>
+    <script src="script/editorTools.js"></script>
+    <script>
+        // intro
+        window.addEventListener("load", () => {
+            const title = document.getElementById("intro-title");
+            title.style.visibility = "visible"
+            const text = title.innerText.trim();
+            title.innerHTML = "";
+
+            [...text].forEach((letter, i) => {
+                const span = document.createElement("span");
+                span.textContent = letter;
+                span.style.animationDelay = `${i * 0.1}s`;
+                title.appendChild(span);
+            });
+
+            const totalTime = text.length * 200;
+
+            setTimeout(() => {
+                const intro = document.getElementById("intro-screen");
+                intro.style.opacity = "0";
+
+                setTimeout(() => intro.remove(), 1800);
+            }, totalTime);
+        });
+
+        loadFilesFromStorage();
+
+        // load settings
+        function loadSettings(){
+            const theme = Settings.getSetting("theme");
+            if (theme) document.body.className = theme;
+
+            const root = document.documentElement;
+
+            const editorFont = Settings.getSetting("editorFont");
+            const paragraphFont = Settings.getSetting("paragraphFont");
+            const titleFont = Settings.getSetting("titleFont");
+
+            if (editorFont) root.style.setProperty("--font-editor", editorFont);
+            if (paragraphFont) root.style.setProperty("--font-text", paragraphFont);
+            if (titleFont) root.style.setProperty("--font-title", titleFont);
+        }
+
+        function changeTheme() {
+            let current = Settings.getSetting('theme');
+            if (current === 'theme-dark') {
+                Settings.setSetting('theme', 'theme-light');
+            } else {
+                Settings.setSetting('theme', 'theme-dark');
+            }
+            loadSettings();
+        }
+
+        loadSettings();
+
+        const constMarkdown = ``
+
+        let markdown = constMarkdown;
+
+        const converter = new showdown.Converter({
+            extensions: [
+                'bannerImage', // banner image controled by document meta
+                'internalLink', // internal link support
+                'definitionList', // definition list support
+                'abbreviation', // abbreviation support
+                'rubyText', // ruby text support
+                'progress', // progress bar support
+                'keys', // kbd support
+                'footnotes', // footnotes support
+                'embed', // embed support
+                'figureCaption', // figure and figcaption support
+                'style'
+            ],
+        });
+
+        const preview = document.getElementById("preview");
+
+        async function loadMarkdownFromURLParams() {
+            const params = new URLSearchParams(window.location.search);
+
+            if (params.has('f')) {
+                const id = params.get('f');
+
+                fetch(`https://tempfiles.flarowom.workers.dev/${id}`)
+                    .then(async res => {
+                        if (!res.ok) {
+
+                            markdown = `
+# File unavailable
+
+The file with ID \`${id}\` is not currently publicly available to be displayed.
+
+You may ask who sent you this document to share it again.
+
+---
+
+[Report an issue](https://github.com/flarom/cohesion/issues) • [Homepage](index.html)`;
+
+                            preview.innerHTML = converter.makeHtml(markdown);
+                            return;
+                        }
+
+                        const text = await res.text();
+
+                        markdown = text;
+                        preview.innerHTML = converter.makeHtml(markdown);
+
+                        document.title = getFileTitleFromText(text) + " - Cohesion";
+
+                        preview.querySelectorAll('pre code').forEach((block) => {
+                            hljs.highlightElement(block);
+                        });
+                    })
+                    .catch(err => {
+                        console.error(err);
+
+                        markdown = `
+# Unable to connect
+
+Please try again later.
+
+---
+
+[Homepage](index.html)`;
+
+                        preview.innerHTML = converter.makeHtml(markdown);
+                    });
+
+                return;
+            }
+
+            if (markdown) preview.innerHTML = converter.makeHtml(markdown);
+        }
+
+        function editOnCohesion() {
+            localStorage.setItem('lastPreviewState', 'true')
+            const params = new URLSearchParams(window.location.search);
+
+            if (params.has('id')) {
+                const id = params.get('id');
+
+                if (!isNaN(id) && files[Number(id)] !== undefined) {
+                    index = id;
+                    localStorage.setItem('lastIndex', index);
+                    window.open('../index.html', '_self')
+
+                    return;
+                }else {
+                    showToast(`'${id}' is an invalid/missing file ID`, 'error');
+                    return;
+                }
+            }
+
+            index = 0;
+            localStorage.setItem('lastIndex', index);
+            files.unshift(markdown);
+            saveFilesToStorage();
+            window.open('../index.html', '_self')
+        }
+
+        loadMarkdownFromURLParams();
+    </script>
+</body>
+</html>
