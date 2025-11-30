@@ -98,7 +98,6 @@ function insertSnippet(snippet, markerChar = "$") {
         cleanText += fullText.slice(last, match.index);
 
         if (match[0] === `${markerChar}0`) {
-            // $0 → posição final
             placeholders.push({ id: 0, start: cleanText.length, end: cleanText.length });
         } else {
             const id = parseInt(match[1]);

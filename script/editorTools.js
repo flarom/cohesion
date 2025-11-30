@@ -106,104 +106,76 @@ const field = {
             .replace(/'/g, "&#39;");
     },
 
-    make : {
-        textbox : function (id, value = "", max) {
-            return `<input type="text" id="${field._escapeAttr(id)}" value="${field._escapeAttr(value)}" maxlength="${field._escapeAttr(max)}">`;
-        },
+    keepValue: function(id, newValue) {
+        const doc = editor.getDoc();
+        let lines = doc.getValue().split("\n");
 
-        slider : function (id, value = 50, min = 0, max = 100, step = 1) {
-            return `<input type="range" id="${field._escapeAttr(id)}" value="${field._escapeAttr(value)}" min="${field._escapeAttr(min)}" max="${field._escapeAttr(max)}" step="${field._escapeAttr(step)}">`;
-        },
+        let matches = [];
 
-        spinner : function (id, value = 0, min = 0, max = 100, step = 1) {
-            return `<input type="number" id="${field._escapeAttr(id)}" value="${field._escapeAttr(value)}" min="${field._escapeAttr(min)}" max="${field._escapeAttr(max)}" step="${field._escapeAttr(step)}">`;
-        },
+        const re = /^>\s*\[!field:[^\]]+\]\(([^)]+)\)/i;
 
-        date : function (id, value = "") {
-            return `<input type="date" id="${field._escapeAttr(id)}" value="${field._escapeAttr(value)}">`;
-        },
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            const match = line.match(re);
 
-        time : function (id, value = "") {
-            return `<input type="time" id="${field._escapeAttr(id)}" value="${field._escapeAttr(value)}">`;
-        },
-
-        select : function (id, options = [], selected = null) {
-            const safeId = field._escapeAttr(id);
-            const opts = options.map(opt => {
-                const val = field._escapeAttr(opt.value ?? opt);
-                const label = field._escapeAttr(opt.label ?? opt);
-                const isSelected = (selected !== null && (opt.value ?? opt) == selected) ? " selected" : "";
-                return `<option value="${val}"${isSelected}>${label}</option>`;
-            }).join("");
-            return `<select id="${safeId}">${opts}</select>`;
+            if (match && match[1] === id) {
+                matches.push(i);
+            }
         }
+
+        if (matches.length > 1) {
+            showToast("Multiple fields blocks with same ID", "Warning");
+            return;
+        }
+
+        if (matches.length === 0) return;
+
+        const idx = matches[matches.length - 1];
+        const valueLine = idx + 1;
+
+        if (valueLine < lines.length) {
+            lines[valueLine] = `> ${newValue}`;
+        }
+
+        doc.setValue(lines.join("\n"));
     },
 
-    keepValue : function(id) {
-        const fields = doc_container.querySelectorAll(`#${id}`);
-        if (fields.length === 0) return;
 
-        const values = Array.from(fields).map(f => f.value);
-
-        const doc = editor.getDoc();
-        let content = doc.getValue();
-
-        const re = new RegExp(
-            `(<[^>]*\\bid=(["'])?${id}\\2?[^>]*)(>)`,
-            "gi"
-        );
-
-        let idx = 0;
-        content = content.replace(re, (match, pre, quote, close) => {
-            const newVal = field._escapeAttr(values[idx++] ?? "");
-
-            if (/\bvalue\s*=/.test(pre)) {
-                return pre.replace(
-                    /\bvalue\s*=\s*(['"])([\s\S]*?)\1/i,
-                    `value="${newVal}"`
-                ).replace(
-                    /\bvalue\s*=\s*([^ >]+)/i,
-                    `value="${newVal}"`
-                ) + close;
-            } else {
-                return `${pre} value="${newVal}"${close}`;
-            }
-        });
-
-        doc.setValue(content);
-    },
-
-    setValue : function(id, value) {
-        const fields = doc_container.querySelectorAll(`#${id}`);
-        if (fields.length === 0) return;
-
-        const values = Array.isArray(value) ? value : Array(fields.length).fill(value);
-
-        const doc = editor.getDoc();
-        let content = doc.getValue();
-
-        let i = 0;
-        content = content.replace(
-            new RegExp(`(<input[^>]*id=['"]${id}['"][^>]*value=['"])([^'"]*)(['"])`, "gi"),
-            (match, pre, oldVal, post) => {
-                const newVal = values[i++] ?? oldVal;
-                return `${pre}${newVal}${post}`;
-            }
-        );
-
-        doc.setValue(content);
-
-        fields.forEach((f, i) => {
-            f.value = values[i] ?? f.value;
-        });
-    },
-
-    getValue : function(id) {
+    setValue: function(id, value) {
         const fields = doc_container.querySelectorAll(`#${id}`);
         if (fields.length === 0) return null;
 
-        const values = Array.from(fields).map(f => f.value);
-        return values.length === 1 ? values[0] : values;
+        if (fields.length > 1) {
+            showToast('Multiple fields blocks with same ID', 'Warning');
+            return;
+        }
+
+        const val = Array.isArray(value) ? value[0] : value;
+
+        const doc = editor.getDoc();
+        let content = doc.getValue();
+
+        content = content.replace(
+            new RegExp(`(<input[^>]*id=['"]${id}['"][^>]*value=['"])([^'"]*)(['"])`, "i"),
+            (match, pre, oldVal, post) => `${pre}${val}${post}`
+        );
+
+        doc.setValue(content);
+
+        fields[0].value = val;
+    },
+
+
+    getValue: function(id) {
+        const fields = doc_container.querySelectorAll(`#${id}`);
+        if (fields.length === 0) return null;
+
+        if (fields.length > 1) {
+            showToast('Multiple fields blocks with same ID', 'Warning');
+            return null;
+        }
+
+        return fields[0].value;
     }
 };
 

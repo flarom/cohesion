@@ -138,7 +138,7 @@
                             Save
                             <kbd>Ctrl+S</kbd>
                         </button>
-                        <button class="text-button" onmouseup="showToast('Please wait...', 'broadcast_on_personal');shareFileAndShowQR()">
+                        <button class="text-button" onmouseup="shareFileAndShowQR()">
                             Share
                         </button>
                         <hr>
@@ -292,6 +292,7 @@
         <script src="script/showdown/extension/embed.js"></script>
         <script src="script/showdown/extension/figcaption.js"></script>
         <script src="script/showdown/extension/style.js"></script>
+        <script src="script/showdown/extension/blocks.js"></script>
         <script src="script/macros.js"></script>
         <script src="script/editorTools.js"></script>
         <script src="script/insert.js"></script>
@@ -652,7 +653,8 @@
                     'footnotes', // footnotes support
                     'embed', // embed support
                     'figureCaption', // figure and figcaption support
-                    'style'
+                    'style',
+                    'blocks'
                 ],
             });
 
@@ -798,7 +800,7 @@
             }
 
             // Show sidebar if lastfiles-barSidebarState is true
-            if (localStorage.getItem(`lastfiles-barSidebarState`) == "true") toggleSidebar('files-bar');
+            if (localStorage.getItem(`lastfiles-barSidebarState`) == "true") { toggleSidebar('files-bar'); editor.focus()}
 
             if (localStorage.getItem(`lastPreviewState`) == "true") togglePreview('preview');
 
@@ -1547,6 +1549,10 @@
             })();
 
             async function shareFileAndShowQR() {
+                if (await promptConfirm('Sharing this file will generate a temporary public link valid for 2 hours. Anyone with the link can view the document. Proceed?') == false) return;
+
+                showToast('Please wait...', 'broadcast_on_personal');
+
                 try {
                     const id = await shareFile(index);
                     const link = `https://flarom.github.io/cohesion/share?f=${id}`;
@@ -1560,7 +1566,7 @@
 
                     const html = `
                         <div style="text-align:center;">
-                            <div style='text-align:center; width:100%; background-color:white; padding:10px'>
+                            <div class="share-qr-code-container">
                                 <img src="${qrUrl}" alt="QR Code" style="width:240px; height:240px;" />
                             </div>
                             <div style='padding: 10px'>

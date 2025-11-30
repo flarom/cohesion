@@ -576,9 +576,10 @@
 }
 
 .preview details {
+    background-color: var(--background-color-2);
     border: 1px solid var(--border-light-color);
     border-radius: 15px;
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-light);
     margin: 20px 0;
     transition: all 0.3s ease-in-out;
     overflow: hidden;
@@ -610,6 +611,10 @@
     transition: transform 0.3s;
 }
 
+.preview details[open] {
+    box-shadow: var(--shadow);
+}
+
 .preview details[open] summary {
     margin: 7px;
 }
@@ -621,6 +626,15 @@
 .preview details .content {
     padding: 12px 15px;
     overflow: scroll;
+}
+
+.preview input[type="color"] {
+    padding: 0;
+    background: transparent;
+    width: 32px;
+    height: 32px;
+    border-radius: 12px;
+    cursor: pointer;
 }
 
 .preview input[type="number"] {

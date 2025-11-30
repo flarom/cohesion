@@ -544,3 +544,22 @@ button.danger:hover {
 * {
     scrollbar-color: var(--border-light-color) transparent;
 }
+
+.share-qr-code-container {
+    text-align:center; 
+    width:100%; 
+    background-color:white; 
+    padding: 10px ;
+    height: 0px;
+    animation: 3s qrcodeexpand 2s forwards;
+    overflow: hidden;
+}
+
+@keyframes qrcodeexpand {
+    from {
+        height: 0px;
+    }
+    to {
+        height: 240px;
+    }
+}

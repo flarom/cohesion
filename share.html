@@ -276,7 +276,7 @@ Please try again later.
                 if (!isNaN(id) && files[Number(id)] !== undefined) {
                     index = id;
                     localStorage.setItem('lastIndex', index);
-                    window.open('../index.html', '_self')
+                    window.open('index.html', '_self')
 
                     return;
                 }else {
@@ -289,7 +289,7 @@ Please try again later.
             localStorage.setItem('lastIndex', index);
             files.unshift(markdown);
             saveFilesToStorage();
-            window.open('../index.html', '_self')
+            window.open('index.html', '_self')
         }
 
         loadMarkdownFromURLParams();

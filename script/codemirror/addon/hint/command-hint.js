@@ -324,9 +324,9 @@
         exec: function(arg) {
             selectFromMenu(["pizza","bars","lines"], function(selectedIndex) {
                 switch (selectedIndex) {
-                    case 0: insertAt("> [!graph:pizza]\n> Label 1, value", 28,33); break;
-                    case 1: insertAt("> [!graph:bars]\n> Label 1, value", 27,32); break;
-                    case 2: insertAt("> [!graph:lines]\n> Label 1, [value, array]", 29,41); break;
+                    case 0: insertSnippet("> [!graph:pie]\n> ${1:Label 1}, ${2:numeric value}\n> ${3:Label 2}, ${4:numeric value}"); break;
+                    case 1: insertSnippet("> [!graph:bar]\n> ${1:Label 1}, ${2:numeric value}\n> ${3:Label 2}, ${4:numeric value}"); break;
+                    case 2: insertSnippet("> [!graph:line]\n> ${1:Label 1}, ${2:Label 2}\n> ${3:numeric value}, ${4:numeric value}"); break;
                 }
             });
         }
@@ -346,7 +346,7 @@
         return patternIdx === pattern.length;
     }
 
-    function showTextMenu(callback, deleteInput = false) {
+    function showTextMenu(callback, message, deleteInput = false) {
         let doneClicked = false;
         const startCursor = editor.getCursor();
         const startCh = startCursor.ch;
@@ -360,7 +360,7 @@
 
             const list = [{
                 text: "Done",
-                displayText: "Done (finish typing)",
+                displayText: message,
                 hint: function(cm, data, completion) {
                     doneClicked = true;
 
