@@ -729,12 +729,10 @@
              * @param {string} forceMode - "preview" to force preview mode, "editor" to force editor mode, or undefined to toggle
              */
             function setModeVisibility(isPreview) {
-                // .hide-on-read-mode deve ficar oculto no modo leitura (preview)
                 document.querySelectorAll('.hide-on-read-mode').forEach(el => {
                     el.style.display = isPreview ? 'none' : '';
                 });
 
-                // .hide-on-edit-mode deve ficar oculto no modo edição
                 document.querySelectorAll('.hide-on-edit-mode').forEach(el => {
                     el.style.display = isPreview ? '' : 'none';
                 });
