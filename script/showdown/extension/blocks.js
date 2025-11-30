@@ -95,17 +95,17 @@
         },
     });
 
-    // BlockRegistry.register("FIELD", {
-    //     allowHtml: true,
-    //     render(param, content, ctx) {
-    //         const type = param || "text"
+    BlockRegistry.register("FIELD", {
+        allowHtml: true,
+        render(param, content, ctx) {
+            const type = param || "text"
 
-    //         content = content.replace(/^<p>/i, "").replace(/<\/p>$/i, "");
-    //         content = content.replace(/^>\s*/gm, "").trim();
+            content = content.replace(/^<p>/i, "").replace(/<\/p>$/i, "");
+            content = content.replace(/^>\s*/gm, "").trim();
 
-    //         return `<input type='${type}' value='${content}' id='${ctx.id}' onchange='field.keepValue("${ctx.id}", this.value)' />`;
-    //     }
-    // });
+            return `<input type='${type}' value='${content}' id='${ctx.id}' onchange='field.keepValue("${ctx.id}", this.value)' />`;
+        }
+    });
 
     // BlockRegistry.register("BUTTON", {
     //     allowHtml: true,
