@@ -775,10 +775,12 @@
     border: 1px solid var(--border-light-color);
     color: var(--title-color);
     padding: 3px 6px;
+        padding-left: 6px;
     border-radius: 6px;
-    box-shadow: var(--shadow-light), 0 1px 0px var(--border-light-color);
+    box-shadow: 0 -2px 0px var(--border-light-color) inset, var(--shadow-light);
     text-transform: capitalize;
     margin: 0px 3px;
+    outline: 1px solid #050505;
 }
 
 .preview kbd.key-shift, .preview kbd.key-alt, .preview kbd.key-ctrl, .preview kbd.key-meta, .preview kbd.key-cmd,

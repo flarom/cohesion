@@ -1349,6 +1349,12 @@ function promptCodeEditor(initialText = "") {
 
         textarea.focus();
 
+        requestAnimationFrame(() => {
+            textarea.selectionStart = 0;
+            textarea.selectionEnd = 0;
+            textarea.scrollTop = 0;
+        });
+
         // helpers
         function closePrompt(result) {
             document.body.removeChild(overlay);
@@ -1368,9 +1374,51 @@ function promptCodeEditor(initialText = "") {
             document.execCommand("redo");
         });
 
+        textarea.addEventListener("keydown", (event) => {
+            if (event.key === "Tab") {
+                event.preventDefault();
+
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+
+                const value = textarea.value;
+                const lines = value.split("\n");
+
+                const startLine = value.substring(0, start).split("\n").length - 1;
+                const endLine = value.substring(0, end).split("\n").length - 1;
+
+                if (!event.shiftKey) {
+                    for (let i = startLine; i <= endLine; i++) {
+                        lines[i] = "\t" + lines[i];
+                    }
+                } else {
+                    for (let i = startLine; i <= endLine; i++) {
+                        if (lines[i].startsWith("\t")) {
+                            lines[i] = lines[i].substring(1);
+                        }
+                    }
+                }
+
+                const newValue = lines.join("\n");
+
+                let diff = 0;
+
+                if (!event.shiftKey) {
+                    diff = 1;
+                } else {
+                    const originalLines = value.split("\n");
+                    if (originalLines[startLine].startsWith("\t")) diff = -1;
+                }
+
+                textarea.value = newValue;
+
+                textarea.selectionStart = start + diff;
+                textarea.selectionEnd = end + diff * (endLine - startLine + 1);
+            }
+        });
+
         overlay.addEventListener("keydown", (event) => {
-            if (event.key === "Escape") closePrompt(null);
-            else if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+            if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
                 closePrompt(textarea.value);
             }
         });

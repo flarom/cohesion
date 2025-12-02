@@ -112,6 +112,7 @@
     "num-enter": "Num Enter",
   };
 
+  
   const REGEX = /\+\+(?:"([^"]+)"|([^+][\s\S]*?))\+\+/g;
 
   function escapeHtml(str) {
@@ -156,22 +157,53 @@
     return out;
   }
 
-  showdown.extension("keys", function() {
+  showdown.extension("keys", function () {
+
     return [
+
+      // 1) FASE LANG: transforma ++...++ em placeholder HEX
       {
         type: "lang",
         regex: REGEX,
-        replace: function(_, quoted, seq) {
+        replace: function (_, quoted, seq) {
           const raw = quoted !== undefined ? `"${quoted}"` : seq;
           const hex = hexEncode(raw);
           return `§§KEYS${hex}§§`;
         }
       },
 
+      // 2) FASE OUTPUT: processa placeholders, mas restaura blocos com placeholders revertidos
       {
         type: "output",
-        filter: function(html) {
-          return html.replace(/§§KEYS([0-9a-fA-F]+)§§/g, function(_, hex) {
+        filter: function (html) {
+
+          const blocks = [];
+
+          // ao armazenar um bloco, também reverte placeholders DENTRO dele
+          // para o texto original ++...++, garantindo que o código final mostre aquilo.
+          html = html.replace(/<pre\b[\s\S]*?<\/pre>/gi, m => {
+            const restored = m.replace(/§§KEYS([0-9a-fA-F]+)§§/g, (_, hex) => {
+              // devolve como ++...++ exatamente como usuário escreveu
+              return "++" + hexDecode(hex) + "++";
+            });
+            const id = `§§BLOCK${blocks.length}§§`;
+            blocks.push(restored);
+            return id;
+          });
+
+          // mesmos cuidados para <code> remanescentes (fora de pre)
+          html = html.replace(/<code\b[\s\S]*?<\/code>/gi, m => {
+            const restored = m.replace(/§§KEYS([0-9a-fA-F]+)§§/g, (_, hex) => {
+              return "++" + hexDecode(hex) + "++";
+            });
+            const id = `§§BLOCK${blocks.length}§§`;
+            blocks.push(restored);
+            return id;
+          });
+
+          // agora processa placeholders FORA dos blocos (vira <kbd>...)
+          html = html.replace(/§§KEYS([0-9a-fA-F]+)§§/g, (_, hex) => {
+
             const content = hexDecode(hex);
 
             if (/^".*"$/.test(content)) {
@@ -190,8 +222,15 @@
 
             return `<span class="keys" data-keys="${escapeHtml(dataKeys)}">${rendered}</span>`;
           });
+
+          // restaurar blocos (eles já foram revertidos internamente)
+          html = html.replace(/§§BLOCK(\d+)§§/g, (_, n) => blocks[n] || "");
+
+          return html;
         }
       }
+
     ];
   });
+
 })();
