@@ -6,7 +6,7 @@
     font-size: larger;
     height: calc(100vh - 48px - 30px);
     max-width: 900px;
-    padding: 15px 0px 15px 0px;
+    /* padding: 15px 0px 15px 0px; */
     margin: 0 auto;
     line-height: 3ch;
     color: var(--text-color);
@@ -252,7 +252,6 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
 
 .CodeMirror-activeline-background {
     background: var(--active-line);
-    border-radius: 5px;
     border: 1px solid var(--background-color);
 }
 

@@ -103,23 +103,33 @@
             content = content.replace(/^<p>/i, "").replace(/<\/p>$/i, "");
             content = content.replace(/^>\s*/gm, "").trim();
 
-            return `<input type='${type}' value='${content}' id='${ctx.id}' onchange='field.keepValue("${ctx.id}", this.value)' />`;
+            return `<input type='${type}' value='${content}' id='${ctx.id}' onchange='try{field.keepValue("${ctx.id}", this.value)}catch (e){}' />`;
         }
     });
 
-    // BlockRegistry.register("BUTTON", {
-    //     allowHtml: true,
-    //     render(param, content, ctx) {
-    //         const label = param || "Button";
-    //         const code = content || "";
+    BlockRegistry.register("BUTTON", {
+        allowHtml: true,
+        render(param, content, ctx) {
+            const label = param || "Button";
+            const code = content || "";
 
-    //         const safeCode = code
-    //             .replace(/\\/g, "\\\\")
-    //             .replace(/"/g, '\\"');
+            const htmlSafe = code
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
 
-    //         return `<button id="${ctx.id}"onclick="(function(){ ${safeCode} })()">${label}</button>`;
-    //     }
-    // });
+            console.warn(`Document contains button with arbitrary code: \n${code}`)
+            return `<button id="${ctx.id}" data-code="${htmlSafe}" onclick="ARBITRARY_runButtonCode(this)">
+        ${label}
+    </button>`;
+        }
+    });
+
+    window.ARBITRARY_runButtonCode = function(btn) {
+        const code = btn.dataset.code;
+        (new Function(code))();
+    };
 
     BlockRegistry.register("NOTE", {
         allowHtml: false,

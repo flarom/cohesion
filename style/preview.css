@@ -243,7 +243,6 @@
     padding-right: 10px;
     border-radius: 8px;
     font-family: var(--font-editor);
-    font-size: medium;
     box-shadow: var(--shadow-light);
     user-select: all;
 }
@@ -495,9 +494,9 @@
 
 .preview button {
     height: 30px;
-    border-radius: 15px;
-    padding-left: 10px;
-    padding-right: 10px;
+    border-radius: 12px;
+    padding-left: 15px;
+    padding-right: 15px;
     border: 1px solid var(--border-light-color);
     background-color: var(--background-color-3);
     color: var(--text-color);

@@ -326,12 +326,18 @@ button.danger:hover {
 
 .main-wrapper {
     position: relative;
-    height: calc(100vh - 48px);
+    height: calc(100vh - 48px - 15px);
     transition: margin-left 0.3s ease;
     overflow: hidden;
 }
 
+.status-bar.show + .main-wrapper {
+    margin-bottom: 31px;
+}
+
 .status-bar {
+    background-color: var(--background-color-2);
+    border-top: 1px solid var(--border-dark-color);
     position: absolute;
     left: 0;
     bottom: 0;
@@ -340,12 +346,17 @@ button.danger:hover {
     justify-content: space-between;
     width: 100%;
     color: var(--text-color);
-    padding: 10px;
+    padding: 5px;
     padding-left: 20px;
     padding-right: 20px;
     box-sizing: border-box;
     font-size: small;
-    pointer-events: none;
+    z-index: 999;
+    display: none;
+}
+
+.status-bar.show {
+    display: flex;
 }
 
 .status-bar .status-bar-left,
@@ -358,11 +369,7 @@ button.danger:hover {
 .status-bar-item {
     display: flex;
     align-items: center;
-    background-color: var(--background-color);
-    padding-left: 15px;
-    padding-right: 15px;
-    border-radius: 999px;
-    height: 35px;
+    height: 20px;
 }
 
 .status-bar-item label .icon {
@@ -456,6 +463,10 @@ button.danger:hover {
     transition: .3s opacity;
 }
 
+.status-bar.show + .sidebar {
+    height: calc(100vh - 48px - 31px - 10px);
+}
+
 .sidebar .file.selected .icon-button,
 .sidebar .file:focus .icon-button,
 .sidebar .file:hover .icon-button {
@@ -472,16 +483,16 @@ button.danger:hover {
 .toast {
     visibility: hidden;
     min-width: 250px;
-    margin-left: -125px;
     background-color: var(--background-color-3);
     color: var(--text-color);
     border: 1px solid var(--border-light-color);
     border-radius: 300px;
-    padding: 0px 20px 0px 20px;
+    padding: 0px 20px;
     position: fixed;
     z-index: 9999;
     left: 50%;
     top: 30px;
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
     gap: 3px;

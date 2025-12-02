@@ -305,18 +305,25 @@
         description: "Text, number, slider, date, or time input",
         icon: "edit_square",
         exec: function(arg) {
-            selectFromMenu(["Text box","Text area","Slider","Spinner","Date","Time"], function(selectedIndex) {
+            selectFromMenu(["Text","Slider","Spinner","Date","Time"], function(selectedIndex) {
                 switch(selectedIndex) {
-                    case 0: insertSnippet('<input id="${1:ID}" value="${2:Text value}" type="text"> ${3: }'); break;
-                    case 1: insertSnippet('<textarea id="${1:ID}">${2:Text value}</textarea> ${3: }'); break;
-                    case 2: insertSnippet('<input id="${1:ID}" value="${2:50}" min="${3:0}" max="${4:100}" step="${5:1}" type="range"> ${6: }'); break;
-                    case 3: insertSnippet('<input id="${1:ID}" value="${2:0}" min="${3:0}" max="${4:100}" step="${5:1}" type="number"> ${6: }'); break;
-                    case 4: insertSnippet(`<input id="\${1:ID}" value="\${2:${strftime('%Y-%m-%d')}}" type="date" >\${3: }`); break;
-                    case 5: insertSnippet(`<input id="\${1:ID}" value="\${2:${strftime('%H:%M')}}" type="time"> \${3: }`); break;
+                    case 0: insertSnippet(`> [!FIELD:text](\${1:ID})\n> \${2:Text}`); break;
+                    case 1: insertSnippet(`> [!FIELD:range](\${1:ID})\n> \${2:Numeric value}`); break;
+                    case 2: insertSnippet(`> [!FIELD:number](\${1:ID})\n> \${2:Numeric value}`); break;
+                    case 3: insertSnippet(`> [!FIELD:date](\${1:ID})\n> \${2:${strftime('%Y-%m-%d')}}`); break;
+                    case 4: insertSnippet(`> [!FIELD:time](\${1:ID})\n> \${2:${strftime('%H:%M')}}`); break;
                 }
             });
         }
     });
+
+    CommandRegistry.register("button", {
+        description: "Button that executes arbitrary code",
+        icon: "left_click",
+        exec: function() {
+            insertSnippet(`> [!BUTTON:\${1:Label}](\${2:ID})\n> \${3:JS body}`)
+        }
+    })
 
     CommandRegistry.register("graph", {
         description: "Pie, bar, or line chart",

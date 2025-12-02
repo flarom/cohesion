@@ -209,24 +209,11 @@
             </header>
             <textarea id="editor" class="editor" style="background-color: transparent; color: white; border: none;">Loading editor...</textarea>
             <div id="preview" class="preview"></div>
-            <div class="status-bar" id="status">
-                <div class="status-bar-left">
-                    <div class="status-bar-item">
-                        <label id="cursorPosLabel">Ln 0, Col 0</label>
-                    </div>
-                    <div class="status-bar-item">
-                        <label id="editorMode">
-                            <span class="icon">edit</span>
-                            <span>Edit mode</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="status-bar-right">
-                    <div class="status-bar-item">
-                        <label id="documentSizeLabel">0 Characters, 0 Words</label>
-                    </div>
-                </div>
-            </div>
+        </div>
+
+        <div class="status-bar show" id="status">
+            <div class="status-bar-left"></div>
+            <div class="status-bar-right"></div>
         </div>
 
         <div id="editorMenu" class="context-menu">
@@ -295,6 +282,7 @@
         <script src="script/showdown/extension/blocks.js"></script>
         <script src="script/macros.js"></script>
         <script src="script/editorTools.js"></script>
+        <script src="script/status.js"></script>
         <script src="script/insert.js"></script>
         <script src="script/prompts.js"></script>
         <script src="script/file.js"></script>
@@ -322,6 +310,8 @@
             // Search menu actions (Ctrl/Cmd-K)
             addSearchMenuAction("Settings", "Settings", function() {showMessageFromFile('dialogs/settings.html', true, false, true, true, 900);});
             addSearchMenuAction("Resources", "Image", function() {showResourcesDialog();});
+            addSearchMenuAction("Macros", "code", function() {showMacrosDialog();})
+            addSearchMenuAction("About", "info", function() {showMessageFromFile('about.html');})
 
             // Retrieve last index from local storage, default to 0
             let index = localStorage.getItem("lastIndex") || 0;
@@ -544,11 +534,9 @@
                 const cursor = instance.getCursor();
                 const content = instance.getValue();
 
-                cursorPosLabel.textContent = `Ln ${cursor.line + 1}, Col ${cursor.ch + 1}`; // Update cursor position label
-
                 const charCount = content.length;
                 const wordCount = content.trim().split(/\s+/).filter(Boolean).length;
-                documentSizeLabel.textContent = `${charCount} Characters, ${wordCount} Words`; // Update document size label
+                StatusRegister.update("docSize"); // Update document size label
 
                 // Debounce saving to avoid excessive writes
                 clearTimeout(debounceTimer);
@@ -562,6 +550,8 @@
                     }
                 }, 100);
             });
+
+            editor.on("cursorActivity", () => StatusRegister.update("cursorPos")); // Update cursor position label
 
             function updateTitle() {
                 document.getElementById("filename").innerText = getFileTitle(index) || "New document";
@@ -663,9 +653,6 @@
 
             // Status bar elements
             const statusBar = document.getElementById("status");
-            const cursorPosLabel = document.getElementById("cursorPosLabel");
-            const documentSizeLabel = document.getElementById("documentSizeLabel");
-            const editorModeLabel = document.getElementById("editorMode");
 
             // Search (Ctrl-F) and replace (Ctrl-H) elements
             const searchField = document.getElementById("search-field");
@@ -761,7 +748,7 @@
                     readBtn.innerText = "edit";
                     readBtn.title = "Write";
                     readBtn.classList.add("button-on");
-                    editorModeLabel.innerHTML = "<span class='icon'>import_contacts</span><span>Read mode</span>";
+                    StatusRegister.update("editorMode");
 
                     setModeVisibility(true);
 
@@ -788,12 +775,12 @@
                     readBtn.title = "Read";
                     readBtn.classList.remove("button-on");
 
-                    editorModeLabel.innerHTML = "<span class='icon'>edit</span><span>Edit mode</span>";
+                    StatusRegister.update("editorMode");
 
                     setModeVisibility(false);
                 }
 
-                editor.refresh();
+                // editor.refresh();
                 localStorage.setItem(`lastPreviewState`, shouldShowPreview);
             }
 
@@ -983,17 +970,68 @@
                 }
 
                 // status bar
-                if (Settings.getSetting("statusShow", "true") != "true") statusBar.style.display = "none";
-                else statusBar.style.display = "flex";
+                StatusRegister.removeAll();
+                if (Settings.getSetting("statusShow", "true") != "true") statusBar.classList.remove('show');
+                else statusBar.classList.add('show');
 
-                if (Settings.getSetting("statusCursorPos", "true") != "true") cursorPosLabel.style.display = "none";
-                else cursorPosLabel.style.display = "flex";
 
-                if (Settings.getSetting("statusEditorMode", "true") != "true") editorModeLabel.style.display = "none";
-                else editorModeLabel.style.display = "flex";
+                if (Settings.getSetting("statusCursorPos", "true") == "true") {
+                    StatusRegister.register({
+                        id: "cursorPos",
+                        side: "left",
 
-                if (Settings.getSetting("statusDocumentSize", "true") != "true") documentSizeLabel.style.display = "none";
-                else documentSizeLabel.style.display = "flex";
+                        render() {
+                            return `<label>Ln 0, Col 0</label>`;
+                        },
+
+                        update(el) {
+                            const cursor = editor.getCursor();
+                            el.querySelector("label").textContent = `Ln ${cursor.line + 1}, Col ${cursor.ch + 1}`;
+                        }
+                    });
+                }
+
+                if (Settings.getSetting("statusEditorMode", "true") == "true") {
+                    StatusRegister.register({
+                        id: "editorMode",
+                        side: "left",
+
+                        render() {
+                            return `
+                                <label>
+                                    <span class="icon">edit</span>
+                                    <span>Edit mode</span>
+                                </label>
+                            `;
+                        },
+
+                        update(el) {
+                            const isPreview = preview.classList.contains("on");
+                            el.querySelector("span.icon").innerText = isPreview ? "import_contacts" : "edit";
+                            el.querySelector("span:nth-child(2)").innerText = isPreview ? "Read mode" : "Edit mode";
+                        }
+                    });
+                }
+
+                if (Settings.getSetting("statusDocumentSize", "true") == "true") {
+                    StatusRegister.register({
+                        id: "docSize",
+                        side: "right",
+
+                        render() {
+                            return `<label>0 Characters, 0 Words</label>`;
+                        },
+
+                        update(el) {
+                            const content = editor.getValue();
+                            const chars = content.length;
+                            const words = content.trim().split(/\s+/).filter(Boolean).length;
+
+                            el.querySelector("label").textContent =
+                                `${chars} Characters, ${words} Words`;
+                        }
+                    });
+                }
 
                 // editor width
                 if (Settings.getSetting("editorWidth", "false") === "true") {
