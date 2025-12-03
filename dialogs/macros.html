@@ -110,14 +110,14 @@
                 div.className = "macro-item";
                 div.title = macro.description;
                 div.innerHTML = `
-                    <div class="macro-icon">${macro.icon || "action_key"}</div>
+                    <div class="macro-icon" translate="no">${macro.icon || "action_key"}</div>
                     <div>
-                        <div class="macro-title">${macro.name}</div>
+                        <div class="macro-title" translate="no">${macro.name}</div>
                         <div class="macro-desc">by ${macro.author || ""}</div>
                     </div>
 
                     <div class="dropdown" style="position:absolute; top:8px; right:8px;">
-                        <button class="icon-button" onclick="toggleDropdown('mac${index}')">more_vert</button>
+                        <button class="icon-button" translate="no" onclick="toggleDropdown('mac${index}')">more_vert</button>
                         <div class="menu dropdown-content" id="mac${index}">
                             <button class="text-button" onclick="editMacroCode(${index})">Edit code</button>
                             <hr>

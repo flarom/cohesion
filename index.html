@@ -207,8 +207,8 @@
                     <button id="replace-all-btn" class="text-button button-group-member right">Rep. all</button>
                 </div>
             </header>
-            <textarea id="editor" class="editor" style="background-color: transparent; color: white; border: none;">Loading editor...</textarea>
-            <div id="preview" class="preview"></div>
+            <textarea id="editor" class="editor"></textarea>
+            <div id="preview" class="preview" translate="no"></div>
         </div>
 
         <div class="status-bar show" id="status">
@@ -999,7 +999,7 @@
                         render() {
                             return `
                                 <label>
-                                    <span class="icon">edit</span>
+                                    <span class="icon" translate="no">edit</span>
                                     <span>Edit mode</span>
                                 </label>
                             `;
@@ -1398,7 +1398,7 @@
             function showCheatSheet() {
                 let leftPane = 
                 `
-                <button class=icon-button onclick="searchTopics()">search</button>
+                <button class=icon-button onclick="searchTopics()" translate="no">search</button>
                 `
 
                 showMessageFromFile('dialogs/cheatsheet.html', true, false, true, true, 1080, leftPane);
@@ -1617,7 +1617,7 @@
                             <div style='padding: 10px'>
                                 <div style="margin-top:12px; display: flex; align-items: center; gap: 6px;">
                                     <input id="qr-link-field" readonly='true' type='text' style='text-align:center;margin:0;width:100%' value='${link}'/>
-                                    <button id="qr-copy-btn" class='icon-button'>content_copy</button>
+                                    <button id="qr-copy-btn" translate='no' class='icon-button'>content_copy</button>
                                 </div>
                                 <p style="opacity:75%">
                                     Link is valid until ${expireTime}

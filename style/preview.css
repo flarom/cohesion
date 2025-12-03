@@ -787,7 +787,7 @@
 .preview kbd.key-super, .preview kbd.key-windows, .preview kbd.key-enter, .preview kbd.key-esc, .preview kbd.key-tab,
 .preview kbd.key-page-up, .preview kbd.key-page-down, .preview kbd.key-up, .preview kbd.key-down, .preview kbd.key-left,
 .preview kbd.key-right, .preview kbd.key-backspace, .preview kbd.key-delete, .preview kbd.key-insert,
-.preview kbd.key-caps-lock, .preview kbd.key-print-screen
+.preview kbd.key-caps-lock, .preview kbd.key-print-screen, .preview kbd.key-fn
 { position: relative; padding-left: 20px; text-transform: capitalize; }
 
 .preview kbd.key-shift::before, .preview kbd.key-alt::before, .preview kbd.key-ctrl::before, .preview kbd.key-meta::before,
@@ -795,7 +795,7 @@
 .preview kbd.key-esc::before, .preview kbd.key-tab::before, .preview kbd.key-page-up::before, .preview kbd.key-page-down::before,
 .preview kbd.key-up::before, .preview kbd.key-down::before, .preview kbd.key-left::before, .preview kbd.key-right::before,
 .preview kbd.key-backspace::before, .preview kbd.key-delete::before, .preview kbd.key-insert::before,
-.preview kbd.key-caps-lock::before, .preview kbd.key-print-screen::before
+.preview kbd.key-caps-lock::before, .preview kbd.key-print-screen::before, .preview kbd.key-fn::before
 { font-family: "Material Symbols Rounded"; font-size: 14px; position: absolute; left: 4px; top: 50%; transform: translateY(-50%); }
 
 .preview kbd.key-shift::before        { content: "arrow_upward"; }
@@ -819,6 +819,7 @@
 .preview kbd.key-insert::before       { content: "arrow_insert"; }
 .preview kbd.key-caps-lock::before    { content: "keyboard_capslock"; }
 .preview kbd.key-print-screen::before { content: "screenshot_keyboard"; }
+.preview kbd.key-fn::before           { content: "functions"; }
 
 /* Banner/Header */
 .preview .meta-container {

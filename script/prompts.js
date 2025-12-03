@@ -765,6 +765,7 @@ async function promptFileSearch(value = '') {
 
                 const iconSpan = document.createElement("span");
                 iconSpan.className = "icon";
+                iconSpan.setAttribute("translate", "no");
                 iconSpan.innerHTML = item.icon || (item.type === "file" ? "draft" : "");
 
                 li.appendChild(iconSpan);
@@ -1301,16 +1302,19 @@ function promptCodeEditor(initialText = "") {
         undoButton.textContent = "undo";
         undoButton.className = "icon-button";
         undoButton.title = "Un-do";
+        undoButton.setAttribute("translate", "no");
 
         const redoButton = document.createElement("button");
         redoButton.textContent = "redo";
         redoButton.className = "icon-button";
         redoButton.title = "Re-do";
+        redoButton.setAttribute("translate", "no");
 
         const okButton = document.createElement("button");
         okButton.textContent = "check";
         okButton.className = "icon-button";
         okButton.title = "Confirm";
+        okButton.setAttribute("translate", "no");
 
         const closeButton = document.createElement("button");
         closeButton.textContent = "close";
@@ -1338,6 +1342,7 @@ function promptCodeEditor(initialText = "") {
         textarea.value = initialText;
         textarea.style.flex = "1";
         textarea.className = "prompt-text-editor";
+        textarea.setAttribute("spellcheck", "false");
 
         editorContainer.appendChild(textarea);
         
@@ -1956,6 +1961,7 @@ async function promptMacroInfo(macro = {}) {
         iconPreview.style.maxWidth = "32px";
         iconPreview.style.overflow = "hidden";
         iconPreview.textContent = iconInput.value;
+        iconPreview.setAttribute("translate", "no");
 
         iconRow.appendChild(iconInput);
         iconRow.appendChild(iconPreview);
