@@ -39,6 +39,17 @@
             from { transform: translateY(100%); opacity: 0; }
             to   { transform: translateY(0%);   opacity: 1; }
         }
+
+        footer {
+            display: flex;
+            gap: 10px;
+        }
+
+        @media (max-width: 700px) {
+            footer {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
@@ -141,32 +152,28 @@
     </section>
 
     <footer>
-        <div style="display: flex; gap: 10px;">
-            <div>
-                <h2>Cohesion</h2>
-                <div style="display: flex; align-items: center;">
-                    <div style="height: 4px; min-width: 64px; background-color: #1b3572;"></div>
-                    <div style="height: 4px; min-width: 64px; background-color: #f5e25b;"></div>
-                    <div style="height: 4px; min-width: 64px; background-color: #4aa556;"></div>
+        <div>
+            <h2>Cohesion</h2>
+            <div style="display: flex; flex-direction: row-reverse;">
+                <div style="max-width: 192px;">
+                    <div style="display: flex; align-items: center;">
+                        <div style="height: 4px; min-width: 64px; background-color: #1b3572;"></div>
+                        <div style="height: 4px; min-width: 64px; background-color: #f5e25b;"></div>
+                        <div style="height: 4px; min-width: 64px; background-color: #4aa556;"></div>
+                    </div>
+                    <p style="margin-top: 2px; text-align: end;">Made in <b>Brazil</b></p>
                 </div>
-                <p style="margin-top: 2px; text-align: end;">Made in <b>Brazil</b></p>
             </div>
-            <div>
-                <h3>Editors</h3>
-                <a target="_blank" href="https://flarom.github.io/cohesion">Markdown text editor</a><br>
-                <a target="_blank" href="https://flarom.github.io/tools/markdown-table-editor.html">Table editor</a><br>
-                <a target="_blank" href="https://flarom.github.io/tools/">Tasklist editor</a>
-            </div>
-            <div>
-                <h3>Community</h3>
-                <a target="_blank" href="https://github.com/flarom/cohesion">GitHub</a><br>
-                <a target="_blank" href="https://ko-fi.com/flarom">Support us</a>
-            </div>
-            <div>
-                <h3>Learn</h3>
-                <a target="_blank" href="https://flarom.github.io/cohesion?intro=true">Home</a><br>
-                <a target="_blank" href="https://github.com/flarom/cohesion/wiki">Documentation</a>
-            </div>
+        </div>
+        <div>
+            <h3>Community</h3>
+            <a target="_blank" href="https://github.com/flarom/cohesion">GitHub</a><br>
+            <a target="_blank" href="https://ko-fi.com/flarom">Support us</a>
+        </div>
+        <div>
+            <h3>Learn</h3>
+            <a target="_blank" href="https://flarom.github.io/cohesion?intro=true">Home</a><br>
+            <a target="_blank" href="https://github.com/flarom/cohesion/wiki">Documentation</a>
         </div>
     </footer>
     
