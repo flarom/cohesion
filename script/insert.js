@@ -132,6 +132,20 @@ function insertSnippet(snippet, markerChar = "$") {
     editor._snippetStops = stops;
     editor._snippetIndex = -1;
 
+    StatusRegister.remove("contextualShortcut");
+    StatusRegister.register({
+        id: "contextualShortcut",
+        side: "left",
+
+        render() {
+            return `
+                <label>
+                    <kbd>Tab</kbd> to advance. <kbd>Shift</kbd>+<kbd>Tab</kbd> to go back. <kbd>Esc</kbd> to cancel.
+                </label>
+            `;
+        }
+    });
+
     const firstIdx = stops.findIndex(s => s.id > 0);
     const initial = firstIdx !== -1 ? firstIdx : stops.findIndex(s => s.id === 0);
 
@@ -153,6 +167,7 @@ function _snippetTab(cm) {
     idx++;
 
     if (idx >= stops.length) {
+        StatusRegister.remove("contextualShortcut");
         cm._snippetStops = null;
         cm._snippetIndex = -1;
         return CodeMirror.Pass;
@@ -177,6 +192,7 @@ function _snippetShiftTab(cm) {
     idx--;
 
     if (idx < 0) {
+        StatusRegister.remove("contextualShortcut");
         cm._snippetStops = null;
         cm._snippetIndex = -1;
         return CodeMirror.Pass;

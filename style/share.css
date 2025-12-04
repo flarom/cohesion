@@ -169,7 +169,7 @@ button.danger:hover {
 
 @media screen and (max-width: 800px) {
     .hide-on-tablet {
-        display: none;
+        display: none !important;
     }
 
     header.window-title input[type="text"] {
@@ -179,13 +179,13 @@ button.danger:hover {
 
 @media screen and (max-width: 500px) {
     .hide-on-mobile {
-        display: none;
+        display: none !important;
     }
 }
 
 @media screen and (min-width: 501px) {
     .hide-on-pc {
-        display: none;
+        display: none !important;
     }
 }
 
@@ -353,6 +353,7 @@ button.danger:hover {
     font-size: small;
     z-index: 999;
     display: none;
+    overflow-x: scroll;
 }
 
 .status-bar.show {
@@ -370,6 +371,7 @@ button.danger:hover {
     display: flex;
     align-items: center;
     height: 20px;
+    white-space: nowrap;
 }
 
 .status-bar-item label .icon {
@@ -380,6 +382,12 @@ button.danger:hover {
     display: flex;
     align-items: center;
     gap: 5px;
+}
+
+.status-bar-item label kbd {
+    padding: 3px;
+    border-radius: 4px;
+    border: 1px solid var(--border-light-color);
 }
 
 .sidebar.show + .main-wrapper {

@@ -2,7 +2,7 @@ const StatusRegister = {
     items: [],
 
     register(item) {
-        // item: { id, side:"left"|"right", render(), update(), interval }
+        // item: { id, hideOnMobile: true|false, side:"left"|"right", render(), update(), interval }
         this.items.push(item);
         this.render();
     },
@@ -40,6 +40,7 @@ const StatusRegister = {
             const el = document.createElement("div");
             el.className = "status-bar-item";
             el.dataset.id = item.id;
+            if (item.hideOnMobile) el.classList.add("hide-on-mobile")
             el.innerHTML = item.render();
 
             if (item.side === "left") left.appendChild(el);

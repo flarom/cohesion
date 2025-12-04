@@ -207,7 +207,7 @@
                     <button id="replace-all-btn" class="text-button button-group-member right">Rep. all</button>
                 </div>
             </header>
-            <textarea id="editor" class="editor"></textarea>
+            <textarea id="editor" class="editor" style="background-color: transparent; border: none; outline: none;"></textarea>
             <div id="preview" class="preview" translate="no"></div>
         </div>
 
@@ -536,7 +536,7 @@
 
                 const charCount = content.length;
                 const wordCount = content.trim().split(/\s+/).filter(Boolean).length;
-                StatusRegister.update("docSize"); // Update document size label
+                StatusRegister.updateAll(); // Update statusbar
 
                 // Debounce saving to avoid excessive writes
                 clearTimeout(debounceTimer);
@@ -971,9 +971,21 @@
 
                 // status bar
                 StatusRegister.removeAll();
+
                 if (Settings.getSetting("statusShow", "true") != "true") statusBar.classList.remove('show');
                 else statusBar.classList.add('show');
 
+                function minPos(a, b) {
+                    if (a.line < b.line) return a;
+                    if (a.line > b.line) return b;
+                    return a.ch < b.ch ? a : b;
+                }
+
+                function maxPos(a, b) {
+                    if (a.line > b.line) return a;
+                    if (a.line < b.line) return b;
+                    return a.ch > b.ch ? a : b;
+                }
 
                 if (Settings.getSetting("statusCursorPos", "true") == "true") {
                     StatusRegister.register({
@@ -985,11 +997,45 @@
                         },
 
                         update(el) {
+                            const selections = editor.listSelections();
                             const cursor = editor.getCursor();
-                            el.querySelector("label").textContent = `Ln ${cursor.line + 1}, Col ${cursor.ch + 1}`;
+                            
+                            let cursorCount = selections.length;
+                            let totalSelected = 0;
+
+                            for (const sel of selections) {
+                                const from = sel.anchor;
+                                const to = sel.head;
+
+                                if (from.line === to.line && from.ch === to.ch) continue;
+
+                                const text = editor.getRange(
+                                    minPos(from, to),
+                                    maxPos(from, to)
+                                );
+
+                                totalSelected += text.length;
+                            }
+
+                            let text = "";
+
+                            if (cursorCount > 1) {
+                                text = `${cursorCount} Cursors`;
+                                if (totalSelected > 0) {
+                                    text += ` (${totalSelected} Selected)`;
+                                }
+                            } else {
+                                text = `Ln ${cursor.line + 1}, Col ${cursor.ch + 1}`;
+                                if (totalSelected > 0) {
+                                    text += ` (${totalSelected} Selected)`;
+                                }
+                            }
+
+                            el.querySelector("label").textContent = text;
                         }
                     });
                 }
+
 
                 if (Settings.getSetting("statusEditorMode", "true") == "true") {
                     StatusRegister.register({
@@ -1229,6 +1275,10 @@
                     editorMenu.style.display = "none";
                     editorMenu.removeEventListener("keydown", handleArrowNavigation);
                     editorMenu.removeEventListener("keydown", handleActivation);
+
+                    StatusRegister.remove("contextualShortcut");
+                    editor._snippetStops = null;
+                    editor._snippetIndex = -1;
                 }, preventDefault: false },
 
                 //// toggle preview (Ctrl+P)

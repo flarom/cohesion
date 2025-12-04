@@ -42,6 +42,7 @@
 .CodeMirror-gutters {
     background-color: transparent;
     white-space: nowrap;
+    border-right: 1px solid var(--border-dark-color);
 }
 
 /* .CodeMirror-linenumbers {} */
@@ -52,7 +53,7 @@
     text-align: right;
     color: var(--text-color);
     white-space: nowrap;
-    opacity: 50%;
+    opacity: 25%;
 }
 
 .CodeMirror-guttermarker {
@@ -252,7 +253,8 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
 
 .CodeMirror-activeline-background {
     background: var(--active-line);
-    border: 1px solid var(--background-color);
+    border: 3px solid var(--background-color);
+    border-radius: 8px;
 }
 
 .CodeMirror-activeline .CodeMirror-linenumber {

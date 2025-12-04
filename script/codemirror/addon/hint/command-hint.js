@@ -355,11 +355,42 @@
 
     function showTextMenu(callback, message, deleteInput = false) {
         let doneClicked = false;
+        let cancelled = false;
         const startCursor = editor.getCursor();
         const startCh = startCursor.ch;
 
+        StatusRegister.register({
+            id: "contextualShortcut",
+            side: "left",
+            render() {
+                return `
+                    <label>
+                        <kbd>Enter</kbd> to select. <kbd>Esc</kbd> to cancel.
+                    </label>
+                `;
+            }
+        });
+
+        function keyHandler(cm, event) {
+            if (event.key === "Escape") {
+                cancelled = true;
+                StatusRegister.remove("contextualShortcut");
+                editor.off("keydown", keyHandler);
+                editor.closeHint();
+                callback(null);
+                event.preventDefault();
+                return;
+            }
+        }
+
+        editor.on("keydown", keyHandler);
+
         function openMenu() {
-            if (doneClicked) return;
+            if (doneClicked || cancelled) {
+                StatusRegister.remove("contextualShortcut");
+                editor.off("keydown", keyHandler);
+                return;
+            }
 
             const cur = editor.getCursor();
             const currentLineText = editor.getLine(cur.line);
@@ -368,11 +399,14 @@
             const list = [{
                 text: "Done",
                 displayText: message,
-                hint: function(cm, data, completion) {
+                hint: function (cm, data, completion) {
                     doneClicked = true;
 
+                    StatusRegister.remove("contextualShortcut");
+                    editor.off("keydown", keyHandler);
+
                     if (deleteInput) {
-                        cm.replaceRange("", {line: startCursor.line, ch: startCh}, {line: startCursor.line, ch: cur.ch});
+                        cm.replaceRange("", { line: startCursor.line, ch: startCh }, { line: startCursor.line, ch: cur.ch });
                     }
 
                     callback(typedText);
@@ -382,13 +416,13 @@
             editor.showHint({
                 completeSingle: false,
                 hint: () => ({
-                    list: list,
-                    from: {line: cur.line, ch: startCh},
-                    to: {line: cur.line, ch: cur.ch}
+                    list,
+                    from: { line: cur.line, ch: startCh },
+                    to: { line: cur.line, ch: cur.ch }
                 })
             });
 
-            if (!doneClicked) {
+            if (!doneClicked && !cancelled) {
                 setTimeout(openMenu, 50);
             }
         }
@@ -418,6 +452,7 @@
             })
         });
     }
+    
     window.selectFromMenu = selectFromMenu;
     window.showTextMenu = showTextMenu;
 
