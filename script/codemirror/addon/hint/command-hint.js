@@ -235,7 +235,7 @@
                 selectFromMenu(fileOptions, (fileIndex) => {
                     const file = files[fileIndex];
                     const filePath = `resources/${file.name}`;
-                    let markdown = `\${1:${filePath}}`;
+                    let markdown = `![\${1:ALT}](\${2:${filePath}})`;
                     insertSnippet(markdown);
                 });
             } catch (err) { showToast("Failed to list resources.", "error"); console.error(err); }
