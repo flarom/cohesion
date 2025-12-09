@@ -1377,7 +1377,7 @@
                 { match: e => e.ctrlKey && e.key.toLowerCase() === "h", handler: () => toggleReplaceHeader(editor.getSelection()), preventDefault: true },
                 //// search documents (Ctrl+K)
                 { match: e => e.ctrlKey && e.key.toLowerCase() === "k", handler: () => searchDocuments(), preventDefault: true },
-
+                
                 // INSERT
                 //// Insert metadata (Ctrl+;)
                 { match: e => e.ctrlKey && e.key === ";", handler: () => insertSnippetAtTop(getMeta(), '~'), preventDefault: true },
@@ -1388,7 +1388,7 @@
                     editor.focus();
                 }, preventDefault: true },
                 //// Insert date/time with default strftime (F6)
-                { match: e => e.key === "F6", handler: () => { insertDate(); }, preventDefault: true },
+                { match: e => !e.shiftKey && e.key === "F6", handler: () => { insertDate(); }, preventDefault: true },
             ];
 
             function addKeyboardShortcut(s) {
