@@ -42,6 +42,7 @@
 
     <link rel="stylesheet" href="style/palette.css">
     <link rel="stylesheet" href="style/share.css">
+    <link rel="stylesheet" href="style/prompts.css">
     <link rel="stylesheet" href="style/landing.css">
     <link rel="stylesheet" href="style/preview.css">
     <link rel="stylesheet" href="script/highlight/lib/highlight.css">
@@ -102,7 +103,7 @@
         </div>
         <div style="display: flex; gap: 5px;">
             <button class="secondary" onclick="editOnCohesion()" title="Edit this file using the Cohesion Markdown editor">Edit</button>
-            <button class="secondary" onclick="" title="Download a copy of this document">Download</button>
+            <button class="secondary" onclick="downloadDocument()" title="Download a copy of this document">Download</button>
             <button class="secondary" onclick="window.open('https://github.com/flarom/cohesion/wiki')" title="Cohesion Documentation">Documentation</button>
             <button class="secondary" onclick="changeTheme();" title="Switch theme" style="font-size: large;" translate="no"><span class="icon">routine</span></button>
         </div>
@@ -192,6 +193,26 @@
 
         let markdown = constMarkdown;
 
+        function sanitizeMarkdown(text) {
+            return text.replace(/\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+        }
+
+        function detectInlineEvents(text) {
+            return /\s+on[a-z]+\s*=/gi.test(text);
+        }
+
+        async function showSecurityWarning() {
+            await promptMessage(
+                `<div style="padding: 20px;">
+                    <h2>Security Vulnerability Detected</h2>
+                    <p>This document contains potentially dangerous event handlers.</p>
+                    <p>This preview was sanitized for your protection. But <strong>saving or editing this document may expose you to security risks.</strong></p>
+                    <p>You may encounter buttons and input fields not working as intended, or unexpected behaviors.</p>
+                </div>`,
+                true
+            );
+        }
+
         const converter = new showdown.Converter({
             extensions: [
                 'bannerImage', // banner image controled by document meta
@@ -238,8 +259,14 @@ You may ask who sent you this document to share it again.
 
                         const text = await res.text();
 
-                        markdown = text;
-                        preview.innerHTML = converter.makeHtml(markdown);
+                        if (detectInlineEvents(text)) {
+                            markdown = text;
+                            await showSecurityWarning();
+                        } else {
+                            markdown = text;
+                        }
+
+                        preview.innerHTML = converter.makeHtml(sanitizeMarkdown(markdown));
 
                         document.title = getFileTitleFromText(text) + " - Cohesion";
 
@@ -265,11 +292,18 @@ Please try again later.
                 return;
             }
 
-            if (markdown) preview.innerHTML = converter.makeHtml(markdown);
+            if (markdown) {
+                if (detectInlineEvents(markdown)) {
+                    preview.innerHTML = converter.makeHtml(sanitizeMarkdown(markdown));
+                    showSecurityWarning();
+                } else {
+                    preview.innerHTML = converter.makeHtml(sanitizeMarkdown(markdown));
+                }
+            }
         }
 
         function editOnCohesion() {
-            localStorage.setItem('lastPreviewState', 'true')
+            localStorage.setItem('lastPreviewState', detectInlineEvents(markdown) ? 'false' : 'true')
             const params = new URLSearchParams(window.location.search);
 
             if (params.has('id')) {
@@ -287,11 +321,47 @@ Please try again later.
                 }
             }
 
-            index = 0;
-            localStorage.setItem('lastIndex', index);
-            files.unshift(markdown);
-            saveFilesToStorage();
-            window.open('index.html', '_self')
+            // Check for vulnerabilities before saving
+            if (detectInlineEvents(markdown)) {
+                promptConfirm('This document contains malicious event handlers. Editing may expose you to security risks. Continue?', true).then((confirmed) => {
+                    if (confirmed) {
+                        saveAndEdit();
+                    }
+                });
+            } else {
+                saveAndEdit();
+            }
+
+            function saveAndEdit() {
+                index = 0;
+                localStorage.setItem('lastIndex', index);
+                files.unshift(markdown); // Use unsanitized markdown
+                saveFilesToStorage();
+                window.open('index.html', '_self')
+            }
+        }
+
+        function downloadDocument() {
+            if (detectInlineEvents(markdown)) {
+                promptConfirm('This document contains malicious event handlers. Downloading may expose you to security risks. Continue?', true).then((confirmed) => {
+                    if (confirmed) {
+                        downloadFile();
+                    }
+                });
+            } else {
+                downloadFile();
+            }
+
+            function downloadFile() {
+                const blob = new Blob([markdown], { type: 'text/markdown' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = getFileTitleFromText(markdown) + '.md';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
         }
 
         loadMarkdownFromURLParams();
