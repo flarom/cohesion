@@ -98,42 +98,49 @@
                     <div class="setting top switch-wrapper">
                         <span class="switch-text">Auto-close brackets</span>
                         <label class="switch">
-                            <input type="checkbox" id="editorAutoCloseBrackets" onchange="Settings.setSetting('editorAutoCloseBrackets', this.checked); location.reload()">
+                            <input type="checkbox" id="editorAutoCloseBrackets" onchange="Settings.setSetting('editorAutoCloseBrackets', this.checked); updateEditorSettings()">
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting switch-wrapper">
+                        <span class="switch-text">Auto-close Markdown notation</span>
+                        <label class="switch">
+                            <input type="checkbox" id="editorAutoCloseMDNotation" onchange="Settings.setSetting('editorAutoCloseMDNotation', this.checked); updateEditorSettings()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting bottom switch-wrapper">
                         <span class="switch-text">Auto-close ML tags</span>
                         <label class="switch">
-                            <input type="checkbox" id="editorAutoCloseTags" onchange="Settings.setSetting('editorAutoCloseTags', this.checked); location.reload()">
+                            <input type="checkbox" id="editorAutoCloseTags" onchange="Settings.setSetting('editorAutoCloseTags', this.checked); updateEditorSettings()">
                             <span class="slider"></span>
                         </label>
                     </div>
-                    <div class="setting switch-wrapper">
+                    <div class="setting top switch-wrapper">
                         <span class="switch-text">Line numbers</span>
                         <label class="switch">
-                            <input type="checkbox" id="editorLineNumbers" onchange="Settings.setSetting('editorLineNumbers', this.checked); location.reload()" />
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    <div class="setting switch-wrapper">
-                        <span class="switch-text">RTL text align</span>
-                        <label class="switch">
-                            <input type="checkbox" id="editorDirection" onchange="if (this.checked) {Settings.setSetting('editorDirection', 'rtl')} else {Settings.setSetting('editorDirection', 'ltr')} location.reload()" />
+                            <input type="checkbox" id="editorLineNumbers" onchange="Settings.setSetting('editorLineNumbers', this.checked); updateEditorSettings()" />
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting switch-wrapper">
                         <span class="switch-text">Full width</span>
                         <label class="switch">
-                            <input type="checkbox" id="editorWidth" onchange="Settings.setSetting('editorWidth', this.checked); location.reload()" />
+                            <input type="checkbox" id="editorWidth" onchange="Settings.setSetting('editorWidth', this.checked); updateEditorSettings()" />
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting bottom switch-wrapper">
                         <span class="switch-text">Highlight active line</span>
                         <label class="switch">
-                            <input type="checkbox" id="editorHighlightActiveLine" onchange="Settings.setSetting('editorHighlightActiveLine', this.checked); location.reload()" />
+                            <input type="checkbox" id="editorHighlightActiveLine" onchange="Settings.setSetting('editorHighlightActiveLine', this.checked); updateEditorSettings()" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting top bottom switch-wrapper">
+                        <span class="switch-text">RTL text align</span>
+                        <label class="switch">
+                            <input type="checkbox" id="editorDirection" onchange="if (this.checked) {Settings.setSetting('editorDirection', 'rtl')} else {Settings.setSetting('editorDirection', 'ltr')} updateEditorSettings()" />
                             <span class="slider"></span>
                         </label>
                     </div>
@@ -283,17 +290,7 @@
                                 <button class="text-button" onclick="importBook();">Import</button>
                             </div>
                         </div>
-
-                        <div class="setting">
-                            <div>
-                                <h5 class="setting-subtitle">Delete empty files</h5>
-                                <span class="switch-text">Delete all files without any text or meta.</span>
-                            </div>
-                            <div>
-                                <button class="text-button danger" onclick="handleDeleteEmptyFiles();">Delete</button>
-                            </div>
-                        </div>
-
+                        
                         <div class="setting bottom">
                             <div>
                                 <h5 class="setting-subtitle">Replace with backup</h5>
@@ -301,6 +298,16 @@
                             </div>
                             <div>
                                 <button class="text-button danger" onclick="handleImportDeleteBook();">Replace</button>
+                            </div>
+                        </div>
+
+                        <div class="setting top bottom">
+                            <div>
+                                <h5 class="setting-subtitle">Delete empty files</h5>
+                                <span class="switch-text">Delete all files without any text or meta.</span>
+                            </div>
+                            <div>
+                                <button class="text-button danger" onclick="handleDeleteEmptyFiles();">Delete</button>
                             </div>
                         </div>
                     </div>
@@ -328,6 +335,7 @@
                 const cbxEditorWidth = document.getElementById("editorWidth");
                 const cbxEditorHighlightActiveLine = document.getElementById('editorHighlightActiveLine');
                 const cbxEditorAutoCloseBrackets = document.getElementById('editorAutoCloseBrackets');
+                const cbxEditorAutoCloseMDNotation = document.getElementById('editorAutoCloseMDNotation');
                 const cbxEditorAutoCloseTags = document.getElementById('editorAutoCloseTags');
                 const txtEditorDate = document.getElementById("editorDate");
                 // if (Settings.getSetting("editorShowHints", "true") === "true") cbxEditorShowHints.checked = "true";
@@ -339,6 +347,7 @@
                 if (Settings.getSetting("editorWidth", "false") === "true") cbxEditorWidth.checked = "true";
                 if (Settings.getSetting("editorHighlightActiveLine", "true") === "true") cbxEditorHighlightActiveLine.checked = "true";
                 if (Settings.getSetting("editorAutoCloseBrackets", "true") === "true") cbxEditorAutoCloseBrackets.checked = "true";
+                if (Settings.getSetting("editorAutoCloseMDNotation", "true") === "true") cbxEditorAutoCloseMDNotation.checked = "true";
                 if (Settings.getSetting("editorAutoCloseTags", "false") === "true") cbxEditorAutoCloseTags.checked = "true";
                 txtEditorDate.value = Settings.getSetting("dateFormat", "%d/%m/%Y %H:%M");
 

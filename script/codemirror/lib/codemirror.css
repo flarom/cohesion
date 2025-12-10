@@ -4,7 +4,7 @@
     /* Set height, width, borders, and global font properties here */
     font-family: var(--font-editor);
     font-size: larger;
-    height: calc(100vh - 48px - 30px);
+    height: 100%;
     max-width: 900px;
     /* padding: 15px 0px 15px 0px; */
     margin: 0 auto;

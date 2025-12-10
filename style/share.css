@@ -326,13 +326,17 @@ button.danger:hover {
 
 .main-wrapper {
     position: relative;
-    height: calc(100vh - 48px - 15px);
+    height: calc(100vh - 48px);
     transition: margin-left 0.3s ease;
     overflow: hidden;
 }
 
-.status-bar.show + .main-wrapper {
-    margin-bottom: 31px;
+.status-bar.show ~ .main-wrapper {
+    height: calc(100vh - 48px - 30px);
+}
+
+.status-bar.show ~ .sidebar {
+    margin-bottom: 30px;
 }
 
 .status-bar {
@@ -390,7 +394,7 @@ button.danger:hover {
     border: 1px solid var(--border-light-color);
 }
 
-.sidebar.show + .main-wrapper {
+.sidebar.show ~ .main-wrapper {
     margin-left: 310px;
 }
 

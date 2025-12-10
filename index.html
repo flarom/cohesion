@@ -178,6 +178,11 @@
             </div>
         </header>
 
+        <div class="status-bar show" id="status">
+            <div class="status-bar-left"></div>
+            <div class="status-bar-right"></div>
+        </div>
+
         <div id="files-bar" class="sidebar">
             <button class="text-button hide-on-pc" style="width: 100%; margin-top: 20px; margin-bottom: 20px" onclick="createFile();">Create new document</button>
             <div id="files"></div>
@@ -209,11 +214,6 @@
             </header>
             <textarea id="editor" class="editor" style="background-color: transparent; border: none; outline: none;"></textarea>
             <div id="preview" class="preview" translate="no"></div>
-        </div>
-
-        <div class="status-bar show" id="status">
-            <div class="status-bar-left"></div>
-            <div class="status-bar-right"></div>
         </div>
 
         <div id="editorMenu" class="context-menu">
@@ -374,11 +374,8 @@
 
             const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
                     mode: "markdown",                                                                       // Set mode to markdown, hardcoded
-                    lineNumbers: Settings.getSetting("editorLineNumbers", "false") === "true",              // Show line numbers based on settings, false as default
                     theme: "default",                                                                       // Set theme to default, hardcoded
                     lineWrapping: true,                                                                     // Enable line wrapping, hardcoded
-                    autoCloseBrackets: Settings.getSetting("editorAutoCloseBrackets", "true") === "true",   // Auto close brackets based on settings, true as default
-                    autoCloseTags: Settings.getSetting("editorAutoCloseTags", "false") === "true",          // Auto close tags based on settings, false as default
                     extraKeys: {
                         Enter: "newlineAndIndentContinueMarkdownList",  // Pressing Enter continues markdown lists
                         "Ctrl-Space": "autocomplete",                   // Trigger autocomplete with Ctrl-Space
@@ -388,11 +385,53 @@
                         "Cmd-K": false                                  // Disable default Cmd-K behavior (for Mac)
                     },
                     keyMap: "sublime",                                                                      // Use Sublime Text keymap, hardcoded
-                    direction: Settings.getSetting("editorDirection", "ltr"),                               // Set text direction based on settings, default to left-to-right
                     showCursorWhenSelecting: true,                                                          // Show cursor when selecting text, hardcoded
-                    styleActiveLine: Settings.getSetting("editorHighlightActiveLine", "true") === "true",   // Highlight active line based on settings, true as default
                     indentUnit: 4,
             });
+
+            function updateEditorSettings() {
+                // Line numbers
+                editor.setOption("lineNumbers", Settings.getSetting("editorLineNumbers", "false") === "true");
+
+                // Direction
+                editor.setOption("direction", Settings.getSetting("editorDirection", "ltr"));
+
+                // Style active line
+                editor.setOption("styleActiveLine", Settings.getSetting("editorHighlightActiveLine", "true") === "true");
+
+                // editor width
+                if (Settings.getSetting("editorWidth", "false") === "true") {
+                    editor.getWrapperElement().classList.add('CodeMirror-Large');
+                }
+
+                // Auto close wrappers
+
+                let editorClosingPairs= "";
+                let editorClosingTriples= "";
+                let editorClosingExplode= "";
+
+                //// Brackets
+                if (Settings.getSetting("editorAutoCloseBrackets", "true") === "true") {
+                    editorClosingPairs+= "()[]{}''\"\"";
+                    editorClosingExplode+= "[]{}";
+                }
+
+                //// MD notation
+                if (Settings.getSetting("editorAutoCloseMDNotation", "true") === "true") {
+                    editorClosingPairs+= "**__``";
+                    editorClosingTriples+= "```";
+                    editorClosingExplode+= "``";
+                }
+
+                //// ML tags
+                if (Settings.getSetting("editorAutoCloseTags", "false") === "true") {
+                    editorClosingPairs+= "<>";
+                    editorClosingExplode+= "<>";
+                }
+
+                editor.setOption("autoCloseBrackets", { pairs: editorClosingPairs, triples: editorClosingTriples, explode: editorClosingExplode, override: true } );
+            }
+            updateEditorSettings();
 
             // Add overlays
             editor.addOverlay(markOverlay); // Overlay for displaying ==highlighted text==
@@ -530,25 +569,37 @@
             let debounceTimer;
 
             // Handle editor changes
-            editor.on("change", (instance) => {
-                const cursor = instance.getCursor();
+            editor.on("change", (instance, change) => {
                 const content = instance.getValue();
 
+                // Update UI
+                const cursor = instance.getCursor();
                 const charCount = content.length;
                 const wordCount = content.trim().split(/\s+/).filter(Boolean).length;
-                StatusRegister.updateAll(); // Update statusbar
+                StatusRegister.updateAll();
 
-                // Debounce saving to avoid excessive writes
+                // update preview if in preview mode
+                if (preview.classList.contains("on")) {
+                    updateMarkdown(content);
+                }
+
+                // Autosave: excluding `setValue` changes
+                if (change.origin === "setValue") {
+                    return;
+                }
+
+                // Debounce saving
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(() => {
+                    // console.time("Autosave");
+
                     updateFile(content, index);
                     saveFilesToStorage();
                     renderFiles("files");
                     updateTitle();
-                    if (preview.classList.contains("on")) {
-                        updateMarkdown(content);
-                    }
-                }, 100);
+
+                    // console.timeEnd("Autosave");
+                }, 1000);
             });
 
             editor.on("cursorActivity", () => StatusRegister.update("cursorPos")); // Update cursor position label
@@ -1077,11 +1128,6 @@
                                 `${chars} Characters, ${words} Words`;
                         }
                     });
-                }
-
-                // editor width
-                if (Settings.getSetting("editorWidth", "false") === "true") {
-                    editor.getWrapperElement().classList.add('CodeMirror-Large');
                 }
             }
 
