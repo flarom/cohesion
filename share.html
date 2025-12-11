@@ -201,6 +201,35 @@
             return /\s+on[a-z]+\s*=/gi.test(text);
         }
 
+        function extractMetadata(markdown) {
+            if (!markdown) return {};
+
+            const metaMatch = markdown.match(/«««([\s\S]*?)»»»/);
+            let metaText = null;
+
+            if (metaMatch) {
+                metaText = metaMatch[1];
+            } else {
+                const yamlMatch = markdown.match(/^---\s*\n([\s\S]*?)\n---/);
+                if (yamlMatch) metaText = yamlMatch[1];
+            }
+
+            if (!metaText) return {};
+
+            const metaLines = metaText.split('\n').map(l => l.trim()).filter(Boolean);
+            const metadata = {};
+            metaLines.forEach(line => {
+                const parts = line.split(':');
+                if (parts.length >= 2) {
+                    const key = parts.shift().trim();
+                    const value = parts.join(':').trim();
+                    if (key) metadata[key] = value;
+                }
+            });
+
+            return metadata;
+        }
+
         async function showSecurityWarning() {
             await promptMessage(
                 `<div style="padding: 20px;">
@@ -214,6 +243,7 @@
         }
 
         const converter = new showdown.Converter({
+            metadata: true,
             extensions: [
                 'bannerImage', // banner image controled by document meta
                 'internalLink', // internal link support
@@ -266,6 +296,11 @@ You may ask who sent you this document to share it again.
                             markdown = text;
                         }
 
+                        try {
+                            const metadata = extractMetadata(markdown);
+                            converter.getMetadata = function() { return metadata; };
+                        } catch (e) { }
+
                         preview.innerHTML = converter.makeHtml(sanitizeMarkdown(markdown));
 
                         document.title = getFileTitleFromText(text) + " - Cohesion";
@@ -294,9 +329,17 @@ Please try again later.
 
             if (markdown) {
                 if (detectInlineEvents(markdown)) {
+                    try {
+                        const metadata = extractMetadata(markdown);
+                        converter.getMetadata = function() { return metadata; };
+                    } catch (e) { }
                     preview.innerHTML = converter.makeHtml(sanitizeMarkdown(markdown));
                     showSecurityWarning();
                 } else {
+                    try {
+                        const metadata = extractMetadata(markdown);
+                        converter.getMetadata = function() { return metadata; };
+                    } catch (e) { }
                     preview.innerHTML = converter.makeHtml(sanitizeMarkdown(markdown));
                 }
             }
