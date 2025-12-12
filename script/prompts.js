@@ -685,7 +685,7 @@ async function promptFileSearch(value = '') {
             const metadata = conv.getMetadata();
 
             const title = (getFileTitle(index) || "").toLowerCase();
-            const authors = (metadata.authors || "")
+            const author = (metadata.author || "")
                 .toLowerCase()
                 .split(",")
                 .map((a) => a.trim());
@@ -706,7 +706,7 @@ async function promptFileSearch(value = '') {
 
             if (lowerQuery.startsWith("~")) {
                 const authorQuery = lowerQuery.slice(1);
-                return authors.some((a) => a.includes(authorQuery));
+                return author.some((a) => a.includes(authorQuery));
             }
 
             if (lowerQuery.startsWith("@")) {
@@ -1052,7 +1052,7 @@ async function promptSaveFile(fileId) {
                 // defualt metadata values
                 const defaultMeta = {
                     title: "New document",
-                    authors: "*",
+                    author: "*",
                     date: "*",
                     tags: "uncategorized",
                     description: "*",
@@ -1063,7 +1063,7 @@ async function promptSaveFile(fileId) {
                 // HTML meta
                 const metaTags = `
                     <meta name="title" content="${meta.title}">
-                    <meta name="author" content="${meta.authors}">
+                    <meta name="author" content="${meta.author}">
                     <meta name="date" content="${meta.date}">
                     <meta name="keywords" content="${meta.tags}">
                     <meta name="description" content="${meta.description}">

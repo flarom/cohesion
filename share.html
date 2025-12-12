@@ -342,6 +342,19 @@ Please try again later.
                     } catch (e) { }
                     preview.innerHTML = converter.makeHtml(sanitizeMarkdown(markdown));
                 }
+            } else {
+                markdown = `
+# No document provided
+
+There is no document ID specified in the URL.
+
+You may ask who sent you this document to share it again, properly.
+
+---
+
+[Report an issue](https://github.com/flarom/cohesion/issues) • [Homepage](index.html)`;
+
+                preview.innerHTML = converter.makeHtml(markdown);
             }
         }
 

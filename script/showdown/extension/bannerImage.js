@@ -5,7 +5,7 @@ showdown.extension('bannerImage', function () {
             filter: function (text, converter, options) {
                 const metadata = converter.getMetadata ? converter.getMetadata() : {};
                 const bannerPath = firstString(metadata.banner);
-                const fallback = 'cohesion/favicon.svg';
+                const fallback = 'cohesion/file-icons/text-x-generic.svg';
 
                 function escapeHtml(str) {
                     if (str === undefined || str === null) return '';
@@ -148,9 +148,10 @@ showdown.extension('bannerImage', function () {
                     const bannerHtml = renderBanner(bannerPath);
                     const iconHtml = renderIcon(metadata.icon);
                     const title = firstString(metadata.title) || '';
-                    const author = firstString(metadata.authors) || firstString(metadata.author) || '';
+                    const author = firstString(metadata.author) || firstString(metadata.author) || '';
                     const date = firstString(metadata.date) || '';
                     const tags = firstString(metadata.tags) || '';
+                    const description = firstString(metadata.description) || '';
 
                     const tagsHtml = tags
                         ? tags.split(',')
@@ -165,22 +166,26 @@ showdown.extension('bannerImage', function () {
                     if (date) subtitleParts.push(date);
                     const subtitle = subtitleParts.join(', ') + (tagsHtml ? `<div class="tags">${tagsHtml}</div>` : '');
 
-                    const headerHtml = `
-<div class="meta-container">
-  <div class="banner-container">
-    ${bannerHtml}
-  </div>
-  <div class="info-container">
-    <div class="row">
-      <div class="icon-container">${iconHtml}</div>
-      <div class="text-container">
-        ${title ? `<span class="title">${escapeHtml(title)}</span>` : ''}
-        ${subtitle ? `<div class="banner-meta-subtitle">${subtitle}</div>` : ''}
-      </div>
+                    const headerHtml = 
+`<div class="meta-container">
+    <div class="banner-container">
+        ${bannerHtml}
     </div>
-  </div>
+    <div class="info-container">
+        <div class="info-content">
+            <div class="row">
+                <div class="icon-container">${iconHtml}</div>
+                <div class="text-container">
+                    ${title ? `<span class="title">${escapeHtml(title)}</span>` : ""}
+                    ${subtitle ? `<div class="banner-meta-subtitle">${subtitle}</div>` : ""}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-`;
+<div class="description-container">
+    ${description ? `<p class="description">${escapeHtml(description)}</p>` : ""}
+</div>`;
                     return headerHtml + text;
                 }
 

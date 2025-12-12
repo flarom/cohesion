@@ -240,7 +240,7 @@ function getMeta() {
     const rawMeta = Settings.getSetting(
         "editorMeta",
         `title: ~{1:\${getFileTitle(index) || "New document"}}
-authors: ~{2:Author name}
+author: ~{2:Author name}
 date: \${strftime(Settings.getSetting("dateFormat", "%Y/%m/%d %H:%M"))}
 tags: ~{3:Uncategorized}
 description: ~{4:No description provided}

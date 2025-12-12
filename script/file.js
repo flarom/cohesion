@@ -460,9 +460,9 @@ function renderFiles(containerId) {
         const p = document.createElement("p");
         p.innerHTML = `<span class=icon>schedule</span>${getFileStats(i).readTime} to read`;
         p.title = `${getFileStats(i).paragraphs} Paragraphs`;
-        const authors = document.createElement("p");
-        authors.innerHTML = `<span class=icon>group</span>${metadata.authors}`;
-        authors.title = "Authors";
+        const author = document.createElement("p");
+        author.innerHTML = `<span class=icon>group</span>${metadata.author}`;
+        author.title = "Author";
         const tags = document.createElement("p");
         tags.innerHTML = `<span class=icon>sell</span>${metadata.tags}`
         tags.title = "Tags";
@@ -474,7 +474,7 @@ function renderFiles(containerId) {
         description.style.opacity = "100%";
         infoDiv.appendChild(h3);
         infoDiv.appendChild(p);
-        if(metadata.authors) infoDiv.appendChild(authors);
+        if(metadata.author) infoDiv.appendChild(author);
         if(metadata.tags) infoDiv.appendChild(tags);
         if(metadata.date) infoDiv.appendChild(date);
         if(metadata.description) infoDiv.appendChild(description);

@@ -292,10 +292,6 @@
     --hljs-positive-bg:     #00000000;
     --hljs-negative:        #000000;
     --hljs-negative-bg:     #00000000;
-
-    img {
-        filter: grayscale(100);
-    }
     
     .sidebar .file.selected,
     .sidebar .file:hover {
