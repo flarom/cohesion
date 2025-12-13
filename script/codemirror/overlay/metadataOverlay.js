@@ -23,9 +23,15 @@ function metadataOverlay() {
             }
 
             // field
-            if (stream.sol() && stream.match(/^[a-zA-Z0-9_-]+/)) {
-                const fieldName = stream.current();
-                return "metadata-field metadata-field-" + fieldName;
+            if (stream.sol() && stream.match(/^[^:]+(?=\s*:)/)) {
+                const fieldName = stream.current().trim();
+
+                const safeClass = fieldName
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")
+                    .replace(/[^a-z0-9_-]/g, "");
+
+                return "metadata-field metadata-field-" + safeClass;
             }
 
             // :

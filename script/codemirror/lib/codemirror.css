@@ -755,9 +755,10 @@ span.CodeMirror-selectedtext {
 
 .cm-metadata-field-title::before { content: "label"; }
 .cm-metadata-field-author::before { content: "person"; }
-.cm-metadata-field-date::before { content: "event"; }
-.cm-metadata-field-tags::before { content: "sell"; }
-.cm-metadata-field-description::before { content: "description"; }
+.cm-metadata-field-authors::before { content: "groups"; }
+.cm-metadata-field-date::before, .cm-metadata-field-created-date::before { content: "event"; }
+.cm-metadata-field-tags::before, .cm-metadata-field-keywords::before { content: "sell"; }
+.cm-metadata-field-description::before, .cm-metadata-field-subject::before, .cm-metadata-field-comment::before { content: "description"; }
 .cm-metadata-field-color::before { content: "palette"; }
 .cm-metadata-field-banner::before { content: "panorama"; }
 .cm-metadata-field-icon::before { content: "add_reaction"; }

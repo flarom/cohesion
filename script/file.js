@@ -427,6 +427,21 @@ function getFileTags(index) {
     return metadata.tags.split(', ').map(tag => tag.trim()).filter(Boolean);
 }
 
+/**
+ * Gets a metadata value with fallback alternatives
+ * @param {Object} metadata The metadata object
+ * @param {Array} fieldNames Array of field names to check in order
+ * @returns {string|undefined} The first available value or undefined
+ */
+function getMetadataValue(metadata, fieldNames) {
+    for (const field of fieldNames) {
+        if (metadata[field]) {
+            return metadata[field];
+        }
+    }
+    return undefined;
+}
+
 function renderFiles(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -460,24 +475,28 @@ function renderFiles(containerId) {
         const p = document.createElement("p");
         p.innerHTML = `<span class=icon>schedule</span>${getFileStats(i).readTime} to read`;
         p.title = `${getFileStats(i).paragraphs} Paragraphs`;
+        const authorValue = getMetadataValue(metadata, ['author', 'authors']);
         const author = document.createElement("p");
-        author.innerHTML = `<span class=icon>group</span>${metadata.author}`;
+        author.innerHTML = `<span class=icon>person</span>${authorValue}`;
         author.title = "Author";
+        const tagsValue = getMetadataValue(metadata, ['tags', 'keywords']);
         const tags = document.createElement("p");
-        tags.innerHTML = `<span class=icon>sell</span>${metadata.tags}`
+        tags.innerHTML = `<span class=icon>sell</span>${tagsValue}`
         tags.title = "Tags";
+        const dateValue = getMetadataValue(metadata, ['date', 'created date']);
         const date = document.createElement("p");
-        date.innerHTML = `<span class=icon>calendar_month</span>${metadata.date}`;
+        date.innerHTML = `<span class=icon>event</span>${dateValue}`;
+        const descriptionValue = getMetadataValue(metadata, ['description', 'subject', 'comment']);
         const description = document.createElement("p");
-        description.innerText =  metadata.description || "";
+        description.innerText =  descriptionValue || "";
         description.style.marginTop = "5px";
         description.style.opacity = "100%";
         infoDiv.appendChild(h3);
         infoDiv.appendChild(p);
-        if(metadata.author) infoDiv.appendChild(author);
-        if(metadata.tags) infoDiv.appendChild(tags);
-        if(metadata.date) infoDiv.appendChild(date);
-        if(metadata.description) infoDiv.appendChild(description);
+        if(authorValue) infoDiv.appendChild(author);
+        if(tagsValue) infoDiv.appendChild(tags);
+        if(dateValue) infoDiv.appendChild(date);
+        if(descriptionValue) infoDiv.appendChild(description);
 
         const dropdownDiv = document.createElement("div");
         dropdownDiv.className = "dropdown";
