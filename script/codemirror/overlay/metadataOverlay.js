@@ -1,21 +1,25 @@
+var inMetadata = false;
+
 function metadataOverlay() {
     return {
         token(stream) {
             const line = stream.string;
 
-            // delimiters
+            // delimiters (toggle metadata state)
             if (stream.sol() && line === "«««") {
+                inMetadata = true;
                 stream.skipToEnd();
                 return "metadata-delimeter";
             }
 
             if (stream.sol() && line === "»»»") {
+                inMetadata = false;
                 stream.skipToEnd();
                 return "metadata-delimeter";
             }
 
-            // outside metadata block
-            if (!isInsideMetadata(line)) {
+            // outside metadata block: nothing to highlight
+            if (!inMetadata) {
                 stream.skipToEnd();
                 return null;
             }
@@ -41,14 +45,6 @@ function metadataOverlay() {
         }
     };
 }
-
-function isInsideMetadata(line) {
-    // assume que todo metadata está no topo do documento
-    return !line.startsWith("«««") &&
-           !line.startsWith("»»»") &&
-           !line.trim().startsWith("#");
-}
-
 var metadataOverlay = {
     token: metadataOverlay().token
 }

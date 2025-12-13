@@ -585,10 +585,10 @@
                     updateMarkdown(content);
                 }
 
-                // Autosave: excluding `setValue` changes
-                if (change.origin === "setValue") {
-                    return;
-                }
+                // // Autosave: excluding `setValue` changes
+                // if (change.origin === "setValue") {
+                //     return;
+                // }
 
                 // Debounce saving
                 clearTimeout(debounceTimer);
@@ -601,7 +601,7 @@
                     updateTitle();
 
                     // console.timeEnd("Autosave");
-                }, 1000);
+                }, 100);
             });
 
             editor.on("cursorActivity", () => StatusRegister.update("cursorPos")); // Update cursor position label
