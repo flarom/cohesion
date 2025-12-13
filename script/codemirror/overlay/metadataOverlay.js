@@ -1,36 +1,31 @@
-var inMetadata = false;
-
 function metadataOverlay() {
     return {
         token(stream) {
             const line = stream.string;
+            const lineNo = stream.lineOracle.line;
+            const doc = stream.lineOracle.doc;
 
-            // delimiters (toggle metadata state)
+            // delimeters
             if (stream.sol() && line === "«««") {
-                inMetadata = true;
                 stream.skipToEnd();
                 return "metadata-delimeter";
             }
 
             if (stream.sol() && line === "»»»") {
-                inMetadata = false;
                 stream.skipToEnd();
                 return "metadata-delimeter";
             }
 
-            // outside metadata block: nothing to highlight
-            if (!inMetadata) {
+            // not inside metadata block
+            if (!isInsideMetadata(doc, lineNo)) {
                 stream.skipToEnd();
                 return null;
             }
 
-            // field name
-            if (stream.sol()) {
-                const m = stream.match(/^([a-zA-Z0-9_-]+)/);
-                if (m) {
-                    const name = m[1].replace(/[^a-zA-Z0-9_-]/g, "-");
-                    return "metadata-field metadata-field-" + name;
-                }
+            // field
+            if (stream.sol() && stream.match(/^[a-zA-Z0-9_-]+/)) {
+                const fieldName = stream.current();
+                return "metadata-field metadata-field-" + fieldName;
             }
 
             // :
@@ -45,6 +40,34 @@ function metadataOverlay() {
         }
     };
 }
-var metadataOverlay = {
-    token: metadataOverlay().token
+
+
+function isInsideMetadata(doc, lineNo) {
+    let hasStart = false;
+    let hasEnd = false;
+
+    // search for ««« above
+    for (let i = lineNo - 1; i >= 0; i--) {
+        const line = doc.getLine(i);
+        if (line === "»»»") break;
+        if (line === "«««") {
+            hasStart = true;
+            break;
+        }
+    }
+
+    // search for »»» below
+    for (let i = lineNo + 1; i < doc.lineCount(); i++) {
+        const line = doc.getLine(i);
+        if (line === "«««") break;
+        if (line === "»»»") {
+            hasEnd = true;
+            break;
+        }
+    }
+
+    return hasStart && hasEnd;
 }
+
+
+var metadataOverlay = metadataOverlay();
