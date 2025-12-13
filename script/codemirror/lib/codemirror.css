@@ -710,3 +710,54 @@ span.CodeMirror-selectedtext {
 .cm-admonition-header {
     font-weight: normal !important;
 }
+
+/* METADATA */
+
+.cm-metadata-delimeter {
+    color: var(--border-light-color);
+}
+
+.cm-metadata-field {
+    color: var(--title-color);
+    font-weight: bold;
+    line-height: 3.3ch;
+}
+
+.cm-metadata-field-delimeter {
+    color: var(--border-light-color);
+    transition: color 0s;
+}
+
+.cm-metadata-value {
+    color: var(--text-color);
+}
+
+.cm-metadata-field::before {
+    position: absolute;
+    left: 1.5ch;
+    font-family: "Material Symbols Rounded";
+    font-weight: normal;
+    color: var(--border-light-color);
+}
+
+.CodeMirror-activeline .cm-metadata-field-delimeter,
+.CodeMirror-activeline .cm-metadata-field::before {
+    color: var(--title-color);
+}
+
+@media (max-width: 700px){
+    .cm-metadata-field::before {
+        position: relative;
+        left: 0;
+        margin-right: 1ch;
+    }
+}
+
+.cm-metadata-field-title::before { content: "label"; }
+.cm-metadata-field-author::before { content: "person"; }
+.cm-metadata-field-date::before { content: "event"; }
+.cm-metadata-field-tags::before { content: "sell"; }
+.cm-metadata-field-description::before { content: "description"; }
+.cm-metadata-field-color::before { content: "palette"; }
+.cm-metadata-field-banner::before { content: "panorama"; }
+.cm-metadata-field-icon::before { content: "add_reaction"; }

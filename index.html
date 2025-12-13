@@ -56,6 +56,7 @@
         <script src="script/codemirror/overlay/underlineOverlay.js"></script>
         <script src="script/codemirror/overlay/admonitionOverlay.js"></script>
         <script src="script/codemirror/overlay/fixCodeOverlay.js"></script>
+        <script src="script/codemirror/overlay/metadataOverlay.js"></script>
         <script src="script/codemirror/addon/edit/closebrackets.js"></script>
         <script src="script/codemirror/addon/edit/continuelist.js"></script>
         <script src="script/codemirror/addon/search/searchcursor.js"></script>
@@ -438,6 +439,7 @@
             editor.addOverlay(underlineOverlay); // Overlay for displaying __underlined text__
             editor.addOverlay(admonitionOverlay); // Overlay for displaying admonition blocks
             editor.addOverlay(fixCodeOverlay); // Overlay to fix fenced code blocks being marked as comments
+            editor.addOverlay(metadataOverlay); // Overlay for displaying metadata blocks
 
             // Load macros
             Macros.updateSlashCommands();

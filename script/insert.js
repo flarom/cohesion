@@ -239,14 +239,14 @@ function insertAtTop(text) {
 function getMeta() {
     const rawMeta = Settings.getSetting(
         "editorMeta",
-        `title: ~{1:\${getFileTitle(index) || "New document"}}
-author: ~{2:Author name}
-date: \${strftime(Settings.getSetting("dateFormat", "%Y/%m/%d %H:%M"))}
-tags: ~{3:Uncategorized}
+        `title:       ~{1:\${getFileTitle(index) || "New document"}}
+author:      ~{2:Author name}
+date:        \${strftime(Settings.getSetting("dateFormat", "%Y/%m/%d %H:%M"))}
+tags:        ~{3:Uncategorized}
 description: ~{4:No description provided}
-color: \${'#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0')}
-banner: cohesion/banners/1.png
-icon: `,
+color:       ~{5:\${'#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0')}}
+banner:      ~{6:cohesion/banners/1.png}
+icon:        ~{7:📄}`,
         true
     );
 
@@ -263,14 +263,13 @@ icon: `,
 
     const metaLines = rawMeta
         .split("\n")
-        .map(line => line.trim())
+        .map(line => line)
         .filter(line => line.includes(":"))
         .map(line => {
             const [key, ...rest] = line.split(":");
-            const trimmedKey = key.trim();
-            const value = rest.join(":").trim();
+            const value = rest.join(":");
 
-            return `${trimmedKey}: ${evalJS(value)}`;
+            return `${key}: ${evalJS(value)}`;
         });
 
     return `«««\n${metaLines.join("\n")}\n»»»`;

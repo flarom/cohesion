@@ -429,18 +429,19 @@
             }
 
             function editEditorMeta() {
-                const defaultMeta = `title: ~{1:\${getFileTitle(index) || "New document"}}
-author: ~{2:Author name}
-date: \${strftime(Settings.getSetting("dateFormat", "%Y/%m/%d %H:%M"))}
-tags: ~{3:Uncategorized}
+                const defaultMeta = 
+`title:       ~{1:\${getFileTitle(index) || "New document"}}
+author:      ~{2:Author name}
+date:        \${strftime(Settings.getSetting("dateFormat", "%Y/%m/%d %H:%M"))}
+tags:        ~{3:Uncategorized}
 description: ~{4:No description provided}
-color: \${'#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0')}
-banner: cohesion/banners/1.png
-icon: `;
+color:       ~{5:\${'#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0')}}
+banner:      ~{6:cohesion/banners/1.png}
+icon:        ~{7:📄}`;
                 const savedMeta = Settings.getSetting('editorMeta', defaultMeta);
                 promptCodeEditor(savedMeta).then(newValue => {
-                    if (typeof newValue === 'string' && newValue.trim() !== '') {
-                        Settings.setSetting('editorMeta', newValue.trim());
+                    if (typeof newValue === 'string' && newValue !== '') {
+                        Settings.setSetting('editorMeta', newValue);
                     }
                 });
             }
