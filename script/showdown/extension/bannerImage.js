@@ -46,6 +46,9 @@ showdown.extension('bannerImage', function () {
                     canvas.width = size;
                     canvas.height = size;
                     const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, size, size);
+                    // draw chars with opaque color so pixels are readable
+                    ctx.fillStyle = '#000';
                     ctx.font = `${size}px sans-serif`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
@@ -69,10 +72,55 @@ showdown.extension('bannerImage', function () {
                     return `rgb(${r},${g},${b})`;
                 }
 
+                function extractEmojisFromString(s) {
+                    if (!s) return [];
+                    const found = [];
+
+                    const codeRe = /:([^:\s]+):/g;
+                    let m;
+                    while ((m = codeRe.exec(s)) !== null) {
+                        const mapped = getEmojiFromCode(m[0]);
+                        if (mapped) found.push(mapped);
+                    }
+
+                    try {
+                        const literal = s.match(/\p{Extended_Pictographic}/gu) || [];
+                        for (const ch of literal) {
+                            found.push(ch);
+                        }
+                    } catch (e) {
+                        const fallback = s.match(/[\u{1F300}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{27BF}]/gu) || [];
+                        for (const ch of fallback) found.push(ch);
+                    }
+
+                    const out = [];
+                    for (const e of found) if (e && out.indexOf(e) === -1) out.push(e);
+                    return out;
+                }
+
+                function parseRgbString(str) {
+                    const m = String(str).match(/rgb\((\d+),(\d+),(\d+)\)/);
+                    return m ? [parseInt(m[1], 10), parseInt(m[2], 10), parseInt(m[3], 10)] : null;
+                }
+
+                function blendColors(colors) {
+                    if (!colors.length) return 'transparent';
+                    let r = 0, g = 0, b = 0, count = 0;
+                    for (const c of colors) {
+                        const p = parseRgbString(c);
+                        if (p) { r += p[0]; g += p[1]; b += p[2]; count++; }
+                    }
+                    if (count === 0) return 'transparent';
+                    return `rgb(${Math.round(r / count)},${Math.round(g / count)},${Math.round(b / count)})`;
+                }
+
                 function renderBanner(val) {
-                    const emojiLiteral = isLiteralEmoji(val) ? val : getEmojiFromCode(val);
-                    if (emojiLiteral) {
-                        const bgColor = averageColorFromEmoji(emojiLiteral);
+                    // try to extract one or more emojis from the value
+                    const emojis = extractEmojisFromString(String(val));
+                    if (emojis && emojis.length) {
+                        // compute background as blend of emoji average colors
+                        const cols = emojis.map(e => averageColorFromEmoji(e)).filter(c => c && c !== 'transparent');
+                        const bgColor = blendColors(cols);
 
                         // create canvas
                         const canvas = document.createElement('canvas');
@@ -92,15 +140,20 @@ showdown.extension('bannerImage', function () {
                         ctx.rotate((12 * Math.PI) / 180);
                         ctx.translate(-w / 2, -h / 2);
 
-                        // draw emojis in a tiled 
+                        // draw emojis in a tiled pattern, alternating between emojis
                         const tile = 200; // tile size
                         ctx.font = `${tile * 0.8}px sans-serif`;
                         ctx.textAlign = 'center';
                         ctx.textBaseline = 'middle';
 
-                        for (let y = -tile; y < h + tile * 2; y += tile) {
-                            for (let x = -tile; x < w + tile * 2; x += tile) {
-                                ctx.fillText(emojiLiteral, x + tile / 2, y + tile / 2);
+                        const n = emojis.length;
+                        for (let row = -2; row * tile < h + tile * 2; row++) {
+                            for (let col = -2; col * tile < w + tile * 2; col++) {
+                                const x = col * tile;
+                                const y = row * tile;
+                                // choose emoji index by a checkerboard/diagonal pattern for variation
+                                const ix = Math.abs(col + row) % n;
+                                ctx.fillText(emojis[ix], x + tile / 2, y + tile / 2);
                             }
                         }
 
@@ -109,11 +162,7 @@ showdown.extension('bannerImage', function () {
                         // export png as data URL
                         const dataURL = canvas.toDataURL('image/png');
 
-                        return `<div class="banner emoji-banner" style="
-                            background-image: url('${dataURL}');
-                            background-color: ${bgColor};
-                            background-size: cover;
-                        "></div>`;
+                        return `<div class="banner emoji-banner" style="background-image: url('${dataURL}'); background-color: ${bgColor}; background-size: cover;"></div>`;
                     }
 
                     return `<img class="banner" src="${escapeHtml(val)}" alt="Banner"/>`;
