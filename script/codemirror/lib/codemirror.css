@@ -260,7 +260,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
 }
 
 .CodeMirror-activeline .CodeMirror-linenumber {
-    color: var(--button-color-2);
+    color: var(--title-color);
     opacity: 100%;
 }
 

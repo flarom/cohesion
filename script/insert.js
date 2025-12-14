@@ -643,6 +643,7 @@ function activateMetaSnippet(metaInfo) {
         const id = i + 1;
         if (!groups[id]) groups[id] = [];
         groups[id].push(marker);
+        StatusRegister.remove("contextualShortcut");
     });
 
     const stops = Object.keys(groups)
@@ -666,6 +667,20 @@ function activateMetaSnippet(metaInfo) {
         .filter(Boolean);
 
     doc.setSelections(first);
+
+    StatusRegister.remove("contextualShortcut");
+    StatusRegister.register({
+        id: "contextualShortcut",
+        side: "left",
+
+        render() {
+            return `
+                <label>
+                    <kbd>Tab</kbd> to advance. <kbd>Shift</kbd>+<kbd>Tab</kbd> to go back. <kbd>Esc</kbd> to cancel.
+                </label>
+            `;
+        }
+    });
 }
 
 function insertOrEditMeta() {

@@ -169,27 +169,53 @@ showdown.extension('bannerImage', function () {
                 }
 
                 function renderIcon(iconVal) {
-                    const val = firstString(iconVal).trim();
-                    if (!val) return `<img class="banner-icon" src="${fallback}" alt="icon"/>`;
+                    const raw = firstString(iconVal).trim();
+                    if (!raw) {
+                        return `<img class="banner-icon" src="${fallback}" alt="icon"/>`;
+                    }
 
-                    const iconTagMatch = val.match(/^<icon>([\s\S]*?)<\/icon>$/i);
-                    if (iconTagMatch) return `<icon>${escapeHtml(iconTagMatch[1])}</icon>`;
+                    // [icon name:color]
+                    const materialMatch = raw.match(/^\[([^\]:]+)(?::([^\]]+))?\]$/);
+                    if (materialMatch) {
+                        const iconName = materialMatch[1]
+                            .trim()
+                            .toLowerCase()
+                            .replace(/\s+/g, "_");
 
-                    const emojiMatch = val.match(/^:([^:]+):$/);
+                        const color = materialMatch[2]
+                            ? escapeHtml(materialMatch[2].trim())
+                            : "currentColor";
+
+                        return `<span
+                            class="icon color-${color}"
+                            style="color: ${color}"
+                        >${iconName}</span>`;
+                    }
+
+                    // emoji :shortcode:
+                    const emojiMatch = raw.match(/^:([^:]+):$/);
                     if (emojiMatch) {
-                        const emojiVal = getEmojiFromCode(val);
-                        if (emojiVal) return `<span class="banner-emoji">${emojiVal}</span>`;
+                        const emojiVal = getEmojiFromCode(raw);
+                        if (emojiVal) {
+                            return `<span class="banner-emoji">${emojiVal}</span>`;
+                        }
                         return `<span class="banner-emoji">:${escapeHtml(emojiMatch[1])}:</span>`;
                     }
 
-                    if (isLiteralEmoji(val)) {
-                        return `<span class="banner-emoji">${escapeHtml(val)}</span>`;
+                    // literal emoji
+                    if (isLiteralEmoji(raw)) {
+                        return `<span class="banner-emoji">${escapeHtml(raw)}</span>`;
                     }
 
-                    if (/^(data:|https?:|\/|\.\/|\.\.\/)/i.test(val) || /\.(png|jpe?g|gif|svg|webp)(?:[?#].*)?$/i.test(val)) {
-                        return `<img class="banner-icon" src="${escapeHtml(val)}" alt="icon"/>`;
+                    // image path / url
+                    if (
+                        /^(data:|https?:|\/|\.\/|\.\.\/)/i.test(raw) ||
+                        /\.(png|jpe?g|gif|svg|webp)(?:[?#].*)?$/i.test(raw)
+                    ) {
+                        return `<img class="banner-icon" src="${escapeHtml(raw)}" alt="icon"/>`;
                     }
 
+                    // fallback
                     return `<img class="banner-icon" src="${fallback}" alt="icon"/>`;
                 }
 
