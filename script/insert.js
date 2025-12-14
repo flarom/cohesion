@@ -246,7 +246,11 @@ tags:        ~{3:Uncategorized}
 description: ~{4:No description provided}
 color:       ~{5:\${'#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0')}}
 banner:      ~{6:cohesion/banners/1.png}
-icon:        ~{7:📄}`,
+icon:        ~{7:📄}
+project:     ~{8:Documents}
+#language:    ~{9:Blank}
+#license:     ~{10:Blank}
+#source:      ~{11:Blank}`,
         true
     );
 
@@ -263,12 +267,12 @@ icon:        ~{7:📄}`,
 
     const metaLines = rawMeta
         .split("\n")
-        .map(line => line)
+        .map(line => line.trim())
+        .filter(line => line && !line.startsWith("#"))
         .filter(line => line.includes(":"))
         .map(line => {
             const [key, ...rest] = line.split(":");
             const value = rest.join(":");
-
             return `${key}: ${evalJS(value)}`;
         });
 

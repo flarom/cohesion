@@ -437,7 +437,11 @@ tags:        ~{3:Uncategorized}
 description: ~{4:No description provided}
 color:       ~{5:\${'#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0')}}
 banner:      ~{6:cohesion/banners/1.png}
-icon:        ~{7:📄}`;
+icon:        ~{7:📄}
+project:     ~{8:Documents}
+#language:    ~{9:Blank}
+#license:     ~{10:Blank}
+#source:      ~{11:Blank}`;
                 const savedMeta = Settings.getSetting('editorMeta', defaultMeta);
                 promptCodeEditor(savedMeta).then(newValue => {
                     if (typeof newValue === 'string' && newValue !== '') {

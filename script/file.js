@@ -442,187 +442,247 @@ function getMetadataValue(metadata, fieldNames) {
     return undefined;
 }
 
+/**
+ * Gets the file group from metadata
+ * @param {*} metadata The metadata object 
+ * @returns {string} The project or folder name, or "Documents" if neither exists
+ */
+function getFileGroup(metadata) {
+    return (
+        metadata.project ||
+        metadata.folder ||
+        "Documents"
+    );
+}
+
+const groupState = JSON.parse(
+    localStorage.getItem("fileGroupState") || "{}"
+);
+
+function saveGroupState() {
+    localStorage.setItem(
+        "fileGroupState",
+        JSON.stringify(groupState)
+    );
+}
+
+function createGroupContainer(name) {
+    const wrapper = document.createElement("div");
+    const isCollapsed = groupState[name] === true;
+
+    wrapper.className = "file-group";
+    wrapper.classList.toggle("collapsed", isCollapsed);
+    wrapper.classList.toggle("expanded", !isCollapsed);
+
+    const header = document.createElement("button");
+    header.className = "file-group-header";
+
+    const icon = document.createElement("span");
+    icon.className = "icon";
+    icon.textContent = isCollapsed ? "keyboard_arrow_right" : "keyboard_arrow_down";
+
+    const title = document.createElement("strong");
+    title.textContent = name;
+
+    header.append(icon, title);
+
+    const content = document.createElement("div");
+    content.className = "file-group-content";
+    content.classList.toggle("collapsed", isCollapsed);
+
+    header.onclick = () => {
+        const collapsed = content.classList.toggle("collapsed");
+
+        wrapper.classList.toggle("collapsed", collapsed);
+        wrapper.classList.toggle("expanded", !collapsed);
+
+        icon.textContent = collapsed ? "keyboard_arrow_right" : "keyboard_arrow_down";
+
+        groupState[name] = collapsed;
+        saveGroupState();
+    };
+
+    wrapper.append(header, content);
+
+    return { wrapper, content };
+}
+
 function renderFiles(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
     container.innerHTML = "";
 
+    const groups = {};
+
     files.forEach((_, i) => {
         const text = getFileText(i);
         let metadata = {};
+
         if (text) {
             const conv = new showdown.Converter({ metadata: true });
             conv.makeHtml(text);
             metadata = conv.getMetadata();
         }
 
-        const fileButton = document.createElement("button");
-        fileButton.className = "file";
-        fileButton.setAttribute("draggable", "true");
-        fileButton.dataset.index = i;
-        fileButton.setAttribute('translate', 'no');
+        const groupName = getFileGroup(metadata).toLowerCase();
 
-        if (i === index) {
-            fileButton.classList.add("selected");
+        if (!groups[groupName]) {
+            groups[groupName] = [];
         }
 
-        const infoDiv = document.createElement("div");
-        infoDiv.style.width = "90%";
-        const h3 = document.createElement("h3");
-        h3.textContent = getFileTitle(i) || "New document";
-        h3.style.color = metadata.color || 'var(--title-color)';
-        const p = document.createElement("p");
-        p.innerHTML = `<span class=icon>schedule</span>${getFileStats(i).readTime} to read`;
-        p.title = `${getFileStats(i).paragraphs} Paragraphs`;
-        const authorValue = getMetadataValue(metadata, ['author', 'authors']);
-        const author = document.createElement("p");
-        author.innerHTML = `<span class=icon>person</span>${authorValue}`;
-        author.title = "Author";
-        const tagsValue = getMetadataValue(metadata, ['tags', 'keywords']);
-        const tags = document.createElement("p");
-        tags.innerHTML = `<span class=icon>sell</span>${tagsValue}`
-        tags.title = "Tags";
-        const dateValue = getMetadataValue(metadata, ['date', 'created date']);
-        const date = document.createElement("p");
-        date.innerHTML = `<span class=icon>event</span>${dateValue}`;
-        const descriptionValue = getMetadataValue(metadata, ['description', 'subject', 'comment']);
-        const description = document.createElement("p");
-        description.innerText =  descriptionValue || "";
-        description.style.marginTop = "5px";
-        description.style.opacity = "100%";
-        infoDiv.appendChild(h3);
-        infoDiv.appendChild(p);
-        if(authorValue) infoDiv.appendChild(author);
-        if(tagsValue) infoDiv.appendChild(tags);
-        if(dateValue) infoDiv.appendChild(date);
-        if(descriptionValue) infoDiv.appendChild(description);
+        groups[groupName].push({ index: i, metadata });
+    });
 
-        const dropdownDiv = document.createElement("div");
-        dropdownDiv.className = "dropdown";
+    Object.entries(groups).forEach(([groupName, items]) => {
+        const { wrapper, content } = createGroupContainer(groupName);
 
-        const dropdownButton = document.createElement("button");
-        dropdownButton.className = "icon-button";
-        dropdownButton.setAttribute("translate", "no");
-        dropdownButton.setAttribute("title", "More options");
-        dropdownButton.innerText = "more_horiz";
-        dropdownButton.onclick = (event) => {
-            event.stopPropagation();
-            toggleDropdown(`file-menu-${i}`);
-        };
+        items.forEach(({ index: i, metadata }) => {
+            const fileButton = document.createElement("button");
+            fileButton.className = "file";
+            fileButton.dataset.index = i;
+            fileButton.setAttribute("draggable", "true");
+            fileButton.setAttribute("translate", "no");
 
-        const dropdownContent = document.createElement("div");
-        dropdownContent.className = "dropdown-content menu";
-        dropdownContent.id = `file-menu-${i}`;
-
-        const duplicateBtn = document.createElement("button");
-        duplicateBtn.className = "text-button";
-        duplicateBtn.textContent = "Duplicate";
-        duplicateBtn.onclick = (event) => {
-            event.stopPropagation();
-            showToast(`Duplicated ${getFileTitle(i)}`, 'file_copy')
-            createFile(getFileText(i));
-        };
-
-        const downloadBtn = document.createElement("button");
-        downloadBtn.className = "text-button";
-        downloadBtn.textContent = "Download";
-        downloadBtn.onclick = (event) => {
-            event.stopPropagation();
-            hideAllMenus();
-            promptSaveFile(i);
-        };
-
-        const hr = document.createElement("hr");
-
-        const deleteBtn = document.createElement("button");
-        deleteBtn.className = "text-button danger";
-        deleteBtn.textContent = "Delete";
-        deleteBtn.onclick = (event) => {
-            event.stopPropagation();
-            deleteFile(i);
-            saveFilesToStorage();
-            if (files.length === 0) {
-                createFile();
+            if (i === index) {
+                fileButton.classList.add("selected");
             }
-            index = 0;
-            localStorage.setItem('lastIndex', index);
-            renderFiles(containerId);
-            renderEditor();
-            editor.focus();
-            showToast('Deleted', 'delete');
-        };
 
-        dropdownContent.appendChild(duplicateBtn);
-        dropdownContent.appendChild(downloadBtn);
-        dropdownContent.appendChild(hr);
-        dropdownContent.appendChild(deleteBtn);
+            const infoDiv = document.createElement("div");
+            infoDiv.style.width = "90%";
 
-        dropdownDiv.appendChild(dropdownButton);
-        dropdownDiv.appendChild(dropdownContent);
+            const h3 = document.createElement("h3");
+            h3.textContent = getFileTitle(i) || "New document";
+            h3.style.color = metadata.color || "var(--title-color)";
 
-        fileButton.appendChild(infoDiv);
-        fileButton.appendChild(dropdownDiv);
+            const stats = getFileStats(i);
 
-        fileButton.onclick = () => {
-            index = i;
-            localStorage.setItem('lastIndex', index);
-            renderFiles(containerId);
-            renderEditor();
-            editor.focus();
-            if (isMobile()) { hideAllSidebars(); }
-        };
+            const readTime = document.createElement("p");
+            readTime.innerHTML = `<span class="icon">schedule</span>${stats.readTime} to read`;
 
-        fileButton.addEventListener("contextmenu", (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            toggleDropdown(`file-menu-${i}`);
-        });
+            const authorValue = getMetadataValue(metadata, ["author", "authors"]);
+            const tagsValue = getMetadataValue(metadata, ["tags", "keywords"]);
+            const dateValue = getMetadataValue(metadata, ["date", "created date"]);
+            const descriptionValue = getMetadataValue(metadata, ["description", "subject", "comment"]);
 
-        fileButton.ondragstart = (e) => {
-            e.dataTransfer.setData("text/plain", i);
-            e.dataTransfer.effectAllowed = "move";
-        };
+            infoDiv.appendChild(h3);
+            infoDiv.appendChild(readTime);
 
-        fileButton.ondragover = (e) => {
-            e.preventDefault();
-            fileButton.classList.add("drag-over");
+            if (authorValue) {
+                const author = document.createElement("p");
+                author.innerHTML = `<span class="icon">person</span>${authorValue}`;
+                infoDiv.appendChild(author);
+            }
 
-            index = i;
-            localStorage.setItem('lastIndex', index);
-            renderFiles(containerId);
-            renderEditor();
-            editor.focus();
-            if (isMobile()) { hideAllSidebars(); }
-        };
+            if (tagsValue) {
+                const tags = document.createElement("p");
+                tags.innerHTML = `<span class="icon">sell</span>${tagsValue}`;
+                infoDiv.appendChild(tags);
+            }
 
-        fileButton.ondragleave = () => {
-            fileButton.classList.remove("drag-over");
-        };
+            if (dateValue) {
+                const date = document.createElement("p");
+                date.innerHTML = `<span class="icon">event</span>${dateValue}`;
+                infoDiv.appendChild(date);
+            }
 
-        fileButton.ondrop = (e) => {
-            e.preventDefault();
-            const fromIndex = parseInt(e.dataTransfer.getData("text/plain"));
-            const toIndex = i;
-            if (fromIndex !== toIndex) {
-                const [movedFile] = files.splice(fromIndex, 1);
-                files.splice(toIndex, 0, movedFile);
-                saveFilesToStorage();
+            if (descriptionValue) {
+                const desc = document.createElement("p");
+                desc.innerText = descriptionValue;
+                desc.style.marginTop = "5px";
+                infoDiv.appendChild(desc);
+            }
+
+            const dropdownDiv = document.createElement("div");
+            dropdownDiv.className = "dropdown";
+
+            const dropdownButton = document.createElement("button");
+            dropdownButton.className = "icon-button";
+            dropdownButton.innerText = "more_horiz";
+            dropdownButton.onclick = (e) => {
+                e.stopPropagation();
+                toggleDropdown(`file-menu-${i}`);
+            };
+
+            const dropdownContent = document.createElement("div");
+            dropdownContent.className = "dropdown-content menu";
+            dropdownContent.id = `file-menu-${i}`;
+
+            const duplicateBtn = document.createElement("button");
+            duplicateBtn.className = "text-button";
+            duplicateBtn.textContent = "Duplicate";
+            duplicateBtn.onclick = (e) => {
+                e.stopPropagation();
+                createFile(getFileText(i));
+            };
+
+            const downloadBtn = document.createElement("button");
+            downloadBtn.className = "text-button";
+            downloadBtn.textContent = "Download";
+            downloadBtn.onclick = (e) => {
+                e.stopPropagation();
+                promptSaveFile(i);
+            };
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.className = "text-button danger";
+            deleteBtn.textContent = "Delete";
+            deleteBtn.onclick = (e) => {
+                e.stopPropagation();
+                deleteFile(i);
+                if (files.length === 0) createFile();
+                index = 0;
+                localStorage.setItem("lastIndex", index);
                 renderFiles(containerId);
-                if (index === fromIndex) index = toIndex;
-                else if (index > fromIndex && index <= toIndex) index--;
-                else if (index < fromIndex && index >= toIndex) index++;
                 renderEditor();
+                showToast("File deleted", "delete");
+            };
 
+            dropdownContent.append(duplicateBtn, downloadBtn, document.createElement("hr"), deleteBtn);
+            dropdownDiv.append(dropdownButton, dropdownContent);
+
+            fileButton.append(infoDiv, dropdownDiv);
+
+            fileButton.onclick = () => {
                 index = i;
-                localStorage.setItem('lastIndex', index);
+                localStorage.setItem("lastIndex", index);
                 renderFiles(containerId);
                 renderEditor();
                 editor.focus();
-                if (isMobile()) { hideAllSidebars(); }
-            }
-        };
+                if (isMobile()) hideAllSidebars();
+            };
 
-        container.appendChild(fileButton);
+            fileButton.oncontextmenu = (e) => {
+                e.preventDefault();
+                toggleDropdown(`file-menu-${i}`);
+            };
+
+            fileButton.ondragstart = (e) => {
+                e.dataTransfer.setData("text/plain", i);
+                e.dataTransfer.effectAllowed = "move";
+            };
+
+            fileButton.ondragover = (e) => {
+                e.preventDefault();
+            };
+
+            fileButton.ondrop = (e) => {
+                e.preventDefault();
+                const from = +e.dataTransfer.getData("text/plain");
+                const to = i;
+                if (from !== to) {
+                    const [moved] = files.splice(from, 1);
+                    files.splice(to, 0, moved);
+                    saveFilesToStorage();
+                    index = to;
+                    renderFiles(containerId);
+                    renderEditor();
+                }
+            };
+
+            content.appendChild(fileButton);
+        });
+
+        container.appendChild(wrapper);
     });
 }

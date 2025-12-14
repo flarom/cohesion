@@ -403,6 +403,8 @@
                 // editor width
                 if (Settings.getSetting("editorWidth", "false") === "true") {
                     editor.getWrapperElement().classList.add('CodeMirror-Large');
+                } else {
+                    editor.getWrapperElement().classList.remove('CodeMirror-Large');
                 }
 
                 // Auto close wrappers

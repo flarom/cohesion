@@ -12,6 +12,8 @@
     color: var(--text-color);
     background-color: transparent;
     direction: ltr;
+
+    transition: max-width 0.3s;
 }
 
 .CodeMirror-Large {
@@ -254,11 +256,11 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
 .CodeMirror-activeline-background {
     background: var(--active-line);
     border: 3px solid var(--background-color);
-    border-radius: 8px;
+    border-radius: 16px;
 }
 
 .CodeMirror-activeline .CodeMirror-linenumber {
-    color: var(--title-color);
+    color: var(--button-color-2);
     opacity: 100%;
 }
 
@@ -742,7 +744,8 @@ span.CodeMirror-selectedtext {
 
 .CodeMirror-activeline .cm-metadata-field-delimeter,
 .CodeMirror-activeline .cm-metadata-field::before {
-    color: var(--title-color);
+    color: var(--text-color);
+    font-variation-settings: 'FILL' 1;
 }
 
 @media (max-width: 700px){
@@ -762,3 +765,7 @@ span.CodeMirror-selectedtext {
 .cm-metadata-field-color::before { content: "palette"; }
 .cm-metadata-field-banner::before { content: "panorama"; }
 .cm-metadata-field-icon::before { content: "add_reaction"; }
+.cm-metadata-field-language::before, .cm-metadata-field-lang::before  { content: "language"; }
+.cm-metadata-field-license::before { content: "balance"; }
+.cm-metadata-field-source::before { content: "line_start_circle"; }
+.cm-metadata-field-project::before, .cm-metadata-field-folder::before { content: "folder"; }

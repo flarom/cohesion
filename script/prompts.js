@@ -620,14 +620,14 @@ async function promptFileSearch(value = '') {
         dialog.style.padding = "20px";
         dialog.className = "prompt-dialog";
 
-        const title = document.createElement("p");
-        title.textContent = "Search";
-        title.className = "prompt-title";
-        dialog.appendChild(title);
+        const lbltitle = document.createElement("p");
+        lbltitle.textContent = "Search";
+        lbltitle.className = "prompt-title";
+        dialog.appendChild(lbltitle);
 
         const input = document.createElement("input");
         input.type = "text";
-        input.placeholder = 'Search title, ~author, @date, #tag or "text"';
+        input.placeholder = 'Search title, ~author, @date, #tag, /project or "text"';
         input.value = value;
         dialog.appendChild(input);
 
@@ -694,31 +694,42 @@ async function promptFileSearch(value = '') {
                 .split(",")
                 .map((t) => t.trim());
             const date = (metadata.date || "").toLowerCase();
-            const description = (metadata.description || "").toLowerCase();
+            const project = (metadata.project || metadata.folder || "")
             const body = text.toLowerCase();
 
             const lowerQuery = query.toLowerCase();
 
             if (lowerQuery.startsWith("#")) {
                 const tagQuery = lowerQuery.slice(1);
+                lbltitle.textContent = "Search for tag";
                 return tags.some((t) => t.includes(tagQuery));
             }
 
             if (lowerQuery.startsWith("~")) {
                 const authorQuery = lowerQuery.slice(1);
+                lbltitle.textContent = "Search for author";
                 return author.some((a) => a.includes(authorQuery));
             }
 
             if (lowerQuery.startsWith("@")) {
                 const dateQuery = lowerQuery.slice(1);
+                lbltitle.textContent = "Search for date";
                 return date.includes(dateQuery);
+            }
+
+            if (lowerQuery.startsWith("/")) {
+                const projQuery = lowerQuery.slice(1)
+                lbltitle.textContent = "Search in project";
+                return project.toLowerCase().includes(projQuery);
             }
 
             if (lowerQuery.startsWith('"') && lowerQuery.endsWith('"')) {
                 const textQuery = lowerQuery.slice(1, -1);
+                lbltitle.textContent = "Search for text fragment";
                 return body.includes(textQuery);
             }
 
+            lbltitle.textContent = "Search";
             return title.includes(lowerQuery);
         }
 

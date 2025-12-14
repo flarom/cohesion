@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded");
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0..200");
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
 
@@ -102,6 +103,12 @@ button {
     transition: all 0.3s ease;
     border-radius: 5px;
     height: 30px;
+}
+
+label.icon.fill,
+span.icon.fill,
+.icon-button.fill {
+    font-variation-settings: 'FILL' 1;
 }
 
 button.danger {
@@ -431,6 +438,48 @@ button.danger:hover {
         width: calc(100vw - 10px);
         border-right: none;
     }
+}
+
+.file-group.expanded {
+    margin-bottom: 32px;
+}
+
+.file-group-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    background: var(--background-color-2);
+    border: none;
+    cursor: pointer;
+    font-size: normal;
+    color: var(--title-color);
+    border-radius: 12px;
+    margin-bottom: 4px;
+    text-transform: capitalize;
+}
+
+.file-group.expanded .file-group-header {
+    background-color: var(--background-color-3);
+}
+
+.file-group-header:hover {
+    background-color: var(--hover-color);
+}
+
+.file-group-content.collapsed {
+    display: none;
+}
+
+.file-group-content {
+    border-left: 1px solid var(--border-light-color);
+    margin-left: 12px;
+    padding-left: 6px;
+}
+
+.file-group-header .icon {
+    font-size: 18px;
 }
 
 .sidebar .file {
