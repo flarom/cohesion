@@ -34,16 +34,20 @@
     --shadow:               0px 0px 10px #00000055;
     --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
     
+    --quote-pink:           #ff66ad;
     --quote-purple:         #dd92ff; 
     --quote-blue:           #818eff;
     --quote-green:          #9aff81; 
     --quote-yellow:         #fff781;
+    --quote-orange:         #ffb347;
     --quote-red:            #ff8881;
 
+    --quote-pink-bg:        #4b2a3a;
     --quote-purple-bg:      #4b3a53; 
     --quote-blue-bg:        #3a3c51;
     --quote-green-bg:       #3f533a; 
     --quote-yellow-bg:      #53513a;
+    --quote-orange-bg:      #533f2a;
     --quote-red-bg:         #533b3a;
 
     --hljs-bg:              #23272e;
@@ -92,16 +96,20 @@
     --shadow:               0px 0px 8px #00000022;
     --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
 
+    --quote-pink:           #ff66ad;
     --quote-purple:         #9421ca; 
     --quote-blue:           #2178ca; 
     --quote-green:          #2fca21; 
     --quote-yellow:         #caa321;
+    --quote-orange:         #ca7b21;
     --quote-red:            #ca2121; 
 
+    --quote-pink-bg:        #f2d6e1;
     --quote-purple-bg:      #e2cbec; 
     --quote-blue-bg:        #cbdcec; 
     --quote-green-bg:       #cdeccb; 
     --quote-yellow-bg:      #ece5cb;
+    --quote-orange-bg:      #f0dccb;
     --quote-red-bg:         #eccbcb;
 
     --hljs-bg:              #f8f8f8;
@@ -150,16 +158,20 @@
     --shadow:               0px 0px 6px #00000015;
     --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
 
+    --quote-pink:           #d14f8b;
     --quote-purple:         #6f32a8; 
     --quote-blue:           #325ba8; 
     --quote-green:          #36a832; 
     --quote-yellow:         #a88d32; 
+    --quote-orange:         #d17e32;
     --quote-red:            #a83232; 
 
+    --quote-pink-bg:        #f4d7e1;
     --quote-purple-bg:      #e1cfd7; 
     --quote-blue-bg:        #d4d7d7; 
     --quote-green-bg:       #d5e6c0; 
     --quote-yellow-bg:      #ece1c0; 
+    --quote-orange-bg:      #f3e0c0;
     --quote-red-bg:         #eccfc0;
 
     --hljs-bg:              #fdf6e3;
@@ -208,16 +220,20 @@
     --shadow:               0px 0px 10px #00000055;
     --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
 
+    --quote-pink:           #ff66ad;
     --quote-purple:         #d3869b;
     --quote-blue:           #83a598;
     --quote-green:          #b8bb26;
     --quote-yellow:         #fabd2f;
+    --quote-orange:         #fe8019;
     --quote-red:            #fb4934;
 
+    --quote-pink-bg:        #4a2a36;
     --quote-purple-bg:      #4a373c;
     --quote-blue-bg:        #2f3b3c;
     --quote-green-bg:       #353c28;
     --quote-yellow-bg:      #4a422c;
+    --quote-orange-bg:      #4a3224;
     --quote-red-bg:         #4a2d2c;
 
     --hljs-bg:              #282828;
@@ -266,16 +282,20 @@
     --shadow:               5px 5px 0px #000000, 0px 0px 0px 1px #000000;
     --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
 
+    --quote-pink:           #000000;
     --quote-purple:         #000000; 
     --quote-blue:           #000000;
     --quote-green:          #000000; 
     --quote-yellow:         #000000; 
+    --quote-orange:         #000000;
     --quote-red:            #000000; 
 
+    --quote-pink-bg:        #ffffff;
     --quote-purple-bg:      #ffffff; 
     --quote-blue-bg:        #ffffff;
     --quote-green-bg:       #ffffff; 
     --quote-yellow-bg:      #ffffff; 
+    --quote-orange-bg:      #ffffff;
     --quote-red-bg:         #ffffff; 
 
     --hljs-bg:              #ffffff;
@@ -335,16 +355,20 @@
     --shadow:               0px 0px 10px #ffffff11;
     --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
     
+    --quote-pink:           #ff66ad;
     --quote-purple:         #d781ff; 
     --quote-blue:           #818eff;
     --quote-green:          #9aff81; 
     --quote-yellow:         #fff781;
+    --quote-orange:         #ffb347;
     --quote-red:            #ff8881;
 
+    --quote-pink-bg:        #2b1a26;
     --quote-purple-bg:      #2b1a33; 
     --quote-blue-bg:        #1a1c31;
     --quote-green-bg:       #1f331a; 
     --quote-yellow-bg:      #33311a;
+    --quote-orange-bg:      #33281a;
     --quote-red-bg:         #331b1a;
 
     --hljs-bg:              #000000;
@@ -393,16 +417,20 @@
     --shadow:               0px 0px 10px #00000055;
     --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
 
+    --quote-pink:           #ff66ad;
     --quote-purple:         #ae81ff;
     --quote-blue:           #66d9ef;
     --quote-green:          #a6e22e;
     --quote-yellow:         #e6db74;
+    --quote-orange:         #fd971f;
     --quote-red:            #f92672;
 
+    --quote-pink-bg:        #4e2a3a;
     --quote-purple-bg:      #423a4e;
     --quote-blue-bg:        #344b4b;
     --quote-green-bg:       #404d24;
     --quote-yellow-bg:      #4d4c32;
+    --quote-orange-bg:      #4e3a18;
     --quote-red-bg:         #512832;
 
     --hljs-bg:              #272822;
@@ -451,16 +479,20 @@
     --shadow:               0px 0px 10px #00000033;
     --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
 
+    --quote-pink:           #ff66ad;
     --quote-purple:         #b48ead;
     --quote-blue:           #81a1c1;
     --quote-green:          #a3be8c;
     --quote-yellow:         #ebcb8b;
+    --quote-orange:         #d08770;
     --quote-red:            #bf616a;
 
+    --quote-pink-bg:        #5a3743;
     --quote-purple-bg:      #494656;
     --quote-blue-bg:        #3f4a5a;
     --quote-green-bg:       #45504f;
     --quote-yellow-bg:      #54524f;
+    --quote-orange-bg:      #4b3d34;
     --quote-red-bg:         #4b3d48;
 
     --hljs-bg:              #2e3440;
@@ -509,16 +541,20 @@
     --shadow:               0px 0px 10px #00000055;
     --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
     
+    --quote-pink:           #ff66ad;
     --quote-purple:         #dd92ff; 
     --quote-blue:           #818eff;
     --quote-green:          #9aff81; 
     --quote-yellow:         #fff781;
+    --quote-orange:         #ffb347;
     --quote-red:            #ff8881;
 
+    --quote-pink-bg:        #3d2a36;
     --quote-purple-bg:      #3d2b45; 
     --quote-blue-bg:        #2b2e42;
     --quote-green-bg:       #30452b; 
     --quote-yellow-bg:      #45432b;
+    --quote-orange-bg:      #45321a;
     --quote-red-bg:         #452d2b;
 
     --hljs-bg:              #23272e;

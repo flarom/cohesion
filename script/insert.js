@@ -239,18 +239,17 @@ function insertAtTop(text) {
 function getMeta() {
     const rawMeta = Settings.getSetting(
         "editorMeta",
-        `title:       ~{1:\${getFileTitle(index) || "New document"}}
-author:      ~{2:Author name}
-date:        \${strftime(Settings.getSetting("dateFormat", "%Y/%m/%d %H:%M"))}
-tags:        ~{3:Uncategorized}
-description: ~{4:No description provided}
-color:       ~{5:\${'#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0')}}
-banner:      ~{6:cohesion/banners/1.png}
+        `title:       ~{1:${getFileTitle(index) || "New document"}}
+project:     ~{2:Documents}
+description: ~{3:No description provided}
+tags:        ~{4:Uncategorized}
+author:      ~{5:Author name}
+date:        ~{6:${strftime(Settings.getSetting("dateFormat", "%Y/%m/%d %H:%M"))}}
 icon:        ~{7:📄}
-project:     ~{8:Documents}
-#language:    ~{9:Blank}
-#license:     ~{10:Blank}
-#source:      ~{11:Blank}`,
+banner:      ~{8:cohesion/banners/1.png}
+#language:   ~{9:Blank}
+#license:    ~{10:Blank}
+#source:     ~{11:Blank}`,
         true
     );
 
@@ -596,4 +595,88 @@ function insertSnippetAtTop(snippet, markerChar = "$") {
     } else {
         doc.setCursor(doc.posFromIndex(cleanText.length));
     }
+}
+
+function getTopMetaBlockInfo(text) {
+    const match = text.match(/^«««\n([\s\S]*?)\n»»»/);
+    if (!match) return null;
+
+    const blockText = match[0];
+    const inner = match[1];
+
+    const start = match.index;
+    const end = start + blockText.length;
+
+    const lines = inner.split("\n");
+    let offset = start + "«««\n".length;
+
+    const fields = [];
+
+    for (const line of lines) {
+        const valueMatch = line.match(/^(\s*[^:]+:\s*)(.+)$/);
+        if (valueMatch) {
+            const valueStart = offset + valueMatch[1].length;
+            const valueEnd = valueStart + valueMatch[2].length;
+
+            fields.push({ from: valueStart, to: valueEnd });
+        }
+
+        offset += line.length + 1;
+    }
+
+    return { start, end, fields };
+}
+
+function activateMetaSnippet(metaInfo) {
+    const doc = editor.getDoc();
+
+    const groups = {};
+    metaInfo.fields.forEach((field, i) => {
+        const from = doc.posFromIndex(field.from);
+        const to = doc.posFromIndex(field.to);
+
+        const marker = doc.markText(from, to, {
+            inclusiveLeft: true,
+            inclusiveRight: true
+        });
+
+        const id = i + 1;
+        if (!groups[id]) groups[id] = [];
+        groups[id].push(marker);
+    });
+
+    const stops = Object.keys(groups)
+        .map(Number)
+        .sort((a, b) => a - b)
+        .map(id => ({
+            id,
+            markers: groups[id]
+        }));
+
+    editor._snippetStops = stops;
+    editor._snippetIndex = 0;
+
+    const first = stops[0].markers
+        .map(m => {
+            const pos = m.find();
+            return pos
+                ? { anchor: pos.from, head: pos.to }
+                : null;
+        })
+        .filter(Boolean);
+
+    doc.setSelections(first);
+}
+
+function insertOrEditMeta() {
+    const text = editor.getValue();
+    const meta = getTopMetaBlockInfo(text);
+
+    if (!meta) {
+        insertSnippetAtTop(getMeta(), "~");
+        return;
+    }
+
+    editor.focus();
+    activateMetaSnippet(meta);
 }

@@ -762,7 +762,6 @@ span.CodeMirror-selectedtext {
 .cm-metadata-field-date::before, .cm-metadata-field-created-date::before { content: "event"; }
 .cm-metadata-field-tags::before, .cm-metadata-field-keywords::before { content: "sell"; }
 .cm-metadata-field-description::before, .cm-metadata-field-subject::before, .cm-metadata-field-comment::before { content: "description"; }
-.cm-metadata-field-color::before { content: "palette"; }
 .cm-metadata-field-banner::before { content: "panorama"; }
 .cm-metadata-field-icon::before { content: "add_reaction"; }
 .cm-metadata-field-language::before, .cm-metadata-field-lang::before  { content: "language"; }

@@ -723,7 +723,16 @@
 .preview icon {
     font-family: "Material Symbols Rounded";
     font-size: x-large;
+    user-select: all;
 }
+
+.preview pink   { color: var(--quote-pink)   !important; }
+.preview purple { color: var(--quote-purple) !important; }
+.preview blue   { color: var(--quote-blue)   !important; }
+.preview green  { color: var(--quote-green)  !important; }
+.preview yellow { color: var(--quote-yellow) !important; }
+.preview orange { color: var(--quote-orange) !important; }
+.preview red    { color: var(--quote-red)    !important; }
 
 .preview blank-space {
     display: block;

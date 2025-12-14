@@ -467,43 +467,146 @@ function saveGroupState() {
 }
 
 function createGroupContainer(name) {
-    const wrapper = document.createElement("div");
-    const isCollapsed = groupState[name] === true;
+    let iconName = "folder";
+    let iconColor = "currentColor";
+    let displayName = name;
 
+    const metaMatch = name.match(/^\[([^:\]]+):([^\]]+)\](.*)$/);
+    if (metaMatch) {
+        iconName = metaMatch[1].trim();
+        iconColor = metaMatch[2].trim();
+        displayName = metaMatch[3].trim();
+    }
+
+    // changing spaces to underscores, makes it a bit more clean for icon names and avoids a DOMException
+    const normalizedIconName = iconName
+        .toLowerCase()
+        .replace(/\s+/g, "_");
+
+    const key = displayName.toLowerCase().trim();
+    const isCollapsed = groupState[key] === true;
+
+    // wrapper
+    const wrapper = document.createElement("div");
     wrapper.className = "file-group";
     wrapper.classList.toggle("collapsed", isCollapsed);
     wrapper.classList.toggle("expanded", !isCollapsed);
 
-    const header = document.createElement("button");
+    // header
+    const header = document.createElement("div");
     header.className = "file-group-header";
 
+    const iconAndTitleContainer = document.createElement("div");
+    iconAndTitleContainer.style.display = "flex";
+    iconAndTitleContainer.style.alignItems = "center";
+    iconAndTitleContainer.style.gap = "6px";
+
+    // icon
     const icon = document.createElement("span");
-    icon.className = "icon";
-    icon.textContent = isCollapsed ? "keyboard_arrow_right" : "keyboard_arrow_down";
+    icon.className = "icon file-group-icon material-symbols-rounded";
+    icon.textContent = normalizedIconName;
+    icon.style.color = iconColor;
 
+    // complementary classes
+    icon.classList.add(
+        `icon-${normalizedIconName}`,
+        iconColor.startsWith("#")
+            ? `color-hex-${iconColor.slice(1).toLowerCase()}`
+            : `color-${iconColor.toLowerCase().replace(/[^a-z0-9_-]/g, "")}`
+    );
+
+    // title
     const title = document.createElement("strong");
-    title.textContent = name;
+    title.textContent = displayName;
 
-    header.append(icon, title);
+    iconAndTitleContainer.append(icon, title);
 
+    // menu
+    const menuWrap = document.createElement("div");
+    menuWrap.className = "dropdown";
+
+    const menuButton = document.createElement("button");
+    menuButton.className = "icon-button";
+    menuButton.textContent = "more_horiz";
+
+    menuButton.onclick = (e) => {
+        e.stopPropagation();
+        toggleDropdown(`group-menu-${key}`);
+    };
+
+    const menu = document.createElement("div");
+    menu.className = "dropdown-content menu";
+    menu.id = `group-menu-${key}`;
+
+    const renameBtn = document.createElement("button");
+    renameBtn.className = "text-button";
+    renameBtn.textContent = "Rename project";
+    renameBtn.onclick = async (e) => {
+        e.stopPropagation();
+
+        const newName = await promptString(
+            "Rename project",
+            name
+        );
+
+        if (!newName) return;
+
+        renameGroup(name, newName);
+        renderFiles("files");
+    };
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "text-button danger";
+    deleteBtn.textContent = "Delete project";
+    deleteBtn.onclick = async (e) => {
+        e.stopPropagation();
+
+        const ok = await promptConfirm(
+            `Delete all documents in "${displayName}"?`,
+            true
+        );
+
+        if (!ok) return;
+
+        deleteGroup(name);
+        renderFiles("files");
+    };
+
+    menu.append(
+        renameBtn,
+        document.createElement("hr"),
+        deleteBtn
+    );
+
+    menuWrap.append(menuButton, menu);
+
+    // content
     const content = document.createElement("div");
     content.className = "file-group-content";
     content.classList.toggle("collapsed", isCollapsed);
+    if(iconColor !== "currentColor") content.style.borderLeftColor = iconColor;
 
+    // complementary classes
+    content.classList.add(
+        `icon-${normalizedIconName}`,
+        iconColor.startsWith("#")
+            ? `color-hex-${iconColor.slice(1).toLowerCase()}`
+            : `color-${iconColor.toLowerCase().replace(/[^a-z0-9_-]/g, "")}`
+    );
+
+    // toggle
     header.onclick = () => {
         const collapsed = content.classList.toggle("collapsed");
-
+        
         wrapper.classList.toggle("collapsed", collapsed);
         wrapper.classList.toggle("expanded", !collapsed);
-
-        icon.textContent = collapsed ? "keyboard_arrow_right" : "keyboard_arrow_down";
-
-        groupState[name] = collapsed;
+        
+        groupState[key] = collapsed;
         saveGroupState();
     };
-
+    
+    header.append(iconAndTitleContainer, menuWrap);
     wrapper.append(header, content);
-
     return { wrapper, content };
 }
 
@@ -553,7 +656,7 @@ function renderFiles(containerId) {
 
             const h3 = document.createElement("h3");
             h3.textContent = getFileTitle(i) || "New document";
-            h3.style.color = metadata.color || "var(--title-color)";
+            // h3.style.color = metadata.color || "var(--title-color)";
 
             const stats = getFileStats(i);
 
@@ -685,4 +788,48 @@ function renderFiles(containerId) {
 
         container.appendChild(wrapper);
     });
+}
+
+function renameGroup(oldName, newName) {
+    files = files.map(text => {
+        if (!text) return text;
+
+        const conv = new showdown.Converter({ metadata: true });
+        conv.makeHtml(text);
+        const metadata = conv.getMetadata();
+
+        const field = metadata.project ? "project" : metadata.folder ? "folder" : null;
+        if (!field) return text;
+
+        if ((metadata[field] || "").toLowerCase() !== oldName.toLowerCase()) {
+            return text;
+        }
+
+        // replace only the metadata line
+        return text.replace(
+            new RegExp(`^(${field}\\s*:\\s*).*$`, "mi"),
+            `$1${newName}`
+        );
+    });
+
+    saveFilesToStorage();
+    renderFiles("files");
+    renderEditor();
+}
+
+function deleteGroup(groupName) {
+    files = files.filter(text => {
+        // if (!text) return true;
+
+        const conv = new showdown.Converter({ metadata: true });
+        conv.makeHtml(text);
+        const metadata = conv.getMetadata();
+
+        const group = getFileGroup(metadata);
+        return group.toLowerCase() !== groupName.toLowerCase();
+    });
+
+    saveFilesToStorage();
+    renderFiles("files");
+    renderEditor();
 }
