@@ -329,44 +329,27 @@ async function handleInsertVideo() {
 
 async function handleInsertBlock() {
     const blocks = [
-        "<span style='color:var(--quote-blue);'  ><span class=icon translate=no>article</span>            Note      </span>",
-        "<span style='color:var(--quote-green);' ><span class=icon translate=no>lightbulb</span>          Tip       </span>",
-        "<span style='color:var(--quote-purple);'><span class=icon translate=no>priority_high</span>      Important </span>",
-        "<span style='color:var(--quote-yellow);'><span class=icon translate=no>warning</span>            Warning   </span>",
-        "<span style='color:var(--quote-red);'   ><span class=icon translate=no>dangerous</span>          Caution   </span>",
-        "<span style='color:var(--text-color);'  ><span class=icon translate=no>expand_circle_down</span> Details   </span>",
-        "<span style='color:var(--text-color);'  ><span class=icon translate=no>table</span>              CSV table </span>"
+        {title: "Note"     , icon: "article"           , color: "blue"             , description: "Shows additional contextual information"        },
+        {title: "Tip"      , icon: "lightbulb"         , color: "green"            , description: "Highlights helpful hints or best practices"     },
+        {title: "Important", icon: "priority_high"     , color: "purple"           , description: "Emphasizes critical information"                },
+        {title: "Warning"  , icon: "warning"           , color: "yellow"           , description: "Alerts about possible issues or risks"          },
+        {title: "Caution"  , icon: "dangerous"         , color: "red"              , description: "Warns about actions that may cause harm or loss"},
+        {title: "Details"  , icon: "expand_circle_down", color: "var(--text-color)", description: "Expandable block for optional content"          },
+        {title: "CSV table", icon: "table"             , color: "var(--text-color)", description: "Converts CSV content into a table"              },
+        {title: "Embed"    , icon: "iframe"            , color: "var(--text-color)", description: "Embedded web content"                           }
     ];
 
     const selection = await promptSelect("Select a block", blocks);
 
     switch (selection) {
-        case 0:
-            resolve("NOTE");
-            break;
-        case 1:
-            resolve("TIP");
-            break;
-        case 2:
-            resolve("IMPORTANT");
-            break;
-        case 3:
-            resolve("WARNING");
-            break;
-        case 4:
-            resolve("CAUTION");
-            break;
-        case 5:
-            resolve("DETAILS:title");
-            break;
-        case 6:
-            resolve("CSV");
-            break;
-    }
-
-    function resolve(value) {
-        insertBlock("> [!" + value + "]\n> \n> \n> ");
-        editor.focus();
+        case 0: insertBlock("> [!NOTE]\n> "); editor.focus(); break;
+        case 1: insertBlock("> [!TIP]\n> "); editor.focus(); break;
+        case 2: insertBlock("> [!IMPORTANT]\n> "); editor.focus(); break;
+        case 3: insertBlock("> [!WARNING]\n> "); editor.focus(); break;
+        case 4: insertBlock("> [!CAUTION]\n> "); editor.focus(); break;
+        case 5: insertSnippet('> [!DETAILS:${1:Title}]\n> ${2:Content}'); editor.focus(); break;
+        case 6: insertSnippet('> [!CSV]\n> ${1:CSV Content}'); editor.focus(); break;
+        case 7: insertSnippet('[!embed ${1:https://example.com}]'); editor.focus(); break;
     }
 }
 

@@ -309,10 +309,10 @@
             loadFilesFromStorage();
 
             // Search menu actions (Ctrl/Cmd-K)
-            addSearchMenuAction("Settings", "Settings", function() {showMessageFromFile('dialogs/settings.html', true, false, true, true, 900);});
-            addSearchMenuAction("Resources", "Image", function() {showResourcesDialog();});
-            addSearchMenuAction("Macros", "code", function() {showMacrosDialog();})
-            addSearchMenuAction("About", "info", function() {showMessageFromFile('about.html');})
+            // addSearchMenuAction("Settings", "Settings", function() {showMessageFromFile('dialogs/settings.html', true, false, true, true, 900);});
+            // addSearchMenuAction("Resources", "Image", function() {showResourcesDialog();});
+            // addSearchMenuAction("Macros", "code", function() {showMacrosDialog();})
+            // addSearchMenuAction("About", "info", function() {showMessageFromFile('about.html');})
 
             // Retrieve last index from local storage, default to 0
             let index = localStorage.getItem("lastIndex") || 0;
@@ -1426,7 +1426,7 @@
                 //// open replace (Ctrl+H)
                 { match: e => e.ctrlKey && e.key.toLowerCase() === "h", handler: () => toggleReplaceHeader(editor.getSelection()), preventDefault: true },
                 //// search documents (Ctrl+K)
-                { match: e => e.ctrlKey && e.key.toLowerCase() === "k", handler: () => searchDocuments(), preventDefault: true },
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "k", handler: () => {closeAllDialogs(); searchDocuments();}, preventDefault: true },
                 
                 // INSERT
                 //// Insert metadata (Ctrl+;)

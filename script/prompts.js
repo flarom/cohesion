@@ -607,37 +607,45 @@ function promptIframe() {
 
 const searchMenuActions = [];
 
-function addSearchMenuAction(title, icon, fn) {
-    searchMenuActions.push({ title, icon, fn });
+function addSearchMenuAction(title, icon, description, fn) {
+    searchMenuActions.push({ title, icon, description, fn });
 }
 
-async function promptFileSearch(value = '') {
+addSearchMenuAction("Search ~author" , "person", "", () => {promptFileSearch("~", false);});
+addSearchMenuAction("Search @date"   , "event" , "", () => {promptFileSearch("@", false);});
+addSearchMenuAction("Search #tag"    , "sell"  , "", () => {promptFileSearch("#", false);});
+addSearchMenuAction("Search /project", "folder", "", () => {promptFileSearch("/", false);});
+// addSearchMenuAction("Search \"text fragment\"", 'text_snippet', () => {promptFileSearch('"');});
+
+async function promptFileSearch(value = '', doAnimation = true) {
     return new Promise((resolve) => {
         const overlay = document.createElement("div");
         overlay.className = "prompt-overlay";
 
         const dialog = document.createElement("div");
-        dialog.style.padding = "20px";
         dialog.className = "prompt-dialog";
+        dialog.style.maxWidth = "600px";
+        if (!doAnimation) dialog.classList.add("no-animation")
 
-        const lbltitle = document.createElement("p");
-        lbltitle.textContent = "Search";
-        lbltitle.className = "prompt-title";
-        dialog.appendChild(lbltitle);
+        // const lbltitle = document.createElement("p");
+        // lbltitle.textContent = "Search";
+        // lbltitle.className = "prompt-title";
+        // dialog.appendChild(lbltitle);
 
         const input = document.createElement("input");
         input.type = "text";
-        input.placeholder = 'Search title, ~author, @date, #tag, /project or "text"';
+        input.placeholder = 'Search documents';
         input.value = value;
+        input.className = "prompt-search-input";
         dialog.appendChild(input);
 
         const previewList = document.createElement("ul");
         previewList.className = "prompt-preview-list";
-        previewList.style.marginTop = "8px";
         dialog.appendChild(previewList);
 
         const toolbar = document.createElement("div");
         toolbar.className = "toolbar";
+        toolbar.style.marginTop = "2px";
 
         const leftDiv = document.createElement("div");
         leftDiv.className = "toolbar-left";
@@ -653,7 +661,7 @@ async function promptFileSearch(value = '') {
 
         const closeButton = document.createElement("button");
         closeButton.textContent = "close";
-        closeButton.className = "icon-button dialog-window-control";
+        closeButton.className = "icon-button dialog-window-control transparent-dialog-window-control";
         closeButton.setAttribute("translate", "no");
 
         toolbar.appendChild(leftDiv);
@@ -701,35 +709,30 @@ async function promptFileSearch(value = '') {
 
             if (lowerQuery.startsWith("#")) {
                 const tagQuery = lowerQuery.slice(1);
-                lbltitle.textContent = "Search for tag";
                 return tags.some((t) => t.includes(tagQuery));
             }
 
             if (lowerQuery.startsWith("~")) {
                 const authorQuery = lowerQuery.slice(1);
-                lbltitle.textContent = "Search for author";
                 return author.some((a) => a.includes(authorQuery));
             }
 
             if (lowerQuery.startsWith("@")) {
                 const dateQuery = lowerQuery.slice(1);
-                lbltitle.textContent = "Search for date";
                 return date.includes(dateQuery);
             }
 
             if (lowerQuery.startsWith("/")) {
                 const projQuery = lowerQuery.slice(1)
-                lbltitle.textContent = "Search in project";
                 return project.toLowerCase().includes(projQuery);
             }
 
             if (lowerQuery.startsWith('"') && lowerQuery.endsWith('"')) {
                 const textQuery = lowerQuery.slice(1, -1);
-                lbltitle.textContent = "Search for text fragment";
                 return body.includes(textQuery);
             }
 
-            lbltitle.textContent = "Search";
+            // lbltitle.textContent = "Search";
             return title.includes(lowerQuery);
         }
 
@@ -764,7 +767,7 @@ async function promptFileSearch(value = '') {
                     return a.title.toLowerCase().includes(lowerQuery);
                 })
                 .slice(0, 5)
-                .map(a => ({ type: "action", title: a.title, icon: a.icon, fn: a.fn }));
+                .map(a => ({ type: "action", title: a.title, icon: a.icon, description: a.description, fn: a.fn }));
 
             filtered = [...actionItems, ...fileItems];
 
@@ -773,23 +776,59 @@ async function promptFileSearch(value = '') {
             previewList.innerHTML = "";
             filtered.forEach((item, i) => {
                 const li = document.createElement("li");
+                li.className = "prompt-item";
 
                 const iconSpan = document.createElement("span");
                 iconSpan.className = "icon";
                 iconSpan.setAttribute("translate", "no");
-                iconSpan.innerHTML = item.icon || (item.type === "file" ? "draft" : "");
 
-                li.appendChild(iconSpan);
-                li.appendChild(document.createTextNode(" " + item.title));
+                const textWrap = document.createElement("div");
+                textWrap.className = "prompt-item-text";
 
-                li.className = i === selectedIndex ? "selected-option" : "";
+                const titleSpan = document.createElement("div");
+                titleSpan.className = "prompt-item-title";
+
+                const descSpan = document.createElement("div");
+                descSpan.className = "prompt-item-description";
+
+                if (item.type === "action") {
+                    iconSpan.textContent = item.icon || "";
+                    titleSpan.textContent = item.title;
+                    descSpan.textContent = item.description || "";
+                }
+
+                if (item.type === "file") {
+                    const text = getFileText(item.index);
+                    let metadata = {};
+
+                    if (text) {
+                        const conv = new showdown.Converter({ metadata: true });
+                        conv.makeHtml(text);
+                        metadata = conv.getMetadata();
+                    }
+
+                    const projectMeta = parseProjectMeta(
+                        metadata.project || metadata.folder
+                    );
+
+                    iconSpan.textContent = projectMeta.icon;
+                    iconSpan.style.color = projectMeta.color;
+                    iconSpan.classList.add("color-" + projectMeta.color)
+
+                    titleSpan.textContent = item.title;
+                    descSpan.innerHTML = buildFileDescription(metadata, input.value);
+                }
+
+                textWrap.append(titleSpan);
+                if (descSpan.innerHTML) textWrap.append(descSpan);
+
+                li.append(iconSpan, textWrap);
+
+                if (i === selectedIndex) li.classList.add("selected-option");
 
                 li.addEventListener("click", () => {
-                    if (item.type === "action") {
-                        executeAction(item.fn);
-                    } else if (item.type === "file") {
-                        closePrompt(item.index);
-                    }
+                    if (item.type === "action") executeAction(item.fn);
+                    else closePrompt(item.index);
                 });
 
                 previewList.appendChild(li);
@@ -840,6 +879,83 @@ async function promptFileSearch(value = '') {
     });
 }
 
+function parseProjectMeta(raw) {
+    if (!raw) {
+        return {
+            name: "Documents",
+            icon: "draft",
+            color: "currentColor"
+        };
+    }
+
+    const str = String(raw).trim();
+
+    // [icon:color]Project name
+    const m = str.match(/^\[([^:\]]+)(?::([^\]]+))?\](.*)$/);
+
+    if (m) {
+        return {
+            icon: m[1].trim().toLowerCase().replace(/\s+/g, "_"),
+            color: m[2]?.trim() || "currentColor",
+            name: m[3].trim() || "Documents"
+        };
+    }
+
+    return {
+        name: str,
+        icon: "draft",
+        color: "currentColor"
+    };
+}
+
+function buildFileDescription(metadata, query) {
+    const lower = query.toLowerCase();
+
+    const parts = [];
+
+    if (lower.startsWith("~") && metadata.author) {
+        return `<span class="icon">person</span> ${metadata.author}`;
+    }
+
+    if (lower.startsWith("@") && metadata.date) {
+        return `<span class="icon">event</span> ${metadata.date}`;
+    }
+
+    if (lower.startsWith("#") && metadata.tags) {
+        return metadata.tags
+            .split(",")
+            .map(t => t.trim())
+            .filter(Boolean)
+            .map(t => `<span class="tag">#${t}</span>`)
+            .join(" ");
+    }
+
+    if (lower.startsWith("/") && (metadata.project || metadata.folder)) {
+        const proj = parseProjectMeta(metadata.project || metadata.folder);
+        return `<span class="icon">folder</span> ${proj.name}`;
+    }
+
+    // default: title search
+    if (metadata.project || metadata.folder) {
+        const proj = parseProjectMeta(metadata.project || metadata.folder);
+        parts.push(`<span class="icon">folder</span> ${proj.name}`);
+    }
+
+    if (metadata.author) {
+        parts.push(`<span class="icon">person</span> ${metadata.author}`);
+    }
+
+    if (metadata.date) {
+        parts.push(`<span class="icon">event</span> ${metadata.date}`);
+    }
+
+    if (metadata.description) {
+        parts.push(metadata.description);
+    }
+
+    return parts.join(" • ");
+}
+
 function promptSelect(title, options) {
     return new Promise((resolve) => {
         const overlay = document.createElement("div");
@@ -847,93 +963,144 @@ function promptSelect(title, options) {
 
         const dialog = document.createElement("div");
         dialog.className = "prompt-dialog";
+        dialog.style.maxWidth = "600px";
 
-        const buttonContainer = document.createElement("div");
-        buttonContainer.className = "prompt-button-list";
-        dialog.appendChild(buttonContainer);
+        const input = document.createElement("input");
+        input.type = "text";
+        input.className = "prompt-search-input";
+        input.placeholder = title;
+
+        const list = document.createElement("ul");
+        list.className = "prompt-preview-list";
+
+        dialog.append(input, list);
 
         const toolbar = document.createElement("div");
         toolbar.className = "toolbar";
+        toolbar.style.marginTop = "2px";
 
-        const leftDiv = document.createElement("div");
-        leftDiv.className = "toolbar-left";
-        leftDiv.innerHTML = `<span>${title}</span>`;
+        const left = document.createElement("div");
+        left.className = "toolbar-left";
 
-        const centerDiv = document.createElement("div");
-        centerDiv.className = "toolbar-center";
-        centerDiv.innerHTML = "";
+        const center = document.createElement("div");
+        center.className = "toolbar-center";
 
-        const rightDiv = document.createElement("div");
-        rightDiv.className = "toolbar-right";
-        rightDiv.innerHTML = "";
+        const right = document.createElement("div");
+        right.className = "toolbar-right";
 
         const closeButton = document.createElement("button");
         closeButton.textContent = "close";
-        closeButton.className = "icon-button dialog-window-control";
+        closeButton.className =
+            "icon-button dialog-window-control transparent-dialog-window-control";
         closeButton.setAttribute("translate", "no");
-        closeButton.addEventListener("click", () => {
-            document.body.removeChild(overlay);
-            resolve(null);
-        });
 
-        toolbar.appendChild(leftDiv);
-        toolbar.appendChild(centerDiv);
-        toolbar.appendChild(rightDiv);
+        closeButton.addEventListener("click", () => close(null));
 
-        rightDiv.appendChild(closeButton);
+        toolbar.append(left, center, right);
+        right.appendChild(closeButton);
 
         dialog.appendChild(toolbar);
-
-        const buttons = options.map((optionText, index) => {
-            const button = document.createElement("button");
-            button.innerHTML = optionText;
-            button.className = "prompt-button";
-            buttonContainer.appendChild(button);
-            button.addEventListener("click", () => closePrompt(index));
-            return button;
-        });
-
         overlay.appendChild(dialog);
         document.body.appendChild(overlay);
 
+        let filtered = [];
         let selectedIndex = 0;
-        updateSelection();
 
-        function updateSelection() {
-            buttons.forEach((btn, i) => {
-                if (i === selectedIndex) {
-                    btn.classList.add("selected-option");
-                    btn.focus();
-                } else {
-                    btn.classList.remove("selected-option");
-                }
-            });
+        function normalizeOption(opt) {
+            if (typeof opt === "string") {
+                return {
+                    title: opt,
+                    description: ""
+                };
+            }
+            return opt;
         }
 
-        function closePrompt(result) {
-            document.body.removeChild(overlay);
+        const normalized = options.map(normalizeOption);
+
+        function close(result) {
+            if (overlay.parentNode) overlay.remove();
             resolve(result);
         }
 
-        overlay.addEventListener("keydown", (event) => {
-            if (event.key === "ArrowDown") {
-                event.preventDefault();
-                selectedIndex = (selectedIndex + 1) % options.length;
-                updateSelection();
-            } else if (event.key === "ArrowUp") {
-                event.preventDefault();
-                selectedIndex = (selectedIndex - 1 + options.length) % options.length;
-                updateSelection();
-            } else if (event.key === "Enter") {
-                event.preventDefault();
-                closePrompt(selectedIndex);
-            } else if (event.key === "Escape") {
-                closePrompt(null);
+        function update() {
+            const q = input.value.toLowerCase();
+
+            filtered = normalized.filter(o =>
+                o.title.toLowerCase().includes(q)
+            );
+
+            list.innerHTML = "";
+
+            filtered.forEach((item, i) => {
+                const li = document.createElement("li");
+                li.className = "prompt-item";
+                if (i === selectedIndex) li.classList.add("selected-option");
+
+                const icon = document.createElement("span");
+                icon.className = "icon";
+                icon.textContent = item.icon || "";
+                icon.style.color = item.color;
+                icon.classList.add("color-" + item.color);
+
+                const textWrap = document.createElement("div");
+                textWrap.className = "prompt-item-text";
+
+                const titleEl = document.createElement("div");
+                titleEl.className = "prompt-item-title";
+                titleEl.textContent = item.title;
+
+                textWrap.appendChild(titleEl);
+
+                if (item.description) {
+                    const desc = document.createElement("div");
+                    desc.className = "prompt-item-description";
+                    desc.innerHTML = item.description;
+                    textWrap.appendChild(desc);
+                }
+
+                li.append(icon, textWrap);
+
+                li.addEventListener("click", () =>
+                    close(normalized.indexOf(item))
+                );
+
+                list.appendChild(li);
+            });
+        }
+
+        input.addEventListener("input", () => {
+            selectedIndex = 0;
+            update();
+        });
+
+        overlay.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowDown") {
+                e.preventDefault();
+                selectedIndex = Math.min(
+                    selectedIndex + 1,
+                    filtered.length - 1
+                );
+                update();
+            } else if (e.key === "ArrowUp") {
+                e.preventDefault();
+                selectedIndex = Math.max(selectedIndex - 1, 0);
+                update();
+            } else if (e.key === "Enter") {
+                e.preventDefault();
+                if (filtered[selectedIndex]) {
+                    close(normalized.indexOf(filtered[selectedIndex]));
+                }
+            } else if (e.key === "Escape") {
+                close(null);
             }
         });
 
         overlay.tabIndex = -1;
         overlay.focus();
+        input.focus();
+
+        update();
     });
 }
 
