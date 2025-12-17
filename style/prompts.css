@@ -385,6 +385,8 @@
 
 .prompt-preview-list li .icon {
     font-size: 24px;
+    max-width: 1ch;
+    overflow: hidden;
 }
 
 .prompt-preview-list li .prompt-item-description {

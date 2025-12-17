@@ -935,6 +935,11 @@
     pointer-events: none;
 }
 
+.preview .icon-container .icon {
+    max-width: 1ch;
+    overflow: hidden;
+}
+
 .preview .icon-container .icon.color-pink   { color: var(--quote-pink)   !important; }
 .preview .icon-container .icon.color-purple { color: var(--quote-purple) !important; }
 .preview .icon-container .icon.color-blue   { color: var(--quote-blue)   !important; }
