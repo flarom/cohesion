@@ -27,7 +27,7 @@ function createFile(text = "") {
     saveFilesToStorage();
     renderFiles("files");
     renderEditor();
-    if (Settings.getSetting('editorAutoMeta', 'false') === 'true') {insertSnippetAtTop(getMeta(), '~');};
+    if (Settings.getSetting('editorAutoMeta', 'false') === 'true' && text === "") {insertSnippetAtTop(getMeta() + "\n\n", '~');};
 }
 
 /**

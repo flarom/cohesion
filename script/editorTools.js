@@ -365,7 +365,7 @@ const block = {
 };
 
 const network = {
-    fetch : function(url, callback) {
+    fetch : async function(url, callback) {
         fetch(url)
         .then(response => {
             if (!response.ok) {

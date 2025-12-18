@@ -446,7 +446,7 @@
     bottom: 0;
     background-color: var(--field-color);
     transition: 0.3s;
-    border-radius: 12px;
+    border-radius: 999px;
 }
 
 .prompt-dialog .slider:before {

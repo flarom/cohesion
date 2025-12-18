@@ -85,6 +85,20 @@
                             <span class="slider"></span>
                         </label>
                     </div>
+                    <div class="setting switch-wrapper">
+                        <span class="switch-text">Suggest resources</span>
+                        <label class="switch">
+                            <input type="checkbox" id="editorSuggestResources" onchange="Settings.setSetting('editorSuggestResources', this.checked)" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting switch-wrapper">
+                        <span class="switch-text">Suggest meta</span>
+                        <label class="switch">
+                            <input type="checkbox" id="editorSuggestResources" onchange="Settings.setSetting('editorSuggestResources', this.checked)" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
                     <div class="setting bottom switch-wrapper">
                         <span class="switch-text">Suggest slash commands</span>
                         <label class="switch">
@@ -329,6 +343,7 @@
                 // const cbxEditorShowHints = document.getElementById("editorShowHints");
                 const cbxEditorSuggestDocWords = document.getElementById("editorSuggestDocWords");
                 const cbxEditorSuggestEmojis = document.getElementById("editorSuggestEmojis");
+                const cbxEditorSuggestResources = document.getElementById("editorSuggestResources");
                 const cbxEditorSuggestCommands = document.getElementById("editorSuggestCommands");
                 const cbxEditorLineNumbers = document.getElementById("editorLineNumbers");
                 const cbxEditorDirection = document.getElementById("editorDirection");
@@ -341,6 +356,7 @@
                 // if (Settings.getSetting("editorShowHints", "true") === "true") cbxEditorShowHints.checked = "true";
                 if (Settings.getSetting("editorSuggestDocWords", "true") === "true") cbxEditorSuggestDocWords.checked = "true";
                 if (Settings.getSetting("editorSuggestEmojis", "true") === "true") cbxEditorSuggestEmojis.checked = "true";
+                if (Settings.getSetting("editorSuggestResources", "true") === "true") cbxEditorSuggestResources.checked = "true";
                 if (Settings.getSetting("editorSuggestCommands", "true") === "true") cbxEditorSuggestCommands.checked = "true";
                 if (Settings.getSetting("editorLineNumbers", "false") === "true") cbxEditorLineNumbers.checked = "true";
                 if (Settings.getSetting("editorDirection", "ltr") === "rtl") cbxEditorDirection.checked = "true";
@@ -430,12 +446,12 @@
 
             function editEditorMeta() {
                 const defaultMeta = 
-`title:       ~{1:${getFileTitle(index) || "New document"}}
+`title:       ~{1:\${getFileTitle(index) || "New document"}}
 project:     ~{2:Documents}
 description: ~{3:No description provided}
 tags:        ~{4:Uncategorized}
 author:      ~{5:Author name}
-date:        ~{6:${strftime(Settings.getSetting("dateFormat", "%Y/%m/%d %H:%M"))}}
+date:        ~{6:\${strftime(Settings.getSetting("dateFormat", "%Y/%m/%d %H:%M"))}}
 icon:        ~{7:📄}
 banner:      ~{8:cohesion/banners/1.png}
 #language:   ~{9:Blank}

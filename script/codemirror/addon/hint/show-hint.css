@@ -29,8 +29,13 @@
   transition: none;
 }
 
+.CodeMirror-hint:hover {
+  background-color: var(--hover-color);
+  text-decoration: underline;
+}
+
 li.CodeMirror-hint-active {
-  background: var(--highlight-color);
+  background: var(--highlight-color) !important;
   color: var(--button-color-2);
 }
 

@@ -239,12 +239,12 @@ function insertAtTop(text) {
 function getMeta() {
     const rawMeta = Settings.getSetting(
         "editorMeta",
-        `title:       ~{1:${getFileTitle(index) || "New document"}}
+        `title:       ~{1:\${getFileTitle(index) || "New document"}}
 project:     ~{2:Documents}
 description: ~{3:No description provided}
 tags:        ~{4:Uncategorized}
 author:      ~{5:Author name}
-date:        ~{6:${strftime(Settings.getSetting("dateFormat", "%Y/%m/%d %H:%M"))}}
+date:        ~{6:\${strftime(Settings.getSetting("dateFormat", "%Y/%m/%d %H:%M"))}}
 icon:        ~{7:📄}
 banner:      ~{8:cohesion/banners/1.png}
 #language:   ~{9:Blank}
@@ -671,7 +671,7 @@ function insertOrEditMeta() {
     const meta = getTopMetaBlockInfo(text);
 
     if (!meta) {
-        insertSnippetAtTop(getMeta(), "~");
+        insertSnippetAtTop(getMeta() + "\n\n", "~");
         return;
     }
 

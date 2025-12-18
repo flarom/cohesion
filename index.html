@@ -631,7 +631,7 @@
 
                 // display resource hints
                 var resMatch = beforeCursor.match(/resources\/[\w\-.]*$/);
-                if (resMatch) {
+                if (resMatch && Settings.getSetting("editorSuggestResources", "true") === "true") {
                     cm.showHint({
                         hint: CodeMirror.hint.resources,
                         completeSingle: false,
@@ -1176,36 +1176,103 @@
 
             /**
              * Update the current search cursor based on the search field value
+             * @param {boolean} preserveSelections
              */
-            function updateCursor() {
+            function updateCursor(preserveSelections = false) {
                 const query = searchField.value;
-                if (query) {
-                    currentCursor = getCursor(query);
-                    if (currentCursor.findNext()) {
-                        editor.setSelection(currentCursor.from(), currentCursor.to());
-                        scrollSelection(currentCursor.from());
-                        toggleSearchHeader(query, true);
+                if (!query) return;
+
+                let selections = null;
+
+                if (preserveSelections) {
+                    selections = editor.listSelections();
+                }
+
+                currentCursor = getCursor(query);
+                lastQuery = query;
+
+                if (currentCursor.findNext()) {
+                    if (!preserveSelections) {
+                        editor.setSelection(
+                            currentCursor.from(),
+                            currentCursor.to()
+                        );
                     }
-                    lastQuery = query;
+
+                    scrollSelection(currentCursor.from());
+                    toggleSearchHeader(query, true);
+                }
+
+                if (preserveSelections && selections) {
+                    editor.setSelections(selections);
                 }
             }
 
             searchField.addEventListener("keydown", function (event) {
+                // shift + enter - select previous instance
                 if (event.shiftKey && event.key === "Enter") {
-                    if (!currentCursor || searchField.value !== lastQuery) updateCursor();
-                    else if (currentCursor.findPrevious()) {
+                    event.preventDefault();
+
+                    if (!currentCursor || searchField.value !== lastQuery) {
+                        updateCursor();
+                    } else if (currentCursor.findPrevious()) {
                         editor.setSelection(currentCursor.from(), currentCursor.to());
                         scrollSelection(currentCursor.from());
                         toggleSearchHeader(lastQuery, true);
                     }
-                } else if (event.key === "Enter") {
-                    if (!currentCursor || searchField.value !== lastQuery) updateCursor();
-                    else if (currentCursor.findNext()) {
+                }
+
+                // enter - select next instance
+                else if (!event.altKey && event.key === "Enter") {
+                    event.preventDefault();
+
+                    if (!currentCursor || searchField.value !== lastQuery) {
+                        updateCursor();
+                    } else if (currentCursor.findNext()) {
                         editor.setSelection(currentCursor.from(), currentCursor.to());
                         scrollSelection(currentCursor.from());
                         toggleSearchHeader(lastQuery, true);
                     }
-                } else if (event.key === "Escape") {
+                }
+
+                // shift + alt + enter - select previous instance (keep selections)
+                else if (event.shiftKey && event.altKey && event.key === "Enter") {
+                    event.preventDefault();
+
+                    if (!currentCursor || searchField.value !== lastQuery) {
+                        updateCursor(true);
+                    }
+
+                    if (currentCursor.findPrevious()) {
+                        editor.addSelection(
+                            currentCursor.from(),
+                            currentCursor.to()
+                        );
+                        scrollSelection(currentCursor.from());
+                        toggleSearchHeader(lastQuery, true);
+                    }
+                }
+
+                // alt + enter - select next instance (keep selections)
+                else if (event.altKey && event.key === "Enter") {
+                    event.preventDefault();
+
+                    if (!currentCursor || searchField.value !== lastQuery) {
+                        updateCursor(true);
+                    }
+
+                    if (currentCursor.findNext()) {
+                        editor.addSelection(
+                            currentCursor.from(),
+                            currentCursor.to()
+                        );
+                        scrollSelection(currentCursor.from());
+                        toggleSearchHeader(lastQuery, true);
+                    }
+                }
+
+                // escape - close search
+                else if (event.key === "Escape") {
                     toggleSearchHeader("", false);
                 }
             });

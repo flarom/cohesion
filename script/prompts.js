@@ -2122,31 +2122,55 @@ async function promptMacroInfo(macro = {}) {
         const iconRow = document.createElement("div");
         iconRow.style.display = "flex";
         iconRow.style.alignItems = "center";
-        iconRow.style.gap = "10px";
         iconRow.style.marginBottom = "20px";
         dialog.appendChild(iconRow);
 
         const iconInput = document.createElement("input");
         iconInput.type = "text";
         iconInput.value = macro.icon || "action_key";
+        iconInput.style.borderRadius = "15px 0px 0px 15px";
         iconInput.style.margin = "0";
+
+        const iconDatalist = document.createElement("datalist");
+        iconDatalist.id = "material-symbols-datalist";
+        dialog.appendChild(iconDatalist);
+
+        iconInput.setAttribute("list", iconDatalist.id);
+
+        async function populateMaterialIconsDatalist() {
+            const icons = await loadMaterialIcons();
+
+            const fragment = document.createDocumentFragment();
+
+            for (const name of icons) {
+                const option = document.createElement("option");
+                option.value = name;
+                fragment.appendChild(option);
+            }
+
+            iconDatalist.appendChild(fragment);
+        }
 
         const iconPreview = document.createElement("span");
         iconPreview.style.fontFamily = "Material Symbols Rounded";
+        iconPreview.style.backgroundColor = "var(--field-color)";
+        iconPreview.style.border = "1px solid var(--border-field-color)";
+        iconPreview.style.borderLeft = "none";
+        iconPreview.style.padding = "0px 15px 0px 5px";
+        iconPreview.style.borderRadius = "0px 15px 15px 0px";
         iconPreview.style.fontSize = "28px";
-        iconPreview.style.opacity = "0.9";
-        iconPreview.style.maxHeight = "32px";
-        iconPreview.style.maxWidth = "32px";
+        iconPreview.style.maxHeight = "33px";
+        iconPreview.style.maxWidth = "33px";
         iconPreview.style.overflow = "hidden";
+        iconPreview.style.userSelect = "none";
         iconPreview.textContent = iconInput.value;
         iconPreview.setAttribute("translate", "no");
 
         iconRow.appendChild(iconInput);
         iconRow.appendChild(iconPreview);
 
-        iconInput.addEventListener("input", () => {
-            iconPreview.textContent = iconInput.value || "";
-        });
+        iconInput.addEventListener("input", () => { iconPreview.textContent = iconInput.value || "action_key"; });
+        iconInput.addEventListener("focus",() => { populateMaterialIconsDatalist(); }, { once: true } );
 
         // BUTTONS 
         const buttonContainer = document.createElement("div");
@@ -2194,4 +2218,14 @@ async function promptMacroInfo(macro = {}) {
 
         nameInput.focus();
     });
+}
+
+let materialIconsCache = null;
+
+async function loadMaterialIcons() {
+    if (materialIconsCache) return materialIconsCache;
+
+    const module = await import("./dictMaterialSymbols.js");
+    materialIconsCache = module.default.MaterialIconsValues;
+    return materialIconsCache;
 }

@@ -499,6 +499,8 @@
                         const iconEl = document.createElement("span");
                         iconEl.textContent = icon;
                         iconEl.style.fontFamily = "Material Symbols Rounded";
+                        iconEl.style.maxWidth = "1ch";
+                        iconEl.style.overflow = "hidden";
                         iconEl.style.opacity = "0.6";
 
                         // command name
