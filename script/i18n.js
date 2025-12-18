@@ -22,7 +22,7 @@ const I18n = {
     if (lang === "en") return null;
 
     if (!this.cache[lang]) {
-        const res = await fetch(`/locale/${lang}.json`);
+        const res = await fetch(`./locale/${lang}.json`);
         const json = await res.json();
 
         this.cache[lang] = {
