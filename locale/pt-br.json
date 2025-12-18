@@ -1,0 +1,148 @@
+{
+    "meta": {
+        "code": "pt-br",
+        "name": "Portuguese (Brazil)",
+        "nativeName": "Português do Brasil",
+        "direction": "ltr",
+        "status": "10%",
+        "translators": [
+            {
+                "name": "Flarom",
+                "role": "Translator",
+                "links": {
+                    "github": "https://github.com/flarom",
+                    "bluesky": "https://bsky.app/profile/flarom.neocities.org",
+                    "website": "https://flarom.neocities.org"
+                }
+            }
+        ]
+    },
+
+    "strings": {
+        "ABOUT": {
+            "MAIN": {
+                "dialogs.about.main.landing-page": "Página inicial",
+                "dialogs.about.main.report-an-issue": "Denunciar um problema",
+                "dialogs.about.main.credits": "Créditos",
+                "dialogs.about.main.legal": "Legal"
+            },
+            "CREDITS": {
+                "dialogs.about.credits.back": "Voltar",
+                "dialogs.about.credits.libraries": "Bibliotecas",
+                "dialogs.about.credits.libraries.text-editor": "Editor de texto",
+                "dialogs.about.credits.libraries.markdown-parser": "Conversor de Markdown",
+                "dialogs.about.credits.libraries.compressor": "Compressor",
+                "dialogs.about.credits.libraries.pdf-export": "Exportação para PDF",
+                "dialogs.about.credits.libraries.syntax-highlight": "Highlight de sintaxe",
+                "dialogs.about.credits.graphics": "Gráficos",
+                "dialogs.about.credits.graphics.symbolic-icons": "Ícones simbólicos",
+                "dialogs.about.credits.graphics.colored-icons": "Ícones coloridos",
+                "dialogs.about.credits.general-inspiration": "Inspiração no geral",
+                "dialogs.about.credits.general-inspiration.original-app-icon": "Ícone original do aplicativo",
+                "dialogs.about.credits.general-inspiration.layout-and-design": "Leiaute e design"
+            },
+            "LEGAL": {
+                "dialogs.about.credits.general-inspiration.design-guidelines": "Diretrizes de design",
+                "dialogs.about.legal.back": "Voltar",
+                "dialogs.about.legal.notice": "Este aplicativo não oferece absolutamente nenhuma garantia. Ele é licenciado sob a <a href='https://www.gnu.org/licenses/gpl-3.0.pt-br.html' target='_blank'>GNU GPL v3</a>."
+            }
+        },
+
+        "SETTINGS": {
+            "APPEARENCE": {
+                "dialogs.settings.main.appearence": "Aparência",
+                "dialogs.settings.main.appearence.theme.epaper": "ePaper",
+                "dialogs.settings.main.appearence.theme.light": "Claro",
+                "dialogs.settings.main.appearence.theme.cream": "Creme",
+                "dialogs.settings.main.appearence.theme.nord": "Nord",
+                "dialogs.settings.main.appearence.theme.dark": "Escuro",
+                "dialogs.settings.main.appearence.theme.monokai": "Monokai",
+                "dialogs.settings.main.appearence.theme.gruvbox-dark": "Gruvbox Escuro",
+                "dialogs.settings.main.appearence.theme.oled": "OLED",
+                "dialogs.settings.main.appearence.theme.custom": "Personalizado",
+                "dialogs.settings.main.appearence.fonts.editor-font": "Fonte do editor",
+                "dialogs.settings.main.appearence.fonts.paragraph-font": "Fonte em parágrafos de texto",
+                "dialogs.settings.main.appearence.fonts.title-font": "Fonte em títulos"
+            },
+            "LANGUAGE": {
+                "dialogs.settings.main.language": "Linguagem",
+                "dialogs.settings.main.translating": "Ajude a traduzir o Cohesion"
+            },
+            "SUGGESTIONS": {
+
+                "dialogs.settings.main.suggestions": "Sugestões",
+                "dialogs.settings.main.suggestions.suggest-document-words": "Sugerir palavras do documento",
+                "dialogs.settings.main.suggestions-suggest-emojis": "Sugerir emojis",
+                "dialogs.settings.main.suggestions-suggest-resources": "Sugerir recursos",
+                "dialogs.settings.main.suggestions-suggest-slash-commands": "Sugerir comandos de barra"
+            },
+            "BEHAVIOR": {
+                "dialogs.settings.main.behavior": "Comportamento",
+                "dialogs.settings.main.behavior.auto-close-brackets": "Auto-completar parênteses",
+                "dialogs.settings.main.behavior.auto-close-markdown-notation": "Auto-completar notação de Markdown",
+                "dialogs.settings.main.behavior.auto-close-ml-tags": "Auto-completar notação de ML",
+                "dialogs.settings.main.behavior.line-numbers": "Números de linha",
+                "dialogs.settings.main.behavior.full-width": "Largura total",
+                "dialogs.settings.main.behavior.highlight-active-line": "Destacar linha ativa",
+                "dialogs.settings.main.behavior.rtl-text-align": "Texto alinhado como RTL"
+            },
+            "DATE AND TIME": {
+                "dialogs.settings.main.date-and-time": "Data e hora",
+                "dialogs.settings.main.date-and-time.day": "Dia",
+                "dialogs.settings.main.date-and-time.day.tooltip.btn2": "Nome completo do dia da semana (ex., 'Domingo')",
+                "dialogs.settings.main.date-and-time.day.tooltip.btn1": "Nome abreviado do dia da semana (ex., 'Dom' para Domingo)",
+                "dialogs.settings.main.date-and-time.day.tooltip.btn3": "Dia do mês com zero na frente (01-31)",
+                "dialogs.settings.main.date-and-time.day.tooltip.btn14": "Dia do mês sem zero na frente (1-31)",
+                "dialogs.settings.main.date-and-time.month": "Mês",
+                "dialogs.settings.main.date-and-time.month.tooltip.btn5": "Nome completo do mês (ex., 'Setembro')",
+                "dialogs.settings.main.date-and-time.month.tooltip.btn4": "Nome abreviado do mês (ex., 'Set' para Setembro)",
+                "dialogs.settings.main.date-and-time.month.tooltip.btn6": "Número do mês com zero na frente (01-12)",
+                "dialogs.settings.main.date-and-time.month.tooltip.btn15": "Número do mês sem zero na frente (1-12)",
+                "dialogs.settings.main.date-and-time.year": "Ano",
+                "dialogs.settings.main.date-and-time.year.tooltip.btn8": "Ano completo com século (ex., '2024')",
+                "dialogs.settings.main.date-and-time.year.tooltip.btn7": "Ano sem século, em dois digitos (ex., '24' para 2024)",
+                "dialogs.settings.main.date-and-time.hour": "Hora",
+                "dialogs.settings.main.date-and-time.hour.tooltip.btn9": "Hora (relógio de 24 horas) com zero na frente (00-23)",
+                "dialogs.settings.main.date-and-time.hour.tooltip.btn16": "Hora (relógio de 24 horas) sem zero na frente (0-23)",
+                "dialogs.settings.main.date-and-time.hour.tooltip.btn10": "Hora (relógio de 12 horas) com zero na frente (01-12)",
+                "dialogs.settings.main.date-and-time.hour.tooltip.btn17": "Hora (relógio de 12 horas) sem zero na frente (1-12)",
+                "dialogs.settings.main.date-and-time.hour.tooltip.btn11": "Indicador de AM ou PM",
+                "dialogs.settings.main.date-and-time.minute": "Minuto",
+                "dialogs.settings.main.date-and-time.minute.tooltip.btn12": "Minuto com zero na frente (00-59)",
+                "dialogs.settings.main.date-and-time.minute.tooltip.btn18": "Minuto sem zero na frente (0-59)",
+                "dialogs.settings.main.date-and-time.second": "Segundo",
+                "dialogs.settings.main.date-and-time.second.tooltip.btn13": "Segundo com zero na frente (00-59)",
+                "dialogs.settings.main.date-and-time.second.tooltip.btn19": "Segundo sem zero na frente (0-59)",
+                "dialogs.settings.main.date-and-time.learn-more": "Saiba mais sobre a sintaxe de data e hora"
+            },
+            "DOCUMENT METADATA": {
+                "dialogs.settings.main.document-metadata": "Metadados do documento",
+                "dialogs.settings.main.document-metadata.edit-metadata": "Editar metadados",
+                "dialogs.settings.main.document-metadata.learn-more": "Saiba mais sobre a sintaxe de metadados",
+                "dialogs.settings.main.document-metadata.editor-auto-meta": "Inserir bloco de metadados automaticamente em novos documentos"
+            },
+            "STATUS BAR": {
+                "dialogs.settings.main.status-bar": "Barra de status",
+                "dialogs.settings.main.status-bar.cursor-position": "Posição do cursor",
+                "dialogs.settings.main.status-bar.editor-mode": "Modo do editor",
+                "dialogs.settings.main.status-bar.document-size": "Tamanho do documento"
+            },
+            "BACKUPS": {
+                "dialogs.settings.main.backups": "Backups",
+                "dialogs.settings.main.backups.backup-reminder": "Lembrete mensal de backup",
+                "dialogs.settings.main.backups.download-backup": "Baixar backup",
+                "dialogs.settings.main.backups.download-backup.description": "Exportar seus documentos como um arquivo zip",
+                "dialogs.settings.main.backups.export": "Exportar",
+                "dialogs.settings.main.backups.import-backup": "Importar backup",
+                "dialogs.settings.main.backups.import-backup.description": "Importar documentos de um arquivo zip",
+                "dialogs.settings.main.backups.import": "Importar",
+                "dialogs.settings.main.backups.replace-with-backup": "Substituír por um backup",
+                "dialogs.settings.main.backups.replace-with-backup.description": "Importar documentos de um arquivo zip, substituíndo seus arquivos atuais",
+                "dialogs.settings.main.backups.replace": "Substituír",
+                "dialogs.settings.main.backups.delete-empty-files": "Deletar arquivos vazios",
+                "dialogs.settings.main.backups.delete-empty-files.description": "Deletar todos arquivos que não tenham nenhum texto ou meta",
+                "dialogs.settings.main.backups.delete": "Deletar"
+            }
+        }
+    }
+}

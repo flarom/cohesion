@@ -24,6 +24,17 @@
                 border: 4px solid var(--background-color-2);
                 box-shadow: var(--shadow);
             }
+
+            .setting select {
+                max-width: 300px;
+                margin-bottom: 0px;
+                padding: 0px 20px;
+                box-sizing: content-box;
+            }
+
+            .setting .infolink {
+                font-size: small;
+            }
         </style>
     </head>
 
@@ -31,69 +42,84 @@
         <div class="settings-body">
             <div class="main-page">
                 <div>
-                    <h4>Appearence</h4>
+                    <h4 data-locale="dialogs.settings.main.appearence">Appearence</h4>
                     <div class="setting top" style="gap: 10px; flex-wrap: wrap; justify-content: flex-start;">
-                        <button id="theme-epaper" class="ball" style="background-color: #ffffff; color: #000000" onclick="Settings.setSetting('theme', 'theme-epaper');loadSettings(); updateSelectedTheme()">ePaper</button>
-                        <button id="theme-light" class="ball" style="background-color: #ffffff; color: #3c3c3c" onclick="Settings.setSetting('theme', 'theme-light');loadSettings(); updateSelectedTheme()">Light</button>
-                        <button id="theme-cream" class="ball" style="background-color: #f5eacb; color: #4b3a25" onclick="Settings.setSetting('theme', 'theme-cream');loadSettings(); updateSelectedTheme()">Cream</button>
-                        <button id="theme-nord" class="ball" style="background-color: #2e3440; color: #d8dee9" onclick="Settings.setSetting('theme', 'theme-nord');loadSettings(); updateSelectedTheme()">Nord</button>
-                        <button id="theme-dark" class="ball" style="background-color: #303030; color: #dddddd" onclick="Settings.setSetting('theme', 'theme-dark');loadSettings(); updateSelectedTheme()">Dark</button>
-                        <button id="theme-monokai" class="ball" style="background-color: #272822; color: #F8F8F2" onclick="Settings.setSetting('theme', 'theme-monokai');loadSettings(); updateSelectedTheme()">Monokai</button>
-                        <button id="theme-gruvbox-dark" class="ball" style="background-color: #282828; color: #d5c4a1" onclick="Settings.setSetting('theme', 'theme-gruvbox-dark');loadSettings(); updateSelectedTheme()">Gruvbox</button>
-                        <button id="theme-oled" class="ball" style="background-color: #000000; color: #888888" onclick="Settings.setSetting('theme', 'theme-oled');loadSettings(); updateSelectedTheme()">OLED</button>
-                        <button id="theme-custom" class="ball" style="background: conic-gradient(var(--quote-purple),var(--quote-blue),var(--quote-green),var(--quote-yellow),var(--quote-red),var(--quote-purple)); color: var(--background-color)" onclick="Settings.setSetting('theme', 'theme-custom');loadSettings(); updateSelectedTheme()">Custom</button>
+                        <button id="theme-epaper" class="ball" data-locale="dialogs.settings.main.appearence.theme.epaper" style="background-color: #ffffff; color: #000000" onclick="Settings.setSetting('theme', 'theme-epaper');loadSettings(); updateSelectedTheme()">ePaper</button>
+                        <button id="theme-light" class="ball" data-locale="dialogs.settings.main.appearence.theme.light" style="background-color: #ffffff; color: #3c3c3c" onclick="Settings.setSetting('theme', 'theme-light');loadSettings(); updateSelectedTheme()">Light</button>
+                        <button id="theme-cream" class="ball" data-locale="dialogs.settings.main.appearence.theme.cream" style="background-color: #f5eacb; color: #4b3a25" onclick="Settings.setSetting('theme', 'theme-cream');loadSettings(); updateSelectedTheme()">Cream</button>
+                        <button id="theme-nord" class="ball" data-locale="dialogs.settings.main.appearence.theme.nord" style="background-color: #2e3440; color: #d8dee9" onclick="Settings.setSetting('theme', 'theme-nord');loadSettings(); updateSelectedTheme()">Nord</button>
+                        <button id="theme-dark" class="ball" data-locale="dialogs.settings.main.appearence.theme.dark" style="background-color: #303030; color: #dddddd" onclick="Settings.setSetting('theme', 'theme-dark');loadSettings(); updateSelectedTheme()">Dark</button>
+                        <button id="theme-monokai" class="ball" data-locale="dialogs.settings.main.appearence.theme.monokai" style="background-color: #272822; color: #F8F8F2" onclick="Settings.setSetting('theme', 'theme-monokai');loadSettings(); updateSelectedTheme()">Monokai</button>
+                        <button id="theme-gruvbox-dark" class="ball" data-locale="dialogs.settings.main.appearence.theme.gruvbox-dark" style="background-color: #282828; color: #d5c4a1" onclick="Settings.setSetting('theme', 'theme-gruvbox-dark');loadSettings(); updateSelectedTheme()">Gruvbox</button>
+                        <button id="theme-oled" class="ball" data-locale="dialogs.settings.main.appearence.theme.oled" style="background-color: #000000; color: #888888" onclick="Settings.setSetting('theme', 'theme-oled');loadSettings(); updateSelectedTheme()">OLED</button>
+                        <button id="theme-custom" class="ball" data-locale="dialogs.settings.main.appearence.theme.custom" style="background: conic-gradient(var(--quote-purple),var(--quote-blue),var(--quote-green),var(--quote-yellow),var(--quote-red),var(--quote-purple)); color: var(--background-color)" onclick="Settings.setSetting('theme', 'theme-custom');loadSettings(); updateSelectedTheme()">Custom</button>
                         <button id="theme-edit-custom" class="icon-button" onclick="editCustomTheme()" style="font-size: larger;" translate="no" title="Edit custom theme">edit</button>
                         <button id="theme-delete-custom" class="icon-button" onclick="deleteCustomTheme()" style="font-size: larger;" translate="no" title="Reset custom theme">refresh</button>
                     </div>
+                    
+                    <div class="setting">
+                        <span class="switch-text" data-locale="dialogs.settings.main.appearence.fonts.editor-font">Editor font</span>
+                        <input list="default-fonts" type="text" placeholder="Ubuntu Mono" id="fontEditor" oninput="Settings.setSetting('editorFont', this.value); loadSettings();" />
+                    </div>
+                    <div class="setting">
+                        <span class="switch-text" data-locale="dialogs.settings.main.appearence.fonts.paragraph-font">Paragraph font</span>
+                        <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontParagraph" oninput="Settings.setSetting('paragraphFont', this.value); loadSettings();" />
+                    </div>
+                    <div class="setting bottom">
+                        <span class="switch-text" data-locale="dialogs.settings.main.appearence.fonts.title-font">Title font</span>
+                        <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontTitle" oninput="Settings.setSetting('titleFont', this.value); loadSettings();" />
+                    </div>
+                    
+                    <datalist id="default-fonts">
+                        <option value="Ubuntu"></option>
+                        <option value="Ubuntu Mono"></option>
+                        <option value="Sans serif"></option>
+                        <option value="Serif"></option>
+                        <option value="Monospace"></option>
+                        <option value="Cursive"></option>
+                    </datalist>
                 </div>
-
-                <div class="setting">
-                    <span class="switch-text">Editor font</span>
-                    <input list="default-fonts" type="text" placeholder="Ubuntu Mono" id="fontEditor" oninput="Settings.setSetting('editorFont', this.value); loadSettings();" />
-                </div>
-                <div class="setting">
-                    <span class="switch-text">Paragraph font</span>
-                    <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontParagraph" oninput="Settings.setSetting('paragraphFont', this.value); loadSettings();" />
-                </div>
-                <div class="setting bottom">
-                    <span class="switch-text">Title font</span>
-                    <input list="default-fonts" type="text" placeholder="Ubuntu" id="fontTitle" oninput="Settings.setSetting('titleFont', this.value); loadSettings();" />
-                </div>
-
-                <datalist id="default-fonts">
-                    <option value="Ubuntu"></option>
-                    <option value="Ubuntu Mono"></option>
-                    <option value="Sans serif"></option>
-                    <option value="Serif"></option>
-                    <option value="Monospace"></option>
-                    <option value="Cursive"></option>
-                </datalist>
 
                 <div>
-                    <h4>Suggestions</h4>
+                    <h4 data-locale="dialogs.settings.main.language">Language</h4>
+                    <div class="setting top">
+                        <span class="switch-text" data-locale="dialogs.settings.main.language">Language</span>
+                        <select id="language" onchange="Language.set(this.value)">
+                            <option value="en">English</option>
+                            <option value="pt-br">Português</option>
+                        </select>
+                    </div>
+                    <div class="setting bottom">
+                        <span style="display: flex; align-items: center; gap: 5px;"><span class="icon">info</span>
+                        <a href="https://github.com/flarom/cohesion/wiki/Translating" class="infolink" data-locale="dialogs.settings.main.translating" target="_blank">Help translating Cohesion</a></span>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 data-locale="dialogs.settings.main.suggestions">Suggestions</h4>
                     <div class="setting top switch-wrapper">
-                        <span class="switch-text">Suggest document words</span>
+                        <span class="switch-text" data-locale="dialogs.settings.main.suggestions.suggest-document-words">Suggest document words</span>
                         <label class="switch">
                             <input type="checkbox" id="editorSuggestDocWords" onchange="Settings.setSetting('editorSuggestDocWords', this.checked)" />
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting switch-wrapper">
-                        <span class="switch-text">Suggest emojis</span>
+                        <span class="switch-text" data-locale="dialogs.settings.main.suggestions-suggest-emojis">Suggest emojis</span>
                         <label class="switch">
                             <input type="checkbox" id="editorSuggestEmojis" onchange="Settings.setSetting('editorSuggestEmojis', this.checked)" />
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting switch-wrapper">
-                        <span class="switch-text">Suggest resources</span>
+                        <span class="switch-text" data-locale="dialogs.settings.main.suggestions-suggest-resources">Suggest resources</span>
                         <label class="switch">
                             <input type="checkbox" id="editorSuggestResources" onchange="Settings.setSetting('editorSuggestResources', this.checked)" />
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting bottom switch-wrapper">
-                        <span class="switch-text">Suggest slash commands</span>
+                        <span class="switch-text" data-locale="dialogs.settings.main.suggestions-suggest-slash-commands">Suggest slash commands</span>
                         <label class="switch">
                             <input type="checkbox" id="editorSuggestCommands" onchange="Settings.setSetting('editorSuggestCommands', this.checked)" />
                             <span class="slider"></span>
@@ -101,51 +127,51 @@
                     </div>
                 </div>
                 <div>
-                    <h4>Behavior</h4>
+                    <h4 data-locale="dialogs.settings.main.behavior">Behavior</h4>
                     <div class="setting top switch-wrapper">
-                        <span class="switch-text">Auto-close brackets</span>
+                        <span class="switch-text" data-locale="dialogs.settings.main.behavior.auto-close-brackets">Auto-close brackets</span>
                         <label class="switch">
                             <input type="checkbox" id="editorAutoCloseBrackets" onchange="Settings.setSetting('editorAutoCloseBrackets', this.checked); updateEditorSettings()">
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting switch-wrapper">
-                        <span class="switch-text">Auto-close Markdown notation</span>
+                        <span class="switch-text" data-locale="dialogs.settings.main.behavior.auto-close-markdown-notation">Auto-close Markdown notation</span>
                         <label class="switch">
                             <input type="checkbox" id="editorAutoCloseMDNotation" onchange="Settings.setSetting('editorAutoCloseMDNotation', this.checked); updateEditorSettings()">
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting bottom switch-wrapper">
-                        <span class="switch-text">Auto-close ML tags</span>
+                        <span class="switch-text" data-locale="dialogs.settings.main.behavior.auto-close-ml-tags">Auto-close ML tags</span>
                         <label class="switch">
                             <input type="checkbox" id="editorAutoCloseTags" onchange="Settings.setSetting('editorAutoCloseTags', this.checked); updateEditorSettings()">
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting top switch-wrapper">
-                        <span class="switch-text">Line numbers</span>
+                        <span class="switch-text" data-locale="dialogs.settings.main.behavior.line-numbers">Line numbers</span>
                         <label class="switch">
                             <input type="checkbox" id="editorLineNumbers" onchange="Settings.setSetting('editorLineNumbers', this.checked); updateEditorSettings()" />
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting switch-wrapper">
-                        <span class="switch-text">Full width</span>
+                        <span class="switch-text" data-locale="dialogs.settings.main.behavior.full-width">Full width</span>
                         <label class="switch">
                             <input type="checkbox" id="editorWidth" onchange="Settings.setSetting('editorWidth', this.checked); updateEditorSettings()" />
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting bottom switch-wrapper">
-                        <span class="switch-text">Highlight active line</span>
+                        <span class="switch-text" data-locale="dialogs.settings.main.behavior.highlight-active-line">Highlight active line</span>
                         <label class="switch">
                             <input type="checkbox" id="editorHighlightActiveLine" onchange="Settings.setSetting('editorHighlightActiveLine', this.checked); updateEditorSettings()" />
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting top bottom switch-wrapper">
-                        <span class="switch-text">RTL text align</span>
+                        <span class="switch-text" data-locale="dialogs.settings.main.behavior.rtl-text-align">RTL text align</span>
                         <label class="switch">
                             <input type="checkbox" id="editorDirection" onchange="if (this.checked) {Settings.setSetting('editorDirection', 'rtl')} else {Settings.setSetting('editorDirection', 'ltr')} updateEditorSettings()" />
                             <span class="slider"></span>
@@ -153,7 +179,7 @@
                     </div>
                 </div>
                 <div>
-                    <h4>Date & Time</h4>
+                    <h4 data-locale="dialogs.settings.main.date-and-time">Date & Time</h4>
                     <div class="setting top" style="display: flex; align-items: center; gap: 10px; justify-content: start;">
                         <input type="text" id="editorDate" style="max-width: 100%;" value="%d/%m/%Y %H:%M" onchange="Settings.setSetting('dateFormat', this.value)" />
                         <button class="icon-button" translate="no" title="Reset" onclick="document.getElementById('editorDate').value='%d/%m/%Y %H:%M'; Settings.setSetting('dateFormat', document.getElementById('editorDate').value); document.getElementById('editorDate').focus();">refresh</button>
@@ -162,73 +188,73 @@
                     <div class="setting">
                         <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                             <div>
-                                <p>Day</p>
+                                <p data-locale="dialogs.settings.main.date-and-time.day">Day</p>
                                 <div style="display: flex; flex-wrap: nowrap; gap: 5px">
-                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%A')" id="dateTimeBtn2" title="Full weekday name (e.g., 'Sunday')">%A</button>
-                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%a')" id="dateTimeBtn1" title="Abbreviated weekday name (e.g., 'Sun' for Sunday)">%a</button>
-                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%d')" id="dateTimeBtn3" title="Day of the month with leading zero (01-31)">%d</button>
-                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%-d')" id="dateTimeBtn14" title="Day of the month without leading zero (1-31)">%-d</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%A')" id="dateTimeBtn2" title="Full weekday name (e.g., 'Sunday')" data-locale-attr="title:dialogs.settings.main.date-and-time.day.tooltip.btn2">%A</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%a')" id="dateTimeBtn1" title="Abbreviated weekday name (e.g., 'Sun' for Sunday)" data-locale-attr="title:dialogs.settings.main.date-and-time.day.tooltip.btn1">%a</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%d')" id="dateTimeBtn3" title="Day of the month with leading zero (01-31)" data-locale-attr="title:dialogs.settings.main.date-and-time.day.tooltip.btn3">%d</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%-d')" id="dateTimeBtn14" title="Day of the month without leading zero (1-31)" data-locale-attr="title:dialogs.settings.main.date-and-time.day.tooltip.btn14">%-d</button>
                                 </div>
                             </div>
                             <div>
-                                <p>Month</p>
+                                <p data-locale="dialogs.settings.main.date-and-time.month">Month</p>
                                 <div style="display: flex; flex-wrap: nowrap; gap: 5px">
-                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%B')" id="dateTimeBtn5" title="Full month name (e.g., 'September')">%B</button>
-                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%b')" id="dateTimeBtn4" title="Abbreviated month name (e.g., 'Sep' for September)">%b</button>
-                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%m')" id="dateTimeBtn6" title="Month as a number with leading zero (01-12)">%m</button>
-                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%-m')" id="dateTimeBtn15" title="Month as a number without leading zero (1-12)">%-m</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%B')" id="dateTimeBtn5" title="Full month name (e.g., 'September')" data-locale-attr="title:dialogs.settings.main.date-and-time.month.tooltip.btn5">%B</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%b')" id="dateTimeBtn4" title="Abbreviated month name (e.g., 'Sep' for September)" data-locale-attr="title:dialogs.settings.main.date-and-time.month.tooltip.btn4">%b</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%m')" id="dateTimeBtn6" title="Month as a number with leading zero (01-12)" data-locale-attr="title:dialogs.settings.main.date-and-time.month.tooltip.btn6">%m</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%-m')" id="dateTimeBtn15" title="Month as a number without leading zero (1-12)" data-locale-attr="title:dialogs.settings.main.date-and-time.month.tooltip.btn15">%-m</button>
                                 </div>
                             </div>
                             <div>
-                                <p>Year</p>
+                                <p data-locale="dialogs.settings.main.date-and-time.year">Year</p>
                                 <div style="display: flex; flex-wrap: nowrap; gap: 5px">
-                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%Y')" id="dateTimeBtn8" title="Full year with century (e.g., '2024')">%Y</button>
-                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%y')" id="dateTimeBtn7" title="Year without century, as two digits (e.g., '24' for 2024)">%y</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%Y')" id="dateTimeBtn8" title="Full year with century (e.g., '2024')" data-locale-attr="title:dialogs.settings.main.date-and-time.year.tooltip.btn8">%Y</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%y')" id="dateTimeBtn7" title="Year without century, as two digits (e.g., '24' for 2024)" data-locale-attr="title:dialogs.settings.main.date-and-time.year.tooltip.btn7">%y</button>
                                 </div>
                             </div>
                             <div>
-                                <p>Hour</p>
+                                <p data-locale="dialogs.settings.main.date-and-time.hour">Hour</p>
                                 <div style="display: flex; flex-wrap: nowrap; gap: 5px">
-                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%H')" id="dateTimeBtn9" title="Hour (24-hour clock) with leading zero (00-23)">%H</button>
-                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%-H')" id="dateTimeBtn16" title="Hour (24-hour clock) without leading zero (0-23)">%-H</button>
-                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%I')" id="dateTimeBtn10" title="Hour (12-hour clock) with leading zero (01-12)">%I</button>
-                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%-I')" id="dateTimeBtn17" title="Hour (12-hour clock) without leading zero (1-12)">%-I</button>
-                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%p')" id="dateTimeBtn11" title="AM or PM indicator">%p</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%H')" id="dateTimeBtn9" title="Hour (24-hour clock) with leading zero (00-23)" data-locale-attr="title:dialogs.settings.main.date-and-time.hour.tooltip.btn9">%H</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%-H')" id="dateTimeBtn16" title="Hour (24-hour clock) without leading zero (0-23)" data-locale-attr="title:dialogs.settings.main.date-and-time.hour.tooltip.btn16">%-H</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%I')" id="dateTimeBtn10" title="Hour (12-hour clock) with leading zero (01-12)" data-locale-attr="title:dialogs.settings.main.date-and-time.hour.tooltip.btn10">%I</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%-I')" id="dateTimeBtn17" title="Hour (12-hour clock) without leading zero (1-12)" data-locale-attr="title:dialogs.settings.main.date-and-time.hour.tooltip.btn17">%-I</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%p')" id="dateTimeBtn11" title="AM or PM indicator" data-locale-attr="title:dialogs.settings.main.date-and-time.hour.tooltip.btn11">%p</button>
                                 </div>
                             </div>
                             <div>
-                                <p>Minute</p>
+                                <p data-locale="dialogs.settings.main.date-and-time.minute">Minute</p>
                                 <div style="display: flex; flex-wrap: nowrap; gap: 5px">
-                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%M')" id="dateTimeBtn12" title="Minute with leading zero (00-59)">%M</button>
-                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%-M')" id="dateTimeBtn18" title="Minute without leading zero (0-59)">%-M</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%M')" id="dateTimeBtn12" title="Minute with leading zero (00-59)" data-locale-attr="title:dialogs.settings.main.date-and-time.minute.tooltip.btn12">%M</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%-M')" id="dateTimeBtn18" title="Minute without leading zero (0-59)" data-locale-attr="title:dialogs.settings.main.date-and-time.minute.tooltip.btn18">%-M</button>
                                 </div>
                             </div>
                             <div>
-                                <p>Second</p>
+                                <p data-locale="dialogs.settings.main.date-and-time.second">Second</p>
                                 <div style="display: flex; flex-wrap: nowrap; gap: 5px">
-                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%S')" id="dateTimeBtn13" title="Second with leading zero (00-59)">%S</button>
-                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%-S')" id="dateTimeBtn19" title="Second without leading zero (0-59)">%-S</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%S')" id="dateTimeBtn13" title="Second with leading zero (00-59)" data-locale-attr="title:dialogs.settings.main.date-and-time.second.tooltip.btn13">%S</button>
+                                    <button class="text-button" translate="no" onclick="insertDateTimeOption('%-S')" id="dateTimeBtn19" title="Second without leading zero (0-59)" data-locale-attr="title:dialogs.settings.main.date-and-time.second.tooltip.btn19">%-S</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="setting bottom">
                         <span style="display: flex; align-items: center; gap: 5px;"><span class="icon">info</span>
-                        <a href="https://github.com/flarom/cohesion/wiki/Time-Formatting" target="_blank">Learn more about date and time syntax</a></span>
+                        <a href="https://github.com/flarom/cohesion/wiki/Time-Formatting" class="infolink" data-locale="dialogs.settings.main.date-and-time.learn-more" target="_blank">Learn more about date and time syntax</a></span>
                     </div>
                 </div>
                 <div>
-                    <h4>Document metadata</h4>
+                    <h4 data-locale="dialogs.settings.main.document-metadata">Document metadata</h4>
                     <div class="setting top">
-                        <button class="text-button" onclick="editEditorMeta();">Edit metadata</button>
+                        <button class="text-button" onclick="editEditorMeta();" data-locale="dialogs.settings.main.document-metadata.edit-metadata">Edit metadata</button>
                         <button class="icon-button" translate="no" title="Reset" onclick="resetEditorMeta();">refresh</button>
                     </div>
                     <div class="setting bottom">
                         <span style="display: flex; align-items: center; gap: 5px;"><span class="icon">info</span>
-                        <a href="https://github.com/flarom/cohesion/wiki/Meta-Formatting" target="_blank">Learn more about the metadata syntax</a></span>
+                        <a href="https://github.com/flarom/cohesion/wiki/Meta-Formatting" class="infolink" target="_blank" data-locale="dialogs.settings.main.document-metadata.learn-more">Learn more about the metadata syntax</a></span>
                     </div>
                     <div class="setting top bottom switch-wrapper">
-                        <span class="switch-text">Automatically insert metadata block on new documents</span>
+                        <span class="switch-text" data-locale="dialogs.settings.main.document-metadata.editor-auto-meta">Automatically insert metadata block on new documents</span>
                         <label class="switch">
                             <input type="checkbox" id="editorAutoMeta" onchange="Settings.setSetting('editorAutoMeta', this.checked); loadSettings()" />
                             <span class="slider"></span>
@@ -237,30 +263,30 @@
                 </div>
 
                 <div>
-                    <h4 id="setting-status-bar">Status bar</h4>
+                    <h4 data-locale="dialogs.settings.main.status-bar">Status bar</h4>
                     <div class="setting top switch-wrapper">
-                        <span class="switch-text">Status bar</span>
+                        <span class="switch-text" data-locale="dialogs.settings.main.status-bar">Status bar</span>
                         <label class="switch">
                             <input type="checkbox" id="statusShow" onchange="Settings.setSetting('statusShow', this.checked); loadSettings()" />
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting switch-wrapper">
-                        <span class="switch-text">Cursor position</span>
+                        <span class="switch-text" data-locale="dialogs.settings.main.status-bar.cursor-position">Cursor position</span>
                         <label class="switch">
                             <input type="checkbox" id="statusCursorPos" onchange="Settings.setSetting('statusCursorPos', this.checked); loadSettings()" />
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting switch-wrapper">
-                        <span class="switch-text">Editor mode</span>
+                        <span class="switch-text" data-locale="dialogs.settings.main.status-bar.editor-mode">Editor mode</span>
                         <label class="switch">
                             <input type="checkbox" id="statusEditorMode" onchange="Settings.setSetting('statusEditorMode', this.checked); loadSettings()" />
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="setting bottom switch-wrapper">
-                        <span class="switch-text">Document size</span>
+                        <span class="switch-text" data-locale="dialogs.settings.main.status-bar.document-size">Document size</span>
                         <label class="switch">
                             <input type="checkbox" id="statusDocumentSize" onchange="Settings.setSetting('statusDocumentSize', this.checked); loadSettings()" />
                             <span class="slider"></span>
@@ -269,9 +295,9 @@
                 </div>
                 <div>
                     <div>
-                        <h4 id="setting-data">Backups</h4>
+                        <h4 data-locale="dialogs.settings.main.backups" id="setting-data">Backups</h4>
                         <div class="setting top bottom switch-wrapper">
-                            <span class="switch-text">Monthly backup reminders</span>
+                            <span class="switch-text" data-locale="dialogs.settings.main.backups.backup-reminder">Monthly backup reminders</span>
                             <label class="switch">
                                 <input type="checkbox" id="backupReminder" onchange="Settings.setSetting('backupReminder', this.checked); loadSettings()" />
                                 <span class="slider"></span>
@@ -280,41 +306,41 @@
 
                         <div class="setting top">
                             <div>
-                                <h5 class="setting-subtitle">Download backup</h5>
-                                <span class="switch-text">Export your notes as a zip file</span>
+                                <h5 class="setting-subtitle" data-locale="dialogs.settings.main.backups.download-backup">Download backup</h5>
+                                <span class="switch-text" data-locale="dialogs.settings.main.backups.download-backup.description">Export your documents as a zip file</span>
                             </div>
                             <div>
-                                <button class="text-button" onclick="exportBook();">Export</button>
+                                <button class="text-button" onclick="exportBook();" data-locale="dialogs.settings.main.backups.export">Export</button>
                             </div>
                         </div>
 
                         <div class="setting">
                             <div>
-                                <h5 class="setting-subtitle">Import backup</h5>
-                                <span class="switch-text">Import files from a zip file</span>
+                                <h5 class="setting-subtitle" data-locale="dialogs.settings.main.backups.import-backup">Import backup</h5>
+                                <span class="switch-text" data-locale="dialogs.settings.main.backups.import-backup.description">Import documents from a zip file</span>
                             </div>
                             <div>
-                                <button class="text-button" onclick="importBook();">Import</button>
+                                <button class="text-button" onclick="importBook();" data-locale="dialogs.settings.main.backups.import">Import</button>
                             </div>
                         </div>
                         
                         <div class="setting bottom">
                             <div>
-                                <h5 class="setting-subtitle">Replace with backup</h5>
-                                <span class="switch-text">Import files from a zip file, replacing your files.</span>
+                                <h5 class="setting-subtitle" data-locale="dialogs.settings.main.backups.replace-with-backup">Replace with backup</h5>
+                                <span class="switch-text" data-locale="dialogs.settings.main.backups.replace-with-backup.description">Import documents from a zip file, replacing your files</span>
                             </div>
                             <div>
-                                <button class="text-button danger" onclick="handleImportDeleteBook();">Replace</button>
+                                <button class="text-button danger" onclick="handleImportDeleteBook();" data-locale="dialogs.settings.main.backups.replace">Replace</button>
                             </div>
                         </div>
 
                         <div class="setting top bottom">
                             <div>
-                                <h5 class="setting-subtitle">Delete empty files</h5>
-                                <span class="switch-text">Delete all files without any text or meta.</span>
+                                <h5 class="setting-subtitle" data-locale="dialogs.settings.main.backups.delete-empty-files">Delete empty files</h5>
+                                <span class="switch-text" data-locale="dialogs.settings.main.backups.delete-empty-files.description">Delete all files without any text or meta</span>
                             </div>
                             <div>
-                                <button class="text-button danger" onclick="handleDeleteEmptyFiles();">Delete</button>
+                                <button class="text-button danger" onclick="handleDeleteEmptyFiles();" data-locale="dialogs.settings.main.backups.delete">Delete</button>
                             </div>
                         </div>
                     </div>
@@ -331,6 +357,10 @@
                 txtFontEditor.value = Settings.getSetting("editorFont", "Ubuntu Mono");
                 txtFontParagraph.value = Settings.getSetting("paragraphFont", "Ubuntu");
                 txtFontTitle.value = Settings.getSetting("titleFont", "Ubuntu");
+
+                // lang
+                const selLanguage = document.getElementById("language");
+                selLanguage.value = Settings.getSetting("language", 'en')
 
                 // editor
                 // const cbxEditorShowHints = document.getElementById("editorShowHints");
@@ -581,6 +611,10 @@ banner:      ~{8:cohesion/banners/1.png}
                     Settings.removeSetting('theme-custom-value');
                 }
             }
+
+            cacheOriginalContent();
+            cacheOriginalAttributes();
+            applyLanguage();
         </script>
     </body>
 </html>
