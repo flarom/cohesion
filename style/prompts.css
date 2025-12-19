@@ -476,9 +476,22 @@
     gap: 8px;
 }
 
+.prompt-dialog .setting-group-title {
+    user-select: none;
+}
+
 .prompt-dialog .switch-text {
     font-size: 14px;
     color: var(--text-color);
+    display: block;
+    user-select: none;
+}
+
+.prompt-dialog .switch-description {
+    font-size: small;
+    color: var(--text-color);
+    display: block;
+    user-select: none;
 }
 
 .settings-body {

@@ -42,7 +42,7 @@
         <div class="settings-body">
             <div class="main-page">
                 <div>
-                    <h4 data-locale="dialogs.settings.main.appearence">Appearence</h4>
+                    <h4 class="setting-group-title" data-locale="dialogs.settings.main.appearence">Appearence</h4>
                     <div class="setting top" style="gap: 10px; flex-wrap: wrap; justify-content: flex-start;">
                         <button id="theme-epaper" class="ball" data-locale="dialogs.settings.main.appearence.theme.epaper" style="background-color: #ffffff; color: #000000" onclick="Settings.setSetting('theme', 'theme-epaper');loadSettings(); updateSelectedTheme()">ePaper</button>
                         <button id="theme-light" class="ball" data-locale="dialogs.settings.main.appearence.theme.light" style="background-color: #ffffff; color: #3c3c3c" onclick="Settings.setSetting('theme', 'theme-light');loadSettings(); updateSelectedTheme()">Light</button>
@@ -81,7 +81,7 @@
                 </div>
 
                 <div>
-                    <h4 data-locale="dialogs.settings.main.language">Language</h4>
+                    <h4 class="setting-group-title" data-locale="dialogs.settings.main.language">Language</h4>
                     <div class="setting top">
                         <span class="switch-text" data-locale="dialogs.settings.main.language">Language</span>
                         <select id="language" onchange="Language.set(this.value)">
@@ -96,7 +96,7 @@
                 </div>
 
                 <div>
-                    <h4 data-locale="dialogs.settings.main.suggestions">Suggestions</h4>
+                    <h4 class="setting-group-title" data-locale="dialogs.settings.main.suggestions">Suggestions</h4>
                     <div class="setting top switch-wrapper">
                         <span class="switch-text" data-locale="dialogs.settings.main.suggestions.suggest-document-words">Suggest document words</span>
                         <label class="switch">
@@ -127,7 +127,7 @@
                     </div>
                 </div>
                 <div>
-                    <h4 data-locale="dialogs.settings.main.behavior">Behavior</h4>
+                    <h4 class="setting-group-title" data-locale="dialogs.settings.main.behavior">Behavior</h4>
                     <div class="setting top switch-wrapper">
                         <span class="switch-text" data-locale="dialogs.settings.main.behavior.auto-close-brackets">Auto-close brackets</span>
                         <label class="switch">
@@ -179,7 +179,7 @@
                     </div>
                 </div>
                 <div>
-                    <h4 data-locale="dialogs.settings.main.date-and-time">Date & Time</h4>
+                    <h4 class="setting-group-title" data-locale="dialogs.settings.main.date-and-time">Date & Time</h4>
                     <div class="setting top" style="display: flex; align-items: center; gap: 10px; justify-content: start;">
                         <input type="text" id="editorDate" style="max-width: 100%;" value="%d/%m/%Y %H:%M" onchange="Settings.setSetting('dateFormat', this.value)" />
                         <button class="icon-button" translate="no" title="Reset" onclick="document.getElementById('editorDate').value='%d/%m/%Y %H:%M'; Settings.setSetting('dateFormat', document.getElementById('editorDate').value); document.getElementById('editorDate').focus();">refresh</button>
@@ -188,8 +188,8 @@
                     <div class="setting">
                         <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                             <div>
-                                <p data-locale="dialogs.settings.main.date-and-time.day">Day</p>
-                                <div style="display: flex; flex-wrap: nowrap; gap: 5px">
+                                <span class="switch-text" data-locale="dialogs.settings.main.date-and-time.day">Day</span>
+                                <div style="display: flex; flex-wrap: nowrap; gap: 3px">
                                     <button class="text-button" translate="no" onclick="insertDateTimeOption('%A')" id="dateTimeBtn2" title="Full weekday name (e.g., 'Sunday')" data-locale-attr="title:dialogs.settings.main.date-and-time.day.tooltip.btn2">%A</button>
                                     <button class="text-button" translate="no" onclick="insertDateTimeOption('%a')" id="dateTimeBtn1" title="Abbreviated weekday name (e.g., 'Sun' for Sunday)" data-locale-attr="title:dialogs.settings.main.date-and-time.day.tooltip.btn1">%a</button>
                                     <button class="text-button" translate="no" onclick="insertDateTimeOption('%d')" id="dateTimeBtn3" title="Day of the month with leading zero (01-31)" data-locale-attr="title:dialogs.settings.main.date-and-time.day.tooltip.btn3">%d</button>
@@ -197,8 +197,8 @@
                                 </div>
                             </div>
                             <div>
-                                <p data-locale="dialogs.settings.main.date-and-time.month">Month</p>
-                                <div style="display: flex; flex-wrap: nowrap; gap: 5px">
+                                <span class="switch-text" data-locale="dialogs.settings.main.date-and-time.month">Month</span>
+                                <div style="display: flex; flex-wrap: nowrap; gap: 3px">
                                     <button class="text-button" translate="no" onclick="insertDateTimeOption('%B')" id="dateTimeBtn5" title="Full month name (e.g., 'September')" data-locale-attr="title:dialogs.settings.main.date-and-time.month.tooltip.btn5">%B</button>
                                     <button class="text-button" translate="no" onclick="insertDateTimeOption('%b')" id="dateTimeBtn4" title="Abbreviated month name (e.g., 'Sep' for September)" data-locale-attr="title:dialogs.settings.main.date-and-time.month.tooltip.btn4">%b</button>
                                     <button class="text-button" translate="no" onclick="insertDateTimeOption('%m')" id="dateTimeBtn6" title="Month as a number with leading zero (01-12)" data-locale-attr="title:dialogs.settings.main.date-and-time.month.tooltip.btn6">%m</button>
@@ -206,15 +206,15 @@
                                 </div>
                             </div>
                             <div>
-                                <p data-locale="dialogs.settings.main.date-and-time.year">Year</p>
-                                <div style="display: flex; flex-wrap: nowrap; gap: 5px">
+                                <span class="switch-text" data-locale="dialogs.settings.main.date-and-time.year">Year</span>
+                                <div style="display: flex; flex-wrap: nowrap; gap: 3px">
                                     <button class="text-button" translate="no" onclick="insertDateTimeOption('%Y')" id="dateTimeBtn8" title="Full year with century (e.g., '2024')" data-locale-attr="title:dialogs.settings.main.date-and-time.year.tooltip.btn8">%Y</button>
                                     <button class="text-button" translate="no" onclick="insertDateTimeOption('%y')" id="dateTimeBtn7" title="Year without century, as two digits (e.g., '24' for 2024)" data-locale-attr="title:dialogs.settings.main.date-and-time.year.tooltip.btn7">%y</button>
                                 </div>
                             </div>
                             <div>
-                                <p data-locale="dialogs.settings.main.date-and-time.hour">Hour</p>
-                                <div style="display: flex; flex-wrap: nowrap; gap: 5px">
+                                <span class="switch-text" data-locale="dialogs.settings.main.date-and-time.hour">Hour</span>
+                                <div style="display: flex; flex-wrap: nowrap; gap: 3px">
                                     <button class="text-button" translate="no" onclick="insertDateTimeOption('%H')" id="dateTimeBtn9" title="Hour (24-hour clock) with leading zero (00-23)" data-locale-attr="title:dialogs.settings.main.date-and-time.hour.tooltip.btn9">%H</button>
                                     <button class="text-button" translate="no" onclick="insertDateTimeOption('%-H')" id="dateTimeBtn16" title="Hour (24-hour clock) without leading zero (0-23)" data-locale-attr="title:dialogs.settings.main.date-and-time.hour.tooltip.btn16">%-H</button>
                                     <button class="text-button" translate="no" onclick="insertDateTimeOption('%I')" id="dateTimeBtn10" title="Hour (12-hour clock) with leading zero (01-12)" data-locale-attr="title:dialogs.settings.main.date-and-time.hour.tooltip.btn10">%I</button>
@@ -223,15 +223,15 @@
                                 </div>
                             </div>
                             <div>
-                                <p data-locale="dialogs.settings.main.date-and-time.minute">Minute</p>
-                                <div style="display: flex; flex-wrap: nowrap; gap: 5px">
+                                <span class="switch-text" data-locale="dialogs.settings.main.date-and-time.minute">Minute</span>
+                                <div style="display: flex; flex-wrap: nowrap; gap: 3px">
                                     <button class="text-button" translate="no" onclick="insertDateTimeOption('%M')" id="dateTimeBtn12" title="Minute with leading zero (00-59)" data-locale-attr="title:dialogs.settings.main.date-and-time.minute.tooltip.btn12">%M</button>
                                     <button class="text-button" translate="no" onclick="insertDateTimeOption('%-M')" id="dateTimeBtn18" title="Minute without leading zero (0-59)" data-locale-attr="title:dialogs.settings.main.date-and-time.minute.tooltip.btn18">%-M</button>
                                 </div>
                             </div>
                             <div>
-                                <p data-locale="dialogs.settings.main.date-and-time.second">Second</p>
-                                <div style="display: flex; flex-wrap: nowrap; gap: 5px">
+                                <span class="switch-text" data-locale="dialogs.settings.main.date-and-time.second">Second</span>
+                                <div style="display: flex; flex-wrap: nowrap; gap: 3px">
                                     <button class="text-button" translate="no" onclick="insertDateTimeOption('%S')" id="dateTimeBtn13" title="Second with leading zero (00-59)" data-locale-attr="title:dialogs.settings.main.date-and-time.second.tooltip.btn13">%S</button>
                                     <button class="text-button" translate="no" onclick="insertDateTimeOption('%-S')" id="dateTimeBtn19" title="Second without leading zero (0-59)" data-locale-attr="title:dialogs.settings.main.date-and-time.second.tooltip.btn19">%-S</button>
                                 </div>
@@ -244,7 +244,7 @@
                     </div>
                 </div>
                 <div>
-                    <h4 data-locale="dialogs.settings.main.document-metadata">Document metadata</h4>
+                    <h4 class="setting-group-title" data-locale="dialogs.settings.main.document-metadata">Document metadata</h4>
                     <div class="setting top">
                         <button class="text-button" onclick="editEditorMeta();" data-locale="dialogs.settings.main.document-metadata.edit-metadata">Edit metadata</button>
                         <button class="icon-button" translate="no" title="Reset" onclick="resetEditorMeta();">refresh</button>
@@ -263,7 +263,7 @@
                 </div>
 
                 <div>
-                    <h4 data-locale="dialogs.settings.main.status-bar">Status bar</h4>
+                    <h4 class="setting-group-title" data-locale="dialogs.settings.main.status-bar">Status bar</h4>
                     <div class="setting top switch-wrapper">
                         <span class="switch-text" data-locale="dialogs.settings.main.status-bar">Status bar</span>
                         <label class="switch">
@@ -295,7 +295,7 @@
                 </div>
                 <div>
                     <div>
-                        <h4 data-locale="dialogs.settings.main.backups" id="setting-data">Backups</h4>
+                        <h4 class="setting-group-title" data-locale="dialogs.settings.main.backups" id="setting-data">Backups</h4>
                         <div class="setting top bottom switch-wrapper">
                             <span class="switch-text" data-locale="dialogs.settings.main.backups.backup-reminder">Monthly backup reminders</span>
                             <label class="switch">
@@ -306,8 +306,8 @@
 
                         <div class="setting top">
                             <div>
-                                <h5 class="setting-subtitle" data-locale="dialogs.settings.main.backups.download-backup">Download backup</h5>
-                                <span class="switch-text" data-locale="dialogs.settings.main.backups.download-backup.description">Export your documents as a zip file</span>
+                                <span class="switch-text" data-locale="dialogs.settings.main.backups.download-backup">Download backup</span>
+                                <span class="switch-description" data-locale="dialogs.settings.main.backups.download-backup.description">Export your documents as a zip file</span>
                             </div>
                             <div>
                                 <button class="text-button" onclick="exportBook();" data-locale="dialogs.settings.main.backups.export">Export</button>
@@ -316,8 +316,8 @@
 
                         <div class="setting">
                             <div>
-                                <h5 class="setting-subtitle" data-locale="dialogs.settings.main.backups.import-backup">Import backup</h5>
-                                <span class="switch-text" data-locale="dialogs.settings.main.backups.import-backup.description">Import documents from a zip file</span>
+                                <span class="switch-text" data-locale="dialogs.settings.main.backups.import-backup">Import backup</span>
+                                <span class="switch-description" data-locale="dialogs.settings.main.backups.import-backup.description">Import documents from a zip file</span>
                             </div>
                             <div>
                                 <button class="text-button" onclick="importBook();" data-locale="dialogs.settings.main.backups.import">Import</button>
@@ -326,8 +326,8 @@
                         
                         <div class="setting bottom">
                             <div>
-                                <h5 class="setting-subtitle" data-locale="dialogs.settings.main.backups.replace-with-backup">Replace with backup</h5>
-                                <span class="switch-text" data-locale="dialogs.settings.main.backups.replace-with-backup.description">Import documents from a zip file, replacing your files</span>
+                                <span class="switch-text" data-locale="dialogs.settings.main.backups.replace-with-backup">Replace with backup</span>
+                                <span class="switch-description" data-locale="dialogs.settings.main.backups.replace-with-backup.description">Import documents from a zip file, replacing your files</span>
                             </div>
                             <div>
                                 <button class="text-button danger" onclick="handleImportDeleteBook();" data-locale="dialogs.settings.main.backups.replace">Replace</button>
@@ -336,8 +336,8 @@
 
                         <div class="setting top bottom">
                             <div>
-                                <h5 class="setting-subtitle" data-locale="dialogs.settings.main.backups.delete-empty-files">Delete empty files</h5>
-                                <span class="switch-text" data-locale="dialogs.settings.main.backups.delete-empty-files.description">Delete all files without any text or meta</span>
+                                <span class="switch-text" data-locale="dialogs.settings.main.backups.delete-empty-files">Delete empty files</span>
+                                <span class="switch-description" data-locale="dialogs.settings.main.backups.delete-empty-files.description">Delete all files without any text or meta</span>
                             </div>
                             <div>
                                 <button class="text-button danger" onclick="handleDeleteEmptyFiles();" data-locale="dialogs.settings.main.backups.delete">Delete</button>
