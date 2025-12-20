@@ -142,7 +142,9 @@
                     div.className = "fsfile";
                     div.setAttribute('translate', 'no');
                     div.addEventListener("dblclick", () => {
-                        copyPath(file.name);
+                        insertAt("![ALT](resources/"+file.name+")",2,5);
+                        closeAllDialogs();
+                        editor.focus();
                     });
                     div.innerHTML = `
                         <span class="icon">
