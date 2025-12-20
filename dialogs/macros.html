@@ -103,8 +103,8 @@
             if (!list.length) {
                 container.innerHTML = `<div class="macro-empty-state">
                     <img src="cohesion/file-icons/floppy.svg" alt="No files" class="empty-icon">
-                    <h2>Nothing here</h2>
-                    <p>Create macros to trigger automation directly through slash-commands.</p></div>`;
+                    <h2 data-locale="dialog.macros.empty-title">Nothing here</h2>
+                    <p data-locale="dialog.macros.empty-description">Create macros to trigger automation directly through slash-commands.</p></div>`;
                 return;
             }
 
@@ -116,20 +116,19 @@
                     <div class="macro-icon" translate="no">${macro.icon || "action_key"}</div>
                     <div>
                         <div class="macro-title" translate="no">${macro.name}</div>
-                        <div class="macro-desc">by ${macro.author || ""}</div>
+                        <div class="macro-desc" data-locale="dialog.macros.macro.author" data-locale-vars='${JSON.stringify({author: macro.author || ""})}'>by ${macro.author || ""}</div>
                     </div>
 
                     <div class="dropdown" style="position:absolute; top:8px; right:8px;">
                         <button class="icon-button" translate="no" onclick="toggleDropdown('mac${index}')">more_vert</button>
                         <div class="menu dropdown-content" id="mac${index}">
-                            <button class="text-button" onclick="editMacroCode(${index})">Edit code</button>
+                            <button class="text-button" onclick="editMacroCode(${index})" data-locale="dialog.macros.macro.edit-code">Edit code</button>
+                            <button class="text-button" onclick="editMacroInfo(${index})" data-locale="dialog.macros.macro.properties">Properties</button>
                             <hr>
-                            <button class="text-button" onclick="Macros.export(${index});">Download</button>
+                            <button class="text-button" onclick="Macros.export(${index});" data-locale="dialog.macros.macro.download">Download</button>
+                            <button class="text-button" onclick="runMacro(${index})" data-locale="dialog.macros.macro.run">Run</button>
                             <hr>
-                            <button class="text-button" onclick="editMacroInfo(${index})">Properties</button>
-                            <button class="text-button" onclick="runMacro(${index})">Run</button>
-                            <hr>
-                            <button class="text-button danger" onclick="deleteMacro(${index})">Delete</button>
+                            <button class="text-button danger" onclick="deleteMacro(${index})" data-locale="dialog.macros.macro.delete">Delete</button>
                         </div>
                     </div>
                 `;
@@ -138,6 +137,10 @@
                 });
                 container.appendChild(div);
             });
+
+            cacheOriginalContent();
+            cacheOriginalAttributes();
+            applyLanguage();
         }
 
         (function allowDragDrop() {

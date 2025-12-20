@@ -19,6 +19,10 @@
     },
 
     "strings": {
+        "GENERIC": {
+            "generic.more-menu": "Mais opções"
+        },
+
         "ABOUT": {
             "MAIN": {
                 "dialogs.about.main.landing-page": "Página inicial",
@@ -44,8 +48,69 @@
             "LEGAL": {
                 "dialogs.about.credits.general-inspiration.design-guidelines": "Diretrizes de design",
                 "dialogs.about.legal.back": "Voltar",
-                "dialogs.about.legal.notice": "Este aplicativo não oferece absolutamente nenhuma garantia. Ele é licenciado sob a <a href='https://www.gnu.org/licenses/gpl-3.0.pt-br.html' target='_blank'>GNU GPL v3</a>."
+                "dialogs.about.legal.notice": "Este aplicativo não oferece absolutamente nenhuma garantia. Ele é licenciado sob a {licenseLink}."
             }
+        },
+
+        "CHEATSHEET": {
+            "dialogs.cheatsheet.headers": "Títulos",
+            "dialogs.cheatsheet.headers.header1": "Título 1",
+            "dialogs.cheatsheet.headers.header2": "Título 2",
+            "dialogs.cheatsheet.headers.header3": "Título 3",
+            "dialogs.cheatsheet.styling": "Estilo",
+            "dialogs.cheatsheet.styling.emphasize": "Enfatizar.",
+            "dialogs.cheatsheet.styling.strong": "Grifar.",
+            "dialogs.cheatsheet.styling.marked-text": "Texto demarcado.",
+            "dialogs.cheatsheet.styling.mistaken-text": "Texto incorreto.",
+            "dialogs.cheatsheet.styling.underlined-text": "Texto sublinhado.",
+            "dialogs.cheatsheet.styling.quoted-text": "Texto citado.",
+            "dialogs.cheatsheet.styling.subscript": "<span style='opacity: 50%;'>H</span>~<sub style='opacity: 50%;'>2</sub>~<span style='opacity: 50%;'>O é um liquido.</span>",
+            "dialogs.cheatsheet.styling.superscript": "<span style='opacity: 50%;'>2</span>^<sup style='opacity: 50%;'>10</sup>^<span style='opacity: 50%;'> é 1024.</span>",
+            "dialogs.cheatsheet.lists": "Listas",
+            "dialogs.cheatsheet.lists.ul.item": "Item",
+            "dialogs.cheatsheet.lists.ol.item-1": "Primeiro item",
+            "dialogs.cheatsheet.lists.ol.item-2": "Segundo item",
+            "dialogs.cheatsheet.lists.ol.item-3": "Terceiro item",
+            "dialogs.cheatsheet.lists.tl.incomplete": "Item incompleto",
+            "dialogs.cheatsheet.lists.tl.complete": "Item completo",
+            "dialogs.cheatsheet.links": "Links",
+            "dialogs.cheatsheet.links.link-1": "<span style='opacity: 50%;'>Visite</span> &lt;https://example.com&gt;<span style='opacity: 50%;'>.</span>",
+            "dialogs.cheatsheet.links.link-2": "<span style='opacity: 50%;'>Um</span> [link](https://example.com)<span style='opacity: 50%;'>.</span>",
+            "dialogs.cheatsheet.links.link-3": "<span style='opacity: 50%;'>Um endereço de email:</span> &lt;mail@example.com&gt;<span style='opacity: 50%;'>.</span>",
+            "dialogs.cheatsheet.links.link-4": "<span style='opacity: 50%;'>Uma imagem:</span> ![Alt](resources/image.png)<span style='opacity: 50%;'>.</span>",
+            "dialogs.cheatsheet.code": "Código",
+            "dialogs.cheatsheet.code.inline": "<span style='opacity: 50%;'>Um </span>`<code style='opacity: 50%;'>código em linha</code>`<span style='opacity: 50%;'>.</span>",
+            "dialogs.cheatsheet.code.block": "// Um bloco de código",
+            "dialogs.cheatsheet.code.highlighted": "// Um bloco de código demarcado",
+            "dialogs.cheatsheet.tables": "Tabelas",
+            "dialogs.cheatsheet.tables.table-1": "Item       | Valor\n---------- | -----\nComputador | $1600\nTelefone   | $12\nCano       | $1",
+            "dialogs.cheatsheet.tables.table-2": "|   Coluna 1   |           Coluna 2 |\n|:------------:| ------------------:|\n| Centralizado | alinhado à direita |",
+            "dialogs.cheatsheet.definition-lists": "Listas de definição",
+            "dialogs.cheatsheet.definition-lists-definition": "Ferramenta de conversão de texto-para-HTML",
+            "dialogs.cheatsheet.abbreviations": "Abreviações",
+            "dialogs.cheatsheet.abbreviations.html": "<span style='opacity: 50%;'>Markdown converte texto para </span> <abbr title='Linguagem de Marcação de HiperTexto'>HTML</abbr><span style='opacity: 50%;'>.</span><br>\n\n*[HTML]: Linguagem de Marcação de HiperTexto",
+            "dialogs.cheatsheet.learn-more": "Visite a {cohesionWiki} para aprender mais."
+        },
+
+        "MACROS": {
+            "dialog.macros.empty-title": "Nada aqui",
+            "dialog.macros.empty-description": "Crie macros para ativar automações diretamente através de comandos de barra.",
+            "dialog.macros.macro.author": "por {author}",
+            "dialog.macros.macro.edit-code": "Editar código",
+            "dialog.macros.macro.properties": "Propriedades",
+            "dialog.macros.macro.download": "Baixar",
+            "dialog.macros.macro.run": "Executar",
+            "dialog.macros.macro.delete": "Deletar",
+            "dialog.macros.header.create-macro": "Criar macro",
+            "dialog.macros.header.import-macro": "Importar macro",
+            "dialog.macros.header.about-scripting": "Sobre scripts",
+            "prompts.prompt-macro-info.title": "Editar informações do macro",
+            "prompts.prompt-macro-info.name-label": "Nome",
+            "prompts.prompt-macro-info.desc-label": "Descrição",
+            "prompts.prompt-macro-info.auth-label": "Autor(a)",
+            "prompts.prompt-macro-info.icon-label": "Ícone (Material Symbols Rounded)",
+            "prompts.prompt-macro-info.cancel-button": "Cancelar",
+            "prompts.prompt-macro-info.submit-button": "Salvar"
         },
 
         "SETTINGS": {
@@ -143,46 +208,6 @@
                 "dialogs.settings.main.backups.delete-empty-files.description": "Deletar todos arquivos que não tenham nenhum texto ou meta",
                 "dialogs.settings.main.backups.delete": "Deletar"
             }
-        },
-
-        "CHEATSHEET": {
-            "dialogs.cheatsheet.headers": "Títulos",
-            "dialogs.cheatsheet.headers.header1": "Título 1",
-            "dialogs.cheatsheet.headers.header2": "Título 2",
-            "dialogs.cheatsheet.headers.header3": "Título 3",
-            "dialogs.cheatsheet.styling": "Estilo",
-            "dialogs.cheatsheet.styling.emphasize": "Enfatizar.",
-            "dialogs.cheatsheet.styling.strong": "Grifar.",
-            "dialogs.cheatsheet.styling.marked-text": "Texto demarcado.",
-            "dialogs.cheatsheet.styling.mistaken-text": "Texto incorreto.",
-            "dialogs.cheatsheet.styling.underlined-text": "Texto sublinhado.",
-            "dialogs.cheatsheet.styling.quoted-text": "Texto citado.",
-            "dialogs.cheatsheet.styling.subscript": "<span style='opacity: 50%;'>H</span>~<sub style='opacity: 50%;'>2</sub>~<span style='opacity: 50%;'>O é um liquido.</span>",
-            "dialogs.cheatsheet.styling.superscript": "<span style='opacity: 50%;'>2</span>^<sup style='opacity: 50%;'>10</sup>^<span style='opacity: 50%;'> é 1024.</span>",
-            "dialogs.cheatsheet.lists": "Listas",
-            "dialogs.cheatsheet.lists.ul.item": "Item",
-            "dialogs.cheatsheet.lists.ol.item-1": "Primeiro item",
-            "dialogs.cheatsheet.lists.ol.item-2": "Segundo item",
-            "dialogs.cheatsheet.lists.ol.item-3": "Terceiro item",
-            "dialogs.cheatsheet.lists.tl.incomplete": "Item incompleto",
-            "dialogs.cheatsheet.lists.tl.complete": "Item completo",
-            "dialogs.cheatsheet.links": "Links",
-            "dialogs.cheatsheet.links.link-1": "<span style='opacity: 50%;'>Visite</span> &lt;https://example.com&gt;<span style='opacity: 50%;'>.</span>",
-            "dialogs.cheatsheet.links.link-2": "<span style='opacity: 50%;'>Um</span> [link](https://example.com)<span style='opacity: 50%;'>.</span>",
-            "dialogs.cheatsheet.links.link-3": "<span style='opacity: 50%;'>Um endereço de email:</span> &lt;mail@example.com&gt;<span style='opacity: 50%;'>.</span>",
-            "dialogs.cheatsheet.links.link-4": "<span style='opacity: 50%;'>Uma imagem:</span> ![Alt](resources/image.png)<span style='opacity: 50%;'>.</span>",
-            "dialogs.cheatsheet.code": "Código",
-            "dialogs.cheatsheet.code.inline": "<span style='opacity: 50%;'>Um </span>`<code style='opacity: 50%;'>código em linha</code>`<span style='opacity: 50%;'>.</span>",
-            "dialogs.cheatsheet.code.block": "// Um bloco de código",
-            "dialogs.cheatsheet.code.highlighted": "// Um bloco de código demarcado",
-            "dialogs.cheatsheet.tables": "Tabelas",
-            "dialogs.cheatsheet.tables.table-1": "Item       | Valor\n---------- | -----\nComputador | $1600\nTelefone   | $12\nCano       | $1",
-            "dialogs.cheatsheet.tables.table-2": "|   Coluna 1   |           Coluna 2 |\n|:------------:| ------------------:|\n| Centralizado | alinhado à direita |",
-            "dialogs.cheatsheet.definition-lists": "Listas de definição",
-            "dialogs.cheatsheet.definition-lists-definition": "Ferramenta de conversão de texto-para-HTML",
-            "dialogs.cheatsheet.abbreviations": "Abreviações",
-            "dialogs.cheatsheet.abbreviations.html": "<span style='opacity: 50%;'>Markdown converte texto para </span> <abbr title='Linguagem de Marcação de HiperTexto'>HTML</abbr><span style='opacity: 50%;'>.</span><br>\n\n*[HTML]: Linguagem de Marcação de HiperTexto",
-            "dialogs.cheatsheet.learn-more": "Visite a <a href='https://github.com/flarom/cohesion/wiki'>Cohesion Wiki</a> para aprender mais."
         }
     }
 }

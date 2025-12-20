@@ -1546,16 +1546,16 @@
 
             function showMacrosDialog() {
                 let leftPane = `
-                <button class='icon-button' onclick='createMacro()' translate='no' title='Create macro'>add</button>
-                <button class='icon-button' onclick='importMacro()' translate='no' title='Import macro'>folder_open</button>
+                <button class='icon-button' onclick='createMacro()' translate='no' title='Create macro' data-locale-attr='title:dialog.macros.header.create-macro'>add</button>
+                <button class='icon-button' onclick='importMacro()' translate='no' title='Import macro' data-locale-attr='title:dialog.macros.header.import-macro'>folder_open</button>
                 `
                 
                 let rightpane =
                 `
                 <div class='dropdown'>
-                    <button class='icon-button' onmousedown='toggleDropdown("macros-more-menu")' translate='no' title='More options'>more_vert</button>
+                    <button class='icon-button' onmousedown='toggleDropdown("macros-more-menu")' translate='no' title='More options' data-locale-attr='title:generic.more-menu'>more_vert</button>
                     <div class='dropdown-content menu' id='macros-more-menu'>
-                        <button class='text-button' onclick='window.open("https://github.com/flarom/cohesion/wiki/Scripting")'>About scripting</button>
+                        <button class='text-button' onclick='window.open("https://github.com/flarom/cohesion/wiki/Scripting")' data-locale='dialog.macros.header.about-scripting'>About scripting</button>
                     </div>
                 </div>
                 `

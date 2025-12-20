@@ -2085,11 +2085,13 @@ async function promptMacroInfo(macro = {}) {
         const title = document.createElement("p");
         title.className = "prompt-title";
         title.textContent = "Edit macro info";
+        title.setAttribute("data-locale","prompts.prompt-macro-info.title");
         dialog.appendChild(title);
 
         // NAME
         const nameLabel = document.createElement("label");
         nameLabel.textContent = "Name";
+        nameLabel.setAttribute("data-locale","prompts.prompt-macro-info.name-label");
         const nameInput = document.createElement("input");
         nameInput.type = "text";
         nameInput.value = macro.name || "";
@@ -2099,6 +2101,7 @@ async function promptMacroInfo(macro = {}) {
         // DESCRIPTION
         const descLabel = document.createElement("label");
         descLabel.textContent = "Description";
+        descLabel.setAttribute("data-locale","prompts.prompt-macro-info.desc-label");
         const descInput = document.createElement("input");
         descInput.type = "text";
         descInput.value = macro.description || "";
@@ -2108,6 +2111,7 @@ async function promptMacroInfo(macro = {}) {
         // AUTHOR
         const authLabel = document.createElement("label");
         authLabel.textContent = "Author";
+        authLabel.setAttribute("data-locale","prompts.prompt-macro-info.auth-label");
         const authInput = document.createElement("input");
         authInput.type = "text";
         authInput.value = macro.author || "";
@@ -2117,6 +2121,7 @@ async function promptMacroInfo(macro = {}) {
         // ICON
         const iconLabel = document.createElement("label");
         iconLabel.textContent = "Icon (Material Symbols Rounded)";
+        iconLabel.setAttribute("data-locale","prompts.prompt-macro-info.icon-label");
         dialog.appendChild(iconLabel);
 
         const iconRow = document.createElement("div");
@@ -2178,10 +2183,12 @@ async function promptMacroInfo(macro = {}) {
 
         const cancelButton = document.createElement("button");
         cancelButton.textContent = "Cancel";
+        cancelButton.setAttribute("data-locale","prompts.prompt-macro-info.cancel-button");
         cancelButton.className = "prompt-button cancel";
 
         const submitButton = document.createElement("button");
         submitButton.textContent = "Save";
+        submitButton.setAttribute("data-locale","prompts.prompt-macro-info.submit-button");
         submitButton.className = "prompt-button submit";
 
         buttonContainer.appendChild(cancelButton);
@@ -2216,6 +2223,9 @@ async function promptMacroInfo(macro = {}) {
             }
         });
 
+        cacheOriginalContent();
+        cacheOriginalAttributes();
+        applyLanguage();
         nameInput.focus();
     });
 }

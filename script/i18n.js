@@ -44,7 +44,17 @@ const I18n = {
         // applies translation based on id
         document.querySelectorAll("[data-locale]").forEach((el) => {
             const key = el.dataset.locale;
-            const value = data.strings[key];
+            let value = data.strings[key];
+            if (!value) return;
+
+            if (el.dataset.localeVars) {
+                try {
+                    const vars = JSON.parse(el.dataset.localeVars);
+                    value = interpolate(value, vars);
+                } catch (e) {
+                    console.warn("Invalid data-locale-vars", el, e);
+                }
+            }
             if (!value) return;
 
             // allow html
@@ -73,6 +83,12 @@ const I18n = {
         return this.cache[lang]?.meta || null;
     },
 };
+
+function interpolate(str, vars = {}) {
+    return str.replace(/\{(\w+)\}/g, (_, key) => {
+        return vars[key] ?? "";
+    });
+}
 
 // Cache original English text
 function cacheOriginalContent() {
