@@ -313,6 +313,11 @@
     filter: brightness(.6);
 }
 
+.preview .media-container.no-title:hover img,
+.preview .media-container.no-title:hover video {
+    filter: brightness(1);
+}
+
 .preview .media-container:hover video:fullscreen {
     filter: brightness(1);
     border-radius: 0px;

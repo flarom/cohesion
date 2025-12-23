@@ -2111,8 +2111,12 @@
                 imgTag += " />";
                 mediaTag = imgTag;
             }
+            
+            if (title != "") {
+                return '<div class="media-container">' + mediaTag + "<div><span class='alt'>" + title + " </span><span class='url'>&lt;" + url + "&gt;</span></div></div>";
+            }
 
-            return '<div class="media-container">' + mediaTag + "<div><span class='alt'>" + altText + " </span><span class='url'>&lt;" + url + "&gt;</span></div></div>";
+            return '<div class="media-container no-title">' + mediaTag + "</div>";
         }
 
         function writeMediaTagBase64(wholeMatch, altText, linkId, url, width, height, m5, title) {
