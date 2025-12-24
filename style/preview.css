@@ -39,31 +39,34 @@
 .preview h1 {
     font-size: 2.5rem;
     margin: 1.5rem 0;
+    border-bottom: 1px solid var(--border-light-color);
 }
 
 .preview h2 {
     font-size: 2rem;
     margin: 1.4rem 0;
+    border-bottom: 1px solid var(--border-light-color);
 }
 
 .preview h3 {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     margin: 1.3rem 0;
 }
 
 .preview h4 {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     margin: 1.2rem 0;
 }
 
 .preview h5 {
-    font-size: 1.25rem;
+    font-size: 1rem;
     margin: 1.1rem 0;
 }
 
 .preview h6 {
     font-size: 1rem;
     margin: 1rem 0;
+    opacity: 75%;
 }
 
 /* rules */
