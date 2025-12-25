@@ -1342,7 +1342,7 @@
                             c.match(/^hsl\(\s*\d+\.?\d*\s*,?\s*\d+\.?\d*%?\s*,?\s*\d+\.?\d*%?\s*\)$/i);
 
             if (colorMatch) {
-                c = m1 + `<span class="colorSwatch" data-color="${c}" style="background-color:${c};" onclick="promptColorInfo('${c}')"></span><code>${c}</code>`;
+                c = m1 + `<code class="colorCode">${c}<span class="colorSwatch" data-color="${c}" style="background-color:${c};" onclick="promptColorInfo('${c}')"></span></code>`;
             } else {
                 c = m1 + "<code>" + c + "</code>";
             }

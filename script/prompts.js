@@ -1230,52 +1230,46 @@ async function promptSaveFile(fileId) {
                 // defualt metadata values
                 const defaultMeta = {
                     title: "New document",
-                    author: "*",
-                    date: "*",
+                    author: "unknown",
+                    date: "unknown",
                     tags: "uncategorized",
-                    description: "*",
+                    description: "none",
                 };
 
                 const meta = { ...defaultMeta, ...metadata };
 
                 // HTML meta
-                const metaTags = `
-                    <meta name="title" content="${meta.title}">
-                    <meta name="author" content="${meta.author}">
-                    <meta name="date" content="${meta.date}">
-                    <meta name="keywords" content="${meta.tags}">
-                    <meta name="description" content="${meta.description}">
-                `;
+                const metaTags = `<meta name="title" content="${meta.title}">
+<meta name="author" content="${meta.author}">
+<meta name="date" content="${meta.date}">
+<meta name="keywords" content="${meta.tags}">
+<meta name="description" content="${meta.description}">
+<meta name="generator" content="Cohesion" />`;
 
                 // Build HTML file
                 const htmlContainer = document.createElement("html");
                 htmlContainer.lang = "en";
-                htmlContainer.innerHTML = `
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>${fileNameField.value}</title>
-            ${metaTags}
-            <!-- cohesion basic style for md documents -->
-            <style>
-                body {
-                    max-width: 900px;
-                    margin: 0 auto;
-                    * { max-width: 900px; }
-                }
-                table { border-collapse: collapse; }
-                table, th, td { border: 1px solid black; }
-                th, td { padding: 5px; text-align: left; }
-            </style>
-        </head>
-        <body>
-            ${tempDiv.innerHTML}
-        </body>
-    `;
+                htmlContainer.innerHTML = `<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${fileNameField.value}.html</title>
+${metaTags}
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+${tempDiv.innerHTML}
+</body>`;
 
                 // Create ZIP
                 const zip = new JSZip();
                 zip.file("index.html", "<!DOCTYPE html>\n" + htmlContainer.outerHTML);
+
+                // Add exported HTML CSS as root style.css
+                const cssResponse = await fetch("./style/exportedHtmlDocument.css");
+                if (cssResponse.ok) {
+                    const cssText = await cssResponse.text();
+                    zip.file("style.css", cssText);
+                }
 
                 // Add resources
                 await Promise.all(usedResources.map(async (fileName) => {

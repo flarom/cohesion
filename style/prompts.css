@@ -719,7 +719,7 @@ h5.setting-subtitle {
 #color-scheme-colors {
     margin: 12px 0;
     display: flex;
-    gap: 2px;
+    gap: 4px;
     flex-wrap: wrap;
     justify-content: center;
 }
@@ -727,21 +727,13 @@ h5.setting-subtitle {
 .color-scheme-box {
     width: 24px;
     height: 24px;
-    border-radius: 3px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: width 0.3s;
-}
-
-.color-scheme-box:first-of-type {
-    border-radius: 10px 3px 3px 10px;
-}
-
-.color-scheme-box:last-of-type {
-    border-radius: 3px 10px 10px 3px;
+    transition: border-radius 0.3s;
 }
 
 .color-scheme-box:hover {
-    width: 48px;
+   border-radius: 6px;
 }
 
 #color-scheme-container {

@@ -2,7 +2,7 @@
     width: 100%;
     box-sizing: border-box;
     padding-block: 15px;
-    padding-inline: max(15px, calc((100% - 1244px) / 2));
+    padding-inline: max(15px, calc((100% - 900px) / 2));
     max-height: calc(100vh - 48px);
     margin: 0;
     color: var(--text-color);
@@ -67,6 +67,10 @@
     font-size: 1rem;
     margin: 1rem 0;
     opacity: 75%;
+}
+
+.preview p {
+    margin-top: 0;
 }
 
 /* rules */
@@ -250,13 +254,21 @@
     user-select: all;
 }
 
+.preview code.colorCode {
+    position: relative;
+    padding-right: 1.5em;
+}
+
 .preview .colorSwatch {
-    display: inline-block;
-    width: 1em;
-    height: 1em;
-    vertical-align: middle;
-    border-radius: 12px;
-    margin-right: 2px;
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: .5em;
+    height: .5em;
+    padding: 2px;
+    border-radius: .5em;
     box-shadow: var(--shadow-light);
     cursor: pointer;
 
@@ -264,7 +276,7 @@
 }
 
 .colorSwatch:hover {
-    border-radius: 6px;
+    border-radius: .2em;
 }
 
 /* images */

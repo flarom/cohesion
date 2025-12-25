@@ -1,0 +1,269 @@
+/*
+   COLOR PALETTE
+   Edit only this section to customize the theme colors
+*/
+
+/* Light theme */
+:root {
+    /* Background colors */
+    --bg: #f5f5f5;        /* Page background */
+    --bg-soft: #ffffff;  /* Cards, tables, code blocks */
+
+    /* Text colors */
+    --text: #2e3436;      /* Main text */
+    --text-soft: #3c3c3c; /* Secondary / muted text */
+
+    /* Borders */
+    --border: #dddddd;        /* Default border */
+    --border-strong: #050505; /* High contrast border */
+
+    /* Links */
+    --anchor: #0d71de;
+
+    /* Accent colors (used in blockquotes, highlights, etc.) */
+    --accent-blue:   #2178ca;
+    --accent-green:  #2fca21;
+    --accent-purple: #9421ca;
+    --accent-yellow: #caa321;
+    --accent-red:    #ca2121;
+}
+
+/* Dark theme */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #282828;
+        --bg-soft: #303030;
+
+        --text: #ffffff;
+        --text-soft: #dddddd;
+
+        --border: #6e6e6e;
+        --border-strong: #050505;
+
+        --anchor: #99c1f1;
+
+        --accent-blue:   #818eff;
+        --accent-green:  #9aff81;
+        --accent-purple: #dd92ff;
+        --accent-yellow: #fff781;
+        --accent-red:    #ff8881;
+    }
+}
+
+
+/*
+   GLOBAL LAYOUT
+*/
+
+body {
+    max-width: 900px;
+    margin: 5vh auto;
+    background-color: var(--bg);
+    color: var(--text);
+}
+
+
+/*
+   TEXT ELEMENTS
+*/
+
+/* Paragraphs */
+p {
+    margin-top: 0;
+    color: var(--text-soft);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text);
+}
+
+/* Links */
+a {
+    color: var(--anchor);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+/*
+   MEDIA
+*/
+
+/* Images should never overflow the container */
+img, video {
+    max-width: 100%;
+}
+
+
+/*
+   BLOCKQUOTES
+*/
+
+blockquote {
+    border-left: 2px solid var(--border);
+    margin-left: 19px;
+    padding-left: 19px;
+    color: var(--text-soft);
+}
+
+/* Colored blockquote variants */
+blockquote.quote-blue   { border-left-color: var(--accent-blue); }
+blockquote.quote-green  { border-left-color: var(--accent-green); }
+blockquote.quote-purple { border-left-color: var(--accent-purple); }
+blockquote.quote-yellow { border-left-color: var(--accent-yellow); }
+blockquote.quote-red    { border-left-color: var(--accent-red); }
+
+/* Optional label inside blockquotes */
+blockquote .quote-label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Icon inside quote labels */
+blockquote .quote-label .icon {
+    font-family: "Material Symbols Rounded";
+    user-select: none;
+}
+
+
+/*
+   HORIZONTAL RULES
+*/
+
+hr {
+    border: 0;
+    border-bottom: 1px solid var(--border);
+}
+
+/* Horizontal rule with centered text */
+.text-hr {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1em 0;
+}
+
+.text-hr::before,
+.text-hr::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+
+/*
+   TABLES
+*/
+
+/* Wrapper to allow horizontal scrolling */
+.table-container {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    border-collapse: collapse;
+    max-width: 100%;
+}
+
+table,
+th,
+td {
+    border: 1px solid var(--border);
+}
+
+th {
+    background-color: var(--bg-soft);
+}
+
+th,
+td {
+    padding: 5px;
+    text-align: left;
+}
+
+
+/*
+   ICON BUTTONS
+*/
+
+.icon-button {
+    font-family: "Material Symbols Rounded";
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-soft);
+}
+
+
+/*
+   CODE BLOCKS
+*/
+
+/* Main container for code blocks */
+.code-container {
+    position: relative;
+    margin: 20px 0;
+    border: 1px solid var(--border);
+    background-color: var(--bg-soft);
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 0;
+}
+
+/* <pre> inside code containers */
+.code-container pre,
+.code-container pre.ghcodeblock {
+    margin: 0;
+    border-radius: 10px;
+    background: none;
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 18px 10px 10px;
+    position: relative;
+}
+
+/* <code> inside <pre> */
+.code-container code {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    font-size: medium;
+    box-shadow: none;
+    user-select: auto;
+}
+
+/* Header area for code actions (copy button, etc.) */
+.code-container .code-head {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-end;
+    background: none;
+    padding: 0;
+    border-radius: 8px;
+}
+
+/*
+   INLINE COLOR PREVIEW
+*/
+
+/* Small color swatch shown next to inline color codes */
+code.colorCode .colorSwatch {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border: 1px solid var(--border-strong);
+}
