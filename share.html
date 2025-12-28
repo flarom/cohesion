@@ -102,14 +102,15 @@
             </a>
         </div>
         <div style="display: flex; gap: 5px;">
-            <button class="secondary" onclick="editOnCohesion()" title="Edit this file using the Cohesion Markdown editor">Edit</button>
-            <button class="secondary" onclick="downloadDocument()" title="Download a copy of this document">Download</button>
-            <button class="secondary" onclick="window.open('https://github.com/flarom/cohesion/wiki')" title="Cohesion Documentation">Documentation</button>
+            <button class="secondary hide-on-mobile" data-locale="dialogs.landing.header.editor" onclick="editOnCohesion()" title="Edit this file using the Cohesion Markdown editor">Edit on Cohesion</button>
+            <button class="secondary hide-on-mobile" data-locale="dialogs.share.header.download" onclick="downloadDocument()" title="Download a copy of this document">Download</button>
+            <button class="secondary hide-on-mobile" data-locale="dialogs.landing.header.documentation" onclick="window.open('https://github.com/flarom/cohesion/wiki')" title="Cohesion Documentation">Documentation</button>
             <button class="secondary" onclick="changeTheme();" title="Switch theme" style="font-size: large;" translate="no"><span class="icon">routine</span></button>
+            <button class="secondary hide-on-pc" onclick="handleMoreMenu();" style="font-size: large;" translate="no"><span class="icon">more_vert</span></button>
         </div>
     </header>
 
-    <div id="preview" class="preview" style="padding-top: 50px; display: block; height: 100vh; max-height: 100vh;">
+    <div id="preview" class="preview" style="padding-top: 100px; display: block; height: 100vh; max-height: 100vh;">
         
     </div>
 
@@ -177,6 +178,16 @@
             if (titleFont) root.style.setProperty("--font-title", titleFont);
         }
 
+        async function handleMoreMenu() {
+            const selection = await promptSelect("More options", ["Edit on Cohesion", "Download", "Documentation"]);
+
+            switch (selection) {
+                case 0: editOnCohesion(); break;
+                case 1: downloadDocument; break;
+                case 2: window.open('https://github.com/flarom/cohesion/wiki'); break;
+            }
+        }
+
         function changeTheme() {
             let current = Settings.getSetting('theme');
             if (current === 'theme-dark') {
@@ -193,12 +204,24 @@
 
         let markdown = constMarkdown;
 
-        function sanitizeMarkdown(text) {
-            return text.replace(/\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+       function sanitizeMarkdown(text) {
+            return text.replace(
+                /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi,
+                (match, offset) => {
+                    console.warn(
+                        "Removed inline event:",
+                        {
+                            removed: match,
+                            position: offset
+                        }
+                    );
+                    return '';
+                }
+            );
         }
 
         function detectInlineEvents(text) {
-            return /\s+on[a-z]+\s*=/gi.test(text);
+            return /<[^>]*\bon[a-z]+\s*=/gi.test(text);
         }
 
         function extractMetadata(markdown) {
@@ -290,7 +313,7 @@ You may ask who sent you this document to share it again.
                         const text = await res.text();
 
                         if (detectInlineEvents(text)) {
-                            markdown = text;
+                            markdown = sanitizeMarkdown(text);
                             await showSecurityWarning();
                         } else {
                             markdown = text;
@@ -301,7 +324,7 @@ You may ask who sent you this document to share it again.
                             converter.getMetadata = function() { return metadata; };
                         } catch (e) { }
 
-                        preview.innerHTML = converter.makeHtml(sanitizeMarkdown(markdown));
+                        preview.innerHTML = converter.makeHtml(markdown);
 
                         document.title = getFileTitleFromText(text) + " - Cohesion";
 
@@ -340,7 +363,7 @@ Please try again later.
                         const metadata = extractMetadata(markdown);
                         converter.getMetadata = function() { return metadata; };
                     } catch (e) { }
-                    preview.innerHTML = converter.makeHtml(sanitizeMarkdown(markdown));
+                    preview.innerHTML = converter.makeHtml(markdown);
                 }
             } else {
                 markdown = `

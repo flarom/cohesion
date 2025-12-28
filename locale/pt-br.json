@@ -20,7 +20,8 @@
 
     "strings": {
         "GENERIC": {
-            "generic.more-menu": "Mais opções"
+            "generic.more-menu": "Mais opções",
+            "generic.learn-more": "Saiba mais"
         },
 
         "ABOUT": {
@@ -90,6 +91,34 @@
             "dialogs.cheatsheet.abbreviations": "Abreviações",
             "dialogs.cheatsheet.abbreviations.html": "<span style='opacity: 50%;'>Markdown converte texto para </span> <abbr title='Linguagem de Marcação de HiperTexto'>HTML</abbr><span style='opacity: 50%;'>.</span><br>\n\n*[HTML]: Linguagem de Marcação de HiperTexto",
             "dialogs.cheatsheet.learn-more": "Visite a {cohesionWiki} para aprender mais."
+        },
+
+        "LANDING": {
+            "HEADER": {
+                "dialogs.landing.header.editor": "Editor",
+                "dialogs.landing.header.tools": "Ferramentas",
+                "dialogs.landing.header.documentation": "Documentação",
+                "dialogs.landing.header.github": "GitHub"
+            },
+            "HERO": {
+                "dialogs.landing.hero.hero": "Cohesion é um editor Markdown, minimo e lindo,<br>designado para clareza e expressão",
+                "dialogs.landing.hero.cta": "Começar a criar..."
+            },
+            "FEATURES": {
+                "dialogs.landing.features": "Qualidades",
+                "dialogs.landing.features.markdown-based": "Baseado em Markdown",
+                "dialogs.landing.features.markdown-based.description": "Escreva documentos complexos sem tirar suas mãos do teclado.",
+                "dialogs.landing.features.in-browser-local-storage": "Armazenamento local no navegador",
+                "dialogs.landing.features.in-browser-local-storage.description": "Seus arquivos não são enviados para nós, Cohesion salva seus arquivos nos dados do seu navegador, você também pode criar backups de todos seus dados com um único clique.",
+                "dialogs.landing.features.themes": "Temas",
+                "dialogs.landing.features.themes.description": "Personalize sua experiência com 8 temas. Troque entre modos claros e escuros, ou escolha de paletas únicas que tornam seu ambiênte mais confortável e inspirador.",
+                "dialogs.landing.features.easy-export": "Exportação fácil",
+                "dialogs.landing.features.easy-export.description": "Exporte suas notas para formatos como PDF, HTML, ou Markdown com um único clique.",
+                "dialogs.landing.features.instant-search": "Busca instantânea",
+                "dialogs.landing.features.instant-search.description": "Encontre rapidamente qualquer nota ou fragmento de texto usando a ferramenta de busca inclusa, otimizando seu fluxo de trabalho.",
+                "dialogs.landing.features.distraction-free-editor": "Editor livre de distrações",
+                "dialogs.landing.features.distraction-free-editor.description": "Escreva sem nenhuma distração. Você não precisa criar uma conta, pagar uma assinatura mensal, assistir anúncios, ou treinar IA. É um editor de texto!"
+            }
         },
 
         "MACROS": {

@@ -44,6 +44,7 @@
     <link rel="stylesheet" href="../style/share.css">
     <link rel="stylesheet" href="../style/landing.css">
     <link rel="stylesheet" href="../style/preview.css">
+    <link rel="stylesheet" href="../style/prompts.css">
     <link rel="stylesheet" href="../script/highlight/lib/highlight.css">
 
     <style>
@@ -118,12 +119,13 @@
             </a>
         </div>
         <div style="display: flex; gap: 5px;">
-            <button class="secondary off" onclick="editOnCohesion()" id="editor-import">Edit on Cohesion</button>
-            <button class="secondary" onclick="window.open('../index.html', '_self')" id="editor-simple">Editor</button>
-            <button class="secondary" onclick="window.open('../tools.html', '_self')">Tools</button>
-            <button class="secondary" onclick="window.open('https://github.com/flarom/cohesion/wiki')">Documentation</button>
-            <button class="secondary" onclick="window.open('https://github.com/flarom/cohesion')">GitHub</button>
+            <button class="secondary hide-on-mobile off" onclick="editOnCohesion()" id="editor-import">Edit on Cohesion</button>
+            <button class="secondary hide-on-mobile" data-locale="dialogs.landing.header.editor" onclick="window.open('../index.html', '_self')" id="editor-simple">Editor</button>
+            <button class="secondary hide-on-mobile" data-locale="dialogs.landing.header.tools" onclick="window.open('../tools.html', '_self')">Tools</button>
+            <button class="secondary hide-on-mobile" data-locale="dialogs.landing.header.documentation" onclick="window.open('https://github.com/flarom/cohesion/wiki')">Documentation</button>
+            <button class="secondary hide-on-mobile" data-locale="dialogs.landing.header.github" onclick="window.open('https://github.com/flarom/cohesion')">GitHub</button>
             <button class="secondary" onclick="changeTheme();" style="font-size: large;" translate="no"><span class="icon">routine</span></button>
+            <button class="secondary hide-on-pc" onclick="handleMoreMenu();" style="font-size: large;" translate="no"><span class="icon">more_vert</span></button>
         </div>
     </header>
 
@@ -187,6 +189,28 @@
             if (editorFont) root.style.setProperty("--font-editor", editorFont);
             if (paragraphFont) root.style.setProperty("--font-text", paragraphFont);
             if (titleFont) root.style.setProperty("--font-title", titleFont);
+        }
+
+        async function handleMoreMenu() {
+            if (btnEditorSimple.classList.contains('off')) {
+                const selection = await promptSelect("More options", ["Edit on Cohesion", "Tools", "Documentation", "GitHub"]);
+
+                switch (selection) {
+                    case 0: editOnCohesion(); break;
+                    case 1: window.open('../tools.html', '_self'); break;
+                    case 2: window.open('https://github.com/flarom/cohesion/wiki'); break;
+                    case 3: window.open('https://github.com/flarom/cohesion'); break;
+                }
+            } else {
+                const selection = await promptSelect("More options", ["Editor", "Tools", "Documentation", "GitHub"]);
+
+                switch (selection) {
+                    case 0: window.open('../index.html', '_self'); break;
+                    case 1: window.open('../tools.html', '_self'); break;
+                    case 2: window.open('https://github.com/flarom/cohesion/wiki'); break;
+                    case 3: window.open('https://github.com/flarom/cohesion'); break;
+                }
+            }
         }
 
         function changeTheme() {
@@ -376,6 +400,8 @@
                 if (file) {
                     const text = await file.text();
                     markdown = text;
+                    btnEditorSimple.classList.add('off');
+                    btnEditorImport.classList.remove('off');
                     preview.innerHTML = converter.makeHtml(markdown);
                     preview.querySelectorAll('pre code').forEach((block) => {
                         hljs.highlightElement(block);

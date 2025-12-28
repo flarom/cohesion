@@ -43,6 +43,7 @@
     <link rel="stylesheet" href="../style/palette.css">
     <link rel="stylesheet" href="../style/share.css">
     <link rel="stylesheet" href="../style/landing.css">
+    <link rel="stylesheet" href="../style/prompts.css">
 
     <style>
         #table-editor {
@@ -144,11 +145,12 @@
             </a>
         </div>
         <div style="display: flex; gap: 5px;">
-            <button class="secondary" onclick="window.open('../index.html', '_self')">Editor</button>
-            <button class="secondary" onclick="window.open('../tools.html', '_self')">Tools</button>
-            <button class="secondary" onclick="window.open('https://github.com/flarom/cohesion/wiki')">Documentation</button>
-            <button class="secondary" onclick="window.open('https://github.com/flarom/cohesion')">GitHub</button>
+            <button class="secondary hide-on-mobile" data-locale="dialogs.landing.header.editor" onclick="window.open('../index.html', '_self')">Editor</button>
+            <button class="secondary hide-on-mobile" data-locale="dialogs.landing.header.tools" onclick="window.open('../tools.html', '_self')">Tools</button>
+            <button class="secondary hide-on-mobile" data-locale="dialogs.landing.header.documentation" onclick="window.open('https://github.com/flarom/cohesion/wiki')">Documentation</button>
+            <button class="secondary hide-on-mobile" data-locale="dialogs.landing.header.github" onclick="window.open('https://github.com/flarom/cohesion')">GitHub</button>
             <button class="secondary" onclick="changeTheme();" style="font-size: large;" translate="no"><span class="icon">routine</span></button>
+            <button class="secondary hide-on-pc" onclick="handleMoreMenu();" style="font-size: large;" translate="no"><span class="icon">more_vert</span></button>
         </div>
     </header>
 
@@ -578,22 +580,9 @@
         updateMarkdown();
     </script>
 </section>
-
-    <section class="filler">
-        <div class="infinite-scroll left">
-            <div class="scroll-content">
-                Cohesion Cohesion Cohesion Cohesion Cohesion Cohesion Cohesion Cohesion Cohesion Cohesion Cohesion
-            </div>
-        </div>
-        <button class="primary filler-start-now" onclick="fadeOutAllDialogs()">
-            <span class="icon" style="font-size: 1.5em;">edit</span>
-            <span id="primary-button-text">
-                Use the Cohesion Markdown editor for free!
-            </span>
-        </button>
-    </section>
     
     <script src="../script/settings.js"></script>
+    <script src="../script/prompts.js"></script>
     <script>
         // load settings
         function loadSettings(){
@@ -609,6 +598,17 @@
             if (editorFont) root.style.setProperty("--font-editor", editorFont);
             if (paragraphFont) root.style.setProperty("--font-text", paragraphFont);
             if (titleFont) root.style.setProperty("--font-title", titleFont);
+        }
+
+        async function handleMoreMenu() {
+            const selection = await promptSelect("More options", ["Editor", "Tools", "Documentation", "GitHub"]);
+
+            switch (selection) {
+                case 0: window.open('../index.html', '_self'); break;
+                case 1: window.open('../tools.html', '_self'); break;
+                case 2: window.open('https://github.com/flarom/cohesion/wiki'); break;
+                case 3: window.open('https://github.com/flarom/cohesion'); break;
+            }
         }
 
         function changeTheme() {

@@ -1810,6 +1810,11 @@
                                 navigator.clipboard.writeText(input.value);
                             });
                         }
+
+                        input.select();
+                        input.setSelectionRange(0, 99999);
+                        navigator.clipboard.writeText(input.value);
+                        showToast("Link copied to clipboard", "check");
                     }, 50);
 
                 } catch (err) {

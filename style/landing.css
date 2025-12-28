@@ -23,7 +23,7 @@ header button.secondary {
 }
 
 footer {
-    display: flex;
+    margin-bottom: 5vh;
 }
 
 footer ul {
@@ -92,13 +92,13 @@ section.filler {
     font-size: 165pt;
     display: flex;
     align-items: center;
-    -webkit-text-stroke: 1px var(--text-color);
+    -webkit-text-stroke: 1px var(--border-light-color);
 }
 
 .scroll-content {
     display: inline-block;
     padding-right: 2em;
-    animation: scroll-left 43s linear infinite;
+    animation: scroll-left 200s linear infinite;
     will-change: transform;
 }
 
