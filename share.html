@@ -93,6 +93,14 @@
 <body class="theme-dark">
     <div id="intro-screen">
         <div id="intro-title" translate="no">Cohesion</div>
+        <noscript class="prompt-overlay" style="pointer-events: all !important;">
+            <div class="prompt-dialog" style="max-width: 500px; padding: 10px;">
+                <h2>Fatal</h2>
+                <p>Scripts failed to load.</p>
+                <p>Update your browser, check settings and extensions.</p>
+                <a target="_blank" href="https://github.com/flarom/cohesion/issues">Report an issue</a>
+            </div>
+        </noscript>
     </div>
     <header>
         <div>
@@ -115,6 +123,8 @@
     </div>
 
     <input type="file" id="fileInput" accept=".md,.markdown,.txt,text/markdown,text/plain" style="display:none" />
+
+    
 
     <script src="script/file.js"></script>
     <script src="script/settings.js"></script>
