@@ -66,6 +66,8 @@
         <script src="script/codemirror/addon/hint/command-hint.js"></script>
         <script src="script/codemirror/addon/hint/resources-hint.js"></script>
         <script src="script/codemirror/addon/selection/active-line.js"></script>
+        <script src="script/codemirror/addon/selection/follow-links.js"></script>
+        <script src="script/codemirror/addon/selection/similar.js"></script>
         <script src="script/codemirror/addon/mode/simple.js"></script>
 
         <script src="script/codemirror/mode/meta.js"></script>
@@ -409,6 +411,12 @@
 
                 // Style active line
                 editor.setOption("styleActiveLine", Settings.getSetting("editorHighlightActiveLine", "true") === "true");
+
+                // style similar symbols
+                editor.setOption("selectionSimilar", Settings.getSetting("editorHighlightSimilarSymbols", "true") === "true")
+
+                // follow links with ctrl+click
+                editor.setOption("followLinks", Settings.getSetting("editorFollowLinks", "true") === "true")
 
                 // editor width
                 if (Settings.getSetting("editorWidth", "false") === "true") {

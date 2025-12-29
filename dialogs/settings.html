@@ -149,6 +149,13 @@
                             <span class="slider"></span>
                         </label>
                     </div>
+                    <div class="setting top bottom switch-wrapper">
+                        <span class="switch-text" data-locale="dialogs.settings.main.behavior.follow-links">Follow links with Ctrl+Click</span>
+                        <label class="switch">
+                            <input type="checkbox" id="editorFollowLinks" onchange="Settings.setSetting('editorFollowLinks', this.checked); updateEditorSettings()" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
                     <div class="setting top switch-wrapper">
                         <span class="switch-text" data-locale="dialogs.settings.main.behavior.line-numbers">Line numbers</span>
                         <label class="switch">
@@ -163,10 +170,17 @@
                             <span class="slider"></span>
                         </label>
                     </div>
-                    <div class="setting bottom switch-wrapper">
+                    <div class="setting switch-wrapper">
                         <span class="switch-text" data-locale="dialogs.settings.main.behavior.highlight-active-line">Highlight active line</span>
                         <label class="switch">
                             <input type="checkbox" id="editorHighlightActiveLine" onchange="Settings.setSetting('editorHighlightActiveLine', this.checked); updateEditorSettings()" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting bottom switch-wrapper">
+                        <span class="switch-text" data-locale="dialogs.settings.main.behavior.highlight-similar-symbols">Highlight similar symbols</span>
+                        <label class="switch">
+                            <input type="checkbox" id="editorHighlightSimilarSymbols" onchange="Settings.setSetting('editorHighlightSimilarSymbols', this.checked); updateEditorSettings()" />
                             <span class="slider"></span>
                         </label>
                     </div>
@@ -372,6 +386,8 @@
                 const cbxEditorDirection = document.getElementById("editorDirection");
                 const cbxEditorWidth = document.getElementById("editorWidth");
                 const cbxEditorHighlightActiveLine = document.getElementById('editorHighlightActiveLine');
+                const cbxEditorHighlightSimilarSymbols = document.getElementById('editorHighlightSimilarSymbols');
+                const cbxEditorFollowLinks = document.getElementById('editorFollowLinks');
                 const cbxEditorAutoCloseBrackets = document.getElementById('editorAutoCloseBrackets');
                 const cbxEditorAutoCloseMDNotation = document.getElementById('editorAutoCloseMDNotation');
                 const cbxEditorAutoCloseTags = document.getElementById('editorAutoCloseTags');
@@ -385,6 +401,8 @@
                 if (Settings.getSetting("editorDirection", "ltr") === "rtl") cbxEditorDirection.checked = "true";
                 if (Settings.getSetting("editorWidth", "false") === "true") cbxEditorWidth.checked = "true";
                 if (Settings.getSetting("editorHighlightActiveLine", "true") === "true") cbxEditorHighlightActiveLine.checked = "true";
+                if (Settings.getSetting("editorHighlightSimilarSymbols", "true") === "true") cbxEditorHighlightSimilarSymbols.checked = "true";
+                if (Settings.getSetting("editorFollowLinks", "true") === "true") cbxEditorFollowLinks.checked = "true";
                 if (Settings.getSetting("editorAutoCloseBrackets", "true") === "true") cbxEditorAutoCloseBrackets.checked = "true";
                 if (Settings.getSetting("editorAutoCloseMDNotation", "true") === "true") cbxEditorAutoCloseMDNotation.checked = "true";
                 if (Settings.getSetting("editorAutoCloseTags", "false") === "true") cbxEditorAutoCloseTags.checked = "true";

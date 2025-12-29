@@ -178,6 +178,8 @@
                 "dialogs.settings.main.behavior.line-numbers": "Números de linha",
                 "dialogs.settings.main.behavior.full-width": "Largura total",
                 "dialogs.settings.main.behavior.highlight-active-line": "Destacar linha ativa",
+                "dialogs.settings.main.behavior.highlight-similar-symbols": "Destacar simbolos similares",
+                "dialogs.settings.main.behavior.follow-links": "Abrir links com Ctrl+Clique",
                 "dialogs.settings.main.behavior.rtl-text-align": "Texto alinhado como RTL"
             },
             "DATE AND TIME": {
