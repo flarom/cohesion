@@ -34,6 +34,63 @@ const I18n = {
     return this.cache[lang];
     },
 
+    interpolate(str, el) {
+        if (!el.dataset.localeVars) return str;
+
+        try {
+            const vars = JSON.parse(el.dataset.localeVars);
+            return str.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? "");
+        } catch (err) {
+            console.warn("Invalid data-locale-vars", el, err);
+            return str;
+        }
+    },
+
+    applyElement(el, data) {
+        if (!data || !data.strings) return;
+
+        // text / html
+        if (el.dataset.locale) {
+            const key = el.dataset.locale;
+            const value = data.strings[key];
+
+            if (value) {
+                const result = this.interpolate(value, el);
+
+                if (el.hasAttribute("data-locale-html")) {
+                    el.innerHTML = result;
+                } else {
+                    el.textContent = result;
+                }
+            }
+        }
+
+        // attributes
+        if (el.dataset.localeAttr) {
+            const rules = el.dataset.localeAttr.split(";");
+
+            rules.forEach(rule => {
+                const [attr, key] = rule.split(":");
+                const value = data.strings[key];
+                if (!value) return;
+
+                el.setAttribute(attr, value);
+            });
+        }
+    },
+
+    applyWithin(root = document) {
+        const lang = Language.get();
+        if (lang === "en") return;
+
+        const data = this.cache[lang];
+        if (!data || !data.strings) return;
+
+        root.querySelectorAll("[data-locale], [data-locale-attr]").forEach(el => {
+            this.applyElement(el, data);
+        });
+    },
+
     async apply() {
         const lang = Language.get();
         if (lang === "en") return;
@@ -165,3 +222,28 @@ document.addEventListener("DOMContentLoaded", () => {
     cacheOriginalAttributes();
     applyLanguage();
 });
+
+function translateElement(el) {
+    const lang = Language.get();
+    if (lang === "en") return;
+
+    const data = I18n.cache[lang];
+    if (!data) return;
+
+    I18n.applyElement(el, data);
+}
+
+function translateWithin(root) {
+    I18n.applyWithin(root);
+}
+
+function getTranslation(key, fallback = "") {
+    const lang = Language.get();
+    const data = I18n.cache[lang];
+
+    if (!data || !data.strings) {
+        return fallback;
+    }
+
+    return data.strings[key] ?? fallback;
+}

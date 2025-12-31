@@ -106,8 +106,18 @@
 /* quotes */
 
 .preview blockquote {
-    border-left: 2px solid var(--border-light-color);
     padding-left: 15px;
+    position: relative;
+}
+
+.preview blockquote::before {
+    content: "";
+    position: absolute;
+    background-color: var(--border-light-color);
+    left: -3px;
+    width: 3px;
+    height: 100%;
+    border-radius: 2px;
 }
 
 .preview .quote-label {
@@ -136,40 +146,40 @@
     border-left: 2px solid var(--border-light-color);
 }
 
-.preview blockquote.quote-blue {
-    border-left: 2px solid var(--quote-blue);
+.preview blockquote.quote-blue::before {
+    background-color: var(--quote-blue);
 }
 
 .preview .quote-blue-label {
     color: var(--quote-blue);
 }
 
-.preview blockquote.quote-green {
-    border-left: 2px solid var(--quote-green);
+.preview blockquote.quote-green::before {
+    background-color: var(--quote-green);
 }
 
 .preview .quote-green-label {
     color: var(--quote-green);
 }
 
-.preview blockquote.quote-purple {
-    border-left: 2px solid var(--quote-purple);
+.preview blockquote.quote-purple::before {
+    background-color: var(--quote-purple);
 }
 
 .preview .quote-purple-label {
     color: var(--quote-purple);
 }
 
-.preview blockquote.quote-yellow {
-    border-left: 2px solid var(--quote-yellow);
+.preview blockquote.quote-yellow::before {
+    background-color: var(--quote-yellow);
 }
 
 .preview .quote-yellow-label {
     color: var(--quote-yellow);
 }
 
-.preview blockquote.quote-red {
-    border-left: 2px solid var(--quote-red);
+.preview blockquote.quote-red::before {
+    background-color: var(--quote-red);
 }
 
 .preview .quote-red-label {

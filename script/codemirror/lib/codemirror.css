@@ -738,7 +738,7 @@ span.CodeMirror-selectedtext {
 }
 
 .cm-selection-similar {
-    text-decoration: underline;
+    text-decoration: underline dotted;
 }
 
 .cm-metadata-field-title::before { content: "label"; }

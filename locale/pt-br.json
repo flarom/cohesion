@@ -21,7 +21,91 @@
     "strings": {
         "GENERIC": {
             "generic.more-menu": "Mais opções",
-            "generic.learn-more": "Saiba mais"
+            "generic.learn-more": "Saiba mais",
+            "generic.undo": "Desfazer",
+            "generic.redo": "Refazer",
+            "generic.search": "Buscar",
+            "generic.yes": "Sim",
+            "generic.no": "Não",
+            "generic.cancel": "Cancelar",
+            "generic.save": "Salvar"
+        },
+
+        "APP": {
+            "TOOLBAR": {
+                "app.toolbar.toggle-sidebar": "Alternar barra lateral",
+                "app.toolbar.new-document": "Novo documento",
+                "app.toolbar.insert-menu": "Inserir",
+                "app.toolbar.insert-menu.date-and-time": "Data e hora",
+                "app.toolbar.insert-menu.image":"Imagem",
+                "app.toolbar.insert-menu.audio":"Áudio",
+                "app.toolbar.insert-menu.video":"Vídeo",
+                "app.toolbar.insert-menu.block": "Bloco",
+                "app.toolbar.insert-menu.table": "Tabela",
+                "app.toolbar.insert-menu.table-of-contents": "Índice",
+                "app.toolbar.insert-menu.document-meta": "Metadados do documento",
+                "app.toolbar.insert-menu.web-embed": "Incorporação da web",
+                "app.toolbar.highlighter": "Marca texto",
+                "app.toolbar.comments": "Comentários",
+                "app.toolbar.read": "Ler",
+                "app.toolbar.write": "Escrever",
+                "app.toolbar.more-menu.new": "Novo",
+                "app.toolbar.more-menu.open": "Abrir",
+                "app.toolbar.more-menu.save": "Salvar",
+                "app.toolbar.more-menu.share": "Compartilhar",
+                "app.toolbar.more-menu.search-documents": "Buscar documentos",
+                "app.toolbar.more-menu.resources": "Recursos",
+                "app.toolbar.more-menu.settings": "Configurações",
+                "app.toolbar.more-menu.macros": "Macros",
+                "app.toolbar.more-menu.help": "Ajuda",
+                "app.toolbar.more-menu.markdown-cheat-sheet": "Cola de Markdown",
+                "app.toolbar.more-menu.keyboard-shortcuts": "Atalhos de teclado",
+                "app.toolbar.more-menu.about-cohesion": "Sobre o Cohesion"
+            },
+            "SIDEBAR": {
+                "app.sidebar.create-new-document": "Criar novo documento",
+                "app.sidebar.project-menu.rename": "Renomear projeto",
+                "app.sidebar.project-menu.delete": "Deletar projeto",
+                "app.sidebar.file-menu.duplicate": "Duplicar",
+                "app.sidebar.file-menu.download": "Salvar",
+                "app.sidebar.file-menu.delete": "Deletar",
+                "app.sidebar.file.readtime": "{readTime} para ler"
+            },
+            "SEARCH HEADER": {
+                "app.search-header.previous-result": "Resultado anterior",
+                "app.search-header.next-result": "Resultado seguinte",
+                "app.search-header.match-casing": "Diferenciar maíusculas de minusculas",
+                "app.search-header.regular_expression": "Expressão regular",
+                "app.search-header.replace": "Substituír"
+            },
+            "REPLACE HEADER": {
+                "app.replace-header.replace": "Substituír",
+                "app.replace-header.replace-all": "Subs. todos"
+            },
+            "EDITOR CONTEXT MENU": {
+                "app.editor.context-menu.bold": "Negrito",
+                "app.editor.context-menu.italic": "Itálico",
+                "app.editor.context-menu.underline": "Sublinhado",
+                "app.editor.context-menu.strikethrough": "Riscado",
+                "app.editor.context-menu.preformatted": "Preformatado",
+                "app.editor.context-menu.highlight": "Demarcado",
+                "app.editor.context-menu.link": "Link",
+                "app.editor.context-menu.cut": "Recortar",
+                "app.editor.context-menu.copy": "Copiar",
+                "app.editor.context-menu.paste": "Colar",
+                "app.editor.context-menu.delete": "Deletar",
+                "app.editor.context-menu.select-all": "Selecionar tudo"
+            },
+            "STATUS BAR": {
+                "app.status-bar.cursor.single": "Ln {line}, Col {col}",
+                "app.status-bar.cursor.single.selected": "Ln {line}, Col {col} ({count} Selecionado)",
+                "app.status-bar.cursor.multi": "{count} Cursores",
+                "app.status-bar.cursor.multi.selected": "{count} Cursores ({selected} Selecionado)",
+                "app.status-bar.editor-mode.read-mode": "Modo de leitura",
+                "app.status-bar.editor-mode.edit-mode": "Modo de edição",
+                "app.status-bar-document-size.characters": "Caracteres",
+                "app.status-bar-document-size.words": "Palavras"
+            }
         },
 
         "ABOUT": {
@@ -137,9 +221,7 @@
             "prompts.prompt-macro-info.name-label": "Nome",
             "prompts.prompt-macro-info.desc-label": "Descrição",
             "prompts.prompt-macro-info.auth-label": "Autor(a)",
-            "prompts.prompt-macro-info.icon-label": "Ícone (Material Symbols Rounded)",
-            "prompts.prompt-macro-info.cancel-button": "Cancelar",
-            "prompts.prompt-macro-info.submit-button": "Salvar"
+            "prompts.prompt-macro-info.icon-label": "Ícone (Material Symbols Rounded)"
         },
 
         "SETTINGS": {
@@ -238,6 +320,16 @@
                 "dialogs.settings.main.backups.delete-empty-files": "Deletar arquivos vazios",
                 "dialogs.settings.main.backups.delete-empty-files.description": "Deletar todos arquivos que não tenham nenhum texto ou meta",
                 "dialogs.settings.main.backups.delete": "Deletar"
+            }
+        },
+
+        "MISC": {
+            "IMPORT FILE DIALOG": {
+                "dialogs.import-file.title": "Arraste e solte um arquivo aqui",
+                "dialogs.import-file.subtitle": "Ou clique para escolher um arquivo"
+            },
+            "SHARE DIALOG": {
+                "dialogs.share.message": "Compartilhar esse arquivo irá gerar um link público temporário que é válido por 2 horas. Qualquer um com esse link conseguirá ver o documento. Prosseguir?"
             }
         }
     }

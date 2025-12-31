@@ -401,6 +401,7 @@ function promptConfirm(message, dangerous = false) {
 
         const yesButton = document.createElement("button");
         yesButton.textContent = "Yes";
+        yesButton.dataset.locale = "generic.yes";
         if (dangerous) {
             yesButton.className = "prompt-button danger";
         } else {
@@ -409,10 +410,12 @@ function promptConfirm(message, dangerous = false) {
 
         const noButton = document.createElement("button");
         noButton.textContent = "No";
+        noButton.dataset.locale = "generic.no";
         noButton.className = "prompt-button cancel";
 
         buttonContainer.appendChild(noButton);
         buttonContainer.appendChild(yesButton);
+        translateWithin(buttonContainer);
         dialog.appendChild(buttonContainer);
 
         overlay.appendChild(dialog);
@@ -2177,12 +2180,12 @@ async function promptMacroInfo(macro = {}) {
 
         const cancelButton = document.createElement("button");
         cancelButton.textContent = "Cancel";
-        cancelButton.setAttribute("data-locale","prompts.prompt-macro-info.cancel-button");
+        cancelButton.setAttribute("data-locale","generic.cancel");
         cancelButton.className = "prompt-button cancel";
 
         const submitButton = document.createElement("button");
         submitButton.textContent = "Save";
-        submitButton.setAttribute("data-locale","prompts.prompt-macro-info.submit-button");
+        submitButton.setAttribute("data-locale","generic.save");
         submitButton.className = "prompt-button submit";
 
         buttonContainer.appendChild(cancelButton);
@@ -2217,9 +2220,8 @@ async function promptMacroInfo(macro = {}) {
             }
         });
 
-        cacheOriginalContent();
-        cacheOriginalAttributes();
-        applyLanguage();
+        translateWithin(overlay);
+
         nameInput.focus();
     });
 }

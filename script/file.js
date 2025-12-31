@@ -99,8 +99,8 @@ function importFile() {
         const html = `
             <div id="drop-area" class="drop-area">
                 <div class="drop-area-text">
-                    <p>Drag & Drop a file here</p>
-                    <p class="subtitle">Or click to choose a file</p>
+                    <p data-locale="dialogs.import-file.title">Drag & Drop a file here</p>
+                    <p class="subtitle" data-locale="dialogs.import-file.subtitle">Or click to choose a file</p>
                 </div>
             </div>
         `;
@@ -108,6 +108,8 @@ function importFile() {
         promptMessage(html, true, false).then(resolve);
 
         const dropArea = document.getElementById("drop-area");
+
+        translateWithin(dropArea);
 
         function handleFile(file) {
             if (!file) return;
@@ -540,6 +542,7 @@ function createGroupContainer(name) {
 
     const renameBtn = document.createElement("button");
     renameBtn.className = "text-button";
+    renameBtn.dataset.locale = "app.sidebar.project-menu.rename"
     renameBtn.textContent = "Rename project";
     renameBtn.onclick = async (e) => {
         e.stopPropagation();
@@ -558,6 +561,7 @@ function createGroupContainer(name) {
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "text-button danger";
     deleteBtn.textContent = "Delete project";
+    deleteBtn.dataset.locale = "app.sidebar.project-menu.delete"
     deleteBtn.onclick = async (e) => {
         e.stopPropagation();
 
@@ -661,16 +665,21 @@ function renderFiles(containerId) {
             const stats = getFileStats(i);
 
             const readTime = document.createElement("p");
-            readTime.innerHTML = `<span class="icon">schedule</span>${stats.readTime} to read`;
+            readTime.innerHTML = `${stats.readTime} to read`;
+            readTime.dataset.localeVars = `{"readTime":"${stats.readTime}"}`
+            readTime.dataset.locale = "app.sidebar.file.readtime"
 
+            /*
             const authorValue = getMetadataValue(metadata, ["author", "authors"]);
             const tagsValue = getMetadataValue(metadata, ["tags", "keywords"]);
             const dateValue = getMetadataValue(metadata, ["date", "created date"]);
             const descriptionValue = getMetadataValue(metadata, ["description", "subject", "comment"]);
+            */
 
             infoDiv.appendChild(h3);
             infoDiv.appendChild(readTime);
 
+            /*
             if (authorValue) {
                 const author = document.createElement("p");
                 author.innerHTML = `<span class="icon">person</span>${authorValue}`;
@@ -695,6 +704,7 @@ function renderFiles(containerId) {
                 desc.style.marginTop = "5px";
                 infoDiv.appendChild(desc);
             }
+            */
 
             const dropdownDiv = document.createElement("div");
             dropdownDiv.className = "dropdown";
@@ -714,6 +724,7 @@ function renderFiles(containerId) {
             const duplicateBtn = document.createElement("button");
             duplicateBtn.className = "text-button";
             duplicateBtn.textContent = "Duplicate";
+            duplicateBtn.dataset.locale = "app.sidebar.file-menu.duplicate";
             duplicateBtn.onclick = (e) => {
                 e.stopPropagation();
                 createFile(getFileText(i));
@@ -721,7 +732,8 @@ function renderFiles(containerId) {
 
             const downloadBtn = document.createElement("button");
             downloadBtn.className = "text-button";
-            downloadBtn.textContent = "Download";
+            downloadBtn.textContent = "Save";
+            downloadBtn.dataset.locale = "app.sidebar.file-menu.download";
             downloadBtn.onclick = (e) => {
                 e.stopPropagation();
                 promptSaveFile(i);
@@ -730,6 +742,7 @@ function renderFiles(containerId) {
             const deleteBtn = document.createElement("button");
             deleteBtn.className = "text-button danger";
             deleteBtn.textContent = "Delete";
+            deleteBtn.dataset.locale = "app.sidebar.file-menu.delete";
             deleteBtn.onclick = (e) => {
                 e.stopPropagation();
                 deleteFile(i);
@@ -788,6 +801,8 @@ function renderFiles(containerId) {
 
         container.appendChild(wrapper);
     });
+
+    translateWithin()
 }
 
 function renameGroup(oldName, newName) {
