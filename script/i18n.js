@@ -224,6 +224,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function translateElement(el) {
+    cacheOriginalContent();
+    cacheOriginalAttributes();
     const lang = Language.get();
     if (lang === "en") return;
 
@@ -234,11 +236,18 @@ function translateElement(el) {
 }
 
 function translateWithin(root) {
+    cacheOriginalContent();
+    cacheOriginalAttributes();
     I18n.applyWithin(root);
 }
 
 function getTranslation(key, fallback = "") {
     const lang = Language.get();
+
+    if (lang === "en") {
+        return fallback;
+    }
+
     const data = I18n.cache[lang];
 
     if (!data || !data.strings) {

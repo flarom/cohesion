@@ -343,6 +343,7 @@ function showMessageFromFile(filePath, showCloseButton = true, useBigDialog = fa
 
         overlay.appendChild(dialog);
         document.body.appendChild(overlay);
+        translateWithin(overlay);
 
         const scripts = content.querySelectorAll("script");
         scripts.forEach((oldScript) => {

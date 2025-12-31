@@ -204,7 +204,7 @@
                     <button id="search-prev-btn" class="icon-button button-group-member" title="Previous result" data-locale-attr="title:app.search-header.previous-result" translate="no">keyboard_arrow_up</button>
                     <button id="search-next-btn" class="icon-button button-group-member right" title="Next result" data-locale-attr="title:app.search-header.next-result" translate="no">keyboard_arrow_down</button>
                     <button id="match-case-btn" class="icon-button button-group-member left" title="Match casing" data-locale-attr="title:app.search-header.match-casing" translate="no">match_case</button>
-                    <button id="regex-btn" class="icon-button button-group-member" title="Regular expression" data-locale-attr="title:app.search-header.regular_expression" translate="no">regular_expression</button>
+                    <button id="regex-btn" class="icon-button button-group-member" title="Regular expression" data-locale-attr="title:app.search-header.regular-expression" translate="no">regular_expression</button>
                     <button class="icon-button button-group-member right" translate="no" title="Replace" data-locale-attr="title:app.search-header.replace" onclick="toggleReplaceHeader()" id="replace-btn">find_replace</button>
                 </div>
             </header>
@@ -1044,15 +1044,18 @@
 
                         render() {
                             return `
-                                <label
-                                    data-locale="app.status-bar.cursor.single"
-                                    data-locale-vars='{"line":1,"col":1}'>
+                                <label>
+                                    <span
+                                        data-locale="app.status-bar.cursor.single"
+                                        data-locale-vars='{"line":1,"col":1}'>
+                                        Ln 1, Col 1
+                                    </span>
                                 </label>
                             `;
                         },
 
                         update(el) {
-                            const label = el.querySelector("label");
+                            const span = el.querySelector("span");
 
                             const selections = editor.listSelections();
                             const cursor = editor.getCursor();
@@ -1076,31 +1079,50 @@
 
                             // single cursor
                             if (cursorCount === 1) {
-                                label.dataset.locale =
-                                    totalSelected > 0
-                                        ? "app.status-bar.cursor.single.selected"
-                                        : "app.status-bar.cursor.single";
+                                if (totalSelected > 0) {
+                                    span.textContent =
+                                        `Ln ${cursor.line + 1}, Col ${cursor.ch + 1} (${totalSelected} Selected)`;
 
-                                label.dataset.localeVars = JSON.stringify({
-                                    line: cursor.line + 1,
-                                    col: cursor.ch + 1,
-                                    count: totalSelected
-                                });
+                                    span.dataset.locale = "app.status-bar.cursor.single.selected";
+                                    span.dataset.localeVars = JSON.stringify({
+                                        line: cursor.line + 1,
+                                        col: cursor.ch + 1,
+                                        count: totalSelected
+                                    });
+                                } else {
+                                    span.textContent =
+                                        `Ln ${cursor.line + 1}, Col ${cursor.ch + 1}`;
+
+                                    span.dataset.locale = "app.status-bar.cursor.single";
+                                    span.dataset.localeVars = JSON.stringify({
+                                        line: cursor.line + 1,
+                                        col: cursor.ch + 1
+                                    });
+                                }
                             }
                             // multiple cursors
                             else {
-                                label.dataset.locale =
-                                    totalSelected > 0
-                                        ? "app.status-bar.cursor.multi.selected"
-                                        : "app.status-bar.cursor.multi";
+                                if (totalSelected > 0) {
+                                    span.textContent =
+                                        `${cursorCount} Cursors (${totalSelected} Selected)`;
 
-                                label.dataset.localeVars = JSON.stringify({
-                                    count: cursorCount,
-                                    selected: totalSelected
-                                });
+                                    span.dataset.locale = "app.status-bar.cursor.multi.selected";
+                                    span.dataset.localeVars = JSON.stringify({
+                                        count: cursorCount,
+                                        selected: totalSelected
+                                    });
+                                } else {
+                                    span.textContent =
+                                        `${cursorCount} Cursors`;
+
+                                    span.dataset.locale = "app.status-bar.cursor.multi";
+                                    span.dataset.localeVars = JSON.stringify({
+                                        count: cursorCount
+                                    });
+                                }
                             }
 
-                            translateElement(label);
+                            translateElement(span);
                         }
                     });
                 }

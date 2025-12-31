@@ -75,7 +75,7 @@
                 "app.search-header.previous-result": "Resultado anterior",
                 "app.search-header.next-result": "Resultado seguinte",
                 "app.search-header.match-casing": "Diferenciar maíusculas de minusculas",
-                "app.search-header.regular_expression": "Expressão regular",
+                "app.search-header.regular-expression": "Expressão regular",
                 "app.search-header.replace": "Substituír"
             },
             "REPLACE HEADER": {

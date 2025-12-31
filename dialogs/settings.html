@@ -39,7 +39,7 @@
     </head>
 
     <body>
-        <div class="settings-body">
+        <div class="settings-body" id="setting-body">
             <div class="main-page">
                 <div>
                     <h4 class="setting-group-title" data-locale="dialogs.settings.main.appearence">Appearence</h4>
@@ -629,10 +629,6 @@ banner:      ~{8:cohesion/banners/1.png}
                     Settings.removeSetting('theme-custom-value');
                 }
             }
-
-            cacheOriginalContent();
-            cacheOriginalAttributes();
-            applyLanguage();
         </script>
     </body>
 </html>
