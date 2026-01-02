@@ -149,12 +149,13 @@ button.primary {
     min-width: 200px;
     cursor: pointer;
     transition: all 0.5s;
+    box-shadow: 0px 0px 100px 50px transparent;
 }
 
 button.primary:hover {
     color: var(--button-color-2);
     background-color: var(--highlight-color);
-    box-shadow: 0px 0px 30px var(--highlight-color);
+    box-shadow: 0px 0px 0px 0px var(--highlight-color);
 }
 
 button.secondary {

@@ -175,7 +175,7 @@
                             <span data-locale="app.toolbar.more-menu.keyboard-shortcuts">Keyboard shortcuts</span>
                             <kbd>Ctrl+?</kbd>
                         </button>
-                        <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('about.html'); hideAllMenus();">
+                        <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('dialogs/about.html'); hideAllMenus();">
                             <span data-locale="app.toolbar.more-menu.about-cohesion">About Cohesion</span>
                             <kbd>F1</kbd>
                         </button>
@@ -327,7 +327,7 @@
             // addSearchMenuAction("Settings", "Settings", function() {showMessageFromFile('dialogs/settings.html', true, false, true, true, 900);});
             // addSearchMenuAction("Resources", "Image", function() {showResourcesDialog();});
             // addSearchMenuAction("Macros", "code", function() {showMacrosDialog();})
-            // addSearchMenuAction("About", "info", function() {showMessageFromFile('about.html');})
+            // addSearchMenuAction("About", "info", function() {showMessageFromFile('dialogs/about.html');})
 
             // Retrieve last index from local storage, default to 0
             let index = localStorage.getItem("lastIndex") || 0;
@@ -1440,7 +1440,7 @@
                 //// toggle preview (Ctrl+P)
                 { match: e => e.ctrlKey && e.key.toLowerCase() === "p", handler: () => togglePreview(), preventDefault: true },
                 //// show about dialog (F1)
-                { match: e => e.key === "F1", handler: () => { closeAllDialogs(); showMessageFromFile("about.html") }, preventDefault: true },
+                { match: e => e.key === "F1", handler: () => { closeAllDialogs(); showMessageFromFile("dialogs/about.html") }, preventDefault: true },
                 //// toggle files sidebar (F9)
                 { match: e => e.key === "F9", handler: () => toggleSidebar("files-bar"), preventDefault: true },
                 //// toggle more menu (F10)

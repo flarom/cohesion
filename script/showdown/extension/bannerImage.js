@@ -186,10 +186,10 @@ showdown.extension('bannerImage', function () {
                             ? escapeHtml(materialMatch[2].trim())
                             : "currentColor";
 
-                        return `<span
-                            class="icon color-${color}"
+                        return `<span class="icon-color color-${color}"><span
+                            class="icon"
                             style="color: ${color}"
-                        >${iconName}</span>`;
+                        >${iconName}</span></span>`;
                     }
 
                     // emoji :shortcode:

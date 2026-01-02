@@ -15,7 +15,6 @@
 .preview *::selection {
     background: var(--highlight-color);
     color: var(--button-color-2);
-    border-radius: 4px;
 }
 
 .preview:focus {
@@ -302,10 +301,9 @@
     left: 15px;
     color: white;
     font-size: large;
-    display: none;
     opacity: 0%;
     z-index: 2;
-    transition: opacity 1s;
+    transition: opacity .3s;
     max-width: 80%;
     box-sizing: border-box;
     text-shadow: 0px 0px 10px black;
@@ -913,7 +911,7 @@
     box-shadow: var(--shadow);
     transition: all .3s, background-color 0s, border 0s, box-shadow 0s;
     border-radius: 16px;
-    padding: 12px 20px;
+    padding: 12px;
     width: 900px;
     max-width: 90vw;
 }
@@ -939,6 +937,7 @@
     border-radius: 12px;
     overflow: hidden;
     background: var(--background-color-2);
+    border: 1px solid transparent;
 }
 
 .preview .icon-container .banner-icon, .preview .icon-container img.icon {
@@ -954,7 +953,8 @@
 }
 
 .preview .icon-container .banner-emoji,
-.preview .icon-container .icon {
+.preview .icon-container .icon-color,
+.preview .icon-container .icon-color .icon {
     font-size: 2.5rem;
     line-height: 1.35;
     display: block;
@@ -965,18 +965,31 @@
     pointer-events: none;
 }
 
-.preview .icon-container .icon {
+.preview .icon-container .icon-color {
+    display: flex;
+    justify-content: center;
+}
+
+.preview .icon-container .icon-color .icon {
     max-width: 1ch;
     overflow: hidden;
 }
 
-.preview .icon-container .icon.color-pink   { color: var(--quote-pink)   !important; }
-.preview .icon-container .icon.color-purple { color: var(--quote-purple) !important; }
-.preview .icon-container .icon.color-blue   { color: var(--quote-blue)   !important; }
-.preview .icon-container .icon.color-green  { color: var(--quote-green)  !important; }
-.preview .icon-container .icon.color-yellow { color: var(--quote-yellow) !important; }
-.preview .icon-container .icon.color-orange { color: var(--quote-orange) !important; }
-.preview .icon-container .icon.color-red    { color: var(--quote-red)    !important; }
+.preview .icon-container .icon-color.color-pink .icon   { color: var(--quote-pink)   !important; }
+.preview .icon-container .icon-color.color-purple .icon { color: var(--quote-purple) !important; }
+.preview .icon-container .icon-color.color-blue .icon   { color: var(--quote-blue)   !important; }
+.preview .icon-container .icon-color.color-green .icon  { color: var(--quote-green)  !important; }
+.preview .icon-container .icon-color.color-yellow .icon { color: var(--quote-yellow) !important; }
+.preview .icon-container .icon-color.color-orange .icon { color: var(--quote-orange) !important; }
+.preview .icon-container .icon-color.color-red .icon    { color: var(--quote-red)    !important; }
+
+.preview .icon-container .icon-color.color-pink   { background-color: var(--quote-pink-bg)   !important; }
+.preview .icon-container .icon-color.color-purple { background-color: var(--quote-purple-bg) !important; }
+.preview .icon-container .icon-color.color-blue   { background-color: var(--quote-blue-bg)   !important; }
+.preview .icon-container .icon-color.color-green  { background-color: var(--quote-green-bg)  !important; }
+.preview .icon-container .icon-color.color-yellow { background-color: var(--quote-yellow-bg) !important; }
+.preview .icon-container .icon-color.color-orange { background-color: var(--quote-orange-bg) !important; }
+.preview .icon-container .icon-color.color-red    { background-color: var(--quote-red-bg)    !important; }
 
 .preview .text-container {
     flex: 1 1 auto;
@@ -1059,6 +1072,7 @@
     transition: all .3s;
     width: 900px;
     max-width: 90vw;
+    padding: 10px 24px;
 }
 
 @media (max-width: 700px) {
@@ -1122,6 +1136,14 @@
     .preview .icon-container {
         border: 1px solid var(--border-light-color);
     }
+
+    .preview .icon-container .icon-color.color-pink   { background-color: transparent !important; }
+    .preview .icon-container .icon-color.color-purple { background-color: transparent !important; }
+    .preview .icon-container .icon-color.color-blue   { background-color: transparent !important; }
+    .preview .icon-container .icon-color.color-green  { background-color: transparent !important; }
+    .preview .icon-container .icon-color.color-yellow { background-color: transparent !important; }
+    .preview .icon-container .icon-color.color-orange { background-color: transparent !important; }
+    .preview .icon-container .icon-color.color-red    { background-color: transparent !important; }
 
     .preview .text-container .title {
         font-size: 1.25rem;
