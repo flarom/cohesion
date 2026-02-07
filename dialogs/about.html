@@ -51,7 +51,7 @@
     <body>
         <div class="center" style="padding: 10px; text-align: center">
             <img src="cohesion/favicon.svg" alt="" style="transform: scale(0); animation: showdialog 1s ease-in-out forwards" />
-            <h3 translate="no" class="app-name">Figure</h3>
+            <h3 translate="no" class="app-name">Cohesion</h3>
             <p translate="no" class="version" onclick="copyVersion(this)">OwO</p>
         </div>
 
@@ -166,7 +166,7 @@
                 }
 
                 try {
-                    const response = await fetch("https://api.github.com/repos/flarom/figure/commits/main");
+                    const response = await fetch("https://api.github.com/repos/flarom/cohesion/commits/main");
                     if (!response.ok) throw new Error("Failed to fetch commit info");
 
                     const data = await response.json();
