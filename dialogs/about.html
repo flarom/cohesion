@@ -36,17 +36,28 @@
                     transform: translateY(0);
                 }
             }
+
+            .page {
+                display: none;
+                width: 100%;
+            }
+
+            .page.active {
+                display: block;
+                animation: fadein 0.3s ease;
+            }
         </style>
     </head>
     <body>
         <div class="center" style="padding: 10px; text-align: center">
             <img src="cohesion/favicon.svg" alt="" style="transform: scale(0); animation: showdialog 1s ease-in-out forwards" />
-            <h3 translate="no" class="app-name">Cohesion</h3>
+            <h3 translate="no" class="app-name">Figure</h3>
             <p translate="no" class="version" onclick="copyVersion(this)">OwO</p>
         </div>
 
         <div class="settings-body" id="settingsBody">
-            <div class="main-page">
+            <!-- MAIN -->
+            <div class="page active" id="page-main">
                 <div class="setting top bottom" style="cursor: pointer" onclick="showLandingPage()">
                     <span class="switch-text" data-locale="dialogs.about.main.landing-page">Landing page</span>
                     <button class="icon-button">open_in_new</button>
@@ -64,40 +75,10 @@
                     <button class="icon-button">chevron_forward</button>
                 </div>
             </div>
-        </div>
 
-        <script>
-            (() => {
-                const settingsBody = document.getElementById("settingsBody");
-            })();
-
-            function showMainPage() {
-                settingsBody.innerHTML = `<div class="main-page">
-                <div class="setting top bottom" style="cursor: pointer" onclick="window.open('index.html?intro=true')">
-                    <span class="switch-text" data-locale="dialogs.about.main.landing-page">Landing page</span>
-                    <button class="icon-button">open_in_new</button>
-                </div>
-                <div class="setting top bottom" style="cursor: pointer" onclick="window.open('https://github.com/flarom/cohesion/issues')">
-                    <span class="switch-text" data-locale="dialogs.about.main.report-an-issue">Report an Issue</span>
-                    <button class="icon-button">open_in_new</button>
-                </div>
-                <div class="setting top" style="cursor: pointer" onclick="showPage('credits')">
-                    <span class="switch-text" data-locale="dialogs.about.main.credits">Credits</span>
-                    <button class="icon-button">chevron_forward</button>
-                </div>
-                <div class="setting bottom" style="cursor: pointer" onclick="showPage('legal')">
-                    <span class="switch-text" data-locale="dialogs.about.main.legal">Legal</span>
-                    <button class="icon-button">chevron_forward</button>
-                </div>
-            </div>`;
-            applyLanguage();
-            }
-
-            function showPage(type) {
-                if (type === "credits") {
-                    settingsBody.innerHTML = `
-            <div class="main-page">
-                <div class="setting top bottom" style="cursor: pointer;" onclick="showMainPage()">
+            <!-- CREDITS -->
+            <div class="page" id="page-credits">
+                <div class="setting top bottom" style="cursor: pointer;" onclick="showPage('main')">
                     <span>
                         <span class="icon">arrow_back</span>
                         <span data-locale="dialogs.about.credits.back">Back</span>
@@ -126,16 +107,13 @@
                         <li><a href='https://apps.gnome.org/TextEditor/' target='_blank'>GNOME Text Editor</a> — <span data-locale="dialogs.about.credits.general-inspiration.original-app-icon">Original app icon</span></li>
                         <li><a href='https://apps.gnome.org/Apostrophe/' target='_blank'>Apostrophe</a> — <span data-locale="dialogs.about.credits.general-inspiration.layout-and-design">Layout and design</span></li>
                         <li><a href='https://developer.gnome.org/hig/' target='_blank'>GNOME Human Interface Guidelines</a> — <span data-locale="dialogs.about.credits.general-inspiration.design-guidelines">Design guidelines</span></li>
-                    </ul
+                    </ul>
                 </div>
             </div>
-            `;
-                }
 
-                if (type === "legal") {
-                    settingsBody.innerHTML = `
-            <div class="main-page">
-                <div class="setting top bottom" style="cursor: pointer;" onclick="showMainPage()">
+            <!-- LEGAL -->
+            <div class="page" id="page-legal">
+                <div class="setting top bottom" style="cursor: pointer;" onclick="showPage('main')">
                     <span>
                         <span class="icon">arrow_back</span>
                         <span data-locale="dialogs.about.legal.back">Back</span>
@@ -143,21 +121,25 @@
                 </div>
                 <div class="setting top bottom">
                     <div>
-                        <p>Copyright (C) ${new Date().getFullYear()}, Flarom.</p>
-                        <p data-locale="dialogs.about.legal.notice"
-                            data-locale-html
-                            data-locale-vars='${JSON.stringify({
-                                licenseLink: `<a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank">GNU GPL v3</a>`
-                            })}'
-                            This application comes with absolutely no warranty. It is licensed under the <a href='https://www.gnu.org/licenses/gpl-3.0.html' target='_blank'>GNU GPL v3</a>.
-                        </p>
+                        <p>Copyright (C) <span id="currentYear"></span>, Flarom.</p>
+                        <p data-locale="dialogs.about.legal.notice" data-locale-html data-locale-vars='{"licenseLink":"<a href=https://www.gnu.org/licenses/gpl-3.0.html target=_blank>GNU GPL v3</a>"}'>This application comes with absolutely no warranty. It is licensed under the <a href='https://www.gnu.org/licenses/gpl-3.0.html' target='_blank'>GNU GPL v3</a>.</p>
                     </div>
                 </div>
             </div>
-            `;
-                }
-                applyLanguage();
+
+        <script>
+            (() => {
+                const settingsBody = document.getElementById("settingsBody");
+            })();
+
+            function showPage(name) {
+                document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+
+                const page = document.getElementById(`page-${name}`);
+                if (page) page.classList.add("active");
             }
+
+            document.getElementById("currentYear").textContent = new Date().getFullYear();
 
             async function updateVersionLabel() {
                 const versionLabel = document.querySelector(".version");
@@ -184,7 +166,7 @@
                 }
 
                 try {
-                    const response = await fetch("https://api.github.com/repos/flarom/cohesion/commits/main");
+                    const response = await fetch("https://api.github.com/repos/flarom/figure/commits/main");
                     if (!response.ok) throw new Error("Failed to fetch commit info");
 
                     const data = await response.json();
@@ -209,20 +191,6 @@
                     .writeText(el.textContent.trim())
                     .then(() => showToast("Copied to clipboard", "content_copy"))
                     .catch((err) => console.error("Copy failed:", err));
-            }
-
-            function showLandingPage() {
-                showMessageFromFile('landing.html', false, true, false, false);
-
-                const landingKeyHandler = (event) => {
-                    if (/^[a-zA-Z0-9]$/.test(event.key)) {
-                        fadeOutAllDialogs();
-                        editor.focus();
-                        document.removeEventListener("keydown", landingKeyHandler);
-                    }
-                };
-
-                document.addEventListener("keydown", landingKeyHandler);
             }
 
             updateVersionLabel();
