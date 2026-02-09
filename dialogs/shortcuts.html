@@ -2,95 +2,383 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
     <title>Shortcuts</title>
 
+    <meta name="dialog-show-close-button" content="true">
+    <meta name="dialog-prefered-width" content="900">
+
     <style>
-        .page-switcher {
-            height: 48px;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
+        .prompt-dialog .shortcuts {
+            padding: 22px 28px 16px;
+            box-sizing: border-box;
+        }
+
+        /* main grid */
+        .prompt-dialog .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        /* sections */
+        .prompt-dialog .section h3 {
+            margin: 14px 0;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .prompt-dialog .shortcut {
+            height: 32px;
+        }
+
+        .prompt-dialog .keys {
             display: flex;
             align-items: center;
-            gap: 10px;
-            justify-content: center;
+            gap: 3px;
+            flex-wrap: wrap;
+            min-width: 120px;
         }
-        
-        .page-switcher button {
+
+        .prompt-dialog kbd {
+            background: var(--background-color-3);
+            border: 1px solid var(--border-field-color);
+            font-family: var(--font-text);
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: var(--shadow-light);
+            white-space: nowrap;
+            text-align: center;
+            min-width: 16px;
+        }
+
+        .prompt-dialog kbd.icon {
+            font-family: "Material Symbols Rounded";
+            font-size: large;
+            max-height: 26px;
+            padding: 0px 8px;
+        }
+
+        .prompt-dialog .desc {
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        /* pages */
+        .prompt-dialog .page {
+            display: none;
+        }
+
+        .prompt-dialog .page.active {
+            display: block;
+        }
+
+        /* pager */
+        .prompt-dialog .pager {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 0 4px;
+        }
+
+        .prompt-dialog .dot {
             width: 32px;
             height: 32px;
-            border-radius: 100%;
-            background-color: var(--background-color-2);
+            border-radius: 16px;
+            border: none;
+            background: var(--background-color-3);
             color: var(--button-color);
-            border:0;
+            font-size: 13px;
             cursor: pointer;
+            transition: border-radius .3s;
         }
 
-        .pages {
-            min-height: 600px;
-        }
-
-        .page {
-            display: none;
-            padding: 30px;
-        }
-
-        .page.on {
-            display: flex;
-            flex-wrap: wrap;
-            min-height: 100%;
-        }
-
-        .page .category {
-            .line {
-                display: flex;
-                justify-content: space-between;
-                margin-bottom: 8px;
-                kbd {
-                    background-color: var(--background-color-2);
-                    padding: 5px;
-                    border-radius: 5px;
-                    margin: 2px;
-                }
-            }
+        .prompt-dialog .dot.active {
+            background: var(--field-color);
+            border-radius: 8px;
         }
     </style>
 </head>
 
 <body>
-    <div class="pages">
-        <div id="1" class="page on">
-            <div class="category">
-                <h3>Navigation</h3>
-                <div class="line">
-                    <span><kbd>ESC</kbd></span>
-                    <span>Focus on editor</span>
+
+    <div class="shortcuts">
+
+        <!-- MARK:-
+        PAGE 1
+        -->
+        <div class="page active">
+            <div class="grid">
+                <div class="section">
+                    <!-- MARK: Documents -->
+                    <h3 data-locale="dialogs.shortcuts.documents">Documents</h3>
+
+                    <table>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Alt</kbd>+<kbd>N</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.documents.new-document">New document</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>O</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.documents.open-document">Open document</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>S</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.documents.save-document">Save document</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Delete</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.documents.delete-document">Delete document</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Alt</kbd>+<kbd>1</kbd>/<kbd>0</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.documents.switch-between-first-ten-documents">Switch between first ten documents</td>
+                        </tr>
+                    </table>
+
+                    <!-- MARK: Markdown -->
+                    <h3 data-locale="dialogs.shortcuts.markdown">Markdown</h3>
+
+                    <table>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>B</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.markdown.bold">Bold</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>I</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.markdown.italic">Italic</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>U</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.markdown.unordered-list">Unordered list</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>1</kbd>/<kbd>6</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.markdown.heading">Heading</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>;</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.markdown.document-metadata-block">Document metadata block</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>F6</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.markdown.date-and-time">Date and time</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Shift</kbd>+<kbd>F6</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.markdown.date-and-time-custom-format">Date and time (Custom format)</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>K</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.markdown.link">Link</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.markdown.separator">Separator</td>
+                        </tr>
+                    </table>
                 </div>
-                <div class="line">
-                    <span><kbd>CTRL</kbd><kbd>P</kbd></span>
-                    <span>Show/Hide rendered document</span>
-                </div>
-                <div class="line">
-                    <span><kbd>F9</kbd></span>
-                    <span>documents sidebar</span>
+
+                <div class="section">
+                    <!-- MARK: Copy and paste -->
+                    <h3 data-locale="dialogs.shortcuts.copy-paste">Copy and paste</h3>
+
+                    <table>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>X</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.copy-paste.cut">Cut</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>C</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.copy-paste.copy">Copy</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>V</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.copy-paste.paste">Paste</td>
+                        </tr>
+
+                    </table>
+
+                    <!-- MARK: Undo and redo -->
+                    <h3 data-locale="dialogs.shortcuts.undo-redo">Undo and redo</h3>
+
+                    <table>                    
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>Z</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.undo-redo.undo">Un-do</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>Y</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.undo-redo.redo">Re-do</td>
+                        </tr>
+
+                    </table>
+
+                    <!-- MARK: Selection -->
+                    <h3 data-locale="dialogs.shortcuts.selection">Selection</h3>
+
+                    <table>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>A</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.selection.select-all">Select all</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>D</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.selection.select-next-instance">Select next instance</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Alt</kbd>+<kbd class="icon" title="Left mouse button and drag / double trackpad tap and drag" data-locale-attr="title:dialogs.shortcuts.selection.drag-click">drag_click</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.selection.select-area">Select area</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd class="icon" title="Left click" data-locale-attr="title:dialogs.shortcuts.selection.left-click">left_click</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.selection.add-cursor">Add cursor</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd class="icon">keyboard_arrow_up</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.selection.add-cursor-above">Add cursor above</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd class="icon">keyboard_arrow_down</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.selection.add-cursor-bellow">Add cursor bellow</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>
-        <div id="2" class="page">
-            
+
+        <!-- MARK:-
+        PAGE 2
+        -->
+        <div class="page">
+            <div class="grid">
+                <div class="section">
+                    <!-- MARK: Navigation -->
+                    <h3 data-locale="dialogs.shortcuts.navigation">Navigation</h3>
+
+                    <table>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Escape</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.navigation.focus-on-editor">Focus on editor</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>P</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.navigation.show-hide-rendered-document">Show/Hide rendered document</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>,</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.navigation.show-settings">Show settings</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>?</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.navigation.show-keyboard-shortcuts">Show keyboard shortcuts</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Alt</kbd>+<kbd>R</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.navigation.show-keyboard-resource-manager">Show resources manager</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>F1</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.navigation.show-about">About Cohesion</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>F8</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.navigation.show-hide-application-menu">Show/Hide application menu</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>F9</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.navigation.show-hide-documents-sidebar">Show/Hide documents sidebar</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Alt</kbd>+<kbd>I</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.navigation.show-hide-insert-menu">Show/Hide insert menu</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>F11</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.navigation.fullscreen">Fullscreen</td>
+                        </tr>
+                    </table>
+                    
+                    <!-- MARK: Editing -->
+                    <h3 data-locale="dialogs.shortcuts.editing">Editing</h3>
+
+                    <table>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Alt</kbd>+<kbd class="icon">keyboard_arrow_up</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.editing.move-up">Move up</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Alt</kbd>+<kbd class="icon">keyboard_arrow_down</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.editing.move-down">Move down</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.editing.duplicate-line">Duplicate line</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>F10</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.editing.sort-lines">Sort lines</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Shift</kbd>+<kbd>F10</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.editing.reverse-sort-lines">Reverse sort lines</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="section">
+                    <!-- MARK: Search -->
+                    <h3 data-locale="dialogs.shortcuts.search">Search</h3>
+
+                    <table>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>F</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.search.find">Find</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>H</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.search.find-and-replace">Find and replace</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>G</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.search.go-to-line">Go to line</td>
+                        </tr>
+                        <tr class="shortcut">
+                            <td class="keys"><kbd>Ctrl</kbd>+<kbd>K</kbd></td>
+                            <td class="desc" data-locale="dialogs.shortcuts.search.search-documents">Search documents</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
         </div>
-        <div id="3" class="page">
-            
+
+        <!-- MARK:
+        PAGE SWITCHER
+        -->
+        <div class="pager">
+            <button class="dot active">1</button>
+            <button class="dot">2</button>
         </div>
     </div>
-    <div class="page-switcher">
-        <button onclick="openPage(1)">1</button>
-        <button onclick="openPage(2)">2</button>
-        <button onclick="openPage(3)">3</button>
-    </div>
+
+    <script>
+        (() => {
+            const pages = document.querySelectorAll(".page");
+            const dots = document.querySelectorAll(".dot");
+
+            dots.forEach((dot, i) => {
+                dot.addEventListener("click", () => {
+                    pages.forEach(p => p.classList.remove("active"));
+                    dots.forEach(d => d.classList.remove("active"));
+
+                    pages[i].classList.add("active");
+                    dot.classList.add("active");
+                });
+            });
+        })();
+    </script>
+
 </body>
 
 </html>

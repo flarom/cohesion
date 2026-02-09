@@ -14,6 +14,7 @@ body {
 }
 
 header.window-title {
+    position: static;
     display: flex;
     justify-content: space-between;
     align-items: center;

@@ -3,6 +3,21 @@
 
 <head>
     <title>Resources</title>
+
+    <meta name="dialog-show-close-button" content="true">
+    <meta name="dialog-prefered-width" content="800">
+    <meta name="dialog-toolbar-left" content="<button class='icon-button' onclick='Resources.uploadFSFile().then(() => renderFSFiles());' translate='no' title='Upload file'>add</button>">
+    <meta name="dialog-toolbar-right" content="
+            <button class='icon-button' translate='no' title='Search'>search</button>
+            <div class='dropdown'>
+                <button class='icon-button' onmousedown='toggleDropdown(`resources-more-menu`)' translate='no' title='More options'>more_vert</button>
+                <div class='dropdown-content menu' id='resources-more-menu'>
+                    <button class='text-button'>About Resources</button>
+                    <hr>
+                    <button class='text-button danger' onmouseup='promptDeleteAllFS()'>Delete all data</button>
+                </div>
+            </div>">
+
     <style>
         .fs-file-container {
             min-height: 200px;

@@ -290,92 +290,158 @@ function promptMessage(htmlContent, showCloseButton = true, useBigDialog = false
     });
 }
 
-function showMessageFromFile(filePath, showCloseButton = true, useBigDialog = false, showAnimation = true, showBg = true, width = 400, toolbarLeft = "", toolbarCenter = "", toolbarRight = "") {
-    fetch(filePath).then((response) => {
-        if (!response.ok) {
-            throw new Error(`Failed loading file: ${response.statusText}`);
-        }
-        return response.text();
-    }).then((htmlContent) => {
-        const overlay = document.createElement("div");
-        overlay.className = "prompt-overlay";
-        if (!showBg) {
-            overlay.classList.add("no-bg");
-        }
-        const dialog = document.createElement("div");
-        dialog.className = useBigDialog ? "prompt-big-dialog" : "prompt-dialog";
-        if (!useBigDialog) dialog.style.maxWidth = `${width}px`;
-        if (!showAnimation) dialog.classList.add("no-animation");
-
-        const closeButton = document.createElement("button");
-        closeButton.textContent = "close";
-        closeButton.className = "icon-button dialog-window-control";
-        closeButton.setAttribute("translate", "no");
-
-        const toolbar = document.createElement("div");
-        toolbar.className = "toolbar";
-
-        const toolbarLeftDiv = document.createElement("div");
-        toolbarLeftDiv.className = "toolbar-left";
-        toolbarLeftDiv.innerHTML = toolbarLeft;
-
-        const toolbarCenterDiv = document.createElement("div");
-        toolbarCenterDiv.className = "toolbar-center";
-        toolbarCenterDiv.innerHTML = toolbarCenter;
-
-        const toolbarRightDiv = document.createElement("div");
-        toolbarRightDiv.className = "toolbar-right";
-        toolbarRightDiv.innerHTML = toolbarRight;
-
-        if (showCloseButton) toolbarRightDiv.appendChild(closeButton);
-
-        toolbar.appendChild(toolbarLeftDiv);
-        toolbar.appendChild(toolbarCenterDiv);
-        toolbar.appendChild(toolbarRightDiv);
-
-        const content = document.createElement("div");
-        const template = document.createElement("template");
-        template.innerHTML = htmlContent.trim();
-        Array.from(template.content.childNodes).forEach((node) => content.appendChild(node));
-
-        dialog.appendChild(toolbar);
-        dialog.appendChild(content);
-
-        overlay.appendChild(dialog);
-        document.body.appendChild(overlay);
-        translateWithin(overlay);
-
-        const scripts = content.querySelectorAll("script");
-        scripts.forEach((oldScript) => {
-            const newScript = document.createElement("script");
-            if (oldScript.src) {
-                newScript.src = oldScript.src;
-            } else {
-                newScript.textContent = oldScript.textContent;
+function showMessageFromFile(filePath) {
+    fetch(filePath)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Failed loading file: ${response.statusText}`);
             }
-            Array.from(oldScript.attributes).forEach((attr) =>
-                newScript.setAttribute(attr.name, attr.value)
-            );
-            oldScript.replaceWith(newScript);
-        });
+            return response.text();
+        })
+        .then((htmlContent) => {
+            // parse dialog html
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlContent, "text/html");
 
-        closeButton.addEventListener("click", () => {
-            document.body.removeChild(overlay);
-        });
+            // meta helpers
+            const getMeta = (name, fallback = null) => {
+                const meta = doc.querySelector(`meta[name="${name}"]`);
+                return meta ? meta.content : fallback;
+            };
 
-        overlay.addEventListener("keydown", (event) => {
-            if (event.key === "Escape") {
-                document.body.removeChild(overlay);
+            const getMetaBool = (name, fallback = true) => {
+                const value = getMeta(name);
+                if (value === null) return fallback;
+                return ["true", "1", "yes", "on"].includes(value.toLowerCase());
+            };
+
+            const getMetaInt = (name, fallback) => {
+                const value = parseInt(getMeta(name), 10);
+                return Number.isFinite(value) ? value : fallback;
+            };
+
+            // meta settings
+            const showCloseButton = getMetaBool("dialog-show-close-button", true);
+            const useBigDialog    = getMetaBool("dialog-big", false);
+            const showAnimation   = getMetaBool("dialog-animate", true);
+            const showBg          = getMetaBool("dialog-show-bg", true);
+            const width           = getMetaInt("dialog-prefered-width", 400);
+
+            const toolbarLeft   = getMeta("dialog-toolbar-left", "");
+            const toolbarCenter = getMeta("dialog-toolbar-center", "");
+            const toolbarRight  = getMeta("dialog-toolbar-right", "");
+
+            // inject dialog css
+            const dialogId = crypto.randomUUID();
+            const injectedStyles = [];
+
+            doc.querySelectorAll("style").forEach((style) => {
+                const clone = document.createElement("style");
+                clone.textContent = style.textContent;
+                clone.dataset.dialogStyle = dialogId;
+                document.head.appendChild(clone);
+                injectedStyles.push(clone);
+            });
+
+            doc.querySelectorAll('link[rel="stylesheet"]').forEach((link) => {
+                const clone = document.createElement("link");
+                clone.rel = "stylesheet";
+                clone.href = link.href;
+                clone.dataset.dialogStyle = dialogId;
+                document.head.appendChild(clone);
+                injectedStyles.push(clone);
+            });
+
+            // overlay and dialog
+            const overlay = document.createElement("div");
+            overlay.className = "prompt-overlay";
+            overlay.tabIndex = -1;
+
+            if (!showBg) overlay.classList.add("no-bg");
+
+            const dialog = document.createElement("div");
+            dialog.className = useBigDialog ? "prompt-big-dialog" : "prompt-dialog";
+            dialog.setAttribute("data-dialog", "");
+
+            if (!useBigDialog) {
+                dialog.style.maxWidth = `${width}px`;
             }
-        });
 
-        closeButton.focus();
-    })
-        .catch((error) => {
-            console.error(error);
-        });
+            if (!showAnimation) {
+                dialog.classList.add("no-animation");
+            }
+
+            // toolbar
+            const toolbar = document.createElement("div");
+            toolbar.className = "toolbar";
+
+            const left = document.createElement("div");
+            left.className = "toolbar-left";
+            left.innerHTML = toolbarLeft;
+
+            const center = document.createElement("div");
+            center.className = "toolbar-center";
+            center.innerHTML = toolbarCenter;
+
+            const right = document.createElement("div");
+            right.className = "toolbar-right";
+            right.innerHTML = toolbarRight;
+
+            const closeButton = document.createElement("button");
+            closeButton.textContent = "close";
+            closeButton.className = "icon-button dialog-window-control";
+            closeButton.setAttribute("translate", "no");
+
+            if (showCloseButton) {
+                right.appendChild(closeButton);
+            }
+
+            toolbar.append(left, center, right);
+
+            // content
+            const content = document.createElement("div");
+            content.className = "dialog-content";
+            content.append(...doc.body.childNodes);
+
+            dialog.append(toolbar, content);
+            overlay.appendChild(dialog);
+            document.body.appendChild(overlay);
+
+            translateWithin(overlay);
+
+            // scripts
+            content.querySelectorAll("script").forEach((oldScript) => {
+                const newScript = document.createElement("script");
+
+                if (oldScript.src) {
+                    newScript.src = oldScript.src;
+                } else {
+                    newScript.textContent = oldScript.textContent;
+                }
+
+                [...oldScript.attributes].forEach((attr) =>
+                    newScript.setAttribute(attr.name, attr.value)
+                );
+
+                oldScript.replaceWith(newScript);
+            });
+
+            // cleanup + close dialog
+            const closeDialog = () => {
+                injectedStyles.forEach((el) => el.remove());
+                overlay.remove();
+            };
+
+            closeButton.addEventListener("click", closeDialog);
+
+            overlay.addEventListener("keydown", (e) => {
+                if (e.key === "Escape") closeDialog();
+            });
+
+            closeButton.focus();
+        })
+        .catch(console.error);
 }
-
 
 function promptConfirm(message, dangerous = false) {
     return new Promise((resolve) => {

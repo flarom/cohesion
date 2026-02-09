@@ -153,11 +153,11 @@
                             <kbd>Ctrl+K</kbd>
                         </button>
                         <hr />
-                        <button class="text-button" onmouseup="closeAllDialogs(); showResourcesDialog(); hideAllMenus();">
+                        <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('dialogs/resources.html'); hideAllMenus();">
                             <span data-locale="app.toolbar.more-menu.resources">Resources</span>
                             <kbd>Alt+R</kbd>
                         </button>
-                        <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('dialogs/settings.html', true, false, true, true, 900); hideAllMenus()">
+                        <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('dialogs/settings.html'); hideAllMenus()">
                             <span data-locale="app.toolbar.more-menu.settings">Settings</span>
                             <kbd>Ctrl+,</kbd>
                         </button>
@@ -167,12 +167,8 @@
                         <hr />
                         <button class="text-button" onmouseup="window.open('https://github.com/flarom/cohesion/wiki'); hideAllMenus()" data-locale="app.toolbar.more-menu.help">Help</button>
                         <button class="text-button" onmouseup="showCheatSheet();" data-locale="app.toolbar.more-menu.markdown-cheat-sheet">Markdown Cheat Sheet</button>
-                        <!-- <button class="text-button" onmouseup="showMessageFromFile('dialogs/shortcuts.html', true, false, true, true, 600); hideAllMenus();">
+                        <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('dialogs/shortcuts.html'); hideAllMenus();">
                             Keyboard shortcuts
-                            <kbd>Ctrl+?</kbd>
-                        </button> -->
-                        <button class="text-button" onmouseup="window.open('https://github.com/flarom/cohesion/wiki/Keyboard-shortcuts', '_blank'); hideAllMenus();">
-                            <span data-locale="app.toolbar.more-menu.keyboard-shortcuts">Keyboard shortcuts</span>
                             <kbd>Ctrl+?</kbd>
                         </button>
                         <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('dialogs/about.html'); hideAllMenus();">
@@ -325,7 +321,7 @@
 
             // Search menu actions (Ctrl/Cmd-K)
             // addSearchMenuAction("Settings", "Settings", function() {showMessageFromFile('dialogs/settings.html', true, false, true, true, 900);});
-            // addSearchMenuAction("Resources", "Image", function() {showResourcesDialog();});
+            // addSearchMenuAction("Resources", "Image", function() {showMessageFromFile("dialogs/resources.html");});
             // addSearchMenuAction("Macros", "code", function() {showMacrosDialog();})
             // addSearchMenuAction("About", "info", function() {showMessageFromFile('dialogs/about.html');})
 
@@ -341,7 +337,7 @@
 
             // show intro if files are empty, or if the intro is set to true
             if (introParam === 'true' || allEmpty) {
-                showMessageFromFile('landing.html', false, true, false, false);
+                showMessageFromFile('landing.html');
 
                 const landingKeyHandler = (event) => {
                     if (/^[a-zA-Z0-9]$/.test(event.key)) {
@@ -1441,18 +1437,18 @@
                 { match: e => e.ctrlKey && e.key.toLowerCase() === "p", handler: () => togglePreview(), preventDefault: true },
                 //// show about dialog (F1)
                 { match: e => e.key === "F1", handler: () => { closeAllDialogs(); showMessageFromFile("dialogs/about.html") }, preventDefault: true },
+                //// toggle more menu (F8)
+                { match: e => e.key === "F8", handler: () => toggleDropdown("more-menu"), preventDefault: true },
                 //// toggle files sidebar (F9)
                 { match: e => e.key === "F9", handler: () => toggleSidebar("files-bar"), preventDefault: true },
-                //// toggle more menu (F10)
-                { match: e => e.key === "F10", handler: () => toggleDropdown("more-menu"), preventDefault: true },
                 //// toggle insert menu (Alt+I)
                 { match: e => e.altKey && e.key.toLowerCase() === "i", handler: () => toggleDropdown("insert-menu"), preventDefault: true },
                 //// open settings (Ctrl+, [Comma])
-                { match: e => e.ctrlKey && e.key === ",", handler: () => { closeAllDialogs();  showMessageFromFile("dialogs/settings.html", true, false, true, true, 900); hideAllMenus(); }, preventDefault: true },
-                //// open keyboard shortcuts wiki (Ctrl+?)
-                { match: e => e.ctrlKey && e.key === "?", handler: () => { window.open('https://github.com/flarom/cohesion/wiki/Keyboard-shortcuts', '_blank'); hideAllMenus(); }, preventDefault: true },
+                { match: e => e.ctrlKey && e.key === ",", handler: () => { closeAllDialogs();  showMessageFromFile("dialogs/settings.html"); hideAllMenus(); }, preventDefault: true },
+                //// open keyboard shortcuts dialog (Ctrl+?)
+                { match: e => e.ctrlKey && e.key === "?", handler: () => { closeAllDialogs(); showMessageFromFile('dialogs/shortcuts.html'); hideAllMenus(); }, preventDefault: true },
                 //// open resources manager (Alt+R)
-                { match: e => e.altKey && e.key.toLowerCase() === "r", handler: () => { closeAllDialogs(); showResourcesDialog(); hideAllMenus(); }, preventDefault: true },
+                { match: e => e.altKey && e.key.toLowerCase() === "r", handler: () => { closeAllDialogs(); showMessageFromFile("dialogs/resources.html"); hideAllMenus(); }, preventDefault: true },
 
                 //// switch first ten docs (Alt+1..0)
                 { match: e => e.altKey && /^[0-9]$/.test(e.key), handler: (e) => {
@@ -1562,24 +1558,6 @@
 
             for (const s of shortcuts) {
                 addKeyboardShortcut(s);
-            }
-
-            function showResourcesDialog(){
-                let leftPane =
-                `<button class='icon-button' onclick='Resources.uploadFSFile().then(() => renderFSFiles());' translate='no' title='Upload file'>add</button>`
-
-                let rightpane =
-                `<button class='icon-button' translate='no' title='Search'>search</button>
-                <div class='dropdown'>
-                    <button class='icon-button' onmousedown='toggleDropdown("resources-more-menu")' translate='no' title='More options'>more_vert</button>
-                    <div class='dropdown-content menu' id='resources-more-menu'>
-                        <button class='text-button'>About Resources</button>
-                        <hr>
-                        <button class='text-button danger' onmouseup='promptDeleteAllFS()'>Delete all data</button>
-                    </div>
-                </div>`
-
-                showMessageFromFile("dialogs/resources.html", true, false, true, true, 800, leftPane, "", rightpane);
             }
 
             function showMacrosDialog() {

@@ -4,7 +4,7 @@
         "name": "Portuguese (Brazil)",
         "nativeName": "Português do Brasil",
         "direction": "ltr",
-        "status": "10%",
+        "status": "90%",
         "translators": [
             {
                 "name": "Flarom",
@@ -320,6 +320,79 @@
                 "dialogs.settings.main.backups.delete-empty-files": "Deletar arquivos vazios",
                 "dialogs.settings.main.backups.delete-empty-files.description": "Deletar todos arquivos que não tenham nenhum texto ou meta",
                 "dialogs.settings.main.backups.delete": "Deletar"
+            }
+        },
+
+        "SHORTCUTS": {
+            "DOCUMENTS": {
+                "dialogs.shortcuts.documents": "Documentos",
+                "dialogs.shortcuts.documents.new-document": "Novo documento",
+                "dialogs.shortcuts.documents.open-document": "Abrir documento",
+                "dialogs.shortcuts.documents.save-document": "Salvar documento",
+                "dialogs.shortcuts.documents.delete-document": "Deletar documento",
+                 "dialogs.shortcuts.documents.switch-between-first-ten-documents": "Alternar entre os primeiros dez documentos"
+            },
+            "MARKDOWN": {
+                "dialogs.shortcuts.markdown": "Markdown",
+                "dialogs.shortcuts.markdown.bold": "Negrito",
+                "dialogs.shortcuts.markdown.italic": "Itálico",
+                "dialogs.shortcuts.markdown.unordered-list": "Lista não ordenada",
+                "dialogs.shortcuts.markdown.heading": "Título",
+                "dialogs.shortcuts.markdown.document-metadata-block": "Bloco de metadados do documento",
+                "dialogs.shortcuts.markdown.date-and-time": "Data e hora",
+                "dialogs.shortcuts.markdown.date-and-time-custom-format": "Data e hora (formato personalizado)",
+                "dialogs.shortcuts.markdown.link": "Link",
+                "dialogs.shortcuts.markdown.separator": "Separador"
+            },
+            "COPY PASTE": {
+                "dialogs.shortcuts.copy-paste": "Copiar e colar",
+                "dialogs.shortcuts.copy-paste.cut": "Recortar",
+                "dialogs.shortcuts.copy-paste.copy": "Copiar",
+                "dialogs.shortcuts.copy-paste.paste": "Colar"
+            },
+            "UNDO REDO": {
+                "dialogs.shortcuts.undo-redo": "Desfazer e refazer",
+                "dialogs.shortcuts.undo-redo.undo": "Desfazer",
+                "dialogs.shortcuts.undo-redo.redo": "Refazer"
+            },
+            "SELECTION": {
+                "dialogs.shortcuts.selection": "Seleção",
+                "dialogs.shortcuts.selection.select-all": "Selecionar tudo",
+                "dialogs.shortcuts.selection.select-next-instance": "Selecionar próxima instância",
+                "dialogs.shortcuts.selection.select-area": "Selecionar área",
+                "dialogs.shortcuts.selection.add-cursor": "Adicionar cursor",
+                "dialogs.shortcuts.selection.add-cursor-above": "Adicionar cursor acima",
+                "dialogs.shortcuts.selection.add-cursor-bellow": "Adicionar cursor abaixo",
+                "dialogs.shortcuts.selection.drag-click": "Botão esquerdo do mouse e arrastar / toque duplo e arrastar no trackpad",
+                "dialogs.shortcuts.selection.left-click": "Clique esquerdo"
+            },
+            "NAVIGATION": {
+                "dialogs.shortcuts.navigation": "Navegação",
+                "dialogs.shortcuts.navigation.focus-on-editor": "Focar no editor",
+                "dialogs.shortcuts.navigation.show-hide-rendered-document": "Mostrar/Esconder documento renderizado",
+                "dialogs.shortcuts.navigation.show-settings": "Mostrar configurações",
+                "dialogs.shortcuts.navigation.show-keyboard-shortcuts": "Mostrar atalhos de teclado",
+                "dialogs.shortcuts.navigation.show-resource-manager": "Mostrar gerenciador de recursos",
+                "dialogs.shortcuts.navigation.show-about": "Sobre o Cohesion",
+                "dialogs.shortcuts.navigation.show-hide-application-menu": "Mostrar/Esconder menu da aplicação",
+                "dialogs.shortcuts.navigation.show-hide-documents-sidebar": "Mostrar/Esconder barra lateral de documentos",
+                "dialogs.shortcuts.navigation.show-hide-insert-menu": "Mostrar/Esconder menu de inserção",
+                 "dialogs.shortcuts.navigation.fullscreen": "Tela cheia"
+            },
+            "EDITING": {
+                "dialogs.shortcuts.editing": "Editando",
+                "dialogs.shortcuts.editing.move-up": "Mover linha para cima",
+                "dialogs.shortcuts.editing.move-down": "Mover linha para baixo",
+                "dialogs.shortcuts.editing.duplicate-line": "Duplicar linha",
+                "dialogs.shortcuts.editing.sort-lines": "Ordenar linhas",
+                "dialogs.shortcuts.editing.reverse-sort-lines": "Ordenar linhas em ordem reversa"
+            },
+            "SEARCH": {
+                "dialogs.shortcuts.search": "Busca",
+                "dialogs.shortcuts.search.find": "Localizar",
+                "dialogs.shortcuts.search.find-and-replace": "Localizar e substituir",
+                "dialogs.shortcuts.search.go-to-line": "Ir para linha",
+                "dialogs.shortcuts.search.search-documents": "Buscar documentos"
             }
         },
 
