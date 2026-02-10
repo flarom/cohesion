@@ -299,3 +299,43 @@ button.secondary:hover {
         display: none;
     }
 }
+
+#intro-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--background-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 1s ease;
+    user-select: none;
+}
+
+#intro-title {
+    visibility: hidden;
+    font-family: var(--font-title);
+    font-size: 3em;
+    color: var(--text-color);
+    display: flex;
+}
+
+#intro-title span {
+    opacity: 0;
+    transform: translateY(-100px);
+    display: inline-block;
+    animation: letterPop 1s ease forwards;
+}
+
+@keyframes letterPop {
+    0% {
+        opacity: 0;
+        transform: translateY(-100px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}

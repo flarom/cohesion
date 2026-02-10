@@ -46,49 +46,6 @@
     <link rel="stylesheet" href="style/landing.css">
     <link rel="stylesheet" href="style/preview.css">
     <link rel="stylesheet" href="script/highlight/lib/highlight.css">
-
-<style>
-#intro-screen {
-    position: fixed;
-    inset: 0;
-    background: var(--background-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 999999;
-    pointer-events: none;
-    opacity: 1;
-    transition: opacity 1s ease;
-    user-select: none;
-}
-
-#intro-title {
-    visibility: hidden;
-    font-family: var(--font-title);
-    font-size: 3em;
-    color: var(--text-color);
-    display: flex;
-}
-
-#intro-title span {
-    opacity: 0;
-    transform: translateY(-100px);
-    display: inline-block;
-    animation: letterPop 1s ease forwards;
-}
-
-@keyframes letterPop {
-    0% {
-        opacity: 0;
-        transform: translateY(-100px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0px);
-    }
-}
-</style>
-
 </head>
 <body class="theme-dark">
     <div id="intro-screen">
@@ -104,7 +61,7 @@
     </div>
     <header>
         <div>
-            <a href="index.html?intro=true" target="_blank" style="display: inline-flex; align-items: center; color: var(--text-color); text-decoration: none;">
+            <a href="index.html" target="_blank" style="display: inline-flex; align-items: center; color: var(--text-color); text-decoration: none;">
                 <img src="cohesion/favicon.svg" alt="" width="48">
                 <h2 translate="no" class="header-text">Cohesion</h2>
             </a>
@@ -312,7 +269,7 @@ You may ask who sent you this document to share it again.
 
 ---
 
-[Report an issue](https://github.com/flarom/cohesion/issues) • [Homepage](index.html)`;
+[Report an issue](https://github.com/flarom/cohesion/issues) • [Homepage](index)`;
 
                             preview.innerHTML = converter.makeHtml(markdown);
                             return;
@@ -350,7 +307,7 @@ Please try again later.
 
 ---
 
-[Homepage](index.html)`;
+[Homepage](index)`;
 
                         preview.innerHTML = converter.makeHtml(markdown);
                     });
@@ -383,7 +340,7 @@ You may ask who sent you this document to share it again, properly.
 
 ---
 
-[Report an issue](https://github.com/flarom/cohesion/issues) • [Homepage](index.html)`;
+[Report an issue](https://github.com/flarom/cohesion/issues) • [Homepage](index)`;
 
                 preview.innerHTML = converter.makeHtml(markdown);
             }
@@ -399,7 +356,7 @@ You may ask who sent you this document to share it again, properly.
                 if (!isNaN(id) && files[Number(id)] !== undefined) {
                     index = id;
                     localStorage.setItem('lastIndex', index);
-                    window.open('index.html', '_self')
+                    window.open('app.html', '_self')
 
                     return;
                 }else {
@@ -424,7 +381,7 @@ You may ask who sent you this document to share it again, properly.
                 localStorage.setItem('lastIndex', index);
                 files.unshift(markdown); // Use unsanitized markdown
                 saveFilesToStorage();
-                window.open('index.html', '_self')
+                window.open('app.html', '_self')
             }
         }
 

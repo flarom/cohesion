@@ -458,7 +458,7 @@ function promptConfirm(message, dangerous = false) {
 
         // message
         const text = document.createElement("p");
-        text.textContent = message;
+        text.innerHTML = message;
         text.className = "prompt-title";
         dialog.appendChild(text);
 

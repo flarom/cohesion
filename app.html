@@ -1,0 +1,1803 @@
+<!-- fork this project: https://github.com/flarom/cohesion -->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Cohesion - Markdown Text Editor</title>
+        <link rel="shortcut icon" href="cohesion/favicon.svg" type="image/x-icon" />
+
+        <!-- Primary Meta Tags -->
+        <meta name="title" content="Cohesion - Markdown Text Editor" />
+        <meta name="description" content="Create and edit Markdown documents easily with Cohesion, a free and opensource online Markdown text editor." />
+        <meta name="keywords" content="Cohesion, markdown, text, editor, free, opensource, online" />
+        <meta name="language" content="en">
+        <meta name="author" content="Cohesion Team">
+        <meta name="robots" content="index, follow">
+
+        <!-- Open Graph -->
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://flarom.github.io/cohesion/">
+        <meta property="og:title" content="Cohesion - Markdown Text Editor">
+        <meta property="og:description" content="Create and edit Markdown documents easily with Cohesion, a free and opensource online Markdown text editor.">
+        <meta property="og:image" content="https://flarom.github.io/cohesion/cohesion/cards/editor.png">
+
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image">
+        <meta property="twitter:url" content="https://flarom.github.io/cohesion/">
+        <meta property="twitter:title" content="Cohesion - Markdown Text Editor">
+        <meta property="twitter:description" content="Create and edit Markdown documents easily with Cohesion, a free and opensource online Markdown text editor.">
+        <meta property="twitter:image" content="https://flarom.github.io/cohesion/cohesion/cards/editor.png">
+
+        <!-- Canonical URL -->
+        <link rel="canonical" href="https://flarom.github.io/cohesion/">
+
+        <!-- PWA meta tags -->
+        <meta name="application-name" content="Cohesion">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta content="#303030" name="theme-color" />
+        <link rel="manifest" href="/manifest.json" />
+
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+
+        <link rel="stylesheet" href="style/palette.css" />
+        <link rel="stylesheet" href="style/share.css" />
+        <link rel="stylesheet" href="style/preview.css" />
+        <link rel="stylesheet" href="style/prompts.css" />
+        <link rel="stylesheet" href="script/codemirror/lib/codemirror.css" />
+        <link rel="stylesheet" href="script/codemirror/addon/hint/show-hint.css" />
+        <link rel="stylesheet" href="script/highlight/lib/highlight.css">
+        
+        <script src="script/codemirror/lib/codemirror.js"></script>
+        <script src="script/codemirror/keymap/sublime.js"></script>
+        <script src="script/codemirror/overlay/markOverlay.js"></script>
+        <script src="script/codemirror/overlay/underlineOverlay.js"></script>
+        <script src="script/codemirror/overlay/admonitionOverlay.js"></script>
+        <script src="script/codemirror/overlay/fixCodeOverlay.js"></script>
+        <script src="script/codemirror/overlay/metadataOverlay.js"></script>
+        <script src="script/codemirror/addon/edit/closebrackets.js"></script>
+        <script src="script/codemirror/addon/edit/continuelist.js"></script>
+        <script src="script/codemirror/addon/search/searchcursor.js"></script>
+        <script src="script/codemirror/addon/hint/show-hint.js"></script>
+        <script src="script/codemirror/addon/hint/anyword-hint.js"></script>
+        <script src="script/codemirror/addon/hint/emoji-hint.js"></script>
+        <script src="script/codemirror/addon/hint/command-hint.js"></script>
+        <script src="script/codemirror/addon/hint/resources-hint.js"></script>
+        <script src="script/codemirror/addon/selection/active-line.js"></script>
+        <script src="script/codemirror/addon/selection/follow-links.js"></script>
+        <script src="script/codemirror/addon/selection/similar.js"></script>
+        <script src="script/codemirror/addon/mode/simple.js"></script>
+
+        <script src="script/codemirror/mode/meta.js"></script>
+        <script src="script/codemirror/mode/plain/plain.js"></script>
+        <script src="script/codemirror/mode/markdown/markdown.js"></script>
+        <script src="script/codemirror/mode/javascript/javascript.js"></script>
+        <script src="script/codemirror/mode/css/css.js"></script>
+        <script src="script/codemirror/mode/clike/clike.js"></script>
+        <script src="script/codemirror/mode/diff/diff.js"></script>
+        <script src="script/codemirror/mode/php/php.js"></script>
+        <script src="script/codemirror/mode/properties/properties.js"></script>
+        <script src="script/codemirror/mode/python/python.js"></script>
+        <script src="script/codemirror/mode/rust/rust.js"></script>
+        <script src="script/codemirror/mode/shell/shell.js"></script>
+        <script src="script/codemirror/mode/sql/sql.js"></script>
+        <script src="script/codemirror/mode/toml/toml.js"></script>
+        <script src="script/codemirror/mode/xml/xml.js"></script>
+        <script src="script/codemirror/mode/yaml/yaml.js"></script>
+    </head>
+
+    <body class="theme-dark">
+        <header class="window-title bottom" id="main-header">
+            <div class="header-left">
+                <button class="icon-button" translate="no" onmousedown="toggleSidebar('files-bar')" ondragenter="toggleSidebar('files-bar')" title="Toggle sidebar" data-locale-attr="title:app.toolbar.toggle-sidebar">side_navigation</button>
+                <button class="icon-button hide-on-mobile" translate="no" title="New document" data-locale-attr="title:app.toolbar.new-document" onclick="createFile(); togglePreview('editor');">add_box</button>
+                <hr class="hide-on-mobile" />
+                <button class="icon-button hide-on-mobile hide-on-read-mode" translate="no" title="Un-do" data-locale-attr="title:generic.undo" onclick="editor.undo();">undo</button>
+                <button class="icon-button hide-on-mobile hide-on-read-mode" translate="no" title="Re-do" data-locale-attr="title:generic.redo" onclick="editor.redo();">redo</button>
+                <hr class="hide-on-read-mode"/>
+                <div class="dropdown hide-on-read-mode">
+                    <button class="icon-button" translate="no" onmousedown="toggleDropdown('insert-menu')" title="Insert" data-locale-attr="title:app.toolbar.insert-menu">attach_filearrow_drop_down</button>
+                    <div class="dropdown-content menu align-left" id="insert-menu">
+                        <button class="text-button" onmouseup="insertDate(); hideAllMenus(); editor.focus()">
+                            <span data-locale="app.toolbar.insert-menu.date-and-time">Date and time</span>
+                            <kbd>F6</kbd>
+                        </button>
+                        <hr>
+                        <button class="text-button" onmouseup="handleInsertImage(); hideAllMenus(); editor.focus();" data-locale="app.toolbar.insert-menu.image">Image</button>
+                        <button class="text-button" onmouseup="handleInsertAudio(); hideAllMenus(); editor.focus();" data-locale="app.toolbar.insert-menu.audio">Audio</button>
+                        <button class="text-button" onmouseup="handleInsertVideo(); hideAllMenus(); editor.focus();" data-locale="app.toolbar.insert-menu.video">Video</button>
+                        <hr />
+                        <button class="text-button" onmouseup="handleInsertBlock(); hideAllMenus();" data-locale="app.toolbar.insert-menu.block">Block</button>
+                        <button class="text-button" onmouseup="promptTableSelector().then((markdown) => {if (markdown) {insertBlock(markdown);}}); hideAllMenus()" data-locale="app.toolbar.insert-menu.table">Table</button>
+                        <button class="text-button" onmouseup="insertBlock(getSummary(editor.getValue())); hideAllMenus()" data-locale="app.toolbar.insert-menu.table-of-contents">Table of Contents</button>
+                        <button class="text-button" onmouseup="insertOrEditMeta(); hideAllMenus();">
+                            <span data-locale="app.toolbar.insert-menu.document-meta">Document meta</span>
+                            <kbd>Ctrl+;</kbd>
+                        </button>
+                        <hr />
+                        <button class="text-button" onmouseup="promptIframe().then((markdown) => {if (markdown) {insertBlock(markdown);}}); hideAllMenus()" data-locale="app.toolbar.insert-menu.web-embed">Web embed</button>
+                    </div>
+                </div>
+                <button class="icon-button hide-on-edit-mode" id="highlighter-btn" translate="no" title="Highlighter" data-locale-attr="title:app.toolbar.highlighter" onclick="toggleHighlighter()">stylus_highlighter</button>
+                <button class="icon-button hide-on-edit-mode" id="comments-btn" translate="no" title="Comments" data-locale-attr="title:app.toolbar.comments" onclick="toggleComments()">tooltip</button>
+            </div>
+            <div class="header-center hide-on-tablet">
+                <p id="filename">New document</p>
+            </div>
+            <div class="header-right">
+                <button class="icon-button" translate="no" onclick="toggleSearchHeader();" title="Search" id="search-btn" data-locale-attr="title:generic.search">search</button>
+                <button class="icon-button" translate="no" onclick="togglePreview()" title="Read" id="readbtn" data-locale-attr="title:app.toolbar.read">import_contacts</button>
+                <div class="dropdown">
+                    <button class="icon-button" translate="no" onmousedown="toggleDropdown('more-menu')" title="More options" data-locale-attr="title:generic.more-menu">more_vert</button>
+                    <div class="dropdown-content menu" id="more-menu">
+                        <button class="text-button" onmouseup="createFile(); hideAllMenus()">
+                            <span data-locale="app.toolbar.more-menu.new">New</span>
+                            <kbd>Ctrl+N</kbd>
+                        </button>
+                        <button class="text-button" onmouseup="importFile(); hideAllMenus()">
+                            <span data-locale="app.toolbar.more-menu.open">Open</span>
+                            <kbd>Ctrl+O</kbd>
+                        </button>
+                        <button class="text-button" onmouseup="promptSaveFile(index); hideAllMenus()">
+                            <span data-locale="app.toolbar.more-menu.save">Save</span>
+                            <kbd>Ctrl+S</kbd>
+                        </button>
+                        <button class="text-button" onmouseup="shareFileAndShowQR()" data-locale="app.toolbar.more-menu.share">
+                            Share
+                        </button>
+                        <hr>
+                        <button class="text-button" onmouseup="searchDocuments(); hideAllMenus();">
+                            <span data-locale="app.toolbar.more-menu.search-documents">Search documents</span>
+                            <kbd>Ctrl+K</kbd>
+                        </button>
+                        <hr />
+                        <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('dialogs/resources.html'); hideAllMenus();">
+                            <span data-locale="app.toolbar.more-menu.resources">Resources</span>
+                            <kbd>Alt+R</kbd>
+                        </button>
+                        <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('dialogs/settings.html'); hideAllMenus()">
+                            <span data-locale="app.toolbar.more-menu.settings">Settings</span>
+                            <kbd>Ctrl+,</kbd>
+                        </button>
+                        <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('dialogs/macros.html'); hideAllMenus()" data-locale="app.toolbar.more-menu.macros">
+                            Macros
+                        </button>
+                        <hr />
+                        <button class="text-button" onmouseup="window.open('https://github.com/flarom/cohesion/wiki'); hideAllMenus()" data-locale="app.toolbar.more-menu.help">Help</button>
+                        <button class="text-button" onmouseup="showCheatSheet();" data-locale="app.toolbar.more-menu.markdown-cheat-sheet">Markdown Cheat Sheet</button>
+                        <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('dialogs/shortcuts.html'); hideAllMenus();">
+                            Keyboard shortcuts
+                            <kbd>Ctrl+?</kbd>
+                        </button>
+                        <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('dialogs/about.html'); hideAllMenus();">
+                            <span data-locale="app.toolbar.more-menu.about-cohesion">About Cohesion</span>
+                            <kbd>F1</kbd>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="status-bar show" id="status">
+            <div class="status-bar-left"></div>
+            <div class="status-bar-right"></div>
+        </div>
+
+        <div id="files-bar" class="sidebar">
+            <button class="text-button hide-on-pc" style="width: 100%; margin-top: 20px; margin-bottom: 20px" onclick="createFile();" data-locale="app.sidebar.create-new-document">Create new document</button>
+            <div id="files"></div>
+        </div>
+
+        <div class="main-wrapper" onclick="hideAllMenus();">
+            <header class="window-title off bottom" id="search-header">
+                <div class="header-center" style="display: flex; align-items: center; gap: 0px">
+                    <div class="field-container">
+                        <label class="icon" for="search-field" translate="no">search</label>
+                        <input type="text" name="search-field" id="search-field" />
+                    </div>
+                    <button id="search-prev-btn" class="icon-button button-group-member" title="Previous result" data-locale-attr="title:app.search-header.previous-result" translate="no">keyboard_arrow_up</button>
+                    <button id="search-next-btn" class="icon-button button-group-member right" title="Next result" data-locale-attr="title:app.search-header.next-result" translate="no">keyboard_arrow_down</button>
+                    <button id="match-case-btn" class="icon-button button-group-member left" title="Match casing" data-locale-attr="title:app.search-header.match-casing" translate="no">match_case</button>
+                    <button id="regex-btn" class="icon-button button-group-member" title="Regular expression" data-locale-attr="title:app.search-header.regular-expression" translate="no">regular_expression</button>
+                    <button class="icon-button button-group-member right" translate="no" title="Replace" data-locale-attr="title:app.search-header.replace" onclick="toggleReplaceHeader()" id="replace-btn">find_replace</button>
+                </div>
+            </header>
+            <header class="window-title off bottom" id="replace-header">
+                <div class="header-center" style="display: flex; align-items: center; gap: 0px">
+                    <div class="field-container" style="border-radius: 5px; margin-right: 3.5px">
+                        <label class="icon" for="replace-field" translate="no">find_replace</label>
+                        <input type="text" name="replace-field" id="replace-field" />
+                    </div>
+                    <button id="replace-one-btn" class="text-button button-group-member left" data-locale="app.replace-header.replace">Replace</button>
+                    <button id="replace-all-btn" class="text-button button-group-member right" data-locale="app.replace-header.replace-all">Rep. all</button>
+                </div>
+            </header>
+            <textarea id="editor" class="editor" style="background-color: transparent; border: none; outline: none;"></textarea>
+            <div id="preview" class="preview" translate="no"></div>
+        </div>
+
+        <div id="editorMenu" class="context-menu">
+            <div style="display: flex; margin: 0px 5px">
+                <button class="icon-button" translate="no" title="Bold" data-locale-attr="title:app.editor.context-menu.bold" onmouseup="formatBold()">format_bold</button>
+                <button class="icon-button" translate="no" title="Italic" data-locale-attr="title:app.editor.context-menu.italic" onmouseup="formatItalic()">format_italic</button>
+                <button class="icon-button" translate="no" title="Underline" data-locale-attr="title:app.editor.context-menu.underline" onmouseup="formatUnderline()">format_underlined</button>
+                <button class="icon-button" translate="no" title="Strikethrough" data-locale-attr="title:app.editor.context-menu.strikethrough" onmouseup="formatStrikethrough()">strikethrough_s</button>
+                <button class="icon-button" translate="no" title="Preformatted" data-locale-attr="title:app.editor.context-menu.preformatted" onmouseup="formatPreformatted()">code</button>
+                <button class="icon-button" translate="no" title="Highlight" data-locale-attr="title:app.editor.context-menu.highlight" onmouseup="formatHighlight()">stylus_highlighter</button>
+                <button class="icon-button" translate="no" title="Link" data-locale-attr="title:app.editor.context-menu.link" onmouseup="formatUrl()">link</button>
+            </div>
+            <hr id="contextual-selection-separator" style="display: none" />
+            <button class="text-button" onmouseup="formatTable(); editor.focus()" id="formatTable" style="display: none">Format table</button>
+            <button class="text-button" onmouseup="window.open(editor.getSelection()); editor.focus()" id="openSelectedURL" style="display: none">Open URL</button>
+            <button class="text-button" onmouseup="peekSelectedMedia();" id="peekmedia" style="display: none">Peek</button>
+            <hr />
+            <button class="text-button" onmouseup="cutText()">
+                <span data-locale="app.editor.context-menu.cut">Cut</span>
+                <kbd>Ctrl+X</kbd>
+            </button>
+            <button class="text-button" onmouseup="copyText()">
+                <span data-locale="app.editor.context-menu.copy">Copy</span>
+                <kbd>Ctrl+C</kbd>
+            </button>
+            <button class="text-button" onmouseup="pasteText()">
+                <span data-locale="app.editor.context-menu.paste">Paste</span>
+                <kbd>Ctrl+V</kbd>
+            </button>
+            <button class="text-button" onmouseup="deleteText()">
+                <span data-locale="app.editor.context-menu.delete">Delete</span>
+                <kbd>Delete</kbd>
+            </button>
+            <hr />
+            <button class="text-button" onmouseup="editor.undo()">
+                <span data-locale="generic.undo">Un-do</span>
+                <kbd>Ctrl+Z</kbd>
+            </button>
+            <button class="text-button" onmouseup="editor.redo()">
+                <span data-locale="generic.redo">Re-do</span>
+                <kbd>Ctrl+Y</kbd>
+            </button>
+            <hr />
+            <button class="text-button" onmouseup="selectAllText()">
+                <span data-locale="app.editor.context-menu.select-all">Select all</span>
+                <kbd>Ctrl+A</kbd>
+            </button>
+        </div>
+
+        <noscript class="prompt-overlay">
+            <div class="prompt-dialog" style="max-width: 500px; padding: 10px;">
+                <h2>Fatal</h2>
+                <p>Scripts failed to load, the UI was locked to protect your data.</p>
+                <p>Update your browser, check settings and extensions.</p>
+                <a target="_blank" href="https://github.com/flarom/cohesion/issues">Report an issue</a>
+            </div>
+        </noscript>
+
+        <script src="script/settings.js"></script>
+        <script src="script/i18n.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+        <script src="script/highlight/lib/highlight.min.js"></script>
+        <script src="script/html2pdf.bundle.min.js"></script>
+        <script src="script/resources.js"></script>
+        <script src="script/showdown/lib/showdown.js"></script>
+        <script src="script/showdown/extension/bannerImage.js"></script>
+        <script src="script/showdown/extension/internalLink.js"></script>
+        <script src="script/showdown/extension/definitionList.js"></script>
+        <script src="script/showdown/extension/abbreviation.js"></script>
+        <script src="script/showdown/extension/rubyText.js"></script>
+        <script src="script/showdown/extension/progress.js"></script>
+        <script src="script/showdown/extension/kbd.js"></script>
+        <script src="script/showdown/extension/footnotes.js"></script>
+        <script src="script/showdown/extension/embed.js"></script>
+        <script src="script/showdown/extension/figcaption.js"></script>
+        <script src="script/showdown/extension/style.js"></script>
+        <script src="script/showdown/extension/blocks.js"></script>
+        <script src="script/macros.js"></script>
+        <script src="script/editorTools.js"></script>
+        <script src="script/status.js"></script>
+        <script src="script/insert.js"></script>
+        <script src="script/prompts.js"></script>
+        <script src="script/file.js"></script>
+        <script src="script/edit.js"></script>
+        <script>
+            // if multiple tabs are open, reload when storage changes
+            window.addEventListener("storage", (event) => {
+                if (event.key === "markdownFiles") {
+                    loadFilesFromStorage(); // update files array
+                    renderFiles("files"); // render files in sidebar
+                    if (index < files.length) {
+                        renderEditor(); // refresh editor if current index is valid
+                    } else {
+                        index = 0;
+                        renderEditor();
+                    }
+                    editor.focus();
+                }
+            });
+
+            // Load documents from local storage
+            loadFilesFromStorage();
+
+            // Search menu actions (Ctrl/Cmd-K)
+            // addSearchMenuAction("Settings", "Settings", function() {showMessageFromFile('dialogs/settings.html', true, false, true, true, 900);});
+            // addSearchMenuAction("Resources", "Image", function() {showMessageFromFile("dialogs/resources.html");});
+            // addSearchMenuAction("Macros", "code", function() {showMessageFromFile("dialogs/macros.html");})
+            // addSearchMenuAction("About", "info", function() {showMessageFromFile('dialogs/about.html');})
+
+            // Retrieve last index from local storage, default to 0
+            let index = localStorage.getItem("lastIndex") || 0;
+
+            //
+            // EDITOR
+            //
+
+            const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+                    mode: "markdown",                                                                       // Set mode to markdown, hardcoded
+                    theme: "default",                                                                       // Set theme to default, hardcoded
+                    lineWrapping: true,                                                                     // Enable line wrapping, hardcoded
+                    extraKeys: {
+                        Enter: "newlineAndIndentContinueMarkdownList",  // Pressing Enter continues markdown lists
+                        "Ctrl-Space": "autocomplete",                   // Trigger autocomplete with Ctrl-Space
+                        Tab: _snippetTab,                               // Custom snippet tab function
+                        "Shift-Tab": _snippetShiftTab,                  // Custom snippet shift-tab function
+                        "Ctrl-K": false,                                // Disable default Ctrl-K behavior
+                        "Cmd-K": false                                  // Disable default Cmd-K behavior (for Mac)
+                    },
+                    keyMap: "sublime",                                                                      // Use Sublime Text keymap, hardcoded
+                    showCursorWhenSelecting: true,                                                          // Show cursor when selecting text, hardcoded
+                    indentUnit: 4,
+            });
+
+            function updateEditorSettings() {
+                // Line numbers
+                editor.setOption("lineNumbers", Settings.getSetting("editorLineNumbers", "false") === "true");
+
+                // Direction
+                editor.setOption("direction", Settings.getSetting("editorDirection", "ltr"));
+
+                // Style active line
+                editor.setOption("styleActiveLine", Settings.getSetting("editorHighlightActiveLine", "true") === "true");
+
+                // style similar symbols
+                editor.setOption("selectionSimilar", Settings.getSetting("editorHighlightSimilarSymbols", "true") === "true")
+
+                // follow links with ctrl+click
+                editor.setOption("followLinks", Settings.getSetting("editorFollowLinks", "true") === "true")
+
+                // editor width
+                if (Settings.getSetting("editorWidth", "false") === "true") {
+                    editor.getWrapperElement().classList.add('CodeMirror-Large');
+                } else {
+                    editor.getWrapperElement().classList.remove('CodeMirror-Large');
+                }
+
+                // Auto close wrappers
+
+                let editorClosingPairs= "";
+                let editorClosingTriples= "";
+                let editorClosingExplode= "";
+
+                //// Brackets
+                if (Settings.getSetting("editorAutoCloseBrackets", "true") === "true") {
+                    editorClosingPairs+= "()[]{}''\"\"";
+                    editorClosingExplode+= "[]{}";
+                }
+
+                //// MD notation
+                if (Settings.getSetting("editorAutoCloseMDNotation", "true") === "true") {
+                    editorClosingPairs+= "**__``";
+                    editorClosingTriples+= "```";
+                    editorClosingExplode+= "``";
+                }
+
+                //// ML tags
+                if (Settings.getSetting("editorAutoCloseTags", "false") === "true") {
+                    editorClosingPairs+= "<>";
+                    editorClosingExplode+= "<>";
+                }
+
+                editor.setOption("autoCloseBrackets", { pairs: editorClosingPairs, triples: editorClosingTriples, explode: editorClosingExplode, override: true } );
+            }
+            updateEditorSettings();
+
+            // Add overlays
+            editor.addOverlay(markOverlay); // Overlay for displaying ==highlighted text==
+            editor.addOverlay(underlineOverlay); // Overlay for displaying __underlined text__
+            editor.addOverlay(admonitionOverlay); // Overlay for displaying admonition blocks
+            editor.addOverlay(fixCodeOverlay); // Overlay to fix fenced code blocks being marked as comments
+            editor.addOverlay(metadataOverlay); // Overlay for displaying metadata blocks
+
+            // Load macros
+            Macros.updateSlashCommands();
+
+            const editorMenu = document.getElementById("editorMenu"); // editor context menu
+            const hrContextualSeparator = document.getElementById("contextual-selection-separator"); // horizontal line shown when contextual options are available
+            const btnFormatTable = document.getElementById("formatTable"); // button to format selected text as table
+            const btnOpenURL = document.getElementById("openSelectedURL"); // button to open selected URL
+            const btnPeek = document.getElementById("peekmedia"); // button to peek selected media
+
+            /**
+             * Render the editor content based on the current index
+             */
+            function renderEditor() {
+                if (!files[index]) files[index] = "";
+                editor.setValue(files[index]);
+                updateTitle();
+            }
+
+            // Handle right-click context menu
+            editor.getWrapperElement().addEventListener("contextmenu", function (e) {
+                e.preventDefault();
+
+                // if table selected, show format table option
+                if (hasTableSelected()) {
+                    hrContextualSeparator.style.display = "block";
+                    btnFormatTable.style.display = "flex";
+                    btnOpenURL.style.display = "none";
+                    btnPeek.style.display = "none";
+                }
+                
+                // if media selected, show peek option
+                else if (hasMediaSelected()) {
+                    hrContextualSeparator.style.display = "block";
+                    btnFormatTable.style.display = "none";
+                    btnOpenURL.style.display = "none";
+                    btnPeek.style.display = "flex";
+                }
+                
+                // if URL selected, show open URL option
+                else if (hasURLSelected()) {
+                    hrContextualSeparator.style.display = "block";
+                    btnFormatTable.style.display = "none";
+                    btnOpenURL.style.display = "flex";
+                    btnPeek.style.display = "none";
+                } 
+                
+                // else, hide contextual options
+                else {
+                    hrContextualSeparator.style.display = "none";
+                    btnFormatTable.style.display = "none";
+                    btnOpenURL.style.display = "none";
+                    btnPeek.style.display = "none";
+                }
+
+                // Show context menu at mouse position but keep it inside the viewport
+                // First make it visible (but hidden) so we can measure its size
+                const margin = 8; // minimal gap from the edges
+                editorMenu.style.display = "block";
+                editorMenu.style.visibility = "hidden"; // avoid flicker while measuring
+                // reset position to get correct bounding size
+                editorMenu.style.top = "0px";
+                editorMenu.style.left = "0px";
+
+                const menuRect = editorMenu.getBoundingClientRect();
+
+                // client coordinates are relative to the viewport; convert to document coords
+                let top = e.clientY + window.scrollY;
+                let left = e.clientX + window.scrollX;
+
+                // compute maximum allowed positions (document coordinates)
+                const docWidth = document.documentElement.clientWidth + window.scrollX;
+                const docHeight = document.documentElement.clientHeight + window.scrollY;
+
+                const maxLeft = docWidth - menuRect.width - margin;
+                const maxTop = docHeight - menuRect.height - margin;
+
+                if (left > maxLeft) left = Math.max(margin + window.scrollX, maxLeft);
+                if (top > maxTop) top = Math.max(margin + window.scrollY, maxTop);
+                if (left < window.scrollX + margin) left = window.scrollX + margin;
+                if (top < window.scrollY + margin) top = window.scrollY + margin;
+
+                editorMenu.style.top = top + "px";
+                editorMenu.style.left = left + "px";
+                editorMenu.style.visibility = "";
+
+                const buttons = editorMenu.querySelectorAll("button");
+                if (buttons.length > 0) {
+                    setTimeout(() => buttons[0].focus(), 0);
+                }
+                editorMenu.addEventListener("keydown", handleArrowNavigation);
+                editorMenu.addEventListener("keydown", handleActivation);
+            });
+
+            // Close context menu on click outside
+            document.addEventListener("click", function () {
+                editorMenu.style.display = "none";
+                editorMenu.removeEventListener("keydown", handleArrowNavigation);
+                editorMenu.removeEventListener("keydown", handleActivation);
+            });
+
+            // Handle paste events
+            editor.getWrapperElement().addEventListener("paste", async function (e) {
+                const items = e.clipboardData.items;
+                for (let i = 0; i < items.length; i++) {
+                    const item = items[i];
+                    if (item.kind === "file") {
+                        const file = item.getAsFile();
+                        if (file) {
+                            try {
+                                const savedFile = await Resources.saveClipboardFile(file);
+                                const filePath = `resources/${savedFile.name}`;
+
+                                const ext = savedFile.name.split(".").pop().toLowerCase();
+
+                                let markdown = `![ALT TEXT](${filePath})`;
+
+                                insertAt(markdown, 2, 10);
+                                showToast(`Archieved ${savedFile.name}`, "archive");
+                            } catch (err) {
+                                showToast("Failed to insert clipboard file.", "error");
+                                console.error(err);
+                            }
+                        }
+                    }
+                }
+            });
+
+            let debounceTimer;
+
+            // Handle editor changes
+            editor.on("change", (instance, change) => {
+                const content = instance.getValue();
+
+                // Update UI
+                const cursor = instance.getCursor();
+                const charCount = content.length;
+                const wordCount = content.trim().split(/\s+/).filter(Boolean).length;
+                StatusRegister.updateAll();
+
+                // update preview if in preview mode
+                if (preview.classList.contains("on")) {
+                    updateMarkdown(content);
+                }
+
+                // // Autosave: excluding `setValue` changes
+                // if (change.origin === "setValue") {
+                //     return;
+                // }
+
+                // Debounce saving
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    // console.time("Autosave");
+
+                    updateFile(content, index);
+                    saveFilesToStorage();
+                    renderFiles("files");
+                    updateTitle();
+
+                    // console.timeEnd("Autosave");
+                }, 100);
+            });
+
+            editor.on("cursorActivity", () => StatusRegister.update("cursorPos")); // Update cursor position label
+
+            function updateTitle() {
+                document.getElementById("filename").innerText = getFileTitle(index) || "New document";
+
+                if(getFileTitle(index)) {
+                    document.title = `${getFileTitle(index)}`;
+
+                    document.title += ` - Cohesion`;
+                } else {
+                    document.title = `Cohesion`;
+                }
+            }
+
+            // Handle autocomplete on input
+            editor.on("inputRead", function (cm, change) {
+                if (Settings.getSetting("editorShowHints", "true") === "false") return;
+
+                var cursor = cm.getCursor();
+                var token = cm.getTokenAt(cursor);
+                var line = cm.getLine(cursor.line);
+                var beforeCursor = line.slice(0, cursor.ch);
+
+                // display resource hints
+                var resMatch = beforeCursor.match(/resources\/[\w\-.]*$/);
+                if (resMatch && Settings.getSetting("editorSuggestResources", "true") === "true") {
+                    cm.showHint({
+                        hint: CodeMirror.hint.resources,
+                        completeSingle: false,
+                    });
+                    return;
+                }
+
+                // display command hints 
+                var match = beforeCursor.match(/\/[\w\-]*$/);
+                if (match && Settings.getSetting("editorSuggestCommands", "true") === "true") {
+                    cm.showHint({
+                        hint: CodeMirror.hint.command,
+                        completeSingle: false,
+                    });
+                    return;
+                }
+
+                // display emoji hints
+                var emojiMatch = beforeCursor.match(/:[\w+\-_]*:?$/);
+                if (emojiMatch && Settings.getSetting("editorSuggestEmojis", "true") === "true") {
+                    cm.showHint({
+                        hint: CodeMirror.hint.emoji,
+                        completeSingle: false,
+                    });
+                    return;
+                }
+
+                // display anyword + emoji hints
+                if (!change.text[0].match(/\w/)) return;
+
+                var currentWord = token.string;
+
+                if (currentWord.length >= 2 && Settings.getSetting("editorSuggestDocWords", "true") === "true") {
+                    cm.showHint({
+                        hint: function(cm) {
+                            var anyword = CodeMirror.hint.anyword(cm) || {from: cm.getCursor(), to: cm.getCursor(), list: []};
+                            var emoji = CodeMirror.hint.emoji(cm) || {from: cm.getCursor(), to: cm.getCursor(), list: []};
+
+                            var list = [...new Set([...anyword.list, ...emoji.list])];
+                            return {
+                                from: anyword.from,
+                                to: anyword.to,
+                                list: list
+                            };
+                        },
+                        completeSingle: false,
+                    });
+                }
+            });
+
+            //
+            // MARKDOWN CONVERTER
+            //
+
+            const converter = new showdown.Converter({
+                extensions: [
+                    'bannerImage', // banner image controled by document meta
+                    'internalLink', // internal link support
+                    'definitionList', // definition list support
+                    'abbreviation', // abbreviation support
+                    'rubyText', // ruby text support
+                    'progress', // progress bar support
+                    'keys', // kbd support
+                    'footnotes', // footnotes support
+                    'embed', // embed support
+                    //'figureCaption', // figure and figcaption support
+                    'style',
+                    'blocks'
+                ],
+            });
+
+            // MD previewer element
+            const preview = document.getElementById("preview");
+
+            // Status bar elements
+            const statusBar = document.getElementById("status");
+
+            // Search (Ctrl-F) and replace (Ctrl-H) elements
+            const searchField = document.getElementById("search-field");
+            const replaceField = document.getElementById("replace-field");
+            let lastQuery = "";
+            let caseSensitive = false;
+            let useRegex = false;
+            let currentCursor = null;
+
+            // Render files and handle fatal errors by locking the app
+            try {
+            renderFiles("files");
+            } catch (err) {
+                promptMessage(`
+                    <h1>That's bad...</h1>
+                    <p>Something went wrong while loading the application, and it cannot run safely.</p>
+                `, false);
+            }
+
+            renderEditor();
+            editor.focus();
+
+            setModeVisibility(preview.classList.contains("on"));
+            
+            document.addEventListener("DOMContentLoaded", () => {
+                loadSettings();
+
+                // check for element id on URL, so details blocks can be auto-opened
+                const hash = window.location.hash;
+                if (!hash) return;
+
+                const block = document.querySelector(hash);
+                if (!block) return;
+
+                const details = block.querySelector("details");
+                if (details) {
+                    details.open = true;
+                }
+
+                block.scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+
+            // same check for clicks on internal links
+            document.addEventListener("click", (ev) => {
+                const a = ev.target.closest("a[href^='#']");
+                if (!a) return;
+
+                const target = document.querySelector(a.getAttribute("href"));
+                if (!target) return;
+
+                const details = target.querySelector("details");
+                if (details) {
+                    details.open = true;
+                }
+
+                setTimeout(() => target.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+            });
+
+            /**
+             * Toggle between editor and preview modes
+             * @param {string} forceMode - "preview" to force preview mode, "editor" to force editor mode, or undefined to toggle
+             */
+            function setModeVisibility(isPreview) {
+                document.querySelectorAll('.hide-on-read-mode').forEach(el => {
+                    el.style.display = isPreview ? 'none' : '';
+                });
+
+                document.querySelectorAll('.hide-on-edit-mode').forEach(el => {
+                    el.style.display = isPreview ? '' : 'none';
+                });
+            }
+
+            /**
+             * Toggle between editor and preview modes
+             * @param {string} forceMode - "preview" to force preview mode, "editor" to force editor mode, or undefined to toggle
+             */
+            function togglePreview(forceMode) {
+                const isOn = preview.classList.contains("on");
+                const readBtn = document.getElementById("readbtn");
+
+                const shouldShowPreview = forceMode === "preview" || (forceMode !== "editor" && !isOn);
+
+                if (shouldShowPreview) {
+                    updateMarkdown(editor.getValue());
+
+                    const cursorLine = editor.getCursor().line;
+                    const totalLines = editor.lineCount();
+                    const scrollRatio = cursorLine / totalLines;
+
+                    preview.classList.add("on");
+                    setTimeout(()=>{ preview.focus(); }, 1);
+                    editor.getWrapperElement().style.display = "none";
+                    readBtn.innerText = "edit";
+                    readBtn.title = "Write";
+                    readBtn.classList.add("button-on");
+                    readBtn.setAttribute("data-locale-attr", "title:app.toolbar.write");
+                    translateElement(readBtn);
+                    StatusRegister.update("editorMode");
+
+                    setModeVisibility(true);
+
+                    requestAnimationFrame(() => {
+                        preview.scrollTop = scrollRatio * (preview.scrollHeight - preview.clientHeight);
+                    });
+                } else {
+                    // Always disable highlighter when returning to edit mode
+                    if (highlighterActive) {
+                        highlighterActive = false;
+                        const btn = document.getElementById("highlighter-btn");
+                        if (btn) btn.classList.remove("button-on");
+                        document.body.classList.remove("highlighter-active");
+
+                        const wrapper = editor.getWrapperElement();
+                        if (wrapper) wrapper.style.cursor = "";
+                        if (preview) preview.style.cursor = "";
+                    }
+
+                    preview.classList.remove("on");
+                    editor.getWrapperElement().style.display = "block";
+                    editor.focus();
+                    readBtn.innerText = "import_contacts";
+                    readBtn.title = "Read";
+                    readBtn.classList.remove("button-on");
+                    readBtn.setAttribute("data-locale-attr", "title:app.toolbar.read");
+                    translateElement(readBtn);
+
+                    StatusRegister.update("editorMode");
+
+                    setModeVisibility(false);
+                }
+
+                // editor.refresh();
+                localStorage.setItem(`lastPreviewState`, shouldShowPreview);
+            }
+
+            // Show sidebar if lastfiles-barSidebarState is true
+            if (localStorage.getItem(`lastfiles-barSidebarState`) == "true") { toggleSidebar('files-bar'); editor.focus()}
+
+            if (localStorage.getItem(`lastPreviewState`) == "true") togglePreview('preview');
+
+            /**
+             * Toggle the search header visibility
+             * @param {string} text - Text to populate the search field with
+             * @param {boolean|null} force - true to open, false to close, null to toggle
+             */
+            function toggleSearchHeader(text = "", force = null) {
+                const mainHeader = document.getElementById("main-header");
+                const searchHeader = document.getElementById("search-header");
+                const replaceHeader = document.getElementById("replace-header");
+                const searchBtn = document.getElementById("search-btn");
+                const replaceBtn = document.getElementById("replace-btn");
+
+                const isCurrentlyOff = searchHeader.classList.contains("off");
+                const shouldOpen = force === null ? isCurrentlyOff : force;
+
+                if (shouldOpen) {
+                    mainHeader.classList.remove("bottom");
+                    searchHeader.classList.add("bottom");
+                    replaceHeader.classList.remove("bottom");
+
+                    searchHeader.classList.remove("off");
+                    replaceHeader.classList.add("off");
+
+                    searchBtn.classList.add("button-on");
+                    replaceBtn.classList.remove("button-on");
+
+                    searchField.focus();
+                    searchField.value = text;
+                } else {
+                    mainHeader.classList.add("bottom");
+                    searchHeader.classList.remove("bottom");
+                    replaceHeader.classList.remove("bottom");
+
+                    searchHeader.classList.add("off");
+                    replaceHeader.classList.add("off");
+
+                    searchBtn.classList.remove("button-on");
+                    replaceBtn.classList.remove("button-on");
+                }
+            }
+
+            /**
+             * Toggle the replace header visibility
+             * @param {string} text - Text to populate the search field with
+             * @param {boolean|null} force - true to open, false to close, null to toggle
+             */
+            function toggleReplaceHeader(text = "", force = null) {
+                const mainHeader = document.getElementById("main-header");
+                const searchHeader = document.getElementById("search-header");
+                const replaceHeader = document.getElementById("replace-header");
+                const searchBtn = document.getElementById("search-btn");
+                const replaceBtn = document.getElementById("replace-btn");
+
+                const isCurrentlyOff = replaceHeader.classList.contains("off");
+                const shouldOpen = force === null ? isCurrentlyOff : force;
+
+                if (shouldOpen) {
+                    mainHeader.classList.remove("bottom");
+                    searchHeader.classList.remove("bottom");
+                    replaceHeader.classList.add("bottom");
+
+                    searchHeader.classList.remove("off");
+                    replaceHeader.classList.remove("off");
+
+                    searchBtn.classList.add("button-on");
+                    replaceBtn.classList.add("button-on");
+
+                    replaceField.focus();
+                    searchField.value = text;
+                } else {
+                    mainHeader.classList.remove("bottom");
+                    searchHeader.classList.add("bottom");
+                    replaceHeader.classList.remove("bottom");
+
+                    searchHeader.classList.remove("off");
+                    replaceHeader.classList.add("off");
+
+                    searchBtn.classList.add("button-on");
+                    replaceBtn.classList.remove("button-on");
+                }
+            }
+
+            /**
+             * Update the markdown preview
+             * @param {string} markdown - The markdown content to render
+             */
+            async function updateMarkdown(markdown) {
+                let codeBlocks = [];
+                const placeholder = "￼";
+                markdown = markdown.replace(/(```[\s\S]*?```|`[^`\n]+`)/g, (match) => {
+                    codeBlocks.push(match);
+                    return placeholder;
+                });
+            
+                let i = 0;
+                markdown = markdown.replace(/\uFFFC/g, () => codeBlocks[i++]);
+            
+                // refreshes metadata
+                const metadata = extractMetadata(markdown);
+                converter.getMetadata = function() {
+                    return metadata;
+                };
+            
+                preview.innerHTML = converter.makeHtml(markdown);
+
+                preview.querySelectorAll('pre code').forEach((block) => {
+                    if (!block.classList.length) return;
+                    hljs.highlightElement(block);
+                });
+            
+                const selectors = ["img", "audio", "video", "iframe", "embed"];
+                for (const tag of selectors) {
+                    const elements = preview.querySelectorAll(tag);
+                    for (const el of elements) {
+                        const src = el.getAttribute("src");
+                        if (src && src.startsWith("resources/")) {
+                            const fileName = src.slice(10);
+                            const dataUrl = await Resources.resolveFSItem(fileName);
+                            if (dataUrl) el.src = dataUrl;
+                        }
+                    }
+                }
+            
+                document.addEventListener("click", function (e) {
+                    if (e.target.classList.contains("internal-link")) {
+                        e.preventDefault();
+
+                        const titleToFind = e.target.dataset.title;
+                        loadFilesFromStorage();
+
+                        for (let i = 0; i < files.length; i++) {
+                            const text = getFileText(i);
+                            if (!text) continue;
+
+                            const fileTitle = getFileTitle(i);
+
+                            if (fileTitle === titleToFind) {
+                                index = i;
+                                localStorage.setItem("lastIndex", index);
+                                renderFiles("files");
+                                renderEditor();
+                                editor.focus();
+                                break;
+                            }
+                        }
+                    }
+                });
+            }
+
+            /**
+             * Load user settings and apply them to the editor and UI
+             * These aren't all settings, only those that need to be applied on load
+             */
+            function loadSettings() {
+                // theme
+                const theme = Settings.getSetting("theme");
+                if (theme) document.body.className = theme;
+                if (Settings.getSetting("theme") === "theme-custom") {
+                    applyCustomTheme(Settings.getSetting("theme-custom-value", ""));
+                }
+
+                // fonts
+                const root = document.documentElement;
+
+                const editorFont = Settings.getSetting("editorFont");
+                const paragraphFont = Settings.getSetting("paragraphFont");
+                const titleFont = Settings.getSetting("titleFont");
+
+                if (editorFont) root.style.setProperty("--font-editor", editorFont);
+                if (paragraphFont) root.style.setProperty("--font-text", paragraphFont);
+                if (titleFont) root.style.setProperty("--font-title", titleFont);
+
+                // meta theme-color
+                const metaTag = document.querySelector('meta[name="theme-color"]');
+                const colorValue = getComputedStyle(document.body).getPropertyValue("--background-color-2").trim();
+
+                if (colorValue) {
+                    metaTag.setAttribute("content", colorValue);
+                }
+
+                // status bar
+                StatusRegister.removeAll();
+
+                if (Settings.getSetting("statusShow", "true") != "true") statusBar.classList.remove('show');
+                else statusBar.classList.add('show');
+
+                function minPos(a, b) {
+                    if (a.line < b.line) return a;
+                    if (a.line > b.line) return b;
+                    return a.ch < b.ch ? a : b;
+                }
+
+                function maxPos(a, b) {
+                    if (a.line > b.line) return a;
+                    if (a.line < b.line) return b;
+                    return a.ch > b.ch ? a : b;
+                }
+
+                if (Settings.getSetting("statusCursorPos", "true") == "true") {
+                    StatusRegister.register({
+                        id: "cursorPos",
+                        side: "left",
+
+                        render() {
+                            return `
+                                <label>
+                                    <span
+                                        data-locale="app.status-bar.cursor.single"
+                                        data-locale-vars='{"line":1,"col":1}'>
+                                        Ln 1, Col 1
+                                    </span>
+                                </label>
+                            `;
+                        },
+
+                        update(el) {
+                            const span = el.querySelector("span");
+
+                            const selections = editor.listSelections();
+                            const cursor = editor.getCursor();
+
+                            const cursorCount = selections.length;
+                            let totalSelected = 0;
+
+                            for (const sel of selections) {
+                                const from = sel.anchor;
+                                const to = sel.head;
+
+                                if (from.line === to.line && from.ch === to.ch) continue;
+
+                                const text = editor.getRange(
+                                    minPos(from, to),
+                                    maxPos(from, to)
+                                );
+
+                                totalSelected += text.length;
+                            }
+
+                            // single cursor
+                            if (cursorCount === 1) {
+                                if (totalSelected > 0) {
+                                    span.textContent =
+                                        `Ln ${cursor.line + 1}, Col ${cursor.ch + 1} (${totalSelected} Selected)`;
+
+                                    span.dataset.locale = "app.status-bar.cursor.single.selected";
+                                    span.dataset.localeVars = JSON.stringify({
+                                        line: cursor.line + 1,
+                                        col: cursor.ch + 1,
+                                        count: totalSelected
+                                    });
+                                } else {
+                                    span.textContent =
+                                        `Ln ${cursor.line + 1}, Col ${cursor.ch + 1}`;
+
+                                    span.dataset.locale = "app.status-bar.cursor.single";
+                                    span.dataset.localeVars = JSON.stringify({
+                                        line: cursor.line + 1,
+                                        col: cursor.ch + 1
+                                    });
+                                }
+                            }
+                            // multiple cursors
+                            else {
+                                if (totalSelected > 0) {
+                                    span.textContent =
+                                        `${cursorCount} Cursors (${totalSelected} Selected)`;
+
+                                    span.dataset.locale = "app.status-bar.cursor.multi.selected";
+                                    span.dataset.localeVars = JSON.stringify({
+                                        count: cursorCount,
+                                        selected: totalSelected
+                                    });
+                                } else {
+                                    span.textContent =
+                                        `${cursorCount} Cursors`;
+
+                                    span.dataset.locale = "app.status-bar.cursor.multi";
+                                    span.dataset.localeVars = JSON.stringify({
+                                        count: cursorCount
+                                    });
+                                }
+                            }
+
+                            translateElement(span);
+                        }
+                    });
+                }
+
+                if (Settings.getSetting("statusEditorMode", "true") == "true") {
+                    StatusRegister.register({
+                        id: "editorMode",
+                        side: "left",
+
+                        render() {
+                            return `
+                                <label>
+                                    <span class="icon" translate="no">edit</span>
+                                    <span data-locale="app.status-bar.editor-mode.edit-mode">Edit mode</span>
+                                </label>
+                            `;
+                        },
+
+                        update(el) {
+                            const isPreview = preview.classList.contains("on");
+                            el.querySelector("span.icon").innerText = isPreview ? "import_contacts" : "edit";
+                            el.querySelector("span:nth-child(2)").innerText = isPreview ? "Read mode" : "Edit mode";
+                            el.querySelector("span:nth-child(2)").dataset.locale = isPreview ? "app.status-bar.editor-mode.read-mode" : "app.status-bar.editor-mode.edit-mode";
+                            translateElement(el.querySelector("span:nth-child(2)"))
+                        }
+                    });
+                }
+
+                if (Settings.getSetting("statusDocumentSize", "true") == "true") {
+                    StatusRegister.register({
+                        id: "docSize",
+                        side: "right",
+
+                        render() {
+                            return `<label><span>0 <span data-locale="app.status-bar-document-size.characters">Characters</span>, 0 <span data-locale="app.status-bar-document-size.words">Words</span></span></label>`;
+                        },
+
+                        update(el) {
+                            const content = editor.getValue();
+                            const chars = content.length;
+                            const words = content.trim().split(/\s+/).filter(Boolean).length;
+
+                            el.querySelector("label").innerHTML =
+                                `<span>${chars} <span data-locale="app.status-bar-document-size.characters">Characters</span>, ${words} <span data-locale="app.status-bar-document-size.words">Words</span></span>`;
+
+                            translateWithin(el.querySelector("label"))
+                        }
+                    });
+                }
+            }
+
+            function applyCustomTheme(cssText) {
+                let styleEl = document.getElementById("custom-theme-style");
+                if (!styleEl) {
+                    styleEl = document.createElement("style");
+                    styleEl.id = "custom-theme-style";
+                    document.head.appendChild(styleEl);
+                }
+                styleEl.textContent = `.theme-custom { ${cssText} }`;
+            }
+
+            //
+            // SEARCH AND REPLACE
+            //
+
+            /**
+             * Get a search cursor for the given query
+             * @param {string} query - The search query
+             * @returns {CodeMirror.SearchCursor} - The search cursor
+             */
+            function getCursor(query) {
+                const cm = editor;
+                const flags = caseSensitive ? "" : "i";
+                let regex;
+
+                if (useRegex) {
+                    try {
+                        regex = new RegExp(query, flags);
+                    } catch (e) {
+                        console.error("Invalid RegExp:", e);
+                        return cm.getSearchCursor("");
+                    }
+                } else {
+                    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+                    regex = new RegExp(escaped, flags);
+                }
+
+                return cm.getSearchCursor(regex);
+            }
+
+            /**
+             * Update the current search cursor based on the search field value
+             * @param {boolean} preserveSelections
+             */
+            function updateCursor(preserveSelections = false) {
+                const query = searchField.value;
+                if (!query) return;
+
+                let selections = null;
+
+                if (preserveSelections) {
+                    selections = editor.listSelections();
+                }
+
+                currentCursor = getCursor(query);
+                lastQuery = query;
+
+                if (currentCursor.findNext()) {
+                    if (!preserveSelections) {
+                        editor.setSelection(
+                            currentCursor.from(),
+                            currentCursor.to()
+                        );
+                    }
+
+                    scrollSelection(currentCursor.from());
+                    toggleSearchHeader(query, true);
+                }
+
+                if (preserveSelections && selections) {
+                    editor.setSelections(selections);
+                }
+            }
+
+            searchField.addEventListener("keydown", function (event) {
+                // shift + enter - select previous instance
+                if (event.shiftKey && event.key === "Enter") {
+                    event.preventDefault();
+
+                    if (!currentCursor || searchField.value !== lastQuery) {
+                        updateCursor();
+                    } else if (currentCursor.findPrevious()) {
+                        editor.setSelection(currentCursor.from(), currentCursor.to());
+                        scrollSelection(currentCursor.from());
+                        toggleSearchHeader(lastQuery, true);
+                    }
+                }
+
+                // enter - select next instance
+                else if (!event.altKey && event.key === "Enter") {
+                    event.preventDefault();
+
+                    if (!currentCursor || searchField.value !== lastQuery) {
+                        updateCursor();
+                    } else if (currentCursor.findNext()) {
+                        editor.setSelection(currentCursor.from(), currentCursor.to());
+                        scrollSelection(currentCursor.from());
+                        toggleSearchHeader(lastQuery, true);
+                    }
+                }
+
+                // shift + alt + enter - select previous instance (keep selections)
+                else if (event.shiftKey && event.altKey && event.key === "Enter") {
+                    event.preventDefault();
+
+                    if (!currentCursor || searchField.value !== lastQuery) {
+                        updateCursor(true);
+                    }
+
+                    if (currentCursor.findPrevious()) {
+                        editor.addSelection(
+                            currentCursor.from(),
+                            currentCursor.to()
+                        );
+                        scrollSelection(currentCursor.from());
+                        toggleSearchHeader(lastQuery, true);
+                    }
+                }
+
+                // alt + enter - select next instance (keep selections)
+                else if (event.altKey && event.key === "Enter") {
+                    event.preventDefault();
+
+                    if (!currentCursor || searchField.value !== lastQuery) {
+                        updateCursor(true);
+                    }
+
+                    if (currentCursor.findNext()) {
+                        editor.addSelection(
+                            currentCursor.from(),
+                            currentCursor.to()
+                        );
+                        scrollSelection(currentCursor.from());
+                        toggleSearchHeader(lastQuery, true);
+                    }
+                }
+
+                // escape - close search
+                else if (event.key === "Escape") {
+                    toggleSearchHeader("", false);
+                }
+            });
+
+            replaceField.addEventListener("keydown", function (event) {
+                if (event.ctrlKey && event.key === "Enter") {
+                    const cm = editor;
+                    const query = searchField.value;
+                    const replaceText = replaceField.value;
+                    if (!query) return;
+
+                    const cursor = getCursor(query);
+                    cm.operation(() => {
+                        while (cursor.findNext()) {
+                            cursor.replace(replaceText);
+                        }
+                    });
+                    toggleReplaceHeader(query, true);
+                } else if (event.shiftKey && event.key === "Enter") {
+                    editor.undo();
+                } else if (event.key === "Enter") {
+                    if (!currentCursor || searchField.value !== lastQuery) updateCursor();
+                    if (currentCursor && currentCursor.from()) {
+                        currentCursor.replace(replaceField.value);
+                        updateCursor();
+                        toggleReplaceHeader(lastQuery, true);
+                    }
+                } else if (event.key === "Escape") {
+                    toggleSearchHeader("", false);
+                }
+            });
+
+            document.getElementById("search-next-btn").onclick = () => {
+                if (!currentCursor || searchField.value !== lastQuery) updateCursor();
+                else if (currentCursor.findNext()) {
+                    editor.setSelection(currentCursor.from(), currentCursor.to());
+                    scrollSelection(currentCursor.from());
+                    toggleSearchHeader(lastQuery, true);
+                }
+            };
+
+            document.getElementById("search-prev-btn").onclick = () => {
+                if (!currentCursor || searchField.value !== lastQuery) updateCursor();
+                else if (currentCursor.findPrevious()) {
+                    editor.setSelection(currentCursor.from(), currentCursor.to());
+                    scrollSelection(currentCursor.from());
+                    toggleSearchHeader(lastQuery, true);
+                }
+            };
+
+            document.getElementById("match-case-btn").onclick = function () {
+                caseSensitive = !caseSensitive;
+                this.classList.toggle("button-on");
+                updateCursor();
+            };
+
+            document.getElementById("regex-btn").onclick = function () {
+                useRegex = !useRegex;
+                this.classList.toggle("button-on");
+                updateCursor();
+            };
+
+            document.getElementById("replace-one-btn").onclick = () => {
+                if (!currentCursor || searchField.value !== lastQuery) updateCursor();
+                if (currentCursor && currentCursor.from()) {
+                    currentCursor.replace(replaceField.value);
+                    updateCursor();
+                    toggleReplaceHeader(lastQuery, true);
+                }
+            };
+
+            document.getElementById("replace-all-btn").onclick = () => {
+                const cm = editor;
+                const query = searchField.value;
+                const replaceText = replaceField.value;
+                if (!query) return;
+
+                const cursor = getCursor(query);
+                cm.operation(() => {
+                    while (cursor.findNext()) {
+                        cursor.replace(replaceText);
+                    }
+                });
+                toggleReplaceHeader(query, true);
+            };
+
+            function scrollSelection(from) {
+                const line = editor.getLineHandle(from.line);
+                const lineEl = editor.getLineHandleVisualStart ? editor.getLineHandleVisualStart(line).handle : line;
+
+                const el = editor.getScrollerElement();
+                const coords = editor.charCoords(from, "local");
+
+                el.scrollTop = coords.top - 50;
+            }
+
+            async function searchDocuments(value = '') {
+                const newIndex = await promptFileSearch(value);
+                if (newIndex != null) {
+                    index = newIndex;
+                    renderEditor();
+                    editor.focus();
+                }
+            }
+
+            //
+            // KEYBOARD SHORTCUTS
+            //
+
+            const shortcuts = [
+                // NAVIGATION
+                //// close menus/dialogs (Escape)
+                { match: e => e.key === "Escape" && !e.ctrlKey && !e.altKey && !e.shiftKey, handler: async () => {
+                    hideAllMenus();
+                    closeAllDialogs();
+                    editor.focus();
+                    editorMenu.style.display = "none";
+                    editorMenu.removeEventListener("keydown", handleArrowNavigation);
+                    editorMenu.removeEventListener("keydown", handleActivation);
+
+                    StatusRegister.remove("contextualShortcut");
+                    editor._snippetStops = null;
+                    editor._snippetIndex = -1;
+                }, preventDefault: false },
+
+                //// toggle preview (Ctrl+P)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "p", handler: () => togglePreview(), preventDefault: true },
+                //// show about dialog (F1)
+                { match: e => e.key === "F1", handler: () => { closeAllDialogs(); showMessageFromFile("dialogs/about.html") }, preventDefault: true },
+                //// toggle more menu (F8)
+                { match: e => e.key === "F8", handler: () => toggleDropdown("more-menu"), preventDefault: true },
+                //// toggle files sidebar (F9)
+                { match: e => e.key === "F9", handler: () => toggleSidebar("files-bar"), preventDefault: true },
+                //// toggle insert menu (Alt+I)
+                { match: e => e.altKey && e.key.toLowerCase() === "i", handler: () => toggleDropdown("insert-menu"), preventDefault: true },
+                //// open settings (Ctrl+, [Comma])
+                { match: e => e.ctrlKey && e.key === ",", handler: () => { closeAllDialogs();  showMessageFromFile("dialogs/settings.html"); hideAllMenus(); }, preventDefault: true },
+                //// open keyboard shortcuts dialog (Ctrl+?)
+                { match: e => e.ctrlKey && e.key === "?", handler: () => { closeAllDialogs(); showMessageFromFile('dialogs/shortcuts.html'); hideAllMenus(); }, preventDefault: true },
+                //// open resources manager (Alt+R)
+                { match: e => e.altKey && e.key.toLowerCase() === "r", handler: () => { closeAllDialogs(); showMessageFromFile("dialogs/resources.html"); hideAllMenus(); }, preventDefault: true },
+
+                //// switch first ten docs (Alt+1..0)
+                { match: e => e.altKey && /^[0-9]$/.test(e.key), handler: (e) => {
+                    const newIndex = e.key === "0" ? 9 : parseInt(e.key) - 1;
+                    if (newIndex > files.length - 1) return;
+                    index = newIndex;
+                    renderEditor();
+                    editor.focus();
+                }, preventDefault: true },
+
+                // FILE
+                //// create new file (Alt+N) (I wanted it to be Ctrl+N, but that is reserved by the browser TwT )
+                { match: e => e.altKey && e.key.toLowerCase() === "n", handler: () => createFile(), preventDefault: true },
+                //// export file (CTRL+S)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "s", handler: () => promptSaveFile(index), preventDefault: true },
+                //// import file (CTRL+O)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "o", handler: () => importFile(), preventDefault: true },
+                //// delete current file (Ctrl+Shift+Delete)
+                { match: e => e.ctrlKey && e.shiftKey && e.key === "Delete", handler: async () => {
+                    if (!(await promptConfirm("Delete this document?", true))) return;
+                    deleteFile(index);
+                    saveFilesToStorage();
+                    if (files.length === 0) createFile();
+                    index = files.length - 1;
+                    renderFiles("files");
+                    renderEditor();
+                    editor.focus();
+                    showToast("Deleted", "delete");
+                }, preventDefault: true },
+
+                // EDIT
+                //// **bold** (Ctrl+B)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "b", handler: () => formatBold(), preventDefault: true },
+                //// *italic* (Ctrl+I)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "i", handler: () => formatItalic(), preventDefault: true },
+                //// - unordered list (Ctrl+U)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "u", handler: () => toggleLineStart("- ", true, ["- ", "* ", "+ "]), preventDefault: true },
+                //// # headings (Ctrl+1..6)
+                { match: e => e.ctrlKey && e.key >= "1" && e.key <= "6", handler: (e) => {
+                    const level = parseInt(e.key, 10);
+                    toggleLineStart("#".repeat(level) + " ", true, Array.from({ length: 6 }, (_, i) => "#".repeat(i + 1) + " "));
+                }, preventDefault: true },
+                //// [URL]() (Ctrl+Shift+K)
+                { match: e => e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "k", handler: () => formatUrl(), preventDefault: true },
+                //// Vertical Separator (Ctrl+R)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "r", handler: () => insertAt("\n\n***\n\n", 7, 7), preventDefault: true },
+
+                // SEARCH
+                //// go to line (Ctrl+G)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "g", handler: async () => {
+                    const totalLines = editor.lineCount();
+                    const currentLine = editor.getCursor().line + 1;
+                    const message = `Type a number between 1 and ${totalLines} to navigate to:`;
+                    async function searchInner(warn = false) {
+                        const lineStr = await promptString(message, currentLine, warn);
+                        if (!lineStr) return;
+                        const match = /^\s*(\d+)\s*$/.exec(lineStr);
+                        if (match) {
+                            const line = parseInt(match[1], 10) - 1;
+                            if (line >= 0 && line < editor.lineCount()) {
+                                editor.setCursor({ line, ch: 0 });
+                                editor.focus();
+                            } else {
+                                showToast("Cant navigate to this line", "warning");
+                                await searchInner(true);
+                            }
+                        } else {
+                            showToast("Cant navigate to this line", "warning");
+                            await searchInner(true);
+                        }
+                    }
+                    await searchInner();
+                }, preventDefault: true },
+
+                //// open search (Ctrl+F)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "f", handler: () => toggleSearchHeader(editor.getSelection()), preventDefault: true },
+                //// open replace (Ctrl+H)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "h", handler: () => toggleReplaceHeader(editor.getSelection()), preventDefault: true },
+                //// search documents (Ctrl+K)
+                { match: e => e.ctrlKey && e.key.toLowerCase() === "k", handler: () => {closeAllDialogs(); searchDocuments();}, preventDefault: true },
+                
+                // INSERT
+                //// Insert metadata (Ctrl+;)
+                { match: e => e.ctrlKey && e.key === ";", handler: () => insertOrEditMeta(), preventDefault: true },
+                //// Insert date/time with custom strftime (Shift+F6)
+                { match: e => e.shiftKey && e.key === "F6", handler: async () => {
+                    const strftime = await promptString("Insert date time format", Settings.getSetting("dateFormat", "%d/%m/%Y %H:%M"));
+                    if (strftime) insertDate(strftime);
+                    editor.focus();
+                }, preventDefault: true },
+                //// Insert date/time with default strftime (F6)
+                { match: e => !e.shiftKey && e.key === "F6", handler: () => { insertDate(); }, preventDefault: true },
+            ];
+
+            function addKeyboardShortcut(s) {
+                document.addEventListener("keydown", async function (event) {
+                    try {
+                        if (s.match(event)) {
+                            if (s.preventDefault) event.preventDefault();
+                            await s.handler(event);
+                        }
+                    } catch (err) {
+                        console.error("Shortcut handler error:", err);
+                    }
+                });
+            }
+
+            for (const s of shortcuts) {
+                addKeyboardShortcut(s);
+            }
+
+            function showCheatSheet() {
+                let leftPane = 
+                `
+                <button class=icon-button onclick="searchTopics()" translate="no">search</button>
+                `
+
+                showMessageFromFile('dialogs/cheatsheet.html', true, false, true, true, 1080, leftPane);
+                hideAllMenus()
+            }
+
+            function peekSelectedMedia() {
+                const selection = editor.getSelection();
+                const mediaPattern = /!\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)/;
+
+                const match = selection.match(mediaPattern);
+                if (match) {
+                    const mediaURL = match[1]; 
+                    showMedia(mediaURL);
+                }
+            }
+
+            const commentsBtn = document.getElementById("comments-btn");
+
+            function toggleComments () {
+                if (!converter.getOption('renderCommentsAsSpan')) {
+                    converter.setOption('renderCommentsAsSpan', true);
+                    commentsBtn.classList.add("button-on");
+                    commentsBtn.innerText = "tooltip_2";
+
+                } else {
+                    converter.setOption('renderCommentsAsSpan', false);
+                    commentsBtn.classList.remove("button-on");
+                    commentsBtn.innerText = "tooltip";
+                }
+
+                renderEditor();
+            }
+
+            // HIGHLIGHTER
+            let highlighterActive = false;
+            const highlighterBtn = document.getElementById("highlighter-btn");
+
+            function toggleHighlighter() {
+                highlighterActive = !highlighterActive;
+                highlighterBtn.classList.toggle("button-on", highlighterActive);
+                document.body.classList.toggle("highlighter-active", highlighterActive);
+            }
+
+            // Apply highlight in editor
+            editor.getWrapperElement().addEventListener("mouseup", function (e) {
+                if (!highlighterActive) return;
+                const sel = editor.getSelection();
+                if (!sel || sel.length === 0) return;
+
+                // Case A: selection itself already contains <mark>...</mark> => remove tags
+                if (sel.startsWith("<mark>") && sel.endsWith("</mark>")) {
+                    const inner = sel.slice(6, sel.length - 7);
+                    editor.replaceSelection(inner);
+                    return;
+                }
+
+                const from = editor.getCursor("from");
+                const to = editor.getCursor("to");
+                const startIdx = editor.indexFromPos(from);
+                const endIdx = editor.indexFromPos(to);
+                const content = editor.getValue();
+
+                // Case B: selection is the inner text and it's surrounded by <mark>...</mark> in the document => unwrap
+                const before = content.slice(Math.max(0, startIdx - 6), startIdx); // "<mark>" length 6
+                const after = content.slice(endIdx, endIdx + 7); // "</mark>" length 7
+                if (before === "<mark>" && after === "</mark>") {
+                    editor.operation(() => {
+                        editor.replaceRange("", editor.posFromIndex(endIdx), editor.posFromIndex(endIdx + 7));
+                        editor.replaceRange("", editor.posFromIndex(startIdx - 6), editor.posFromIndex(startIdx));
+                        editor.setSelection(editor.posFromIndex(startIdx - 6), editor.posFromIndex(endIdx - 6));
+                    });
+                    return;
+                }
+
+                // Default: wrap selection with <mark>
+                editor.replaceSelection("<mark>" + sel + "</mark>");
+            });
+
+            // Apply highlight in preview (read mode)
+            preview.addEventListener("mouseup", function (e) {
+                if (!highlighterActive) return;
+                const sel = window.getSelection();
+                if (!sel || sel.isCollapsed) return;
+
+                try {
+                    const range = sel.getRangeAt(0);
+                    const container = range.commonAncestorContainer.nodeType === 3 ? range.commonAncestorContainer.parentElement : range.commonAncestorContainer;
+                    const markAncestor = container && container.closest ? container.closest("mark") : null;
+
+                    // If selection is fully inside an existing <mark>, unwrap that <mark>
+                    if (markAncestor && markAncestor.contains(range.startContainer) && markAncestor.contains(range.endContainer)) {
+                        const parent = markAncestor.parentNode;
+                        while (markAncestor.firstChild) parent.insertBefore(markAncestor.firstChild, markAncestor);
+                        parent.removeChild(markAncestor);
+                        sel.removeAllRanges();
+                        return;
+                    }
+
+                    // Otherwise wrap selection with a new <mark>
+                    const mark = document.createElement("mark");
+                    range.surroundContents(mark);
+                    sel.removeAllRanges();
+                } catch (err) {
+                    // Fallback: replace first occurrence of selected text inside preview HTML
+                    const text = sel.toString();
+                    if (!text) return;
+                    const escaped = text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+                    const re = new RegExp(escaped);
+                    preview.innerHTML = preview.innerHTML.replace(re, "<mark>" + text + "</mark>");
+                    sel.removeAllRanges();
+                }
+            });
+
+            // BACKUP REMINDER BANNER
+            (() => {
+                function parseDateSafe(v) {
+                    if (v === null || v === undefined) return null;
+                    if (typeof v === 'string') {
+                        const s = v.trim();
+                        if (s === '' || s.toLowerCase() === 'null' || s.toLowerCase() === 'undefined') return null;
+                    }
+                    const d = new Date(v);
+                    return isNaN(d.getTime()) ? null : d;
+                }
+
+                const lastLoginRaw = Settings.getSetting('lastLogin', null);
+                const backupReminder = Settings.getSetting('backupReminder', 'true');
+                const now = new Date();
+                const lastLogin = parseDateSafe(lastLoginRaw);
+                const hasFiles = files.length === 0 || files.every(f => f.trim() === "");
+
+                console.log("lastLogin:", lastLogin, "backupReminder:", backupReminder, "hasFiles:", hasFiles);
+
+                let shouldShowBanner = false;
+                if (backupReminder === 'true' && !hasFiles) {
+                    if (!lastLogin) {
+                        shouldShowBanner = true;
+                    } else {
+                        const diffMonths = (now.getFullYear() - lastLogin.getFullYear()) * 12 + (now.getMonth() - lastLogin.getMonth());
+                        if (diffMonths >= 1) {
+                            shouldShowBanner = true;
+                        }
+                    }
+                }
+
+                console.log("Should show backup banner:", shouldShowBanner);
+
+                if (shouldShowBanner) {
+                    showBanner({
+                        message: "<strong>Keep your files safe</strong><br><span style='font-size:small'>Cohesion recommends saving a fresh backup of your files every month.</span>",
+                        buttons: [
+                            {
+                                value: "Download backup",
+                                isPrimary: true,
+                                onclick: (close) => {
+                                    exportBook();
+                                    close && close();
+                                    showToast("Backup downloaded", "download");
+                                }
+                            },
+                            {
+                                value: "Remind me later",
+                                isPrimary: false,
+                                onclick: (close) => {
+                                    Settings.setSetting('lastLogin', null);
+                                    close && close();
+                                }
+                            },
+                            {
+                                value: "close",
+                                isPrimary: false,
+                                onclick: (close) => {
+                                    close && close();
+                                },
+                                isIcon: true,
+                            }
+                        ],
+                        menuButtons: [
+                            {
+                                value: "Don't remind me again",
+                                onclick: (close) => {
+                                    Settings.setSetting('backupReminder', 'false');
+                                    close && close();
+                                }
+                            }
+                        ]
+                    });
+                }
+
+                Settings.setSetting('lastLogin', now.toISOString());
+                console.log("Updated lastLogin to:", now.toISOString());
+            })();
+
+            async function shareFileAndShowQR() {
+                
+                if (await promptConfirm(getTranslation('dialogs.share.message','Sharing this file will generate a temporary public link valid for 2 hours. Anyone with the link can view the document. Proceed?')) == false) return;
+
+                showToast('Please wait...', 'broadcast_on_personal');
+
+                try {
+                    const id = await shareFile(index);
+                    const link = `https://flarom.github.io/cohesion/share?f=${id}`;
+
+                    const qrUrl = createQRCode(link, 240);
+
+                    const expireTimestmp = new Date(Date.now() + 2 * 60 * 60 * 1000);
+                    const hh = expireTimestmp.getHours().toString().padStart(2, "0");
+                    const mm = expireTimestmp.getMinutes().toString().padStart(2, "0");
+                    const expireTime = `${hh}:${mm}`;
+
+                    const html = `
+                        <div style="text-align:center;">
+                            <div class="share-qr-code-container">
+                                <img src="${qrUrl}" alt="QR Code" style="width:240px; height:240px;" />
+                            </div>
+                            <div style='padding: 10px'>
+                                <div style="margin-top:12px; display: flex; align-items: center; gap: 6px;">
+                                    <input id="qr-link-field" readonly='true' type='text' style='text-align:center;margin:0;width:100%' value='${link}'/>
+                                    <button id="qr-copy-btn" translate='no' class='icon-button'>content_copy</button>
+                                </div>
+                                <p style="opacity:75%">
+                                    Link is valid until ${expireTime}
+                                </p>
+                            </div>
+                        </div>
+                    `;
+
+                    promptMessage(html, true, false);
+                    
+                    console.log(`File ${getFileTitle(index)} is now temporarily available on ${link}. This link is valid until ${expireTime}`)
+
+                    setTimeout(() => {
+                        const input = document.getElementById("qr-link-field");
+                        const btn = document.getElementById("qr-copy-btn");
+
+                        if (btn && input) {
+                            btn.addEventListener("click", () => {
+                                showToast("Copied to clipboard", "check");
+                                input.select();
+                                input.setSelectionRange(0, 99999);
+                                navigator.clipboard.writeText(input.value);
+                            });
+                        }
+
+                        input.select();
+                        input.setSelectionRange(0, 99999);
+                        navigator.clipboard.writeText(input.value);
+                        showToast("Link copied to clipboard", "check");
+                    }, 50);
+
+                } catch (err) {
+                    console.error("QR share failed:", err);
+                    showToast("Failed to share this file", "error");
+                }
+            }
+        </script>
+    </body>
+</html>

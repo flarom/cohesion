@@ -113,14 +113,14 @@
 <body class="theme-dark">
     <header>
         <div>
-            <a href="../index.html?intro=true" style="display: inline-flex; align-items: center; color: var(--text-color); text-decoration: none;">
+            <a href="../index.html" style="display: inline-flex; align-items: center; color: var(--text-color); text-decoration: none;">
                 <img src="../cohesion/favicon.svg" alt="" width="48">
                 <h2 translate="no" class="header-text">Cohesion</h2>
             </a>
         </div>
         <div style="display: flex; gap: 5px;">
             <button class="secondary hide-on-mobile off" onclick="editOnCohesion()" id="editor-import">Edit on Cohesion</button>
-            <button class="secondary hide-on-mobile" data-locale="dialogs.landing.header.editor" onclick="window.open('../index.html', '_self')" id="editor-simple">Editor</button>
+            <button class="secondary hide-on-mobile" data-locale="dialogs.landing.header.editor" onclick="window.open('../app.html', '_self')" id="editor-simple">Editor</button>
             <button class="secondary hide-on-mobile" data-locale="dialogs.landing.header.tools" onclick="window.open('../tools.html', '_self')">Tools</button>
             <button class="secondary hide-on-mobile" data-locale="dialogs.landing.header.documentation" onclick="window.open('https://github.com/flarom/cohesion/wiki')">Documentation</button>
             <button class="secondary hide-on-mobile" data-locale="dialogs.landing.header.github" onclick="window.open('https://github.com/flarom/cohesion')">GitHub</button>
@@ -205,7 +205,7 @@
                 const selection = await promptSelect("More options", ["Editor", "Tools", "Documentation", "GitHub"]);
 
                 switch (selection) {
-                    case 0: window.open('../index.html', '_self'); break;
+                    case 0: window.open('../app.html', '_self'); break;
                     case 1: window.open('../tools.html', '_self'); break;
                     case 2: window.open('https://github.com/flarom/cohesion/wiki'); break;
                     case 3: window.open('https://github.com/flarom/cohesion'); break;
@@ -453,7 +453,7 @@
                 if (!isNaN(id) && files[Number(id)] !== undefined) {
                     index = id;
                     localStorage.setItem('lastIndex', index);
-                    window.open('../index.html', '_self')
+                    window.open('../app.html', '_self')
 
                     return;
                 }else {
