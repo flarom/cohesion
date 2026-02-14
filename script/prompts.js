@@ -952,8 +952,8 @@ async function promptFileSearch(value = '', doAnimation = true) {
 function parseProjectMeta(raw) {
     if (!raw) {
         return {
-            name: "Documents",
-            icon: "draft",
+            name: "New project",
+            icon: "folder",
             color: "currentColor"
         };
     }
@@ -967,13 +967,13 @@ function parseProjectMeta(raw) {
         return {
             icon: m[1].trim().toLowerCase().replace(/\s+/g, "_"),
             color: m[2]?.trim() || "currentColor",
-            name: m[3].trim() || "Documents"
+            name: m[3].trim() || "New project"
         };
     }
 
     return {
         name: str,
-        icon: "draft",
+        icon: "folder",
         color: "currentColor"
     };
 }
@@ -2301,4 +2301,253 @@ async function loadMaterialIcons() {
     const module = await import("./dictMaterialSymbols.js");
     materialIconsCache = module.default.MaterialIconsValues;
     return materialIconsCache;
+}
+
+async function promptRenameProject(projectName = "") {
+    return new Promise((resolve) => {
+        // Parse the project name to extract icon, color, and name
+        const parsed = parseProjectMeta(projectName);
+        
+        const overlay = document.createElement("div");
+        overlay.className = "prompt-overlay";
+
+        const dialog = document.createElement("div");
+        dialog.className = "prompt-dialog";
+
+        // PROJECT NAME
+        const projectNameDiv = document.createElement("div");
+        projectNameDiv.style.padding = "20px";
+        const nameLabel = document.createElement("label");
+        nameLabel.textContent = "Project name";
+        const nameInput = document.createElement("input");
+        nameInput.type = "text";
+        nameInput.value = parsed.name;
+        projectNameDiv.appendChild(nameLabel);
+        projectNameDiv.appendChild(nameInput);
+        dialog.appendChild(projectNameDiv);
+
+        //
+        // ICON SELECTOR
+        //
+
+        const iconButtonsContainer = document.createElement("div");
+        iconButtonsContainer.style.display = "flex";
+        iconButtonsContainer.style.gap = "12px";
+        iconButtonsContainer.style.padding = "0 20px";
+        iconButtonsContainer.style.overflowX = "scroll";
+        iconButtonsContainer.style.marginBottom = "20px";
+        iconButtonsContainer.style.scrollbarWidth = "none"; /* remove scrollbar on firefox */
+        iconButtonsContainer.style.msOverflowStyle = "none"; /* remove scrollbar on IE */
+        iconButtonsContainer.style.overflow = "-moz-scrollbars-none"; /* remove scrollbar on old versions of firefox */
+        /* todo: remove on webkit */
+
+        iconButtonsContainer.addEventListener("wheel", (e) => {
+            e.preventDefault();
+            iconButtonsContainer.scrollLeft += e.deltaY;
+        });
+
+        const exampleIcons = ["folder", "draft", "bookmark", "star", "flag", "palette", "code", "settings", "home", "work", "school", "shopping_bag", "travel"];
+        
+        let selectedIcon = parsed.icon;
+
+        const createIconButton = (iconName) => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.style.fontFamily = "Material Symbols Rounded";
+            btn.style.fontSize = "24px";
+            btn.style.minWidth = "48px";
+            btn.style.minHeight = "48px";
+            btn.style.padding = "0";
+            btn.style.border = "1px solid var(--border-field-color)";
+            btn.style.borderRadius = "8px";
+            btn.style.backgroundColor = "var(--field-color)";
+            btn.style.cursor = "pointer";
+            btn.style.display = "flex";
+            btn.style.alignItems = "center";
+            btn.style.justifyContent = "center";
+            btn.style.color = "var(--button-color)";
+            btn.textContent = iconName;
+            btn.title = iconName;
+            btn.setAttribute("translate", "no");
+
+            if (iconName === selectedIcon) {
+                btn.style.borderColor = "var(--highlight-color)";
+                btn.style.backgroundColor = "var(--highlight-color)";
+                btn.style.color = "var(--button-color-2)"
+            }
+
+            btn.addEventListener("click", (e) => {
+                e.preventDefault();
+                document.querySelectorAll(".icon-choice-button").forEach(b => {
+                    b.style.borderColor = "var(--border-field-color)";
+                    b.style.backgroundColor = "var(--field-color)";
+                    b.style.color = "var(--button-color)";
+                });
+                selectedIcon = iconName;
+                btn.style.borderColor = "var(--highlight-color)";
+                btn.style.backgroundColor = "var(--highlight-color)";
+                btn.style.color = "var(--button-color-2)";
+                setTimeout(() => {
+                    const selectedBtn = Array.from(iconButtonsContainer.children).find(btn => btn.textContent === selectedIcon);
+                    if (selectedBtn) {
+                        selectedBtn.scrollIntoView({ behavior: "smooth", inline: "center" });
+                    }
+                }, 10);
+                nameInput.focus();
+                nameInput.select();
+            });
+
+            btn.addEventListener("dblclick", (e) => {
+                e.preventDefault();
+                selectedIcon = iconName;
+                submitButton.click();
+            });
+
+            btn.classList.add("icon-choice-button");
+            return btn;
+        };
+        
+        exampleIcons.forEach(icon => {
+            iconButtonsContainer.appendChild(createIconButton(icon));
+        });
+
+        // scroll selected icon button into view
+        if (selectedIcon) {
+            setTimeout(() => {
+                const selectedBtn = Array.from(iconButtonsContainer.children).find(btn => btn.textContent === selectedIcon);
+                if (selectedBtn) {
+                    selectedBtn.scrollIntoView({ behavior: "smooth", inline: "center" });
+                }
+            }, 200);
+        }
+        
+        dialog.appendChild(iconButtonsContainer);
+
+        //
+        // COLOR SELECTOR
+        //
+
+        const colorButtonsContainer = document.createElement("div");
+        colorButtonsContainer.style.display = "flex";
+        colorButtonsContainer.style.gap = "8px";
+        colorButtonsContainer.style.padding = "0 20px";
+        colorButtonsContainer.style.overflowX = "scroll";
+        colorButtonsContainer.style.justifyContent = "center";
+        colorButtonsContainer.style.marginBottom = "20px";
+
+        const exampleColors = [ "blue", "green", "yellow", "orange", "red", "pink", "purple" ];
+        
+        let selectedColor = parsed.color;
+
+        const createColorButton = (colorValue) => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.style.width = "32px";
+            btn.style.height = "32px";
+            btn.style.padding = "0";
+            btn.style.borderRadius = "16px";
+            btn.style.border = '4px solid var(--background-color)';
+            btn.style.backgroundColor = `var(--quote-${colorValue})`;
+            btn.style.cursor = "pointer";
+            btn.title = colorValue;
+            btn.style.transition = "border-radius 0.3s, border 0.3s";
+
+            if (colorValue === selectedColor) {
+                btn.style.borderRadius = "8px";
+                btn.style.border = '0px solid transparent';
+            }
+
+            btn.addEventListener("click", (e) => {
+                e.preventDefault();
+                document.querySelectorAll(".color-choice-button").forEach(b => {
+                    b.style.borderRadius = "16px";
+                    b.style.border = '4px solid var(--background-color)';
+                });
+                selectedColor = colorValue;
+                btn.style.borderRadius = "8px";
+                btn.style.border = '0px solid transparent';
+
+                nameInput.focus();
+                nameInput.select();
+            });
+
+            btn.addEventListener("dblclick", (e) => {
+                e.preventDefault();
+                selectedColor = colorValue;
+                submitButton.click();
+            });
+
+            btn.classList.add("color-choice-button");
+            return btn;
+        };
+
+        exampleColors.forEach(color => {
+            colorButtonsContainer.appendChild(createColorButton(color));
+        });
+
+        dialog.appendChild(colorButtonsContainer);
+
+        // BUTTONS
+        const buttonContainer = document.createElement("div");
+        buttonContainer.style.padding = "0 20px 20px 20px";
+        buttonContainer.className = "prompt-buttons";
+
+        const cancelButton = document.createElement("button");
+        cancelButton.textContent = "Cancel";
+        cancelButton.className = "prompt-button cancel";
+
+        const submitButton = document.createElement("button");
+        submitButton.textContent = "Save";
+        submitButton.className = "prompt-button submit";
+
+        buttonContainer.appendChild(cancelButton);
+        buttonContainer.appendChild(submitButton);
+        dialog.appendChild(buttonContainer);
+
+        overlay.appendChild(dialog);
+        document.body.appendChild(overlay);
+
+        function close(result) {
+            document.body.removeChild(overlay);
+            resolve(result);
+        }
+
+        cancelButton.addEventListener("click", () => close(null));
+        submitButton.addEventListener("click", () => {
+            // Build the result string
+            let result = "";
+            
+            // If custom icon or color is selected, format with [icon:color]name
+            if (nameInput.value.match(/^\[.+\].+/)) {
+                result = nameInput.value; // Use the user-defined value
+            } else if (selectedIcon !== "folder" || selectedColor !== "currentColor") {
+                result = `[${selectedIcon}:${selectedColor}]${nameInput.value}`;
+            } else {
+                result = nameInput.value;
+            }
+            
+            close(result);
+        });
+
+        overlay.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                close(null);
+            } else if (event.key === "Enter") {
+                let result = "";
+                
+                if (nameInput.value.match(/^\[.+\].+/)) {
+                    result = nameInput.value; // Use the user-defined value
+                } else if (selectedIcon !== "folder" || selectedColor !== "currentColor") {
+                    result = `[${selectedIcon}:${selectedColor}]${nameInput.value}`;
+                } else {
+                    result = nameInput.value;
+                }
+                
+                close(result);
+            }
+        });
+
+        nameInput.focus();
+        nameInput.select();
+    });
 }

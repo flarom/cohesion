@@ -447,13 +447,13 @@ function getMetadataValue(metadata, fieldNames) {
 /**
  * Gets the file group from metadata
  * @param {*} metadata The metadata object 
- * @returns {string} The project or folder name, or "Documents" if neither exists
+ * @returns {string} The project or folder name, or null if neither exists
  */
 function getFileGroup(metadata) {
     return (
         metadata.project ||
         metadata.folder ||
-        "Documents"
+        null
     );
 }
 
@@ -473,11 +473,17 @@ function createGroupContainer(name) {
     let iconColor = "currentColor";
     let displayName = name;
 
-    const metaMatch = name.match(/^\[([^:\]]+):([^\]]+)\](.*)$/);
-    if (metaMatch) {
-        iconName = metaMatch[1].trim();
-        iconColor = metaMatch[2].trim();
-        displayName = metaMatch[3].trim();
+    // Only parse metadata if name is a string (not null, which is the default group)
+    if (typeof name === "string") {
+        const metaMatch = name.match(/^\[([^:\]]+):([^\]]+)\](.*)$/);
+        if (metaMatch) {
+            iconName = metaMatch[1].trim();
+            iconColor = metaMatch[2].trim();
+            displayName = metaMatch[3].trim();
+        }
+    } else if (name === null) {
+        iconName = "";
+        displayName = null; // Keep null as is for default group
     }
 
     // changing spaces to underscores, makes it a bit more clean for icon names and avoids a DOMException
@@ -485,7 +491,7 @@ function createGroupContainer(name) {
         .toLowerCase()
         .replace(/\s+/g, "_");
 
-    const key = displayName.toLowerCase().trim();
+    const key = displayName === null ? "__default__" : displayName.toLowerCase().trim();
     const isCollapsed = groupState[key] === true;
 
     // wrapper
@@ -519,7 +525,7 @@ function createGroupContainer(name) {
 
     // title
     const title = document.createElement("strong");
-    title.textContent = displayName;
+    title.textContent = displayName === null ? "Your Documents" : displayName;
 
     iconAndTitleContainer.append(icon, title);
 
@@ -540,6 +546,18 @@ function createGroupContainer(name) {
     menu.className = "dropdown-content menu";
     menu.id = `group-menu-${key}`;
 
+    // Only show menu for non-null groups (string groups, not the default group)
+    const shouldShowMenu = name !== null;
+
+    const exportBtn = document.createElement("button");
+    exportBtn.className = "text-button";
+    exportBtn.dataset.locale = "app.sidebar.project-menu.export"
+    exportBtn.textContent = "Export project";
+    exportBtn.onclick = async (e) => {
+        e.stopPropagation();
+        exportGroup(name);
+    }
+
     const renameBtn = document.createElement("button");
     renameBtn.className = "text-button";
     renameBtn.dataset.locale = "app.sidebar.project-menu.rename"
@@ -547,8 +565,13 @@ function createGroupContainer(name) {
     renameBtn.onclick = async (e) => {
         e.stopPropagation();
 
-        const newName = await promptString(
-            "Rename project",
+        // can't rename default group (null, not string "null")
+        if (name === null) {
+            showToast("Default group can't be renamed", "error");
+            return;
+        }
+
+        const newName = await promptRenameProject(
             name
         );
 
@@ -577,12 +600,16 @@ function createGroupContainer(name) {
     };
 
     menu.append(
+        exportBtn,
         renameBtn,
         document.createElement("hr"),
         deleteBtn
     );
 
-    menuWrap.append(menuButton, menu);
+    // Only append menu if this is not the default group
+    if (shouldShowMenu) {
+        menuWrap.append(menuButton, menu);
+    }
 
     // content
     const content = document.createElement("div");
@@ -608,7 +635,22 @@ function createGroupContainer(name) {
         groupState[key] = collapsed;
         saveGroupState();
     };
-    
+
+    // rename on double click (if not default group)
+    if (shouldShowMenu) {
+        header.ondblclick = async (e) => {
+            e.stopPropagation();
+            const newName = await promptRenameProject(
+                name
+            );
+            
+            if (newName && newName !== name) {
+                renameGroup(name, newName);
+                renderFiles("files");
+            }
+        };
+    }
+
     header.append(iconAndTitleContainer, menuWrap);
     wrapper.append(header, content);
     return { wrapper, content };
@@ -632,16 +674,20 @@ function renderFiles(containerId) {
             metadata = conv.getMetadata();
         }
 
-        const groupName = getFileGroup(metadata).toLowerCase();
+        let groupName = getFileGroup(metadata);
+        // Use special key for default group to avoid collision with "null" string
+        const groupKey = groupName === null ? "__default__" : groupName.toLowerCase().trim();
 
-        if (!groups[groupName]) {
-            groups[groupName] = [];
+        if (!groups[groupKey]) {
+            groups[groupKey] = [];
         }
 
-        groups[groupName].push({ index: i, metadata });
+        groups[groupKey].push({ index: i, metadata });
     });
 
-    Object.entries(groups).forEach(([groupName, items]) => {
+    Object.entries(groups).forEach(([groupKey, items]) => {
+        // Convert special key back to null for default group
+        const groupName = groupKey === "__default__" ? null : groupKey;
         const { wrapper, content } = createGroupContainer(groupName);
 
         items.forEach(({ index: i, metadata }) => {
@@ -659,7 +705,7 @@ function renderFiles(containerId) {
             infoDiv.style.width = "90%";
 
             const h3 = document.createElement("h3");
-            h3.textContent = getFileTitle(i) || "New document";
+            h3.textContent = getFileTitle(i) || "Empty file";
             // h3.style.color = metadata.color || "var(--title-color)";
 
             const stats = getFileStats(i);
@@ -805,7 +851,10 @@ function renderFiles(containerId) {
     translateWithin()
 }
 
-function renameGroup(oldName, newName) {
+function renameGroup(oldName, newNewName) {
+    // Can't rename the default group (null)
+    if (oldName === null) return;
+
     files = files.map(text => {
         if (!text) return text;
 
@@ -823,7 +872,7 @@ function renameGroup(oldName, newName) {
         // replace only the metadata line
         return text.replace(
             new RegExp(`^(${field}\\s*:\\s*).*$`, "mi"),
-            `$1${newName}`
+            `$1${newNewName}`
         );
     });
 
@@ -833,6 +882,9 @@ function renameGroup(oldName, newName) {
 }
 
 function deleteGroup(groupName) {
+    // Can't delete the default group (null)
+    if (groupName === null) return;
+
     files = files.filter(text => {
         // if (!text) return true;
 
@@ -841,10 +893,42 @@ function deleteGroup(groupName) {
         const metadata = conv.getMetadata();
 
         const group = getFileGroup(metadata);
+        // Delete files that belong to this named group
+        // Use strict comparison to differentiate "null" string from null
+        if (group === null) return true; // keep default group files
         return group.toLowerCase() !== groupName.toLowerCase();
     });
 
     saveFilesToStorage();
     renderFiles("files");
     renderEditor();
+}
+
+function exportGroup(groupName) {
+    // Can't export the default group (null)
+    if (groupName === null) return;
+
+    const zip = new JSZip();
+    files.forEach((file, index) => {
+        const text = getFileText(index);
+        if (!text) return;
+        const conv = new showdown.Converter({ metadata: true });
+        conv.makeHtml(text);
+        const metadata = conv.getMetadata();
+        const group = getFileGroup(metadata);
+        // Use strict comparison to handle "null" string group
+        if (group !== null && group.toLowerCase() === groupName.toLowerCase()) {
+            let title = getFileTitle(index) || `untitled-${index + 1}`;
+            title = title.replace(/[<>:"/\\|?*\x00-\x1F]/g, "").trim();
+            zip.file(`${title}.md`, file);
+        }
+    });
+
+    zip.generateAsync({ type: "blob" }).then(content => {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(content);
+        a.download = `${groupName}.zip`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+    });
 }

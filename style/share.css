@@ -456,7 +456,7 @@ button.danger:hover {
     justify-content: space-between;
     align-items: center;
     gap: 6px;
-    padding: 6px 5px 6px 8px;
+    padding: 0px 5px 0px 8px;
     background: var(--background-color-2);
     border: none;
     cursor: pointer;
@@ -465,6 +465,7 @@ button.danger:hover {
     border-radius: 12px;
     text-transform: capitalize;
     box-sizing: border-box;
+    min-height: 30px;
 }
 
 /* .file-group.expanded .file-group-header {

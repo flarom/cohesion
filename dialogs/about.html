@@ -175,10 +175,11 @@
                     const author = data.commit.author.name;
                     const committer = data.commit.committer.name;
                     const message = data.commit.message.split("\n")[0];
+                    const description = data.commit.message.split("\n").slice(1).join("\n").trim();
                     const date = data.commit.committer.date;
 
                     versionLabel.textContent = `${sha}`;
-                    versionLabel.title = `"${message}"\nauthored by ${author} • committed by ${committer} ${timeAgo(date)}`;
+                    versionLabel.title = `authored by ${author} • committed by ${committer} ${timeAgo(date)}\n\n"${message}"\n${description}`;
                 } catch (error) {
                     console.error("Error fetching version info:", error);
                     versionLabel.textContent = "version unknown";

@@ -64,6 +64,7 @@
             },
             "SIDEBAR": {
                 "app.sidebar.create-new-document": "Criar novo documento",
+                "app.sidebar.project-menu.export": "Exportar projeto",
                 "app.sidebar.project-menu.rename": "Renomear projeto",
                 "app.sidebar.project-menu.delete": "Deletar projeto",
                 "app.sidebar.file-menu.duplicate": "Duplicar",

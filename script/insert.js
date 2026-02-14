@@ -240,7 +240,7 @@ function getMeta() {
     const rawMeta = Settings.getSetting(
         "editorMeta",
         `title:       ~{1:\${getFileTitle(index) || "New document"}}
-project:     ~{2:Documents}
+project:     ~{2:New project}
 description: ~{3:No description provided}
 tags:        ~{4:Uncategorized}
 author:      ~{5:Author name}
