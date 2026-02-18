@@ -328,9 +328,7 @@
             // Retrieve last index from local storage, default to 0
             let index = localStorage.getItem("lastIndex") || 0;
 
-            //
-            // EDITOR
-            //
+            // MARK: EDITOR
 
             const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
                     mode: "markdown",                                                                       // Set mode to markdown, hardcoded
@@ -586,6 +584,20 @@
             }
 
             // Handle autocomplete on input
+            // Helper: detect if cursor is inside a metadata block (between ««« and »»»)
+            function isCursorInMetaBlock(cm, cursor) {
+                try {
+                    const doc = cm.getValue();
+                    const posIndex = cm.indexFromPos(cursor);
+                    const start = doc.lastIndexOf('«««', posIndex);
+                    if (start === -1) return false;
+                    const end = doc.indexOf('»»»', posIndex);
+                    return end !== -1 && start < posIndex && posIndex <= end;
+                } catch (e) {
+                    return false;
+                }
+            }
+
             editor.on("inputRead", function (cm, change) {
                 if (Settings.getSetting("editorShowHints", "true") === "false") return;
 
@@ -593,6 +605,35 @@
                 var token = cm.getTokenAt(cursor);
                 var line = cm.getLine(cursor.line);
                 var beforeCursor = line.slice(0, cursor.ch);
+
+                // if cursor is inside metadata block and editing project: or folder:, suggest existing groups
+                if (isCursorInMetaBlock(cm, cursor) && typeof getAllGroupNames === 'function') {
+                    const metaMatch = beforeCursor.match(/^\s*(project|folder)\s*:\s*([^\n]*)$/i);
+                    if (metaMatch) {
+                        const typed = (metaMatch[2] || "").trim();
+                        const all = getAllGroupNames();
+                        if (all.length > 0) {
+                            cm.showHint({
+                                hint: function(cmInner) {
+                                    const cur = cmInner.getCursor();
+                                    const lineText = cmInner.getLine(cur.line);
+                                    const colonPos = lineText.indexOf(':');
+                                    const valueStartCh = colonPos >= 0 ? colonPos + 1 : 0;
+                                    const afterColon = lineText.slice(valueStartCh);
+                                    const leadingSpacesMatch = afterColon.match(/^\s*/);
+                                    const leading = leadingSpacesMatch ? leadingSpacesMatch[0].length : 0;
+                                    const from = { line: cur.line, ch: valueStartCh + leading };
+                                    const to = { line: cur.line, ch: cur.ch };
+                                    const lowerTyped = typed.toLowerCase();
+                                    const list = all.filter(s => s.toLowerCase().startsWith(lowerTyped));
+                                    return { from, to, list: list.length ? list : all };
+                                },
+                                completeSingle: false
+                            });
+                            return;
+                        }
+                    }
+                }
 
                 // display resource hints
                 var resMatch = beforeCursor.match(/resources\/[\w\-.]*$/);

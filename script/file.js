@@ -513,6 +513,8 @@ function createGroupContainer(name) {
     const icon = document.createElement("span");
     icon.className = "icon file-group-icon material-symbols-rounded";
     icon.textContent = normalizedIconName;
+    icon.translate = false;
+    icon.style.userSelect = "none";
     icon.style.color = iconColor;
 
     // complementary classes
@@ -526,6 +528,7 @@ function createGroupContainer(name) {
     // title
     const title = document.createElement("strong");
     title.textContent = displayName === null ? "Your Documents" : displayName;
+    title.style.userSelect = "none";
 
     iconAndTitleContainer.append(icon, title);
 
@@ -715,42 +718,8 @@ function renderFiles(containerId) {
             readTime.dataset.localeVars = `{"readTime":"${stats.readTime}"}`
             readTime.dataset.locale = "app.sidebar.file.readtime"
 
-            /*
-            const authorValue = getMetadataValue(metadata, ["author", "authors"]);
-            const tagsValue = getMetadataValue(metadata, ["tags", "keywords"]);
-            const dateValue = getMetadataValue(metadata, ["date", "created date"]);
-            const descriptionValue = getMetadataValue(metadata, ["description", "subject", "comment"]);
-            */
-
             infoDiv.appendChild(h3);
             infoDiv.appendChild(readTime);
-
-            /*
-            if (authorValue) {
-                const author = document.createElement("p");
-                author.innerHTML = `<span class="icon">person</span>${authorValue}`;
-                infoDiv.appendChild(author);
-            }
-
-            if (tagsValue) {
-                const tags = document.createElement("p");
-                tags.innerHTML = `<span class="icon">sell</span>${tagsValue}`;
-                infoDiv.appendChild(tags);
-            }
-
-            if (dateValue) {
-                const date = document.createElement("p");
-                date.innerHTML = `<span class="icon">event</span>${dateValue}`;
-                infoDiv.appendChild(date);
-            }
-
-            if (descriptionValue) {
-                const desc = document.createElement("p");
-                desc.innerText = descriptionValue;
-                desc.style.marginTop = "5px";
-                infoDiv.appendChild(desc);
-            }
-            */
 
             const dropdownDiv = document.createElement("div");
             dropdownDiv.className = "dropdown";
@@ -931,4 +900,26 @@ function exportGroup(groupName) {
         a.click();
         URL.revokeObjectURL(a.href);
     });
+}
+
+/**
+ * Returns an array of unique group names (project or folder) used across files.
+ * Group names are returned as stored in metadata, e.g. "[icon:color]MyProject".
+ * @returns {string[]} Array of unique group names
+ */
+function getAllGroupNames() {
+    const set = new Set();
+
+    files.forEach(text => {
+        if (!text) return;
+
+        const conv = new showdown.Converter({ metadata: true });
+        conv.makeHtml(text);
+        const metadata = conv.getMetadata();
+
+        const group = getFileGroup(metadata);
+        if (group) set.add(group);
+    });
+
+    return Array.from(set);
 }
