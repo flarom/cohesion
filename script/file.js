@@ -923,3 +923,29 @@ function getAllGroupNames() {
 
     return Array.from(set);
 }
+
+function getAllTagsNames() {
+    const set = new Set();
+
+    files.forEach(text => {
+        if (!text) return;
+
+        const conv = new showdown.Converter({ metadata: true });
+        conv.makeHtml(text);
+        const metadata = conv.getMetadata();
+
+        if (!metadata || !metadata.tags) return;
+
+        const rawTags = metadata.tags;
+
+        if (typeof rawTags !== "string") return;
+
+        rawTags
+            .split(",")
+            .map(tag => tag.trim())
+            .filter(tag => tag.length > 0)
+            .forEach(tag => set.add(tag));
+    });
+
+    return Array.from(set);
+}
