@@ -1,3 +1,5 @@
+<!--This application comes with absolutely no warranty. It is licensed under the GNU General Public License v3-->
+<!--https://www.gnu.org/licenses/gpl-3.0.html-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -113,7 +115,7 @@
 
     <section class="hero">
         <div>
-            <h1>Bring <span id="cycling-word" style="background-color: var(--quote-green-bg); color: var(--quote-green);" class="highlight">clarity</span> to your ideas</h1>
+            <h1><span data-locale="dialogs.landing.hero.title-start">Bring</span> <span id="cycling-word" data-locale="dialogs.landing.hero.title-clarity" style="background-color: var(--quote-green-bg); color: var(--quote-green);" class="highlight">clarity</span> <span data-locale="dialogs.landing.hero.title-end">to your ideas</span></h1>
             
             <p data-locale="dialogs.landing.hero.hero" data-locale-html>Cohesion is a minimal, beautiful, Markdown editor<br>designed for clarity and expression</p>
             <div style="margin-top: 40px; margin-bottom: 40px; display: flex; gap: 5px;" translate="no">
@@ -266,11 +268,11 @@
             }, 600);
 
             const words = [
-                { text: 'structure', bg: 'var(--quote-yellow-bg)', border: 'var(--quote-yellow)'},
-                { text: 'focus', bg: 'var(--quote-red-bg)', border: 'var(--quote-red)'},
-                { text: 'simplicity', bg: 'var(--quote-purple-bg)', border: 'var(--quote-purple)'},
-                { text: 'cohesion', bg: 'var(--quote-blue-bg)', border: 'var(--quote-blue)'},
-                { text: 'clarity', bg: 'var(--quote-green-bg)', border: 'var(--quote-green)'},
+                { text: 'structure',  datalocale: 'dialogs.landing.hero.title-structure',  bg: 'var(--quote-yellow-bg)', border: 'var(--quote-yellow)'},
+                { text: 'focus',      datalocale: 'dialogs.landing.hero.title-focus',      bg: 'var(--quote-red-bg)',    border: 'var(--quote-red)'},
+                { text: 'simplicity', datalocale: 'dialogs.landing.hero.title-simplicity', bg: 'var(--quote-purple-bg)', border: 'var(--quote-purple)'},
+                { text: 'cohesion',   datalocale: 'dialogs.landing.hero.title-cohesion',   bg: 'var(--quote-blue-bg)',   border: 'var(--quote-blue)'},
+                { text: 'clarity',    datalocale: 'dialogs.landing.hero.title-clarity',    bg: 'var(--quote-green-bg)',  border: 'var(--quote-green)'},
             ];
             const element = document.getElementById('cycling-word');
             let index = 0;
@@ -283,26 +285,31 @@
                 const word = words[index];
                 element.style.backgroundColor = word.bg;
                 element.style.color = word.border;
-
+                
                 const temp = document.createElement('span');
                 temp.className = 'cycle-item';
                 temp.style.position = 'absolute';
                 temp.style.visibility = 'hidden';
                 temp.style.transform = 'none';
                 temp.textContent = word.text;
+                temp.dataset.locale = word.datalocale;
                 element.appendChild(temp);
+
+                translateWithin(element);
 
                 const cs = getComputedStyle(element);
                 const paddingH = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
                 const borderH = parseFloat(cs.borderLeftWidth) + parseFloat(cs.borderRightWidth);
                 const newWidth = Math.ceil(temp.getBoundingClientRect().width + paddingH + borderH);
 
+
                 temp.remove();
 
                 element.style.width = newWidth + 'px';
 
                 requestAnimationFrame(() => {
-                    element.innerHTML = `<span class="cycle-item">${word.text}</span>`;
+                    element.innerHTML = `<span class="cycle-item" data-locale="${word.datalocale}">${word.text}</span>`;
+                    translateWithin(element);
                 });
 
                 index = (index + 1) % words.length;

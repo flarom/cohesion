@@ -186,6 +186,13 @@
                 "dialogs.landing.header.github": "GitHub"
             },
             "HERO": {
+                "dialogs.landing.hero.title-start": "Traga ",
+                "dialogs.landing.hero.title-end": " para suas ideias",
+                "dialogs.landing.hero.title-clarity": "clareza",
+                "dialogs.landing.hero.title-structure": "estrutura",
+                "dialogs.landing.hero.title-focus": "foco",
+                "dialogs.landing.hero.title-simplicity": "simplicidade",
+                "dialogs.landing.hero.title-cohesion": "coesão",
                 "dialogs.landing.hero.hero": "Cohesion é um editor Markdown, minimo e lindo,<br>designado para clareza e expressão",
                 "dialogs.landing.hero.cta": "Começar a criar..."
             },

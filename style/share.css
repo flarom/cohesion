@@ -284,6 +284,10 @@ button.danger:hover {
     background-color: var(--hover-color);
 }
 
+.dropdown-content .text-button:focus:hover {
+    filter: brightness(1.5);
+}
+
 .dropdown.show .dropdown-content {
     display: block;
 }
@@ -450,7 +454,25 @@ button.danger:hover {
     margin-bottom: 32px;
 }
 
-.file-group-header {
+.file-group .file-group-header {
+    display: none;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+    padding: 0px 5px 0px 8px;
+    background: var(--background-color-2);
+    border: none;
+    cursor: pointer;
+    font-size: normal;
+    color: var(--title-color);
+    border-radius: 12px;
+    text-transform: capitalize;
+    box-sizing: border-box;
+    min-height: 30px;
+}
+
+.file-group.valid .file-group-header {
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -488,7 +510,7 @@ button.danger:hover {
     display: none;
 }
 
-.file-group-content {
+.file-group.valid .file-group-content {
     border-left: 1px solid var(--border-light-color);
     border-left-color: var(--border-light-color);
     margin-left: 17px;
@@ -557,6 +579,7 @@ button.danger:hover {
 
 .sidebar .file.selected .icon-button,
 .sidebar .file:focus .icon-button,
+.sidebar .file .icon-button:focus,
 .sidebar .file:hover .icon-button {
     opacity: 1;
 }

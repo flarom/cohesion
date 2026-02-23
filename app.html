@@ -1,5 +1,6 @@
-<!-- fork this project: https://github.com/flarom/cohesion -->
-
+<!--This application comes with absolutely no warranty.
+It is licensed under the GNU General Public License v3-->
+<!--https://www.gnu.org/licenses/gpl-3.0.html-->
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -329,7 +330,9 @@
             // Retrieve last index from local storage, default to 0
             let index = localStorage.getItem("lastIndex") || 0;
 
+            //
             // MARK: EDITOR
+            //
 
             const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
                     mode: "markdown",                                                                       // Set mode to markdown, hardcoded
@@ -584,7 +587,9 @@
                 }
             }
 
+            //
             // MARK: EDITOR HINTS
+            //
             editor.on("inputRead", function (cm, change) {
                 showEditorHints(cm, change);
             });
@@ -663,7 +668,7 @@
             }
 
             //
-            // MARKDOWN CONVERTER
+            // MARK: CONVERTER
             //
 
             const converter = new showdown.Converter({
@@ -1174,7 +1179,7 @@
             }
 
             //
-            // SEARCH AND REPLACE
+            // MARK: SEARCH AND REPLACE
             //
 
             /**
@@ -1407,7 +1412,7 @@
             }
 
             //
-            // KEYBOARD SHORTCUTS
+            // MARK: KEYBOARD SHORTCUTS
             //
 
             const shortcuts = [
@@ -1671,7 +1676,9 @@
                 }
             });
 
-            // BACKUP REMINDER BANNER
+            //
+            // MARK: BACKUP REMINDER BANNER
+            //
             (() => {
                 function parseDateSafe(v) {
                     if (v === null || v === undefined) return null;

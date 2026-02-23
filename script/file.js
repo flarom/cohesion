@@ -524,6 +524,9 @@ function createGroupContainer(name) {
             ? `color-hex-${iconColor.slice(1).toLowerCase()}`
             : `color-${iconColor.toLowerCase().replace(/[^a-z0-9_-]/g, "")}`
     );
+    if (displayName !== null) {
+        wrapper.classList.add("valid");
+    }
 
     // title
     const title = document.createElement("strong");

@@ -13,9 +13,11 @@ header {
     display: flex;
     align-items: center;
     gap: 20px;
-    backdrop-filter: blur(10px);
     justify-content: space-between;
     z-index: 9999;
+    background: linear-gradient(var(--background-color), transparent);
+    mask: linear-gradient(black, black, black, transparent);
+    backdrop-filter: blur(8px);
 }
 
 header button.secondary {
