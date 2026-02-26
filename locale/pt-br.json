@@ -197,19 +197,23 @@
                 "dialogs.landing.hero.cta": "Começar a criar..."
             },
             "FEATURES": {
-                "dialogs.landing.features": "Qualidades",
-                "dialogs.landing.features.markdown-based": "Baseado em Markdown",
-                "dialogs.landing.features.markdown-based.description": "Escreva documentos complexos sem tirar suas mãos do teclado.",
+                "dialogs.landing.features.keyboard-centric-design": "Design teclado centrico",
+                "dialogs.landing.features.keyboard-centric-design.paragraph": "Escreva documentos complexos sem tirar suas mãos do teclado.",
                 "dialogs.landing.features.in-browser-local-storage": "Armazenamento local no navegador",
-                "dialogs.landing.features.in-browser-local-storage.description": "Seus arquivos não são enviados para nós, Cohesion salva seus arquivos nos dados do seu navegador, você também pode criar backups de todos seus dados com um único clique.",
-                "dialogs.landing.features.themes": "Temas",
-                "dialogs.landing.features.themes.description": "Personalize sua experiência com 8 temas. Troque entre modos claros e escuros, ou escolha de paletas únicas que tornam seu ambiênte mais confortável e inspirador.",
-                "dialogs.landing.features.easy-export": "Exportação fácil",
-                "dialogs.landing.features.easy-export.description": "Exporte suas notas para formatos como PDF, HTML, ou Markdown com um único clique.",
+                "dialogs.landing.features.in-browser-local-storage.paragraph-1": "Seus arquivos não são enviados para nós, Cohesion salva seus arquivos no seu navegador.",
+                "dialogs.landing.features.in-browser-local-storage.paragraph-2": "Você também pode criar backups de todos seus dados com um único clique.",
+                "dialogs.landing.features.export-as": "Exportar como",
+                "dialogs.landing.features.the-way-you-like": "Como você gosta",
+                "dialogs.landing.features.the-way-you-like.paragraph": "Personalize seu editor com temas ou até seu próprio CSS.",
                 "dialogs.landing.features.instant-search": "Busca instantânea",
-                "dialogs.landing.features.instant-search.description": "Encontre rapidamente qualquer nota ou fragmento de texto usando a ferramenta de busca inclusa, otimizando seu fluxo de trabalho.",
-                "dialogs.landing.features.distraction-free-editor": "Editor livre de distrações",
-                "dialogs.landing.features.distraction-free-editor.description": "Escreva sem nenhuma distração. Você não precisa criar uma conta, pagar uma assinatura mensal, assistir anúncios, ou treinar IA. É um editor de texto!"
+                "dialogs.landing.features.instant-search.paragraph": "Encontre rapidamente qualquer fragmento de texto usando a ferramenta de busca inclusa, otimizando seu fluxo de trabalho.",
+                "dialogs.landing.features.ideas-organize-themselves": "Ideias se organizam",
+                "dialogs.landing.features.ideas-organize-themselves.paragraph": "Organize seus arquivos Markdown com projetos, tags e metadados.",
+                "dialogs.landing.features.free-and-opensource": "Grátis e de código fonte aberto",
+                "dialogs.landing.features.free-and-opensource.source-code": "Código fonte",
+                "dialogs.landing.features.completely-zen": "Completamente zen",
+                "dialogs.landing.features.completely-zen.paragraph-1": "Escreva sem nenhuma distração. Você não precisa criar uma conta, pagar uma assinatura mensal, assistir anúncios, ou treinar IA.",
+                "dialogs.landing.features.completely-zen.paragraph-2": "É só um editor de texto."
             }
         },
 

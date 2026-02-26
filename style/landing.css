@@ -26,6 +26,7 @@ header button.secondary {
 
 footer {
     margin-bottom: 5vh;
+    padding: 12px;
 }
 
 footer ul {
@@ -211,8 +212,8 @@ button.secondary:hover {
         "a a a b"
         "f c c b"
         "f c c b"
-        "d d e h"
-        "d d i j"
+        "d d e e"
+        "d d h h"
         "g g g g";
     
     gap: 1rem;
@@ -253,8 +254,6 @@ button.secondary:hover {
 .feature-f { grid-area: f; }
 .feature-g { grid-area: g; }
 .feature-h { grid-area: h; }
-.feature-i { grid-area: i; }
-.feature-j { grid-area: j; }
 
 .feature-container img {
     border-radius: 12px;
@@ -310,8 +309,9 @@ button.secondary:hover {
             "c"
             "d"
             "e"
+            "h"
             "f"
-            "g";
+            "g"
     }
 
     .feature-container.row {
