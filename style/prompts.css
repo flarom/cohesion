@@ -489,6 +489,7 @@
 .prompt-dialog .switch-description {
     font-size: small;
     color: var(--text-color);
+    display: block;
     user-select: none;
 }
 
