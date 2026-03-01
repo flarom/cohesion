@@ -499,11 +499,18 @@
                                 <span class="switch-text">${ext.title}</span><br/>
                                 <span class="switch-description">
                                     ${ext.author ? "by " + ext.author : ""}
+                                    ${ext.version ? "v" + ext.version : ""}
                                 </span>
                             </div>
                         </div>
 
                         <div>
+                            <button class="icon-button"
+                                    style="font-size:larger;"
+                                    onclick="upgradeExtension(${index})">
+                                Update
+                            </button>
+
                             <button class="icon-button"
                                     style="font-size:larger;"
                                     onclick="editExtension(${index})">
@@ -536,6 +543,11 @@
                 showToast('Extension updated')
             }
 
+            async function upgradeExtension(index) {
+                await Extensions.upgradeFromLink(index);
+                renderExtensions();
+                updateExtension();
+            }
 
             async function deleteExtension(index) {
                 await Extensions.delete(index);
