@@ -475,9 +475,15 @@
 
 .preview table.csv-table tbody tr:first-child td:first-child {
     border-top-left-radius: 10px;
-}
+}       
 .preview table.csv-table tbody tr:first-child td:last-child {
     border-top-right-radius: 10px;
+}
+
+.preview td.separator {
+    background-color: var(--background-color-2);
+    padding: 0px 15px;
+    height: 12px;
 }
 
 /* html stuff */
@@ -754,6 +760,12 @@
     font-size: small;
     opacity: 50%;
     display: block;
+}
+
+.preview .progress-container {
+    display: flex;
+    align-items: center;
+    gap: 1ch;
 }
 
 .preview progress {

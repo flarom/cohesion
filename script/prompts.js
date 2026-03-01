@@ -1380,6 +1380,65 @@ ${tempDiv.innerHTML}
     fileNameField.selectionEnd = fileNameField.value.length;
 }
 
+async function promptDragOpenFile() {
+    return new Promise((resolve) => {
+        const html = `
+            <div id="drop-area" class="drop-area">
+                <div class="drop-area-text">
+                    <p data-locale="dialogs.import-file.title">Drag & Drop a file here</p>
+                </div>
+            </div>
+        `;
+
+        promptMessage(html, true, false).then(resolve);
+
+        const dropArea = document.getElementById("drop-area");
+
+        translateWithin(dropArea);
+
+        function handleFile(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                files.unshift(reader.result);
+                saveFilesToStorage();
+                renderFiles("files");
+                index = 0;
+                localStorage.setItem('lastIndex', index);
+                renderEditor();
+                editor.focus();
+            };
+            reader.readAsText(file);
+            closeAllDialogs();
+        }
+
+        dropArea.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropArea.classList.add("dragover");
+        });
+
+        dropArea.addEventListener("dragleave", () => {
+            dropArea.classList.remove("dragover");
+        });
+
+        dropArea.addEventListener("drop", (e) => {
+            e.preventDefault();
+            dropArea.classList.remove("dragover");
+            const file = e.dataTransfer.files[0];
+            handleFile(file);
+        });
+
+        dropArea.addEventListener("click", () => {
+            const input = document.createElement("input");
+            input.type = "file";
+            input.onchange = (event) => {
+                handleFile(event.target.files[0]);
+            };
+            input.click();
+        });
+    });
+}
+
 async function showMedia(filePath) {
     closeAllDialogs();
 

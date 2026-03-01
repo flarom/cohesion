@@ -64,12 +64,11 @@
 
                         formattedLabel = formattedLabel.replace(/\{%\}/g, Math.round(realPercent));
 
-                        labelHTML = `\n<label class="progress-label">${formattedLabel}</label>`;
+                        labelHTML = `<label class="progress-label">${formattedLabel}</label>`;
                     }
 
                     return (
-                        `<progress value="${progressValue}" max="100"></progress>` +
-                        labelHTML
+                        `<div class="progress-container"><progress value="${progressValue}" max="100"></progress>${labelHTML}</div>`
                     );
                 }
             }

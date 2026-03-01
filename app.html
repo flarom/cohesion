@@ -154,17 +154,14 @@ It is licensed under the GNU General Public License v3-->
                             <span data-locale="app.toolbar.more-menu.search-documents">Search documents</span>
                             <kbd>Ctrl+K</kbd>
                         </button>
-                        <hr />
                         <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('dialogs/resources.html'); hideAllMenus();">
                             <span data-locale="app.toolbar.more-menu.resources">Resources</span>
                             <kbd>Alt+R</kbd>
                         </button>
+                        <hr />
                         <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('dialogs/settings.html'); hideAllMenus()">
                             <span data-locale="app.toolbar.more-menu.settings">Settings</span>
                             <kbd>Ctrl+,</kbd>
-                        </button>
-                        <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('dialogs/macros.html'); hideAllMenus()" data-locale="app.toolbar.more-menu.macros">
-                            Macros
                         </button>
                         <hr />
                         <button class="text-button" onmouseup="window.open('https://github.com/flarom/cohesion/wiki'); hideAllMenus()" data-locale="app.toolbar.more-menu.help">Help</button>
@@ -192,7 +189,7 @@ It is licensed under the GNU General Public License v3-->
             <div id="files"></div>
         </div>
 
-        <div class="main-wrapper" onclick="hideAllMenus();">
+        <div class="main-wrapper" id="main-wrapper" onclick="hideAllMenus();">
             <header class="window-title off bottom" id="search-header">
                 <div class="header-center" style="display: flex; align-items: center; gap: 0px">
                     <div class="field-container">
@@ -282,6 +279,7 @@ It is licensed under the GNU General Public License v3-->
         <script src="script/highlight/lib/highlight.min.js"></script>
         <script src="script/html2pdf.bundle.min.js"></script>
         <script src="script/resources.js"></script>
+        <script src="script/extensions.js"></script>
         <script src="script/showdown/lib/showdown.js"></script>
         <script src="script/showdown/extension/bannerImage.js"></script>
         <script src="script/showdown/extension/internalLink.js"></script>
@@ -289,13 +287,11 @@ It is licensed under the GNU General Public License v3-->
         <script src="script/showdown/extension/abbreviation.js"></script>
         <script src="script/showdown/extension/rubyText.js"></script>
         <script src="script/showdown/extension/progress.js"></script>
-        <script src="script/showdown/extension/kbd.js"></script>
         <script src="script/showdown/extension/footnotes.js"></script>
         <script src="script/showdown/extension/embed.js"></script>
         <script src="script/showdown/extension/figcaption.js"></script>
         <script src="script/showdown/extension/style.js"></script>
         <script src="script/showdown/extension/blocks.js"></script>
-        <script src="script/macros.js"></script>
         <script src="script/editorTools.js"></script>
         <script src="script/status.js"></script>
         <script src="script/insert.js"></script>
@@ -318,13 +314,17 @@ It is licensed under the GNU General Public License v3-->
                 }
             });
 
+            document.getElementById('main-wrapper').addEventListener("dragover", (e) => {
+                e.preventDefault();
+                promptDragOpenFile();
+            });
+
             // Load documents from local storage
             loadFilesFromStorage();
 
             // Search menu actions (Ctrl/Cmd-K)
             // addSearchMenuAction("Settings", "Settings", function() {showMessageFromFile('dialogs/settings.html', true, false, true, true, 900);});
             // addSearchMenuAction("Resources", "Image", function() {showMessageFromFile("dialogs/resources.html");});
-            // addSearchMenuAction("Macros", "code", function() {showMessageFromFile("dialogs/macros.html");})
             // addSearchMenuAction("About", "info", function() {showMessageFromFile('dialogs/about.html');})
 
             // Retrieve last index from local storage, default to 0
@@ -409,9 +409,6 @@ It is licensed under the GNU General Public License v3-->
             editor.addOverlay(admonitionOverlay); // Overlay for displaying admonition blocks
             editor.addOverlay(fixCodeOverlay); // Overlay to fix fenced code blocks being marked as comments
             editor.addOverlay(metadataOverlay); // Overlay for displaying metadata blocks
-
-            // Load macros
-            Macros.updateSlashCommands();
 
             const editorMenu = document.getElementById("editorMenu"); // editor context menu
             const hrContextualSeparator = document.getElementById("contextual-selection-separator"); // horizontal line shown when contextual options are available
@@ -573,6 +570,8 @@ It is licensed under the GNU General Public License v3-->
                 }, 100);
             });
 
+            editor.on("keyHandled", () => StatusRegister.updateAll());
+
             editor.on("cursorActivity", () => StatusRegister.update("cursorPos")); // Update cursor position label
 
             function updateTitle() {
@@ -679,7 +678,6 @@ It is licensed under the GNU General Public License v3-->
                     'abbreviation', // abbreviation support
                     'rubyText', // ruby text support
                     'progress', // progress bar support
-                    'keys', // kbd support
                     'footnotes', // footnotes support
                     'embed', // embed support
                     //'figureCaption', // figure and figcaption support
@@ -1013,7 +1011,7 @@ It is licensed under the GNU General Public License v3-->
                     metaTag.setAttribute("content", colorValue);
                 }
 
-                // status bar
+                // MARK: STATUS BAR
                 StatusRegister.removeAll();
 
                 if (Settings.getSetting("statusShow", "true") != "true") statusBar.classList.remove('show');
@@ -1141,6 +1139,21 @@ It is licensed under the GNU General Public License v3-->
                             el.querySelector("span:nth-child(2)").innerText = isPreview ? "Read mode" : "Edit mode";
                             el.querySelector("span:nth-child(2)").dataset.locale = isPreview ? "app.status-bar.editor-mode.read-mode" : "app.status-bar.editor-mode.edit-mode";
                             translateElement(el.querySelector("span:nth-child(2)"))
+                        }
+                    });
+                }
+                
+                if (Settings.getSetting('statusKeyboardAlert', "true") == "true") {
+                    StatusRegister.register({
+                        id: "keyboardAlert",
+                        side: "right",
+
+                        render() {
+                            return ``;
+                        },
+
+                        update(el) {
+                            el.innerHTML = `${editor.state.overwrite ? "<label class='pill' title='Overwrite mode is active. The text you type will replace the existing text. Press Insert to return to normal mode.'>OVR</label>" : ""}`;
                         }
                     });
                 }
@@ -1521,7 +1534,8 @@ It is licensed under the GNU General Public License v3-->
                     await searchInner();
                 }, preventDefault: true },
 
-                //// open search (Ctrl+F)
+                //// open search (Ctrl+F & F3)
+                { match: e => e.key === "F3", handler: () => { toggleSearchHeader(editor.getSelection()) }, preventDefault: true},
                 { match: e => e.ctrlKey && e.key.toLowerCase() === "f", handler: () => toggleSearchHeader(editor.getSelection()), preventDefault: true },
                 //// open replace (Ctrl+H)
                 { match: e => e.ctrlKey && e.key.toLowerCase() === "h", handler: () => toggleReplaceHeader(editor.getSelection()), preventDefault: true },
@@ -1539,6 +1553,12 @@ It is licensed under the GNU General Public License v3-->
                 }, preventDefault: true },
                 //// Insert date/time with default strftime (F6)
                 { match: e => !e.shiftKey && e.key === "F6", handler: () => { insertDate(); }, preventDefault: true },
+
+                // SUPRESSORS
+                //// Supress F7
+                { match: e => e.key === "F7", handler: () => { }, preventDefault: true},
+                //// Supress F10
+                { match: e => e.key === "F10", handler: () => { }, preventDefault: true},
             ];
 
             function addKeyboardShortcut(s) {
@@ -1820,6 +1840,11 @@ It is licensed under the GNU General Public License v3-->
                     showToast("Failed to share this file", "error");
                 }
             }
+
+            async function updateExtensions() { 
+                await Extensions.runAll();
+            }
+            updateExtensions();
         </script>
     </body>
 </html>

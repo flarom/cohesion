@@ -107,25 +107,37 @@ function formatTable() {
     }
 
     const alignments = table[1].map(cell => {
-        const left = cell.startsWith(':');
-        const right = cell.endsWith(':');
+        const clean = cell.replace(/[+-]/g, '');
+        const left = clean.startsWith(':');
+        const right = clean.endsWith(':');
         if (left && right) return 'center';
         if (right) return 'right';
         return 'left';
     });
 
+    const separators = table[1].map(cell => {
+        if (cell.includes('+')) return '+';
+        return '-';
+    });
+
     const formatted = table.map((row, rowIndex) => {
         return '| ' + row.map((cell, colIndex) => {
+
             if (rowIndex === 1) {
+
                 const left = cell.startsWith(':');
                 const right = cell.endsWith(':');
-                let dashes = '-'.repeat(colWidths[colIndex]);
+
+                let sepChar = separators[colIndex];
+                let dashes = sepChar.repeat(colWidths[colIndex] || 3);
 
                 if (left) dashes = ':' + dashes.slice(1);
                 if (right) dashes = dashes.slice(0, -1) + ':';
 
                 return dashes;
+
             } else {
+
                 const width = colWidths[colIndex];
                 const align = alignments[colIndex] || 'left';
 
@@ -139,7 +151,9 @@ function formatTable() {
                 } else {
                     return cell.padEnd(width, ' ');
                 }
+
             }
+
         }).join(' | ') + ' |';
     });
 

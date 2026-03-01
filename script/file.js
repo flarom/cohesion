@@ -95,63 +95,26 @@ function deleteEmptyFiles() {
 }
 
 function importFile() {
-    return new Promise((resolve) => {
-        const html = `
-            <div id="drop-area" class="drop-area">
-                <div class="drop-area-text">
-                    <p data-locale="dialogs.import-file.title">Drag & Drop a file here</p>
-                    <p class="subtitle" data-locale="dialogs.import-file.subtitle">Or click to choose a file</p>
-                </div>
-            </div>
-        `;
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".md, text/markdown, text/plain";
+    input.onchange = (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
 
-        promptMessage(html, true, false).then(resolve);
-
-        const dropArea = document.getElementById("drop-area");
-
-        translateWithin(dropArea);
-
-        function handleFile(file) {
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = () => {
-                files.unshift(reader.result);
-                saveFilesToStorage();
-                renderFiles("files");
-                index = 0;
-                localStorage.setItem('lastIndex', index);
-                renderEditor();
-                editor.focus();
-            };
-            reader.readAsText(file);
-            closeAllDialogs();
-        }
-
-        dropArea.addEventListener("dragover", (e) => {
-            e.preventDefault();
-            dropArea.classList.add("dragover");
-        });
-
-        dropArea.addEventListener("dragleave", () => {
-            dropArea.classList.remove("dragover");
-        });
-
-        dropArea.addEventListener("drop", (e) => {
-            e.preventDefault();
-            dropArea.classList.remove("dragover");
-            const file = e.dataTransfer.files[0];
-            handleFile(file);
-        });
-
-        dropArea.addEventListener("click", () => {
-            const input = document.createElement("input");
-            input.type = "file";
-            input.onchange = (event) => {
-                handleFile(event.target.files[0]);
-            };
-            input.click();
-        });
-    });
+        const reader = new FileReader();
+        reader.onload = () => {
+            files.unshift(reader.result);
+            saveFilesToStorage();
+            renderFiles("files");
+            index = 0;
+            localStorage.setItem('lastIndex', index);
+            renderEditor();
+            editor.focus();
+        };
+        reader.readAsText(file);
+    };
+    input.click();
 }
 
 /**

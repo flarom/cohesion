@@ -329,14 +329,15 @@ async function handleInsertVideo() {
 
 async function handleInsertBlock() {
     const blocks = [
-        {title: "Note"     , icon: "article"           , color: "blue"             , description: "Shows additional contextual information"        },
-        {title: "Tip"      , icon: "lightbulb"         , color: "green"            , description: "Highlights helpful hints or best practices"     },
-        {title: "Important", icon: "priority_high"     , color: "purple"           , description: "Emphasizes critical information"                },
-        {title: "Warning"  , icon: "warning"           , color: "yellow"           , description: "Alerts about possible issues or risks"          },
-        {title: "Caution"  , icon: "dangerous"         , color: "red"              , description: "Warns about actions that may cause harm or loss"},
-        {title: "Details"  , icon: "expand_circle_down", color: "var(--text-color)", description: "Expandable block for optional content"          },
-        {title: "CSV table", icon: "table"             , color: "var(--text-color)", description: "Converts CSV content into a table"              },
-        {title: "Embed"    , icon: "iframe"            , color: "var(--text-color)", description: "Embedded web content"                           }
+        {title: "Note"        , icon: "article"           , color: "blue"             , description: "Shows additional contextual information"        },
+        {title: "Tip"         , icon: "lightbulb"         , color: "green"            , description: "Highlights helpful hints or best practices"     },
+        {title: "Important"   , icon: "priority_high"     , color: "purple"           , description: "Emphasizes critical information"                },
+        {title: "Warning"     , icon: "warning"           , color: "yellow"           , description: "Alerts about possible issues or risks"          },
+        {title: "Caution"     , icon: "dangerous"         , color: "red"              , description: "Warns about actions that may cause harm or loss"},
+        {title: "Details"     , icon: "expand_circle_down", color: "var(--text-color)", description: "Expandable block for optional content"          },
+        {title: "CSV table"   , icon: "table"             , color: "var(--text-color)", description: "Converts CSV content into a table"              },
+        {title: "Embed"       , icon: "iframe"            , color: "var(--text-color)", description: "Embedded web content"                           },
+        {title: "Progress bar", icon: "progress_activity" , color: "var(--text-color)", description: "A progress indicator"}
     ];
 
     const selection = await promptSelect("Select a block", blocks);
@@ -350,6 +351,7 @@ async function handleInsertBlock() {
         case 5: insertSnippet('> [!DETAILS:${1:Title}]\n> ${2:Content}'); editor.focus(); break;
         case 6: insertSnippet('> [!CSV]\n> ${1:CSV Content}'); editor.focus(); break;
         case 7: insertSnippet('[!embed ${1:https://example.com}]'); editor.focus(); break;
+        case 8: insertSnippet('[!progress ${1:value} ${2:0} ${3:100} "${4:label}"]'); editor.focus(); break;
     }
 }
 

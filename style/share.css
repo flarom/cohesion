@@ -406,6 +406,20 @@ button.danger:hover {
     border: 1px solid var(--border-light-color);
 }
 
+.status-bar-item label.alert {
+    background-color: var(--danger-bg);
+    color: var(--danger);
+    border-radius: 999px;
+    padding: 2px 12px;
+}
+
+.status-bar-item label.pill {
+    background-color: var(--selection-color);
+    color: var(--highlight-color);
+    border-radius: 999px;
+    padding: 2px 12px;
+}
+
 .sidebar.show ~ .main-wrapper {
     margin-left: 310px;
 }

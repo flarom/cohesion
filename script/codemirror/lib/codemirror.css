@@ -259,12 +259,18 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
 }
 
 .CodeMirror-activeline-background {
+    background: transparent;
+    border: 3px solid transparent;
+    border-radius: 16px;
+}
+
+.CodeMirror-focused .CodeMirror-activeline-background {
     background: var(--active-line);
     border: 3px solid var(--background-color);
     border-radius: 16px;
 }
 
-.CodeMirror-activeline .CodeMirror-linenumber {
+.CodeMirror-focused .CodeMirror-activeline .CodeMirror-linenumber {
     color: var(--title-color);
     opacity: 100%;
 }

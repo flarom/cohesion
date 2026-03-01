@@ -14,6 +14,7 @@
                 cursor: pointer;
                 border: 0;
                 transition: border-radius 0.3s, filter 0.3s;
+                word-wrap: anywhere;
             }
 
             button.ball:hover {
@@ -310,55 +311,66 @@
                     </div>
                 </div>
                 <div>
-                    <div>
-                        <h4 class="setting-group-title" data-locale="dialogs.settings.main.backups" id="setting-data">Backups</h4>
-                        <div class="setting top bottom switch-wrapper">
-                            <span class="switch-text" data-locale="dialogs.settings.main.backups.backup-reminder">Monthly backup reminders</span>
-                            <label class="switch">
-                                <input type="checkbox" id="backupReminder" onchange="Settings.setSetting('backupReminder', this.checked); loadSettings()" />
-                                <span class="slider"></span>
-                            </label>
-                        </div>
+                    <h4 class="setting-group-title" data-locale="dialogs.settings.main.backups" id="setting-data">Backups</h4>
+                    <div class="setting top bottom switch-wrapper">
+                        <span class="switch-text" data-locale="dialogs.settings.main.backups.backup-reminder">Monthly backup reminders</span>
+                        <label class="switch">
+                            <input type="checkbox" id="backupReminder" onchange="Settings.setSetting('backupReminder', this.checked); loadSettings()" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
 
-                        <div class="setting top">
-                            <div>
-                                <span class="switch-text" data-locale="dialogs.settings.main.backups.download-backup">Download backup</span>
-                                <span class="switch-description" data-locale="dialogs.settings.main.backups.download-backup.description">Export your documents as a zip file</span>
-                            </div>
-                            <div>
-                                <button class="text-button" onclick="exportBook();" data-locale="dialogs.settings.main.backups.export">Export</button>
-                            </div>
+                    <div class="setting top">
+                        <div>
+                            <span class="switch-text" data-locale="dialogs.settings.main.backups.download-backup">Download backup</span>
+                            <span class="switch-description" data-locale="dialogs.settings.main.backups.download-backup.description">Export your documents as a zip file</span>
                         </div>
+                        <div>
+                            <button class="text-button" onclick="exportBook();" data-locale="dialogs.settings.main.backups.export">Export</button>
+                        </div>
+                    </div>
 
-                        <div class="setting">
-                            <div>
-                                <span class="switch-text" data-locale="dialogs.settings.main.backups.import-backup">Import backup</span>
-                                <span class="switch-description" data-locale="dialogs.settings.main.backups.import-backup.description">Import documents from a zip file</span>
-                            </div>
-                            <div>
-                                <button class="text-button" onclick="importBook();" data-locale="dialogs.settings.main.backups.import">Import</button>
-                            </div>
+                    <div class="setting">
+                        <div>
+                            <span class="switch-text" data-locale="dialogs.settings.main.backups.import-backup">Import backup</span>
+                            <span class="switch-description" data-locale="dialogs.settings.main.backups.import-backup.description">Import documents from a zip file</span>
                         </div>
-                        
-                        <div class="setting bottom">
-                            <div>
-                                <span class="switch-text" data-locale="dialogs.settings.main.backups.replace-with-backup">Replace with backup</span>
-                                <span class="switch-description" data-locale="dialogs.settings.main.backups.replace-with-backup.description">Import documents from a zip file, replacing your files</span>
-                            </div>
-                            <div>
-                                <button class="text-button danger" onclick="handleImportDeleteBook();" data-locale="dialogs.settings.main.backups.replace">Replace</button>
-                            </div>
+                        <div>
+                            <button class="text-button" onclick="importBook();" data-locale="dialogs.settings.main.backups.import">Import</button>
                         </div>
+                    </div>
+                    
+                    <div class="setting bottom">
+                        <div>
+                            <span class="switch-text" data-locale="dialogs.settings.main.backups.replace-with-backup">Replace with backup</span>
+                            <span class="switch-description" data-locale="dialogs.settings.main.backups.replace-with-backup.description">Import documents from a zip file, replacing your files</span>
+                        </div>
+                        <div>
+                            <button class="text-button danger" onclick="handleImportDeleteBook();" data-locale="dialogs.settings.main.backups.replace">Replace</button>
+                        </div>
+                    </div>
 
-                        <div class="setting top bottom">
-                            <div>
-                                <span class="switch-text" data-locale="dialogs.settings.main.backups.delete-empty-files">Delete empty files</span>
-                                <span class="switch-description" data-locale="dialogs.settings.main.backups.delete-empty-files.description">Delete all files without any text or meta</span>
-                            </div>
-                            <div>
-                                <button class="text-button danger" onclick="handleDeleteEmptyFiles();" data-locale="dialogs.settings.main.backups.delete">Delete</button>
-                            </div>
+                    <div class="setting top bottom">
+                        <div>
+                            <span class="switch-text" data-locale="dialogs.settings.main.backups.delete-empty-files">Delete empty files</span>
+                            <span class="switch-description" data-locale="dialogs.settings.main.backups.delete-empty-files.description">Delete all files without any text or meta</span>
                         </div>
+                        <div>
+                            <button class="text-button danger" onclick="handleDeleteEmptyFiles();" data-locale="dialogs.settings.main.backups.delete">Delete</button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h4>Extensions</h4>
+                    <div class="setting top">
+                        <button class="text-button" id="extensionImport" onclick="importExtension()">Import extension</button>
+                    </div>
+                    <div id="extension-container">
+
+                    </div>
+                    <div class="setting bottom">
+                        <span style="display: flex; align-items: center; gap: 5px;"><span class="icon">info</span>
+                        <a href="https://github.com/flarom/cohesion-extensions" class="infolink" data-locale="dialogs.settings.main.extensions.get-extensions" target="_blank">Get extensions</a></span>
                     </div>
                 </div>
             </div>
@@ -448,6 +460,88 @@
                 const cbxBackupReminder = document.getElementById("backupReminder");
                 if (Settings.getSetting("backupReminder", "true") === "true") cbxBackupReminder.checked = "true";
             })();
+
+            async function importExtension() {
+                const text = await Extensions.pickFile();
+
+                if (!text) return;
+                const ext = await Extensions.import(text);
+                if (ext)
+                renderExtensions();
+                updateExtensions();
+            }
+                
+            async function renderExtensions() {
+                const container = document.getElementById("extension-container");
+                container.innerHTML = "";
+
+                const list = await Extensions.getAll();
+
+                if (!list.length) {
+                    container.innerHTML = "";
+                    return;
+                }
+
+                list.forEach((ext, index) => {
+
+                    const div = document.createElement("div");
+
+                    div.className = "setting";
+
+                    div.innerHTML = `
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span class="icon"
+                                style="font-size:x-large; color:${ext.color || "var(--text-color)"}">
+                                ${ext.icon || "extension"}
+                            </span>
+
+                            <div>
+                                <span class="switch-text">${ext.title}</span><br/>
+                                <span class="switch-description">
+                                    ${ext.author ? "by " + ext.author : ""}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button class="icon-button"
+                                    style="font-size:larger;"
+                                    onclick="editExtension(${index})">
+                                Edit
+                            </button>
+
+                            <button class="icon-button danger"
+                                    style="font-size:larger;"
+                                    onclick="deleteExtension(${index})">
+                                Delete
+                            </button>
+                        </div>
+                    `;
+
+                    div.ondblclick = () => editExtension(index);
+
+                    container.appendChild(div);
+
+                });
+            }
+            renderExtensions();
+
+            async function editExtension(index) {
+                const ext = await Extensions.get(index);
+                const code = await promptCodeEditor(ext.code);
+                if (code === null) return;
+                await Extensions.update(index, code);
+                renderExtensions();
+                updateExtensions();
+                showToast('Extension updated')
+            }
+
+
+            async function deleteExtension(index) {
+                await Extensions.delete(index);
+                renderExtensions();
+                updateExtensions();
+            }
 
             function insertDateTimeOption(block) {
                 const txtEditorDate = document.getElementById("editorDate");
