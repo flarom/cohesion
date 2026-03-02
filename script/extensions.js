@@ -36,6 +36,7 @@ const Extensions = (() => {
         meta.version = get("version");
         meta.description = get("description");
         meta.updateLink = get("updateLink");
+        meta.documentationLink = get("documentationLink");
         meta.icon = get("icon") || "extension";
         meta.color = get("color") || "";
 

@@ -337,7 +337,6 @@ async function handleInsertBlock() {
         {title: "Details"     , icon: "expand_circle_down", color: "var(--text-color)", description: "Expandable block for optional content"          },
         {title: "CSV table"   , icon: "table"             , color: "var(--text-color)", description: "Converts CSV content into a table"              },
         {title: "Embed"       , icon: "iframe"            , color: "var(--text-color)", description: "Embedded web content"                           },
-        {title: "Progress bar", icon: "progress_activity" , color: "var(--text-color)", description: "A progress indicator"}
     ];
 
     const selection = await promptSelect("Select a block", blocks);
@@ -351,7 +350,6 @@ async function handleInsertBlock() {
         case 5: insertSnippet('> [!DETAILS:${1:Title}]\n> ${2:Content}'); editor.focus(); break;
         case 6: insertSnippet('> [!CSV]\n> ${1:CSV Content}'); editor.focus(); break;
         case 7: insertSnippet('[!embed ${1:https://example.com}]'); editor.focus(); break;
-        case 8: insertSnippet('[!progress ${1:value} ${2:0} ${3:100} "${4:label}"]'); editor.focus(); break;
     }
 }
 

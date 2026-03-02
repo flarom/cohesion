@@ -286,7 +286,6 @@ It is licensed under the GNU General Public License v3-->
         <script src="script/showdown/extension/definitionList.js"></script>
         <script src="script/showdown/extension/abbreviation.js"></script>
         <script src="script/showdown/extension/rubyText.js"></script>
-        <script src="script/showdown/extension/progress.js"></script>
         <script src="script/showdown/extension/footnotes.js"></script>
         <script src="script/showdown/extension/embed.js"></script>
         <script src="script/showdown/extension/figcaption.js"></script>
@@ -670,20 +669,79 @@ It is licensed under the GNU General Public License v3-->
             // MARK: CONVERTER
             //
 
-            const converter = new showdown.Converter({
-                extensions: [
-                    'bannerImage', // banner image controled by document meta
-                    'internalLink', // internal link support
-                    'definitionList', // definition list support
-                    'abbreviation', // abbreviation support
-                    'rubyText', // ruby text support
-                    'progress', // progress bar support
-                    'footnotes', // footnotes support
-                    'embed', // embed support
-                    //'figureCaption', // figure and figcaption support
-                    'style',
-                    'blocks'
-                ],
+            window.Converter = (() => {
+                const factories = new Map();
+                let instance = null;
+                let rebuildCallback = null;
+
+                function build() {
+                    const builtIn = [
+                        'bannerImage',
+                        'internalLink',
+                        'definitionList',
+                        'abbreviation',
+                        'rubyText',
+                        'footnotes',
+                        'embed',
+                        'style',
+                        'blocks'
+                    ];
+
+                    const external = [...factories.keys()];
+
+                    instance = new showdown.Converter({
+                        extensions: [
+                            ...builtIn,
+                            ...external
+                        ]
+                    });
+
+                    if (rebuildCallback)
+                        rebuildCallback(instance);
+
+                    return instance;
+                }
+
+                return {
+                    register(name, factory) {
+                        if (!name || !factory)
+                            throw "Invalid extension";
+
+                        factories.set(name, factory);
+                        showdown.extension(name, factory);
+                        build();
+                    },
+
+                    unregister(name) {
+                        factories.delete(name);
+                        build();
+                    },
+
+                    rebuild() {
+                        return build();
+                    },
+
+                    get() {
+                        if (!instance)
+                            build();
+                        return instance;
+                    },
+
+                    onRebuild(fn) {
+                        rebuildCallback = fn;
+                    },
+
+                    getExtensionNames() {
+                        return [...factories.keys()];
+                    }
+                };
+            })();
+
+            let converter = Converter.get();
+
+            Converter.onRebuild((newConverter) => {
+                converter = newConverter;
+                updateMarkdown(editor.getValue());
             });
 
             // MD previewer element

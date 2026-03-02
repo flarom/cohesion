@@ -508,6 +508,17 @@
                         </div>
 
                         <div>
+                            ${ext.documentationLink ? `
+                            <button class="icon-button"
+                                    style="font-size:larger;"
+                                    title="Read online documentation"
+                                    data-locale-attr="title:dialogs.settings.main.extensions.read-documentation"
+                                    onclick="window.open('${ext.documentationLink}', '_blank')">
+                                developer_guide
+                            </button>
+                            ` : ""
+                            }
+
                             ${ext.updateLink ? `
                             <button class="icon-button"
                                     style="font-size:larger;"
