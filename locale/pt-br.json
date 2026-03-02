@@ -216,25 +216,6 @@
             }
         },
 
-        "MACROS": {
-            "dialog.macros.empty-title": "Nada aqui",
-            "dialog.macros.empty-description": "Crie macros para ativar automações diretamente através de comandos de barra.",
-            "dialog.macros.macro.author": "por {author}",
-            "dialog.macros.macro.edit-code": "Editar código",
-            "dialog.macros.macro.properties": "Propriedades",
-            "dialog.macros.macro.download": "Baixar",
-            "dialog.macros.macro.run": "Executar",
-            "dialog.macros.macro.delete": "Deletar",
-            "dialog.macros.header.create-macro": "Criar macro",
-            "dialog.macros.header.import-macro": "Importar macro",
-            "dialog.macros.header.about-scripting": "Sobre scripts",
-            "prompts.prompt-macro-info.title": "Editar informações do macro",
-            "prompts.prompt-macro-info.name-label": "Nome",
-            "prompts.prompt-macro-info.desc-label": "Descrição",
-            "prompts.prompt-macro-info.auth-label": "Autor(a)",
-            "prompts.prompt-macro-info.icon-label": "Ícone (Material Symbols Rounded)"
-        },
-
         "SETTINGS": {
             "APPEARENCE": {
                 "dialogs.settings.main.appearence": "Aparência",
@@ -331,6 +312,15 @@
                 "dialogs.settings.main.backups.delete-empty-files": "Deletar arquivos vazios",
                 "dialogs.settings.main.backups.delete-empty-files.description": "Deletar todos arquivos que não tenham nenhum texto ou meta",
                 "dialogs.settings.main.backups.delete": "Deletar"
+            },
+            "EXTENSIONS": {
+                "dialogs.settings.main.extensions": "Extensões",
+                "dialogs.settings.main.extensions.import-extension": "Importar extensão",
+                "dialogs.settings.main.extensions.update-all-extensions": "Atualizar todas extensões",
+                "dialogs.settings.main.extensions.get-extensions": "Baixar extensões",
+                "dialogs.settings.main.extensions.update-extension": "Atualizar extensão",
+                "dialogs.settings.main.extensions.edit-source-code": "Editar código fonte",
+                "dialogs.settings.main.extensions.delete-extension": "Deletar extensões"
             }
         },
 

@@ -361,16 +361,17 @@
                     </div>
                 </div>
                 <div>
-                    <h4>Extensions</h4>
+                    <h4 class="setting-group-title" data-locale="dialogs.settings.main.extensions">Extensions</h4>
                     <div class="setting top">
-                        <button class="text-button" id="extensionImport" onclick="importExtension()">Import extension</button>
+                        <button class="text-button" id="extensionImport" onclick="importExtension()" data-locale="dialogs.settings.main.extensions.import-extension">Import extension</button>
+                        <button class="icon-button" id="extensionUpgradeAll" onclick="upgradeAllExtensions()" title="Update all extensions" data-locale-attr="title:dialogs.settings.main.extensions.update-all-extensions">update</button>
                     </div>
                     <div id="extension-container">
 
                     </div>
                     <div class="setting bottom">
                         <span style="display: flex; align-items: center; gap: 5px;"><span class="icon">info</span>
-                        <a href="https://github.com/flarom/cohesion-extensions" class="infolink" data-locale="dialogs.settings.main.extensions.get-extensions" target="_blank">Get extensions</a></span>
+                        <a href="https://github.com/flarom/cohesion-extensions/blob/main/README.md" class="infolink" data-locale="dialogs.settings.main.extensions.get-extensions" target="_blank">Get extensions</a></span>
                     </div>
                 </div>
             </div>
@@ -496,7 +497,9 @@
                             </span>
 
                             <div>
-                                <span class="switch-text">${ext.title}</span><br/>
+                                <span class="switch-text">
+                                    ${ext.title}
+                                </span><br/>
                                 <span class="switch-description">
                                     ${ext.author ? "by " + ext.author : ""}
                                     ${ext.version ? "v" + ext.version : ""}
@@ -505,20 +508,29 @@
                         </div>
 
                         <div>
+                            ${ext.updateLink ? `
                             <button class="icon-button"
                                     style="font-size:larger;"
+                                    title="Update extension"
+                                    data-locale-attr="title:dialogs.settings.main.extensions.update-extension"
                                     onclick="upgradeExtension(${index})">
                                 Update
                             </button>
+                            ` : ""
+                            }
 
                             <button class="icon-button"
                                     style="font-size:larger;"
+                                    title="Edit source code"
+                                    data-locale-attr="title:dialogs.settings.main.extensions.edit-source-code"
                                     onclick="editExtension(${index})">
-                                Edit
+                                Code
                             </button>
 
                             <button class="icon-button danger"
                                     style="font-size:larger;"
+                                    title="Delete extension"
+                                    data-locale-attr="title:dialogs.settings.main.extensions.delete-extension"
                                     onclick="deleteExtension(${index})">
                                 Delete
                             </button>
@@ -528,7 +540,7 @@
                     div.ondblclick = () => editExtension(index);
 
                     container.appendChild(div);
-
+                    translateWithin(container);
                 });
             }
             renderExtensions();
@@ -547,6 +559,17 @@
                 await Extensions.upgradeFromLink(index);
                 renderExtensions();
                 updateExtension();
+            }
+
+            async function upgradeAllExtensions() {
+                const list = await Extensions.getAll();
+                for (let i = 0; i < list.length; i++) {
+                    if (list[i].updateLink) {
+                        await Extensions.upgradeFromLink(i);
+                    }
+                }
+                renderExtensions();
+                updateExtensions();
             }
 
             async function deleteExtension(index) {
