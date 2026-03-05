@@ -177,6 +177,7 @@
     overflow-x: scroll;
     padding: 0;
     box-shadow: var(--shadow-light);
+    border: 1px solid var(--border-light-color);
 }
 
 .preview .code-container .code-head {
@@ -204,7 +205,6 @@
     overflow-x: auto;
     padding: 18px 10px 10px 10px;
     position: relative;
-    border: 1px solid var(--border-light-color);
 }
 
 .preview .code-container code {
