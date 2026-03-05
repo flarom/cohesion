@@ -2196,16 +2196,16 @@
             return /\S/.test(m) ? parseInside(m, "<mark>", "</mark>") : wm;
         });
 
-        // Parse superscript: ^text^
-        text = text.replace(/(?<!\\)\^([^\s^][\s\S]*?)\^/g, function (wm, m) {
-            return parseInside(m, "<sup>", "</sup>");
-        });
+        // // Parse superscript: ^text^
+        // text = text.replace(/(?<!\\)\^([^\s^][\s\S]*?)\^/g, function (wm, m) {
+        //     return parseInside(m, "<sup>", "</sup>");
+        // });
 
-        // Parse subscript: ~text~
-        text = text.replace(/(^|[^\~])~(?!~)([\s\S]*?)~(?!~)/g, function (wm, pre, m) {
-            if (!/\S/.test(m)) return wm;
-            return pre + parseInside(m, "<sub>", "</sub>");
-        });
+        // // Parse subscript: ~text~
+        // text = text.replace(/(^|[^\~])~(?!~)([\s\S]*?)~(?!~)/g, function (wm, pre, m) {
+        //     if (!/\S/.test(m)) return wm;
+        //     return pre + parseInside(m, "<sub>", "</sub>");
+        // });
         
         text = text.replace(/\\\^/g, "^");
         text = globals.converter._dispatch("makehtml.italicsAndBold.after", text, options, globals).getText();
