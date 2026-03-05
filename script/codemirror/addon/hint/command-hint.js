@@ -325,20 +325,6 @@
         }
     })
 
-    CommandRegistry.register("graph", {
-        description: "Pie, bar, or line chart",
-        icon: "bar_chart",
-        exec: function(arg) {
-            selectFromMenu(["pizza","bars","lines"], function(selectedIndex) {
-                switch (selectedIndex) {
-                    case 0: insertSnippet("> [!graph:pie]\n> ${1:Label 1}, ${2:numeric value}\n> ${3:Label 2}, ${4:numeric value}"); break;
-                    case 1: insertSnippet("> [!graph:bar]\n> ${1:Label 1}, ${2:numeric value}\n> ${3:Label 2}, ${4:numeric value}"); break;
-                    case 2: insertSnippet("> [!graph:line]\n> ${1:Label 1}, ${2:Label 2}\n> ${3:numeric value}, ${4:numeric value}"); break;
-                }
-            });
-        }
-    });
-
     function fuzzyMatch(str, pattern) {
         pattern = pattern.replace(/-/g, "");
         if (!pattern) return true;
