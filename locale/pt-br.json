@@ -315,13 +315,14 @@
             },
             "EXTENSIONS": {
                 "dialogs.settings.main.extensions": "Extensões",
-                "dialogs.settings.main.extensions.import-extension": "Importar extensão",
+                "dialogs.settings.main.extensions.add-extension": "Adicionar extensão",
+                "dialogs.settings.main.extensions.import-from-file": "Importar de arquivo",
                 "dialogs.settings.main.extensions.update-all-extensions": "Atualizar todas extensões",
                 "dialogs.settings.main.extensions.get-extensions": "Baixar extensões",
                 "dialogs.settings.main.extensions.read-documentation": "Ler documentação online",
                 "dialogs.settings.main.extensions.update-extension": "Atualizar extensão",
                 "dialogs.settings.main.extensions.edit-source-code": "Editar código fonte",
-                "dialogs.settings.main.extensions.delete-extension": "Deletar extensões"
+                "dialogs.settings.main.extensions.delete-extension": "Deletar extensão"
             }
         },
 

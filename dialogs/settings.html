@@ -363,7 +363,10 @@
                 <div>
                     <h4 class="setting-group-title" data-locale="dialogs.settings.main.extensions">Extensions</h4>
                     <div class="setting top">
-                        <button class="text-button" id="extensionImport" onclick="importExtension()" data-locale="dialogs.settings.main.extensions.import-extension">Import extension</button>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button class="text-button" id="extensionImportFromUrl" onclick="importExtensionFromUrl()" data-locale="dialogs.settings.main.extensions.add-extension">Add extension</button>
+                            <button class="text-button" id="extensionImport" onclick="importExtension()" data-locale="dialogs.settings.main.extensions.import-from-file">Import extension</button>
+                        </div>
                         <button class="icon-button" id="extensionUpgradeAll" onclick="upgradeAllExtensions()" title="Update all extensions" data-locale-attr="title:dialogs.settings.main.extensions.update-all-extensions">update</button>
                     </div>
                     <div id="extension-container">
@@ -470,6 +473,23 @@
                 if (ext)
                 renderExtensions();
                 updateExtensions();
+
+                showToast('Extension imported', 'extension');
+            }
+
+            async function importExtensionFromUrl() {
+                const url = await promptString("Enter the extension's URL");
+
+                if (!url) return;
+
+                Extensions.importFromRepoUrl(url).then(ext => {
+                    if (ext) {
+                        renderExtensions();
+                        updateExtensions();
+                    }
+
+                    showToast('Extension imported', 'extension');
+                });
             }
                 
             async function renderExtensions() {
@@ -484,70 +504,88 @@
                 }
 
                 list.forEach((ext, index) => {
-
                     const div = document.createElement("div");
-
                     div.className = "setting";
 
-                    div.innerHTML = `
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <span class="icon"
-                                style="font-size:x-large; color:${ext.color || "var(--text-color)"}">
-                                ${ext.icon || "extension"}
-                            </span>
+                    // Icon and text content
+                    const contentDiv = document.createElement("div");
+                    contentDiv.style.display = "flex";
+                    contentDiv.style.alignItems = "center";
+                    contentDiv.style.gap = "8px";
 
-                            <div>
-                                <span class="switch-text">
-                                    ${ext.title}
-                                </span><br/>
-                                <span class="switch-description">
-                                    ${ext.author ? "by " + ext.author : ""}
-                                    ${ext.version ? "v" + ext.version : ""}
-                                </span>
-                            </div>
-                        </div>
+                    const iconSpan = document.createElement("span");
+                    iconSpan.className = "icon";
+                    iconSpan.style.fontSize = "x-large";
+                    iconSpan.style.color = ext.color || "var(--text-color)";
+                    iconSpan.textContent = ext.icon || "extension";
 
-                        <div>
-                            ${ext.documentationLink ? `
-                            <button class="icon-button"
-                                    style="font-size:larger;"
-                                    title="Read online documentation"
-                                    data-locale-attr="title:dialogs.settings.main.extensions.read-documentation"
-                                    onclick="window.open('${ext.documentationLink}', '_blank')">
-                                developer_guide
-                            </button>
-                            ` : ""
-                            }
+                    const infoDiv = document.createElement("div");
+                    
+                    const titleSpan = document.createElement("span");
+                    titleSpan.className = "switch-text";
+                    titleSpan.textContent = ext.title;
 
-                            ${ext.updateLink ? `
-                            <button class="icon-button"
-                                    style="font-size:larger;"
-                                    title="Update extension"
-                                    data-locale-attr="title:dialogs.settings.main.extensions.update-extension"
-                                    onclick="upgradeExtension(${index})">
-                                Update
-                            </button>
-                            ` : ""
-                            }
+                    const descSpan = document.createElement("span");
+                    descSpan.className = "switch-description";
+                    descSpan.textContent = ext.description || "";
 
-                            <button class="icon-button"
-                                    style="font-size:larger;"
-                                    title="Edit source code"
-                                    data-locale-attr="title:dialogs.settings.main.extensions.edit-source-code"
-                                    onclick="editExtension(${index})">
-                                Code
-                            </button>
+                    const metaSpan = document.createElement("span");
+                    metaSpan.className = "switch-description";
 
-                            <button class="icon-button danger"
-                                    style="font-size:larger;"
-                                    title="Delete extension"
-                                    data-locale-attr="title:dialogs.settings.main.extensions.delete-extension"
-                                    onclick="deleteExtension(${index})">
-                                Delete
-                            </button>
-                        </div>
-                    `;
+                    metaSpan.textContent = (ext.author ? "by " + ext.author : "") + (ext.version ? " v" + ext.version : "");
 
+                    infoDiv.appendChild(titleSpan);
+                    infoDiv.appendChild(descSpan);
+                    infoDiv.appendChild(metaSpan);
+
+                    contentDiv.appendChild(iconSpan);
+                    contentDiv.appendChild(infoDiv);
+
+                    // Buttons
+                    const buttonsDiv = document.createElement("div");
+
+                    if (ext.documentationLink) {
+                        const docBtn = document.createElement("button");
+                        docBtn.className = "icon-button";
+                        docBtn.style.fontSize = "larger";
+                        docBtn.textContent = "developer_guide";
+                        docBtn.title = "Read online documentation";
+                        docBtn.setAttribute("data-locale-attr", "title:dialogs.settings.main.extensions.read-documentation");
+                        docBtn.onclick = () => window.open(ext.documentationLink, "_blank");
+                        buttonsDiv.appendChild(docBtn);
+                    }
+
+                    if (ext.updateLink) {
+                        const updateBtn = document.createElement("button");
+                        updateBtn.className = "icon-button";
+                        updateBtn.style.fontSize = "larger";
+                        updateBtn.textContent = "update";
+                        updateBtn.title = "Update extension";
+                        updateBtn.setAttribute("data-locale-attr", "title:dialogs.settings.main.extensions.update-extension");
+                        updateBtn.onclick = () => upgradeExtension(index);
+                        buttonsDiv.appendChild(updateBtn);
+                    }
+
+                    const editBtn = document.createElement("button");
+                    editBtn.className = "icon-button";
+                    editBtn.style.fontSize = "larger";
+                    editBtn.textContent = "edit";
+                    editBtn.title = "Edit source code";
+                    editBtn.setAttribute("data-locale-attr", "title:dialogs.settings.main.extensions.edit-source-code");
+                    editBtn.onclick = () => editExtension(index);
+                    buttonsDiv.appendChild(editBtn);
+
+                    const deleteBtn = document.createElement("button");
+                    deleteBtn.className = "icon-button danger";
+                    deleteBtn.style.fontSize = "larger";
+                    deleteBtn.textContent = "delete";
+                    deleteBtn.title = "Delete extension";
+                    deleteBtn.setAttribute("data-locale-attr", "title:dialogs.settings.main.extensions.delete-extension");
+                    deleteBtn.onclick = () => deleteExtension(index);
+                    buttonsDiv.appendChild(deleteBtn);
+
+                    div.appendChild(contentDiv);
+                    div.appendChild(buttonsDiv);
                     div.ondblclick = () => editExtension(index);
 
                     container.appendChild(div);
@@ -563,13 +601,14 @@
                 await Extensions.update(index, code);
                 renderExtensions();
                 updateExtensions();
-                showToast('Extension updated')
+                showToast('Extension updated', 'update');
             }
 
             async function upgradeExtension(index) {
                 await Extensions.upgradeFromLink(index);
                 renderExtensions();
-                updateExtension();
+                updateExtensions();
+                showToast('Update complete', 'update');
             }
 
             async function upgradeAllExtensions() {

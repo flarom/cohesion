@@ -95,6 +95,10 @@ const Extensions = (() => {
             return load();
         },
 
+        getMeta(text) {
+            return parseMetadata(text);
+        },
+
         async get(index) {
             return load()[index];
         },
@@ -175,6 +179,24 @@ const Extensions = (() => {
 
         async import(code) {
             return await Extensions.create(code);
+        },
+
+        async importFromRepoUrl(url) {
+            try {
+                const res = await fetch(url);
+
+                if (!res.ok)
+                    throw "Failed to fetch file";
+
+                const code = await res.text();
+
+                return await Extensions.import(code);
+
+            } catch (err) {
+                console.error(err);
+                showToast("Import failed: " + err.toString(), "error");
+                return null;
+            }
         },
 
         async pickFile() {
