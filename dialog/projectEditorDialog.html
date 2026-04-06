@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="dialog-preferred-width" content="520">
+    <style>
+        .icon-grid {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            overflow-x: scroll;
+            padding: 0px 8px 0px 8px;
+            -ms-overflow-style: none;  /* Hide scrollbar for Internet Explorer and Edge */
+            scrollbar-width: none;  /* Hide scrollbar for Firefox */
+        }
+
+        .icon-grid::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for WebKit browsers */
+        }
+
+        .icon-grid .icon-option {
+            height: 48px;
+            min-width: 48px;
+            width: 48px;
+            border-radius: 8px;
+            background-color: var(--background-color-3);
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .icon-grid .icon-option:hover {
+            background-color: var(--hover-color);
+        }
+
+        .icon-grid .icon-option.selected {
+            background-color: var(--accent);
+            color: var(--button-color-2);
+        }
+
+        .color-grid {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .color-grid .color-option {
+            height: 32px;
+            min-width: 32px;
+            width: 32px;
+            border-radius: 16px;
+            border: none;
+            transition: width 0.2s ease-in-out, box-shadow 0.2s;
+        }
+
+        .color-grid .color-option:hover {
+            box-shadow: 0 0 0 4px var(--hover-color);
+        }
+
+        .color-grid .color-option.selected {
+            box-shadow: 0 0 0 4px var(--hover-color);
+            width: 80px;
+        }
+    </style>
+</head>
+<body>
+    <hr class="toolbar-spacer">
+    <main class="padding">
+        <section>
+            <div class="row">
+                <label for="project-name">Project name</label>
+                <input type="text" id="project-name" maxlength="64" required>
+            </div>
+        </section>
+        <section>
+            <div class="row" style="padding: 8px 0px 8px 0px; overflow: hidden;">
+                <div id="project-icon-grid" class="icon-grid" role="radiogroup" aria-label="Project icon">
+                    <button type="button" class="icon-button icon-option" data-icon="folder" aria-label="folder" title="Folder" translate="no">folder</button>
+                    <button type="button" class="icon-button icon-option" data-icon="draft" aria-label="draft" title="Draft" translate="no">draft</button>
+                    <button type="button" class="icon-button icon-option" data-icon="bookmark" aria-label="bookmark" title="Bookmark" translate="no">bookmark</button>
+                    <button type="button" class="icon-button icon-option" data-icon="star" aria-label="star" title="Star" translate="no">star</button>
+                    <button type="button" class="icon-button icon-option" data-icon="flag" aria-label="flag" title="Flag" translate="no">flag</button>
+                    <button type="button" class="icon-button icon-option" data-icon="palette" aria-label="palette" title="Palette" translate="no">palette</button>
+                    <button type="button" class="icon-button icon-option" data-icon="code" aria-label="code" title="Code" translate="no">code</button>
+                    <button type="button" class="icon-button icon-option" data-icon="settings" aria-label="settings" title="Settings" translate="no">settings</button>
+                    <button type="button" class="icon-button icon-option" data-icon="home" aria-label="home" title="Home" translate="no">home</button>
+                    <button type="button" class="icon-button icon-option" data-icon="work" aria-label="work" title="Work" translate="no">work</button>
+                    <button type="button" class="icon-button icon-option" data-icon="school" aria-label="school" title="School" translate="no">school</button>
+                    <button type="button" class="icon-button icon-option" data-icon="shopping_bag" aria-label="shopping_bag" title="Shopping Bag" translate="no">shopping_bag</button>
+                    <button type="button" class="icon-button icon-option" data-icon="travel" aria-label="travel" title="Travel" translate="no">travel</button>
+                </div>
+            </div>
+            <div class="row">
+                <div id="project-color-grid" class="color-grid" role="radiogroup" aria-label="Project color">
+                    <button type="button" class="color-option" data-color="var(--text-color)" aria-label="var(--text-color)" title="Text color" style="background-color: var(--text-color);"></button>
+                    <button type="button" class="color-option" data-color="var(--color-red)" aria-label="var(--color-red)" title="Red" style="background-color: var(--color-red);"></button>
+                    <button type="button" class="color-option" data-color="var(--color-orange)" aria-label="var(--color-orange)" title="Orange" style="background-color: var(--color-orange);"></button>
+                    <button type="button" class="color-option" data-color="var(--color-yellow)" aria-label="var(--color-yellow)" title="Yellow" style="background-color: var(--color-yellow);"></button>
+                    <button type="button" class="color-option" data-color="var(--color-green)" aria-label="var(--color-green)" title="Green" style="background-color: var(--color-green);"></button>
+                    <button type="button" class="color-option" data-color="var(--color-blue)" aria-label="var(--color-blue)" title="Blue" style="background-color: var(--color-blue);"></button>
+                    <button type="button" class="color-option" data-color="var(--color-purple)" aria-label="var(--color-purple)" title="Purple" style="background-color: var(--color-purple);"></button>
+                    <button type="button" class="color-option" data-color="var(--color-pink)" aria-label="var(--color-pink)" title="Pink" style="background-color: var(--color-pink);"></button>
+                </div>
+            </div>
+        </section>
+
+        <section class="button-row">
+            <button class="text-button" type="button" id="project-cancel">Cancel</button>
+            <button class="text-button primary" type="button" id="project-confirm">Save</button>
+        </section>
+    </main>
+
+    <script>
+        (() => {
+            const args = typeof window.dialogArgs === "function" ? window.dialogArgs() : {};
+            const initialData = args.initialData && typeof args.initialData === "object" ? args.initialData : {};
+
+            const projectNameInput = document.getElementById("project-name");
+            const iconGrid = document.getElementById("project-icon-grid");
+            const iconButtons = Array.from(iconGrid.querySelectorAll(".icon-option"));
+            const availableIcons = new Set(iconButtons.map((button) => button.dataset.icon));
+            const colorGrid = document.getElementById("project-color-grid");
+            const colorButtons = Array.from(colorGrid.querySelectorAll(".color-option"));
+            const availableColors = new Set(colorButtons.map((button) => button.dataset.color));
+
+            setHorizontalScroll(iconGrid, true);
+
+            const scrollToSelectedIcon = () => {
+                const selectedButton = iconGrid.querySelectorAll(".icon-option.selected")[0];
+                if (selectedButton) {
+                    const buttonRect = selectedButton.getBoundingClientRect();
+                    const gridRect = iconGrid.getBoundingClientRect();
+                    const offset = buttonRect.left - gridRect.left - (gridRect.width / 2) + (buttonRect.width / 2);
+                    iconGrid.scrollBy({ left: offset, behavior: "smooth" });
+                }
+            };
+
+            scrollToSelectedIcon();
+
+            projectNameInput.value = String(initialData.name || "");
+
+            let selectedIcon = String(initialData.icon || "folder");
+            if (!availableIcons.has(selectedIcon)) {
+                selectedIcon = "folder";
+            }
+
+            const updateSelectedIcon = (iconName) => {
+                selectedIcon = iconName;
+                iconButtons.forEach((button) => {
+                    const isSelected = button.dataset.icon === iconName;
+                    button.classList.toggle("selected", isSelected);
+                    button.setAttribute("aria-pressed", String(isSelected));
+                });
+                scrollToSelectedIcon();
+            };
+
+            iconButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    updateSelectedIcon(button.dataset.icon);
+                });
+                button.addEventListener("dblclick", () => {
+                    updateSelectedIcon(button.dataset.icon);
+                    document.getElementById("project-confirm").click();
+                });
+            });
+
+            updateSelectedIcon(selectedIcon);
+
+            let selectedColor = String(initialData.color || "var(--text-color)");
+            if (!availableColors.has(selectedColor)) {
+                selectedColor = "var(--text-color)";
+            }
+
+            const updateSelectedColor = (colorValue) => {
+                selectedColor = colorValue;
+                colorButtons.forEach((button) => {
+                    const isSelected = button.dataset.color === colorValue;
+                    button.classList.toggle("selected", isSelected);
+                    button.setAttribute("aria-pressed", String(isSelected));
+                });
+            };
+
+            colorButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    updateSelectedColor(button.dataset.color);
+                });
+                button.addEventListener("dblclick", () => {
+                    updateSelectedColor(button.dataset.color);
+                    document.getElementById("project-confirm").click();
+                });
+            });
+
+            updateSelectedColor(selectedColor);
+
+            const confirmText = typeof args.confirmText === "string" && args.confirmText.trim() ? args.confirmText : "Save";
+            document.getElementById("project-confirm").textContent = confirmText;
+
+            document.getElementById("project-cancel").addEventListener("click", () => {
+                window.dialogCancel(null);
+            });
+
+            document.getElementById("project-confirm").addEventListener("click", () => {
+                const payload = {
+                    name: projectNameInput.value.trim(),
+                    icon: selectedIcon,
+                    color: selectedColor,
+                };
+
+                if (!payload.name) {
+                    Toast.show("Project name is required", "warning");
+                    projectNameInput.focus();
+                    return;
+                }
+
+                window.dialogReturn(payload);
+            });
+
+            projectNameInput.focus();
+            projectNameInput.select();
+
+            projectNameInput.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    document.getElementById("project-confirm").click();
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

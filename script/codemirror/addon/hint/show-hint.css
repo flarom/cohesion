@@ -1,19 +1,21 @@
 .CodeMirror-hints {
   position: absolute;
-  z-index: 1000;
+  z-index: 10;
   overflow: hidden;
   list-style: none;
 
   margin: 0;
-  padding: 0;
+  padding: 2px;
 
-  box-shadow: var(--shadow);
-  border-radius: 15px;
-  /* border: 1px solid var(--border-light-color); */
+  -webkit-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+  -moz-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+  box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+  border-radius: 3px;
+  border: 1px solid silver;
 
-  background: var(--background-color-2);
-  font-size: normal;
-  font-family: var(--font-editor);
+  background: white;
+  font-size: 90%;
+  font-family: monospace;
 
   max-height: 20em;
   overflow-y: auto;
@@ -22,27 +24,14 @@
 
 .CodeMirror-hint {
   margin: 0;
-  padding: 5px 10px;
+  padding: 0 4px;
+  border-radius: 2px;
   white-space: pre;
-  color: var(--button-color);
+  color: black;
   cursor: pointer;
-  transition: none;
-}
-
-.CodeMirror-hint:hover {
-  background-color: var(--hover-color);
-  text-decoration: underline;
 }
 
 li.CodeMirror-hint-active {
-  background: var(--highlight-color) !important;
-  color: var(--button-color-2);
-}
-
-.CodeMirror-hints .menu-title {
-    font-weight: bold;
-    color: #888;
-    cursor: default;
-    pointer-events: none;
-    border-bottom: 1px solid #ddd;
+  background: #08f;
+  color: white;
 }

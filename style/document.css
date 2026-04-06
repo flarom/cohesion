@@ -1,0 +1,212 @@
+.md-document {
+    font-family: var(--font-text);
+    padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* MARK: HEADER */
+.md-document h1 {
+    font-family: var(--font-title);
+    font-size: 2.5rem;
+    margin-bottom: 16px;
+}
+.md-document h2 {
+    font-family: var(--font-title);
+    font-size: 1.8rem;
+    margin-bottom: 12px;
+}
+.md-document h3 {
+    font-family: var(--font-title);
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+}
+.md-document h4 {
+    font-family: var(--font-title);
+    font-size: 1.2rem;
+    margin-bottom: 6px;
+}
+.md-document h5 {
+    font-family: var(--font-title);
+    font-size: 1rem;
+    margin-bottom: 4px;
+}
+.md-document h6 {
+    font-family: var(--font-title);
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+}
+
+/* MARK: BLOCKQUOTE */
+.md-document blockquote {
+    border-left: 3px solid var(--border-light-color);
+    padding-left: 16px;
+    margin: 16px 0;
+}
+
+/* MARK: CODEBLOCK */
+.md-document code {
+    background: var(--background-color-2);
+    border: 1px solid var(--border-field-color);
+    border-radius: 8px;
+    padding: 2px 4px;
+    font-family: var(--font-editor);
+}
+.md-document pre {
+    background: var(--background-color-2);
+    border: 1px solid var(--border-field-color);
+    border-radius: 12px;
+    padding: 16px;
+    overflow-x: auto;
+    margin: 16px 0;
+    box-shadow: var(--shadow-light);
+}
+
+.md-document pre code {
+    padding: 0;
+    border: none;
+    background-color: transparent;
+}
+
+/* MARK: HORIZONTAL RULE */
+.md-document hr {
+    border: 0;
+    border-top: 1px solid var(--border-light-color);
+    margin: 20px 0;
+}
+
+/* MARK: LIST */
+.md-document ul li {
+    margin: 8px 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+.md-document ol li {
+    margin: 8px 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+.md-document ol li::marker {
+    font-family: var(--font-editor);
+}
+
+.md-document input[type="checkbox"] {
+    font-family: "Material Symbols Rounded";
+    appearance: none;
+    min-width: 18px;
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--border-light-color);
+    border-radius: 5px;
+    background-color: transparent;
+    display: inline-block;
+    position: relative;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.md-document input[type="checkbox"]:checked {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+
+.md-document input[type="checkbox"]:checked::after {
+    content: "check";
+    color: var(--button-color-2);
+    font-size: 18px;
+    font-weight: 900;
+    position: absolute;
+    top: -2px;
+    left: -1px;
+}
+
+/* MARK: LINKS */
+.md-document a {
+    color: var(--link-color);
+    text-decoration: none;
+}
+.md-document a:hover {
+    text-decoration: underline;
+}
+
+/* MARK: IMAGES */
+.md-document img {
+    margin: 0;
+    max-width: 100%;
+    border-radius: 12px;
+    box-shadow: var(--shadow-light);
+}
+
+.md-document figure {
+    margin: 0;
+    display: inline-block;
+    background-color: var(--background-color-2);
+    border-radius: 12px;
+    box-shadow: var(--shadow-light);
+
+    img {
+        border-radius: 12px 12px 0 0;
+        box-shadow: none;
+    }
+    
+    figcaption {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        color: var(--text-color);
+        text-align: center;
+    }
+}
+
+/* MARK: TABLES */
+
+.md-document table {
+    margin: 20px 0;
+    font-size: 1rem;
+    border-spacing: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border-light-color);
+    border-right: 1px solid var(--border-light-color);
+}
+
+.md-document th,
+.md-document td {
+    padding: 12px 15px;
+    text-align: left;
+    transition: 0.3s;
+    border: 1px solid var(--border-light-color);
+    border-bottom: 0;
+    border-right: 0;
+}
+
+.md-document thead th {
+    background-color: var(--background-color-2);
+    color: var(--text-color);
+    font-weight: bold;
+}
+
+.md-document thead th:first-child {
+    border-top-left-radius: 10px;
+}
+.md-document thead th:last-child {
+    border-top-right-radius: 10px;
+}
+.md-document tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+.md-document tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+}
+
+.md-document tr:hover td,
+.md-document tr:hover th {
+    background-color: var(--hover-color);
+}
+
+.md-document table.csv-table tbody tr:first-child td:first-child {
+    border-top-left-radius: 10px;
+}       
+.md-document table.csv-table tbody tr:first-child td:last-child {
+    border-top-right-radius: 10px;
+}

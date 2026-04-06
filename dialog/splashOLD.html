@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Cohesion</title>
+    <meta name="dialog-show-close-button" content="true">
+    <meta name="dialog-prefered-width" content="900">
+    <meta name="dialog-prefered-height" content="600">
+
+    <style>
+        dialog .container {
+            display: flex;
+            height: 100%;
+            width: 100%;
+        }
+
+        dialog aside {
+            background-color: var(--background-color-2);
+            border-right: 1px solid var(--border-light-color);
+            min-width: 320px;
+            height: 598px;
+            flex: 1;
+        }
+
+        dialog aside .top-padding {
+            padding-top: 20px;
+        }
+
+        dialog aside .sides-padding {
+            padding: 0 20px;
+        }
+
+        dialog aside .top-padding.sides-padding {
+            padding: 20px 20px 0 20px;
+        }
+
+        dialog aside h1 {
+            margin-top: 0;
+            color: var(--title-color);
+        }
+
+        dialog aside a {
+            color: var(--link-color);
+            text-decoration: none;
+        }
+
+        dialog aside a:hover {
+            text-decoration: underline;
+        }
+
+        dialog aside ul {
+            padding-left: 20px;
+            margin-top: 20px;
+        }
+
+        dialog aside li {
+            margin-bottom: 8px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        dialog aside li span.icon,
+        dialog aside li svg {
+            fill: var(--text-color);
+            color: var(--text-color);
+            width: 24px;
+            height: 24px;
+            font-size: x-large;
+            user-select: none;
+        }
+
+        dialog .project-list {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 0 20px 20px 20px;
+            gap: 10px;
+            margin-top: 8px;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        dialog .project-item {
+            background-color: transparent;
+            border: none;
+            border-radius: 12px;
+            color: var(--text-color);
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            text-align: left;
+            gap: 10px;
+            padding: 10px;
+            width: 100%;
+        }
+
+        dialog .project-item .project-icon {
+            font-size: 24px;
+        }
+
+        dialog .project-item .project-name {
+            font-weight: 600;
+        }
+
+        dialog .project-item .project-description {
+            color: var(--text-color-2);
+            font-size: 0.9em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 180px;
+        }
+
+        dialog .project-item.active,
+        dialog .project-item:hover {
+            background-color: var(--selection-color);
+        }
+
+        dialog .project-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            padding: 0 20px 20px 20px;
+        }
+
+        dialog .project-actions .text-button {
+            width: 100%;
+        }
+
+        dialog .changelog {
+            width: 100%;
+            max-height: 598px;
+            overflow-y: scroll;
+            flex: 2;
+        }
+
+        dialog .changelog h1 {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 1.5em;
+        }
+
+        dialog .changelog .date {
+            color: var(--accent);
+            background-color: var(--selection-color);
+            border-radius: 999px;
+            padding: 2px 8px;
+            font-size: 0.5em;
+            font-weight: normal;
+        }
+
+        dialog .changelog section {
+            border-bottom: 1px solid var(--border-light-color);
+            padding: 10px 20px;
+        }
+
+        @media (max-width: 500px) {
+            dialog .container {
+                display: block;
+                flex-direction: column;
+                max-height: 598px;
+                overflow-x: scroll;
+            }
+
+            dialog aside {
+                display: block;
+                border-right: none;
+                border-bottom: 1px solid var(--border-light-color);
+                height: auto;
+                min-width: auto;
+            }
+
+            dialog .changelog {
+                max-height: fit-content;
+                height: fit-content;
+                overflow-y: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside>
+            <div class="top-padding sides-padding">
+                <h1>Cohesion</h1>
+                <strong>Projects</strong>
+            </div>
+            <div class="project-list" id="project-list">
+            </div>
+            <div class="project-actions">
+                <button class="text-button" id="create-project-btn">Create</button>
+                <button class="text-button" id="edit-project-btn">Edit</button>
+                <button class="text-button danger" id="delete-project-btn">Delete</button>
+                <button class="text-button" id="duplicate-project-btn">Duplicate</button>
+                <button class="text-button" id="import-project-btn">Import ZIP</button>
+                <button class="text-button" id="export-project-btn">Export ZIP</button>
+            </div>
+            <div>
+                <ul>
+                    <li>
+                        <span class="icon" translate="no">developer_guide</span>
+                        <a href="https://github.com/flarom/cohesion/wiki" data-locale="dialogs.splash.documentation">Documentation</a>
+                    </li>
+                    <li>
+                        <span class="icon" translate="no">loyalty</span>
+                        <a href="https://ko-fi.com/flarom" data-locale="dialogs.splash.donate">Donate</a>
+                    </li>
+                    <li>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M237.9 461.4C237.9 463.4 235.6 465 232.7 465C229.4 465.3 227.1 463.7 227.1 461.4C227.1 459.4 229.4 457.8 232.3 457.8C235.3 457.5 237.9 459.1 237.9 461.4zM206.8 456.9C206.1 458.9 208.1 461.2 211.1 461.8C213.7 462.8 216.7 461.8 217.3 459.8C217.9 457.8 216 455.5 213 454.6C210.4 453.9 207.5 454.9 206.8 456.9zM251 455.2C248.1 455.9 246.1 457.8 246.4 460.1C246.7 462.1 249.3 463.4 252.3 462.7C255.2 462 257.2 460.1 256.9 458.1C256.6 456.2 253.9 454.9 251 455.2zM316.8 72C178.1 72 72 177.3 72 316C72 426.9 141.8 521.8 241.5 555.2C254.3 557.5 258.8 549.6 258.8 543.1C258.8 536.9 258.5 502.7 258.5 481.7C258.5 481.7 188.5 496.7 173.8 451.9C173.8 451.9 162.4 422.8 146 415.3C146 415.3 123.1 399.6 147.6 399.9C147.6 399.9 172.5 401.9 186.2 425.7C208.1 464.3 244.8 453.2 259.1 446.6C261.4 430.6 267.9 419.5 275.1 412.9C219.2 406.7 162.8 398.6 162.8 302.4C162.8 274.9 170.4 261.1 186.4 243.5C183.8 237 175.3 210.2 189 175.6C209.9 169.1 258 202.6 258 202.6C278 197 299.5 194.1 320.8 194.1C342.1 194.1 363.6 197 383.6 202.6C383.6 202.6 431.7 169 452.6 175.6C466.3 210.3 457.8 237 455.2 243.5C471.2 261.2 481 275 481 302.4C481 398.9 422.1 406.6 366.2 412.9C375.4 420.8 383.2 435.8 383.2 459.3C383.2 493 382.9 534.7 382.9 542.9C382.9 549.4 387.5 557.3 400.2 555C500.2 521.8 568 426.9 568 316C568 177.3 455.5 72 316.8 72zM169.2 416.9C167.9 417.9 168.2 420.2 169.9 422.1C171.5 423.7 173.8 424.4 175.1 423.1C176.4 422.1 176.1 419.8 174.4 417.9C172.8 416.3 170.5 415.6 169.2 416.9zM158.4 408.8C157.7 410.1 158.7 411.7 160.7 412.7C162.3 413.7 164.3 413.4 165 412C165.7 410.7 164.7 409.1 162.7 408.1C160.7 407.5 159.1 407.8 158.4 408.8zM190.8 444.4C189.2 445.7 189.8 448.7 192.1 450.6C194.4 452.9 197.3 453.2 198.6 451.6C199.9 450.3 199.3 447.3 197.3 445.4C195.1 443.1 192.1 442.8 190.8 444.4zM179.4 429.7C177.8 430.7 177.8 433.3 179.4 435.6C181 437.9 183.7 438.9 185 437.9C186.6 436.6 186.6 434 185 431.7C183.6 429.4 181 428.4 179.4 429.7z"/></svg>
+                        <a href="https://github.com/flarom/cohesion/" data-locale="dialogs.splash.github">GitHub</a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+        <div class="changelog" id="changelog">
+
+        </div>
+    </div>
+
+    <script>
+        (() => {
+            const changelog = document.getElementById("changelog");
+            fetch("./changelog.html").then(res => res.text()).then(content => {
+                changelog.innerHTML = content;
+            });
+
+            const projectList = document.getElementById("project-list");
+            const createProjectBtn = document.getElementById("create-project-btn");
+            const editProjectBtn = document.getElementById("edit-project-btn");
+            const deleteProjectBtn = document.getElementById("delete-project-btn");
+            const duplicateProjectBtn = document.getElementById("duplicate-project-btn");
+            const importProjectBtn = document.getElementById("import-project-btn");
+            const exportProjectBtn = document.getElementById("export-project-btn");
+
+            let selectedProjectId = null;
+
+            const getProjectName = (id) => String(id || "").split("/").filter(Boolean).pop() || "Project";
+
+            const promptZipFile = () => new Promise((resolve) => {
+                const input = document.createElement("input");
+                input.type = "file";
+                input.accept = ".zip,application/zip";
+                input.onchange = () => resolve(input.files?.[0] || null);
+                input.click();
+            });
+
+            const getSelectedProject = async () => {
+                if (!selectedProjectId) {
+                    Toast.show("Select a project first", "warning");
+                    return null;
+                }
+                const project = await file.readFile(selectedProjectId);
+                if (!project || project.type !== "directory") {
+                    Toast.show("Selected project does not exist anymore", "error");
+                    await loadProjects();
+                    return null;
+                }
+                return project;
+            };
+
+            const openProject = async (projectId) => {
+                await fileManager.openProject(projectId);
+                closeAllDialogs();
+            };
+
+            const loadProjects = async () => {
+                await fileManager.loadProjects();
+
+                projectList.innerHTML = "";
+                if (fileManager.projects.length === 0) {
+                    selectedProjectId = null;
+                    projectList.innerHTML = "<p>No projects yet.</p>";
+                    await fileManager.closeProject();
+                    return;
+                }
+
+                if (!selectedProjectId || !fileManager.projects.some((project) => project.id === selectedProjectId)) {
+                    selectedProjectId = fileManager.currentProjectId && fileManager.projects.some((project) => project.id === fileManager.currentProjectId)
+                        ? fileManager.currentProjectId
+                        : fileManager.projects[0].id;
+                }
+
+                for (const project of fileManager.projects) {
+                    const metadata = await file.getProjectMetadata(project.id);
+                    const button = document.createElement("button");
+                    button.className = "project-item" + (project.id === selectedProjectId ? " active" : "");
+                    button.dataset.projectId = project.id;
+                    button.innerHTML = `
+                        <span class="icon project-icon" style="color:${metadata.color}" translate="no">${metadata.icon || "folder"}</span>
+                        <div>
+                            <div class="project-name">${project.name}</div>
+                            <div class="project-description">${metadata.description || "No description"}</div>
+                        </div>
+                    `;
+
+                    button.addEventListener("click", () => {
+                        selectedProjectId = project.id;
+                        loadProjects();
+                    });
+
+                    button.addEventListener("dblclick", async () => {
+                        await openProject(project.id);
+                    });
+
+                    projectList.appendChild(button);
+                }
+            };
+
+            createProjectBtn.addEventListener("click", async () => {
+                const payload = await showDialogFile("dialog/projectEditorDialog.html", {
+                    title: "Create project",
+                    confirmText: "Create",
+                    initialData: {
+                        name: "New project",
+                        icon: "folder",
+                        color: "var(--text-color)",
+                        description: "",
+                        author: ""
+                    }
+                });
+
+                if (!payload || !payload.name) {
+                    return;
+                }
+
+                const uniqueName = await file.getUniqueDirectoryName(payload.name.trim());
+                const project = await file.createProject(uniqueName, payload);
+                selectedProjectId = project.id;
+                await loadProjects();
+                Toast.show("Project created", "check");
+            });
+
+            editProjectBtn.addEventListener("click", async () => {
+                const selectedProject = await getSelectedProject();
+                if (!selectedProject) {
+                    return;
+                }
+
+                const metadata = await file.getProjectMetadata(selectedProject.id);
+                const payload = await showDialogFile("dialog/projectEditorDialog.html", {
+                    title: "Edit project",
+                    confirmText: "Save",
+                    initialData: {
+                        name: selectedProject.name,
+                        icon: metadata.icon,
+                        color: metadata.color,
+                        description: metadata.description,
+                        author: metadata.author
+                    }
+                });
+
+                if (!payload || !payload.name) {
+                    return;
+                }
+
+                let targetProjectId = selectedProject.id;
+                const trimmedName = payload.name.trim();
+                if (trimmedName && trimmedName !== selectedProject.name) {
+                    await file.renameDirectory(selectedProject.id, trimmedName);
+                    targetProjectId = file.buildId(trimmedName, "");
+                }
+
+                await file.updateProjectMetadata(targetProjectId, payload);
+                selectedProjectId = targetProjectId;
+
+                if (fileManager.currentProjectId === selectedProject.id || fileManager.currentProjectId === targetProjectId) {
+                    await fileManager.openProject(targetProjectId);
+                }
+
+                await loadProjects();
+                Toast.show("Project updated", "check");
+            });
+
+            deleteProjectBtn.addEventListener("click", async () => {
+                const selectedProject = await getSelectedProject();
+                if (!selectedProject) {
+                    return;
+                }
+
+                const confirmed = await showConfirmDialog({
+                    message: `Delete project \"${selectedProject.name}\"?`,
+                    detail: "This action cannot be undone.",
+                    confirmButtonDestructive: true,
+                    confirmButtonText: "Delete",
+                    denyButtonText: "Cancel",
+                    showCancelButton: false
+                });
+
+                if (!confirmed) {
+                    return;
+                }
+
+                await file.removeDirectory(selectedProject.id);
+
+                if (fileManager.currentProjectId === selectedProject.id) {
+                    await fileManager.closeProject();
+                }
+
+                selectedProjectId = null;
+                await loadProjects();
+                Toast.show("Project deleted", "delete");
+            });
+
+            duplicateProjectBtn.addEventListener("click", async () => {
+                const selectedProject = await getSelectedProject();
+                if (!selectedProject) {
+                    return;
+                }
+
+                const duplicated = await file.duplicateProject(selectedProject.id);
+                selectedProjectId = duplicated.id;
+                await loadProjects();
+                Toast.show("Project duplicated", "check");
+            });
+
+            importProjectBtn.addEventListener("click", async () => {
+                const zipFile = await promptZipFile();
+                if (!zipFile) {
+                    return;
+                }
+
+                const importedProject = await file.importDirectoryZip(zipFile);
+                selectedProjectId = importedProject.id;
+                await loadProjects();
+                Toast.show("Project imported", "check");
+            });
+
+            exportProjectBtn.addEventListener("click", async () => {
+                const selectedProject = await getSelectedProject();
+                if (!selectedProject) {
+                    return;
+                }
+
+                await file.exportDirectoryZip(selectedProject.id);
+                Toast.show("Project exported", "download");
+            });
+
+            loadProjects();
+        })();
+    </script>   
+</body>
+</html>

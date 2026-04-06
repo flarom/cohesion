@@ -1,374 +1,537 @@
-function hasSelection() {
-    return editor.getDoc().getSelection().length > 0;
-}
+const SNIPPET_PLACEHOLDER_CLASS = "cm-snippet-placeholder";
 
-function wrapSelection(prefix, suffix) {
-    const doc = editor.getDoc();
-    const selection = doc.getSelection();
-    const replacement = prefix + selection + suffix;
-    doc.replaceSelection(replacement, "around");
-}
+const insert = {
+    _snippetSession: null,
 
-function toggleLineStart(prefix, toggle = false, prefixesToRemove = []) {
-    const doc = editor.getDoc();
-    const selections = doc.listSelections();
+    atCursor: (text, selectInsertion = false) => {
+        insert._finishSnippetSession();
+        const doc = editor.getDoc();
+        const cursor = doc.getCursor();
+        doc.replaceRange(text, cursor);
+        if (selectInsertion) {
+            doc.setSelection(cursor, { line: cursor.line, ch: cursor.ch + text.length });
+            editor.focus();
+        }
+    },
+    atStart: (text) => {
+        insert._finishSnippetSession();
+        const doc = editor.getDoc();
+        doc.replaceRange(text, { line: 0, ch: 0 });
+    },
+    atStartSafe: (text) => {
+        insert._finishSnippetSession();
+        // only insert after a seccond "---" or a first "»»»", to avoid inserting before the metadata section
+        const doc = editor.getDoc();
+        const firstLine = doc.getLine(0);
+        let insertPos = { line: 0, ch: 0 };
 
-    editor.operation(() => {
-        for (const sel of selections) {
-            const fromLine = sel.anchor.line;
-            const toLine = sel.head.line;
-            const start = Math.min(fromLine, toLine);
-            const end = Math.max(fromLine, toLine);
+        if (firstLine.startsWith("---")) {
+            for (let i = 1; i < doc.lineCount(); i++) {
+                if (doc.getLine(i).startsWith("---")) {
+                    insertPos = { line: i + 1, ch: 0 };
+                    break;
+                }
+            }
+        } else if (firstLine.startsWith("»»»")) {
+            insertPos = { line: 1, ch: 0 };
+        }
 
-            for (let i = start; i <= end; i++) {
-                const line = doc.getLine(i);
-                let newLine = line;
+        doc.replaceRange(text, insertPos);
+    },
+    atEnd: (text) => {
+        insert._finishSnippetSession();
+        const doc = editor.getDoc();
+        const lastLine = doc.lineCount() - 1;
+        const lastCh = doc.getLine(lastLine).length;
+        doc.replaceRange(text, { line: lastLine, ch: lastCh });
+    },
+    wrap : (prefix, suffix, textIfNoSelection = "") => {
+        insert._finishSnippetSession();
+        const doc = editor.getDoc();
+        const from = doc.getCursor("from");
+        const to = doc.getCursor("to");
+        const hasSelection = doc.somethingSelected();
 
-                const hasPrefix = prefixesToRemove.some((p) => line.startsWith(p));
-                if (toggle && hasPrefix) {
-                    for (const p of prefixesToRemove) {
-                        if (newLine.startsWith(p)) {
-                            newLine = newLine.slice(p.length);
-                            break;
-                        }
+        if (!hasSelection) {
+            const cursor = doc.getCursor();
+            const inserted = prefix + textIfNoSelection + suffix;
+
+            doc.replaceRange(inserted, cursor);
+
+            const startIndex = doc.indexFromPos(cursor);
+            const contentStart = startIndex + prefix.length;
+            const contentEnd = contentStart + textIfNoSelection.length;
+
+            if (textIfNoSelection.length > 0) {
+                doc.setSelection(doc.posFromIndex(contentStart), doc.posFromIndex(contentEnd));
+            } else {
+                doc.setCursor(doc.posFromIndex(contentStart));
+            }
+
+            editor.focus();
+            return;
+        }
+
+        const fullText = doc.getValue();
+        const startIndex = doc.indexFromPos(from);
+        const endIndex = doc.indexFromPos(to);
+        const selection = fullText.slice(startIndex, endIndex);
+
+        const isWrappedInsideSelection =
+            selection.startsWith(prefix) &&
+            selection.endsWith(suffix) &&
+            selection.length >= prefix.length + suffix.length;
+
+        const hasAdjacentPrefix =
+            startIndex >= prefix.length &&
+            fullText.slice(startIndex - prefix.length, startIndex) === prefix;
+        const hasAdjacentSuffix =
+            fullText.slice(endIndex, endIndex + suffix.length) === suffix;
+        const isWrappedAdjacent = hasAdjacentPrefix && hasAdjacentSuffix;
+
+        if (isWrappedInsideSelection) {
+            const unwrapped = selection.slice(prefix.length, selection.length - suffix.length);
+            doc.replaceRange(unwrapped, from, to);
+
+            const newStart = startIndex;
+            const newEnd = newStart + unwrapped.length;
+            doc.setSelection(doc.posFromIndex(newStart), doc.posFromIndex(newEnd));
+        } else if (isWrappedAdjacent) {
+            const replaceFrom = doc.posFromIndex(startIndex - prefix.length);
+            const replaceTo = doc.posFromIndex(endIndex + suffix.length);
+
+            doc.replaceRange(selection, replaceFrom, replaceTo);
+
+            const newStart = startIndex - prefix.length;
+            const newEnd = newStart + selection.length;
+            doc.setSelection(doc.posFromIndex(newStart), doc.posFromIndex(newEnd));
+        } else {
+            const wrapped = prefix + selection + suffix;
+            doc.replaceRange(wrapped, from, to);
+
+            const newStart = startIndex + prefix.length;
+            const newEnd = newStart + selection.length;
+            doc.setSelection(doc.posFromIndex(newStart), doc.posFromIndex(newEnd));
+        }
+
+        editor.focus();
+    },
+    async snippet(template) {
+        const doc = editor.getDoc();
+        this._finishSnippetSession();
+
+        const snippetText = String(template || "");
+        const selectionRanges = doc.listSelections().map((range) => {
+            const from = CodeMirror.cmpPos(range.anchor, range.head) <= 0 ? range.anchor : range.head;
+            const to = CodeMirror.cmpPos(range.anchor, range.head) <= 0 ? range.head : range.anchor;
+            return { from, to, head: range.head };
+        });
+
+        let fileName = "";
+        let directory = "";
+        if (typeof fileManager !== "undefined" && fileManager.currentFileId && typeof file !== "undefined") {
+            try {
+                const fileEntry = await file.readFile(fileManager.currentFileId);
+                fileName = fileEntry?.name || "";
+                directory = fileEntry?.path || "";
+            } catch (error) {
+                console.warn("Could not get file info for snippet variables:", error);
+            }
+        }
+
+        let clipboard = "";
+        try {
+            // clipboard = await navigator.clipboard.readText();
+        } catch {
+            clipboard = "";
+        }
+
+        const fullText = doc.getValue();
+        const segments = selectionRanges.map((range, cursorIndex) => {
+            const selectedText = doc.getRange(range.from, range.to);
+            const activeLine = doc.getLine(range.head.line) || "";
+
+            const variables = {
+                SELECTED_TEXT: selectedText,
+                CURRENT_LINE: activeLine,
+                CURRENT_WORD: this._getWordAtPosition(doc, range.head),
+                LINE_INDEX: String(range.head.line),
+                LINE_NUMBER: String(range.head.line + 1),
+                FILENAME: fileName,
+                DIRECTORY: directory,
+                CLIPBOARD: clipboard,
+                CURSOR_INDEX: String(cursorIndex),
+                CURSOR_NUMBER: String(cursorIndex + 1),
+                RANDOM: this._generateRandomDigits(6),
+                RANDOM_HEX: this._generateRandomHex(6),
+                UUID: this._generateUuidV4()
+            };
+
+            const parsed = this._parseSnippetTemplate(snippetText, variables);
+            return {
+                fromIndex: doc.indexFromPos(range.from),
+                toIndex: doc.indexFromPos(range.to),
+                replacementText: parsed.text,
+                placeholders: parsed.placeholders
+            };
+        }).sort((a, b) => a.fromIndex - b.fromIndex);
+
+        const placeholdersByIndex = new Map();
+
+        editor.operation(() => {
+            let delta = 0;
+
+            for (const segment of segments) {
+                const startIndex = segment.fromIndex + delta;
+                const endIndex = segment.toIndex + delta;
+                const replaceFrom = doc.posFromIndex(startIndex);
+                const replaceTo = doc.posFromIndex(endIndex);
+
+                doc.replaceRange(segment.replacementText, replaceFrom, replaceTo);
+
+                for (const placeholder of segment.placeholders) {
+                    const from = doc.posFromIndex(startIndex + placeholder.start);
+                    const to = doc.posFromIndex(startIndex + placeholder.end);
+                    const mark = doc.markText(from, to, {
+                        className: SNIPPET_PLACEHOLDER_CLASS,
+                        inclusiveLeft: true,
+                        inclusiveRight: true,
+                        clearWhenEmpty: false
+                    });
+
+                    if (!placeholdersByIndex.has(placeholder.index)) {
+                        placeholdersByIndex.set(placeholder.index, []);
                     }
-                } else {
-                    newLine = prefix + line;
+                    placeholdersByIndex.get(placeholder.index).push(mark);
                 }
 
-                doc.replaceRange(newLine, { line: i, ch: 0 }, { line: i, ch: line.length });
-            }
-        }
-    });
-}
-
-function getTable(cols, rows, width = 10) {
-    let md = "";
-    const cell = " ".repeat(width);
-    const headerRow = Array(cols).fill(cell).join("|");
-    const separator = Array(cols).fill(":" + "-".repeat(width - 2) + ":").join("|");
-
-    md += `|${headerRow}|\n`;
-    md += `|${separator}|\n`;
-    for (let i = 0; i < rows; i++) {
-        md += `|${Array(cols).fill(cell).join("|")}|\n`;
-    }
-    return md;
-}
-
-function insertBlock(text) {
-    const doc = editor.getDoc();
-    const selection = doc.listSelections()[0];
-
-    const from = selection.anchor;
-    const to = selection.head;
-
-    const start = doc.indexFromPos(from);
-    const end = doc.indexFromPos(to);
-
-    const lineText = doc.getLine(from.line);
-    const needsNewline = lineText.trim().length > 0;
-
-    const block = (needsNewline ? "\n" : "") + text;
-    doc.replaceRange(block, from, to);
-
-    const newIndex = start + block.length;
-    const newPos = doc.posFromIndex(newIndex);
-    doc.setCursor(newPos);
-}
-
-function insertSnippet(snippet, markerChar = "$") {
-    const doc = editor.getDoc();
-    const cursor = doc.getCursor();
-    const startIdx = doc.indexFromPos(cursor);
-
-    doc.replaceRange(snippet, cursor);
-    const endIdx = startIdx + snippet.length;
-    const fullText = doc.getRange(doc.posFromIndex(startIdx), doc.posFromIndex(endIdx));
-
-    const esc = markerChar.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const re = new RegExp(`${esc}\\{(\\d+):([^}]*)\\}|${esc}0`, "g");
-
-    let cleanText = "";
-    let last = 0;
-    const placeholders = [];
-
-    let match;
-    while ((match = re.exec(fullText)) !== null) {
-        cleanText += fullText.slice(last, match.index);
-
-        if (match[0] === `${markerChar}0`) {
-            placeholders.push({ id: 0, start: cleanText.length, end: cleanText.length });
-        } else {
-            const id = parseInt(match[1]);
-            const text = match[2];
-            const s = cleanText.length;
-            cleanText += text;
-            const e = cleanText.length;
-            placeholders.push({ id, start: s, end: e });
-        }
-
-        last = match.index + match[0].length;
-    }
-    cleanText += fullText.slice(last);
-
-    doc.replaceRange(cleanText, doc.posFromIndex(startIdx), doc.posFromIndex(endIdx));
-
-    const groups = {};
-    placeholders.forEach(ph => {
-        if (!groups[ph.id]) groups[ph.id] = [];
-        const from = doc.posFromIndex(startIdx + ph.start);
-        const to = doc.posFromIndex(startIdx + ph.end);
-        const marker = doc.markText(from, to, { inclusiveLeft: true, inclusiveRight: true });
-        groups[ph.id].push(marker);
-    });
-
-    const ids = Object.keys(groups).map(Number);
-    const order = ids.filter(i => i > 0).sort((a, b) => a - b);
-    if (ids.includes(0)) order.push(0);
-
-    const stops = order.map(id => ({ id, markers: groups[id] }));
-
-    editor._snippetStops = stops;
-    editor._snippetIndex = -1;
-
-    StatusRegister.remove("contextualShortcut");
-    StatusRegister.register({
-        id: "contextualShortcut",
-        side: "left",
-
-        render() {
-            return `
-                <label>
-                    <kbd>Tab</kbd> to advance. <kbd>Shift</kbd>+<kbd>Tab</kbd> to go back. <kbd>Esc</kbd> to cancel.
-                </label>
-            `;
-        }
-    });
-
-    const firstIdx = stops.findIndex(s => s.id > 0);
-    const initial = firstIdx !== -1 ? firstIdx : stops.findIndex(s => s.id === 0);
-
-    if (initial !== -1) {
-        editor._snippetIndex = initial;
-        const markers = stops[initial].markers;
-        const ranges = markers.map(m => ({ anchor: m.find().from, head: m.find().to }));
-        doc.setSelections(ranges);
-    } else {
-        doc.setCursor(doc.posFromIndex(startIdx + cleanText.length));
-    }
-}
-
-function _snippetTab(cm) {
-    const stops = cm._snippetStops;
-    if (!stops) return CodeMirror.Pass;
-
-    let idx = cm._snippetIndex ?? -1;
-    idx++;
-
-    if (idx >= stops.length) {
-        StatusRegister.remove("contextualShortcut");
-        cm._snippetStops = null;
-        cm._snippetIndex = -1;
-        return CodeMirror.Pass;
-    }
-
-    cm._snippetIndex = idx;
-    const doc = cm.getDoc();
-    const markers = stops[idx].markers;
-    const ranges = markers.map(m => {
-        const pos = m.find();
-        return pos ? { anchor: pos.from, head: pos.to } : null;
-    }).filter(Boolean);
-
-    doc.setSelections(ranges);
-}
-
-function _snippetShiftTab(cm) {
-    const stops = cm._snippetStops;
-    if (!stops) return CodeMirror.Pass;
-
-    let idx = cm._snippetIndex ?? 0;
-    idx--;
-
-    if (idx < 0) {
-        StatusRegister.remove("contextualShortcut");
-        cm._snippetStops = null;
-        cm._snippetIndex = -1;
-        return CodeMirror.Pass;
-    }
-
-    cm._snippetIndex = idx;
-    const doc = cm.getDoc();
-    const markers = stops[idx].markers;
-    const ranges = markers.map(m => {
-        const pos = m.find();
-        return pos ? { anchor: pos.from, head: pos.to } : null;
-    }).filter(Boolean);
-
-    doc.setSelections(ranges);
-}
-
-function insertAt(text, selectFrom, selectTo) {
-    const doc = editor.getDoc();
-    const cursor = doc.getCursor();
-    const index = doc.indexFromPos(cursor);
-
-    doc.replaceRange(text, cursor);
-
-    const start = index;
-    const end = index + text.length;
-
-    if (typeof selectFrom === "number" && typeof selectTo === "number") {
-        const from = doc.posFromIndex(start + selectFrom);
-        const to = doc.posFromIndex(start + selectTo);
-        doc.setSelection(from, to);
-    } else {
-        const pos = doc.posFromIndex(end);
-        doc.setCursor(pos);
-    }
-}
-
-function insertAtTop(text) {
-    const doc = editor.getDoc();
-    const block = `${text}\n\n`;
-    const startPos = { line: 0, ch: 0 };
-    doc.replaceRange(block, startPos);
-}
-
-function getMeta() {
-    const rawMeta = Settings.getSetting(
-        "editorMeta",
-        `title:       ~{1:\${getFileTitle(index) || "New document"}}
-project:     ~{2:New project}
-description: ~{3:No description provided}
-tags:        ~{4:Uncategorized}
-author:      ~{5:Author name}
-date:        ~{6:\${strftime(Settings.getSetting("dateFormat", "%Y/%m/%d %H:%M"))}}
-icon:        ~{7:📄}
-banner:      ~{8:cohesion/banners/1.png}
-#language:   ~{9:Blank}
-#license:    ~{10:Blank}
-#source:     ~{11:Blank}`,
-        true
-    );
-
-    function evalJS(str) {
-        return str.replace(/\$\{([^}]*)\}/g, (_, code) => {
-            try {
-                return Function(`return (${code});`)();
-            } catch (e) {
-                console.error("Meta JS error:", e);
-                return "";
+                const originalLength = segment.toIndex - segment.fromIndex;
+                delta += segment.replacementText.length - originalLength;
             }
         });
-    }
 
-    const metaLines = rawMeta
-        .split("\n")
-        .map(line => line.trim())
-        .filter(line => line && !line.startsWith("#"))
-        .filter(line => line.includes(":"))
-        .map(line => {
-            const [key, ...rest] = line.split(":");
-            const value = rest.join(":");
-            return `${key}: ${evalJS(value)}`;
+        if (placeholdersByIndex.size === 0) {
+            editor.focus();
+            return;
+        }
+
+        const orderedIndexes = Array.from(placeholdersByIndex.keys()).sort((a, b) => {
+            if (a === 0) return 1;
+            if (b === 0) return -1;
+            return a - b;
         });
 
-    return `«««\n${metaLines.join("\n")}\n»»»`;
-}
+        const groups = orderedIndexes.map((index) => ({
+            index,
+            marks: placeholdersByIndex.get(index)
+        }));
 
-function insertYouTubeVideo(url) {
-    return embedBlock(formatYouTubeEmbed(url));
+        const keyMap = {
+            name: "cohesion-snippet-keymap",
+            Tab: () => {
+                if (this._moveSnippetSelection(1)) {
+                    return;
+                }
+                return CodeMirror.Pass;
+            },
+            "Shift-Tab": () => {
+                if (this._moveSnippetSelection(-1)) {
+                    return;
+                }
+                return CodeMirror.Pass;
+            },
+            Esc: () => {
+                this._finishSnippetSession();
+            }
+        };
 
-    function formatYouTubeEmbed(url) {
-        let regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/;
-        let match = url.match(regex);
+        this._snippetSession = {
+            groups,
+            activeGroupIndex: -1,
+            keyMap
+        };
 
-        if (match && match[1]) {
-            return `https://www.youtube.com/embed/${match[1]}`;
-        } else {
-            return "Unknown";
+        editor.addKeyMap(keyMap);
+        this._moveSnippetSelection(1);
+        editor.focus();
+    },
+    snippetNext() {
+        return this._moveSnippetSelection(1);
+    },
+    snippetPrevious() {
+        return this._moveSnippetSelection(-1);
+    },
+    snippetCancel() {
+        this._finishSnippetSession();
+    },
+    _moveSnippetSelection(direction) {
+        if (!this._snippetSession || !Array.isArray(this._snippetSession.groups)) {
+            return false;
         }
+
+        const session = this._snippetSession;
+        let targetGroupIndex = session.activeGroupIndex + direction;
+
+        while (targetGroupIndex >= 0 && targetGroupIndex < session.groups.length) {
+            const group = session.groups[targetGroupIndex];
+            const ranges = group.marks
+                .map((mark) => mark.find())
+                .filter(Boolean)
+                .map((range) => ({ anchor: range.from, head: range.to }));
+
+            if (ranges.length > 0) {
+                editor.getDoc().setSelections(ranges);
+                session.activeGroupIndex = targetGroupIndex;
+                editor.focus();
+                return true;
+            }
+
+            targetGroupIndex += direction;
+        }
+
+        if (direction > 0) {
+            this._finishSnippetSession();
+        }
+
+        return false;
+    },
+    _finishSnippetSession() {
+        if (!this._snippetSession) {
+            return;
+        }
+
+        const { groups, keyMap } = this._snippetSession;
+
+        if (Array.isArray(groups)) {
+            for (const group of groups) {
+                for (const mark of group.marks || []) {
+                    try {
+                        mark.clear();
+                    } catch {
+                        // Ignore stale marker cleanup errors.
+                    }
+                }
+            }
+        }
+
+        if (keyMap) {
+            editor.removeKeyMap(keyMap);
+        }
+
+        this._snippetSession = null;
+    },
+    _parseSnippetTemplate(template, variables) {
+        const placeholders = [];
+        let output = "";
+        let i = 0;
+
+        const appendPlaceholder = (index, text) => {
+            const placeholderText = String(text || "");
+            const start = output.length;
+            output += placeholderText;
+            const end = output.length;
+            placeholders.push({ index: Number(index), start, end });
+        };
+
+        while (i < template.length) {
+            const char = template[i];
+
+            if (char === "\\" && i + 1 < template.length) {
+                const escaped = template[i + 1];
+                if (escaped === "$" || escaped === "{" || escaped === "}" || escaped === "\\") {
+                    output += escaped;
+                    i += 2;
+                    continue;
+                }
+            }
+
+            if (char !== "$") {
+                output += char;
+                i += 1;
+                continue;
+            }
+
+            const nextChar = template[i + 1];
+
+            if (nextChar === "{") {
+                const closeIndex = template.indexOf("}", i + 2);
+                if (closeIndex === -1) {
+                    output += char;
+                    i += 1;
+                    continue;
+                }
+
+                const body = template.slice(i + 2, closeIndex);
+
+                const numberedPlaceholder = body.match(/^(\d+)(?::([\s\S]*))?$/);
+                if (numberedPlaceholder) {
+                    const index = Number(numberedPlaceholder[1]);
+                    const defaultText = this._expandSnippetVariables(numberedPlaceholder[2] || "", variables);
+                    appendPlaceholder(index, defaultText);
+                    i = closeIndex + 1;
+                    continue;
+                }
+
+                const variableWithDefault = body.match(/^([A-Z_][A-Z0-9_]*)(?::([\s\S]*))?$/);
+                if (variableWithDefault) {
+                    const variableName = variableWithDefault[1];
+                    const fallbackText = variableWithDefault[2] || "";
+                    const value = variables[variableName];
+                    output += typeof value === "string" && value.length > 0 ? value : fallbackText;
+                    i = closeIndex + 1;
+                    continue;
+                }
+
+                output += template.slice(i, closeIndex + 1);
+                i = closeIndex + 1;
+                continue;
+            }
+
+            if (/\d/.test(nextChar || "")) {
+                let j = i + 1;
+                while (j < template.length && /\d/.test(template[j])) {
+                    j += 1;
+                }
+                appendPlaceholder(Number(template.slice(i + 1, j)), "");
+                i = j;
+                continue;
+            }
+
+            if (/[A-Z_]/.test(nextChar || "")) {
+                let j = i + 1;
+                while (j < template.length && /[A-Z0-9_]/.test(template[j])) {
+                    j += 1;
+                }
+                const variableName = template.slice(i + 1, j);
+                const value = variables[variableName];
+                output += typeof value === "string" ? value : "";
+                i = j;
+                continue;
+            }
+
+            output += char;
+            i += 1;
+        }
+
+        return { text: output, placeholders };
+    },
+    _expandSnippetVariables(text, variables) {
+        const source = String(text || "");
+        let output = "";
+        let i = 0;
+
+        while (i < source.length) {
+            const char = source[i];
+
+            if (char === "\\" && i + 1 < source.length) {
+                const escaped = source[i + 1];
+                if (escaped === "$" || escaped === "{" || escaped === "}" || escaped === "\\") {
+                    output += escaped;
+                    i += 2;
+                    continue;
+                }
+            }
+
+            if (char !== "$") {
+                output += char;
+                i += 1;
+                continue;
+            }
+
+            const nextChar = source[i + 1];
+
+            if (nextChar === "{") {
+                const closeIndex = source.indexOf("}", i + 2);
+                if (closeIndex === -1) {
+                    output += char;
+                    i += 1;
+                    continue;
+                }
+
+                const body = source.slice(i + 2, closeIndex);
+                const variableWithDefault = body.match(/^([A-Z_][A-Z0-9_]*)(?::([\s\S]*))?$/);
+                if (variableWithDefault) {
+                    const variableName = variableWithDefault[1];
+                    const fallbackText = variableWithDefault[2] || "";
+                    const value = variables[variableName];
+                    output += typeof value === "string" && value.length > 0 ? value : this._expandSnippetVariables(fallbackText, variables);
+                    i = closeIndex + 1;
+                    continue;
+                }
+
+                output += source.slice(i, closeIndex + 1);
+                i = closeIndex + 1;
+                continue;
+            }
+
+            if (/[A-Z_]/.test(nextChar || "")) {
+                let j = i + 1;
+                while (j < source.length && /[A-Z0-9_]/.test(source[j])) {
+                    j += 1;
+                }
+                const variableName = source.slice(i + 1, j);
+                const value = variables[variableName];
+                output += typeof value === "string" ? value : "";
+                i = j;
+                continue;
+            }
+
+            output += char;
+            i += 1;
+        }
+
+        return output;
+    },
+    _getWordAtPosition(doc, position) {
+        const line = doc.getLine(position.line) || "";
+        const cursorCh = Math.max(0, Math.min(position.ch, line.length));
+
+        let start = cursorCh;
+        let end = cursorCh;
+
+        while (start > 0 && /[\w]/.test(line[start - 1])) {
+            start -= 1;
+        }
+        while (end < line.length && /[\w]/.test(line[end])) {
+            end += 1;
+        }
+
+        return line.slice(start, end);
+    },
+    _generateRandomDigits(length = 6) {
+        let output = "";
+        for (let i = 0; i < length; i += 1) {
+            output += Math.floor(Math.random() * 10);
+        }
+        return output;
+    },
+    _generateRandomHex(length = 6) {
+        let output = "";
+        for (let i = 0; i < length; i += 1) {
+            output += Math.floor(Math.random() * 16).toString(16);
+        }
+        return output;
+    },
+    _generateUuidV4() {
+        if (typeof crypto !== "undefined" && crypto.randomUUID) {
+            return crypto.randomUUID();
+        }
+
+        const randomBytes = new Uint8Array(16);
+        if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+            crypto.getRandomValues(randomBytes);
+        } else {
+            for (let i = 0; i < randomBytes.length; i += 1) {
+                randomBytes[i] = Math.floor(Math.random() * 256);
+            }
+        }
+
+        randomBytes[6] = (randomBytes[6] & 0x0f) | 0x40;
+        randomBytes[8] = (randomBytes[8] & 0x3f) | 0x80;
+
+        const hex = Array.from(randomBytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+        return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
     }
-}
-
-function embedBlock(embedUrl) {
-    return `[!EMBED ${embedUrl}]`;
-}
-
-async function handleInsertImage() {
-    try {
-        const text = await insertFile("![ALT TEXT](", ")", ".apng, .gif, .ico, .cur, .jpg, .jpeg, .jfif, .pjpeg, .pjp, .png, .svg, .webp");
-        insertAt(text, 2, 10);
-    } catch (e) {
-        showToast("No file selected.");
-        console.error(e);
-    }
-}
-
-async function handleInsertAudio() {
-    try {
-        const text = await insertFile("![ALT TEXT](", ")", ".mp3, .wav, .ogg");
-        insertAt(text, 2, 10);
-    } catch (e) {
-        showToast("No file selected.");
-        console.error(e);
-    }
-}
-
-async function handleInsertVideo() {
-    try {
-        const text = await insertFile("![ALT TEXT](", ")", ".mp4, .webm, .ogg");
-        insertAt(text, 2, 10);
-    } catch (e) {
-        showToast("No file selected.");
-        console.error(e);
-    }
-}
-
-async function handleInsertBlock() {
-    const blocks = [
-        {title: "Note"        , icon: "article"           , color: "blue"             , description: "Shows additional contextual information"        },
-        {title: "Tip"         , icon: "lightbulb"         , color: "green"            , description: "Highlights helpful hints or best practices"     },
-        {title: "Important"   , icon: "priority_high"     , color: "purple"           , description: "Emphasizes critical information"                },
-        {title: "Warning"     , icon: "warning"           , color: "yellow"           , description: "Alerts about possible issues or risks"          },
-        {title: "Caution"     , icon: "dangerous"         , color: "red"              , description: "Warns about actions that may cause harm or loss"},
-        {title: "Details"     , icon: "expand_circle_down", color: "var(--text-color)", description: "Expandable block for optional content"          },
-        {title: "CSV table"   , icon: "table"             , color: "var(--text-color)", description: "Converts CSV content into a table"              },
-        {title: "Embed"       , icon: "iframe"            , color: "var(--text-color)", description: "Embedded web content"                           },
-    ];
-
-    const selection = await promptSelect("Select a block", blocks);
-
-    switch (selection) {
-        case 0: insertBlock("> [!NOTE]\n> "); editor.focus(); break;
-        case 1: insertBlock("> [!TIP]\n> "); editor.focus(); break;
-        case 2: insertBlock("> [!IMPORTANT]\n> "); editor.focus(); break;
-        case 3: insertBlock("> [!WARNING]\n> "); editor.focus(); break;
-        case 4: insertBlock("> [!CAUTION]\n> "); editor.focus(); break;
-        case 5: insertSnippet('> [!DETAILS:${1:Title}]\n> ${2:Content}'); editor.focus(); break;
-        case 6: insertSnippet('> [!CSV]\n> ${1:CSV Content}'); editor.focus(); break;
-        case 7: insertSnippet('[!embed ${1:https://example.com}]'); editor.focus(); break;
-    }
-}
-
-async function insertFile(prefix, suffix, accept = "*/*") {
-    const file = await Resources.uploadFSFile(accept);
-    if (!file || !file.name) throw new Error("No file returned");
-
-    const filePath = `resources/${file.name}`;
-    return prefix + filePath + suffix;
-}
-
-function insertDate(format) {
-    if (!format) {
-        format = Settings.getSetting("dateFormat", "%d/%m/%Y %H:%M");
-    }
-
-    const time = strftime(format);
-
-    insertAt(time, 0, time.length);
 }
 
 function strftime(format, date = new Date()) {
@@ -456,225 +619,6 @@ function strftime(format, date = new Date()) {
     });
 }
 
-function getSummary(markdown) {
-    const lines = markdown.split("\n");
-    const titles = [];
-
-    for (const line of lines) {
-        const match = line.match(/^(#{1,6})\s+(.+)$/);
-        if (match) {
-            const level = match[1].length;
-            const text = match[2].trim();
-            const id = text
-                .toLowerCase()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .replace(/[^\w\s-]/g, "")
-                .replace(/\s+/g, "-");
-
-            titles.push({ level, text, id });
-        }
-    }
-
-    return titles
-        .map((title) => {
-            const indent = "    ".repeat(title.level - 1);
-            return `${indent}- [${title.text}](#${title.id})`;
-        })
-        .join("\n");
-}
-
-function insertSnippetAtTop(snippet, markerChar = "$") {
-    const doc = editor.getDoc();
-
-    const insertPos = { line: 0, ch: 0 };
-    const startIdx = 0;
-
-    doc.replaceRange(snippet, insertPos);
-
-    const endIdx = snippet.length;
-    const fullText = doc.getRange(
-        doc.posFromIndex(startIdx),
-        doc.posFromIndex(endIdx)
-    );
-
-    const esc = markerChar.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const re = new RegExp(`${esc}\\{(\\d+):([^}]*)\\}|${esc}0`, "g");
-
-    let cleanText = "";
-    let last = 0;
-    const placeholders = [];
-
-    let match;
-    while ((match = re.exec(fullText)) !== null) {
-        cleanText += fullText.slice(last, match.index);
-
-        if (match[0] === `${markerChar}0`) {
-            placeholders.push({
-                id: 0,
-                start: cleanText.length,
-                end: cleanText.length
-            });
-        } else {
-            const id = parseInt(match[1]);
-            const text = match[2];
-            const s = cleanText.length;
-            cleanText += text;
-            const e = cleanText.length;
-            placeholders.push({ id, start: s, end: e });
-        }
-
-        last = match.index + match[0].length;
-    }
-
-    cleanText += fullText.slice(last);
-
-    doc.replaceRange(
-        cleanText,
-        doc.posFromIndex(startIdx),
-        doc.posFromIndex(endIdx)
-    );
-
-    const groups = {};
-    placeholders.forEach(ph => {
-        if (!groups[ph.id]) groups[ph.id] = [];
-        const from = doc.posFromIndex(startIdx + ph.start);
-        const to = doc.posFromIndex(startIdx + ph.end);
-        const marker = doc.markText(from, to, {
-            inclusiveLeft: true,
-            inclusiveRight: true
-        });
-        groups[ph.id].push(marker);
-    });
-
-    const ids = Object.keys(groups).map(Number);
-    const order = ids.filter(i => i > 0).sort((a, b) => a - b);
-    if (ids.includes(0)) order.push(0);
-
-    const stops = order.map(id => ({
-        id,
-        markers: groups[id]
-    }));
-
-    editor._snippetStops = stops;
-    editor._snippetIndex = -1;
-
-    const firstIdx = stops.findIndex(s => s.id > 0);
-    const initial =
-        firstIdx !== -1 ? firstIdx : stops.findIndex(s => s.id === 0);
-
-    if (initial !== -1) {
-        editor._snippetIndex = initial;
-        const markers = stops[initial].markers;
-        const ranges = markers
-            .map(m => {
-                const pos = m.find();
-                return pos
-                    ? { anchor: pos.from, head: pos.to }
-                    : null;
-            })
-            .filter(Boolean);
-        doc.setSelections(ranges);
-    } else {
-        doc.setCursor(doc.posFromIndex(cleanText.length));
-    }
-}
-
-function getTopMetaBlockInfo(text) {
-    const match = text.match(/^«««\n([\s\S]*?)\n»»»/);
-    if (!match) return null;
-
-    const blockText = match[0];
-    const inner = match[1];
-
-    const start = match.index;
-    const end = start + blockText.length;
-
-    const lines = inner.split("\n");
-    let offset = start + "«««\n".length;
-
-    const fields = [];
-
-    for (const line of lines) {
-        const valueMatch = line.match(/^(\s*[^:]+:\s*)(.+)$/);
-        if (valueMatch) {
-            const valueStart = offset + valueMatch[1].length;
-            const valueEnd = valueStart + valueMatch[2].length;
-
-            fields.push({ from: valueStart, to: valueEnd });
-        }
-
-        offset += line.length + 1;
-    }
-
-    return { start, end, fields };
-}
-
-function activateMetaSnippet(metaInfo) {
-    const doc = editor.getDoc();
-
-    const groups = {};
-    metaInfo.fields.forEach((field, i) => {
-        const from = doc.posFromIndex(field.from);
-        const to = doc.posFromIndex(field.to);
-
-        const marker = doc.markText(from, to, {
-            inclusiveLeft: true,
-            inclusiveRight: true
-        });
-
-        const id = i + 1;
-        if (!groups[id]) groups[id] = [];
-        groups[id].push(marker);
-        StatusRegister.remove("contextualShortcut");
-    });
-
-    const stops = Object.keys(groups)
-        .map(Number)
-        .sort((a, b) => a - b)
-        .map(id => ({
-            id,
-            markers: groups[id]
-        }));
-
-    editor._snippetStops = stops;
-    editor._snippetIndex = 0;
-
-    const first = stops[0].markers
-        .map(m => {
-            const pos = m.find();
-            return pos
-                ? { anchor: pos.from, head: pos.to }
-                : null;
-        })
-        .filter(Boolean);
-
-    doc.setSelections(first);
-
-    StatusRegister.remove("contextualShortcut");
-    StatusRegister.register({
-        id: "contextualShortcut",
-        side: "left",
-
-        render() {
-            return `
-                <label>
-                    <kbd>Tab</kbd> to advance. <kbd>Shift</kbd>+<kbd>Tab</kbd> to go back. <kbd>Esc</kbd> to cancel.
-                </label>
-            `;
-        }
-    });
-}
-
-function insertOrEditMeta() {
-    const text = editor.getValue();
-    const meta = getTopMetaBlockInfo(text);
-
-    if (!meta) {
-        insertSnippetAtTop(getMeta() + "\n\n", "~");
-        return;
-    }
-
-    editor.focus();
-    activateMetaSnippet(meta);
+function insertMetadata() {
+    
 }

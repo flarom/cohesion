@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cohesion</title>
+    <meta name="dialog-prefered-width" content="900">
+    <meta name="dialog-prefered-height" content="600">
+    <meta name="dialog-toolbar-left" content="<button class=icon-button translate=no title='Create new project' id='newProjectBtn'>add_box</button>">
+    <style>
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(128px, 8px));
+            gap: 8px;
+
+            .project-item {
+                position: relative;
+                background-color: var(--background-color-2);
+                color: var(--text-color);
+                font-size: medium;
+                border: 1px solid var(--border-field-color);
+                width: 128px;
+                height: 128px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                padding: 0px;
+                border-radius: 12px;
+                transition: background-color 0.2s;
+
+                .project-dropdown {
+                    opacity: 0;
+                    position: absolute;
+                    top: 4px;
+                    right: 4px;
+                    transition: opacity 0.2s;
+                }
+
+                .project-dropdown.show {
+                    opacity: 1;
+                }
+
+                .project-icon {
+                    font-size: 32px;
+                }
+
+                .project-file-count {
+                    font-size: small;
+                    color: var(--subtle-color);
+                }
+
+                &:focus-visible { outline: 2px solid var(--accent); .project-dropdown { opacity: 1; }}
+                &:focus-within .project-dropdown { opacity: 1; }
+                &:hover { background-color: var(--hover-color); .project-dropdown { opacity: 1; }}
+            }
+        }
+
+        .project-grid:has(.empty-state) {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 500px;
+
+            .empty-state {
+                user-select: none;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                color: var(--text-color);
+
+                .icon {
+                    font-size: 48px;
+                    color: var(--accent);
+                    transform: rotatez(-45deg);
+                }
+
+                h1 { margin-bottom: 0;}
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    <hr class="toolbar-spacer">
+    <div class="padding">
+        <div class="project-grid" id="project-grid"></div>
+    </div>
+    <script>
+        (() => {
+            const args = typeof window.dialogArgs === "function" ? window.dialogArgs() : {};
+
+            const projectGrid = document.getElementById("project-grid");
+            const newProjectBtn = document.getElementById("newProjectBtn");
+            
+            if (args.introSequence) {
+                const promptOverlay = document.querySelector(".prompt-dialog");
+                if (promptOverlay) {
+                    promptOverlay.classList.add("introAnimation");
+                }
+            }
+
+            const openProject = async (projectId) => {
+                await fileManager.openProject(projectId);
+                closeAllDialogs();
+            };
+
+            const newProject = () => async () => {
+                const payload = await showDialogFile("dialog/projectEditorDialog.html",{
+                    confirmText: "Create",
+                    initialData: {
+                        name: "New project",
+                        icon: "folder",
+                        color: "var(--text-color)"
+                    }
+                });
+
+                if (!payload || !payload.name) {
+                    return;
+                }
+
+                const uniqueName = await file.getUniqueDirectoryName(payload.name.trim());
+                const project = await file.createProject(uniqueName, payload);
+                await loadProjects();
+
+                if (fileManager.projects.length === 1) {
+                    await openProject(project.id);
+                }
+            };
+            newProjectBtn.addEventListener("click", newProject());
+
+            const loadProjects = async () => {
+                await fileManager.loadProjects();
+
+                projectGrid.innerHTML = "";
+                if (fileManager.projects.length === 0) {
+                    projectGrid.innerHTML = `
+                        <div class="empty-state">
+                            <span class="icon" translate="no">front_hand</span>
+                            <h1>Welcome to Cohesion</h1>
+                            <span class="empty-state-text">Let's get started by creating a new project.</span>
+                        </div>
+                    `;
+                    updateDialogToolbarRight(""); // remove close button
+                    await fileManager.closeProject();
+                    return;
+                }
+
+                for (const project of fileManager.projects) {
+                    const metadata = await file.getProjectMetadata(project.id);
+                    const button = document.createElement("button");
+                    button.className = "project-item";
+                    button.dataset.projectId = project.id;
+                    button.innerHTML = `
+                        <div class="dropdown project-dropdown">
+                            <button class="icon-button" translate="no" onmousedown="toggleDropdown('${project.id}-menu')">more_vert</button>
+                            <div class="dropdown-content menu align-left" id="${project.id}-menu">
+                                <button class="text-button" data-proj-properties-id="${project.id}">Properties</button>
+                                <hr>
+                                <button class="text-button">Duplicate</button>
+                                <button class="text-button">Export</button>
+                                <hr>
+                                <button class="text-button danger" data-proj-delete-id="${project.id}">Delete</button>
+                            </div>
+                        </div>
+                        <span class="icon project-icon" style="color:${metadata.color}" translate="no">${metadata.icon || "folder"}</span>
+                        <div>
+                            <div class="project-name">${project.name}</div>
+                            <div class="project-file-count">${await getFileCount(project.id)} files</div>
+                        </div>
+                    `;
+
+                    const propertiesButton = button.querySelector(`[data-proj-properties-id="${project.id}"]`);
+                    propertiesButton.addEventListener("mouseup", async (e) => {
+                        e.stopPropagation();
+                        const metadata = await file.getProjectMetadata(project.id);
+
+                        const payload = await showDialogFile("dialog/projectEditorDialog.html", {
+                            initialData: {
+                                name: project.name,
+                                icon: metadata.icon,
+                                color: metadata.color,
+                            }
+                        });
+
+                        if (!payload || !payload.name) {
+                            return;
+                        }
+
+                        await file.updateProjectMetadata(project.id, {
+                            icon: payload.icon,
+                            color: payload.color,
+                        });
+
+                        const trimmedName = payload.name.trim();
+                        if (trimmedName && trimmedName !== project.name) {
+                            await file.renameDirectory(project.id, trimmedName);
+                        }
+
+                        await loadProjects();
+                    });
+
+                    const deleteButton = button.querySelector(`[data-proj-delete-id="${project.id}"]`);
+                    deleteButton.addEventListener("mouseup", async (e) => {
+                        e.stopPropagation();
+                        // const confirmDelete = confirm(`Are you sure you want to delete the project "${project.name}"? This action cannot be undone.`);
+                        const confirmDelete = await showConfirmDialog({
+                            message: "Delete this project?",
+                            detail: `The project "${project.name}" will be permanently deleted. This action cannot be undone.`,
+                            confirmButtonText: getTranslation('common.delete', 'Delete'),
+                            confirmButtonDestructive: true,
+                        });
+                        if (confirmDelete) {
+                            await file.removeDirectory(project.id);
+                            await loadProjects();
+                        }
+                    });
+
+                    button.addEventListener("dblclick", async (e) => {
+                        e.stopPropagation();
+                        await openProject(project.id);
+                    });
+
+                    projectGrid.appendChild(button);
+                }
+            };
+
+            const getFileCount = async (projectId) => {
+                console.log (await file.listDirectory(projectId));
+                return (await file.listDirectory(projectId)).length - 1;
+            };
+
+            loadProjects();
+        })();
+    </script>
+</body>
+</html>

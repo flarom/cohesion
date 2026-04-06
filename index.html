@@ -1,398 +1,461 @@
-<!--This application comes with absolutely no warranty. It is licensed under the GNU General Public License v3-->
-<!--https://www.gnu.org/licenses/gpl-3.0.html-->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cohesion - Markdown Text Editor</title>
-    <link rel="shortcut icon" href="cohesion/favicon.svg" type="image/x-icon" />
+    <title>Cohesion</title>
+    <link rel="stylesheet" href="style/layout.css" priority="high">
+    <link rel="stylesheet" href="style/theme.css" priority="high">
+    <link rel="stylesheet" href="style/document.css">
+    <link rel="stylesheet" href="style/dialog.css">
+    <link rel="stylesheet" href="script/codemirror/lib/codemirror.css" />
+    <link rel="stylesheet" href="script/codemirror/addon/hint/show-hint.css" />
+    <link rel="shortcut icon" href="static/favicon.svg" type="image/svg+xml">
 
-    <!-- Primary Meta Tags -->
-    <meta name="title" content="Cohesion - Markdown Text Editor" />
-    <meta name="description" content="Create and edit Markdown documents easily with Cohesion, a free and opensource online Markdown text editor." />
-    <meta name="keywords" content="Cohesion, markdown, text, editor, free, opensource, online" />
-    <meta name="language" content="en">
-    <meta name="author" content="Cohesion Team">
-    <meta name="robots" content="index, follow">
+    <script src="script/codemirror/lib/codemirror.js"></script>
+    <script src="script/codemirror/keymap/sublime.js"></script>
+    <script src="script/codemirror/addon/edit/closebrackets.js"></script>
+    <script src="script/codemirror/addon/edit/continuelist.js"></script>
+    <script src="script/codemirror/addon/search/searchcursor.js"></script>
+    <script src="script/codemirror/addon/hint/show-hint.js"></script>
+    <script src="script/codemirror/addon/hint/anyword-hint.js"></script>
+    <script src="script/codemirror/addon/selection/active-line.js"></script>
+    <script src="script/codemirror/addon/mode/simple.js"></script>
 
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://flarom.github.io/cohesion/">
-    <meta property="og:title" content="Cohesion - Markdown Text Editor">
-    <meta property="og:description" content="Create and edit Markdown documents easily with Cohesion, a free and opensource online Markdown text editor.">
-    <meta property="og:image" content="https://flarom.github.io/cohesion/cohesion/cards/editor.png">
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://flarom.github.io/cohesion/">
-    <meta property="twitter:title" content="Cohesion - Markdown Text Editor">
-    <meta property="twitter:description" content="Create and edit Markdown documents easily with Cohesion, a free and opensource online Markdown text editor.">
-    <meta property="twitter:image" content="https://flarom.github.io/cohesion/cohesion/cards/editor.png">
-
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://flarom.github.io/cohesion/">
-
-    <!-- PWA meta tags -->
-    <meta name="application-name" content="Cohesion">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta content="#303030" name="theme-color" />
-    <link rel="manifest" href="/manifest.json" />
-
-    <link rel="stylesheet" href="style/share.css">
-    <link rel="stylesheet" href="style/landing.css">
-    <link rel="stylesheet" href="style/palette.css">
-    <link rel="stylesheet" href="style/prompts.css">
-
-    <style>
-        .highlight {
-            padding: 0 0px 0px 10px;
-            border-radius: 12px;
-            display: inline-flex;
-            align-items: center;
-            overflow: hidden;
-            height: 1.3em;
-            position: relative;
-            box-sizing: content-box;
-            transition: width 260ms, background-color 200ms, border-color 200ms;
-            width: auto;
-        }
-
-        .cycle-item {
-            display: inline-block;
-            transform: translateY(100%);
-            opacity: 0;
-            will-change: transform, opacity;
-            animation: slideUp 450ms ease forwards;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(100%); opacity: 0; }
-            to   { transform: translateY(0%);   opacity: 1; }
-        }
-
-        @media (max-width: 700px) {
-            footer {
-                flex-direction: column;
-            }
-        }
-    </style>
+    <script src="script/codemirror/mode/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 </head>
-<body class="theme-dark">
-    <div id="intro-screen">
-        <div id="intro-title" translate="no">Cohesion</div>
-        <noscript class="prompt-overlay" style="pointer-events: all !important;">
-            <div class="prompt-dialog" style="max-width: 500px; padding: 10px;">
-                <h2>Fatal</h2>
-                <p>Scripts failed to load.</p>
-                <p>Update your browser, check settings and extensions.</p>
-                <a target="_blank" href="https://github.com/flarom/cohesion/issues">Report an issue</a>
+
+<body class="theme-auto">
+    <header class="toolbar">
+        <div class="toolbar-left">
+            <button class="icon-button" id="toggleSidebarBtn" translate="no" title="Toggle sidebar" data-locale-attr="title:main.header.toggle-sidebar">side_navigation</button>
+            <button class="icon-button hide-on-mobile" onclick="fileManager.createNewFile()" id="newDocumentBtn" translate="no" title="New document" data-locale-attr="title:main.header.new-document">add_box</button>
+            <hr class="hide-on-mobile">
+            <button class="icon-button hide-on-mobile" onclick="editor.undo()" translate="no" title="Undo" data-locale-attr="title:main.header.undo">undo</button>
+            <button class="icon-button hide-on-mobile" onclick="editor.redo()" translate="no" title="Redo" data-locale-attr="title:main.header.redo">redo</button>
+            <hr>
+            <div class="dropdown">
+                <button class="icon-button" translate="no" onmousedown="toggleDropdown('insert-menu')" title="Insert" data-locale-attr="title:main.header.insert">attach_filearrow_drop_down</button>
+                <div class="dropdown-content menu align-left" id="insert-menu">
+                    <button class="text-button" onmouseup="insert.atCursor(strftime(Settings.getSetting('timeFormatting', '%d/%m/%Y %H:%M')), true); hideAllMenus()">
+                        <span data-locale="main.header.insert.date-and-time">Date and time</span>
+                        <kbd>F6</kbd>
+                    </button>
+                    <hr>
+                    <button class="text-button" data-locale="main.header.insert.file">
+                        File
+                    </button>
+                    <button class="text-button" data-locale="main.header.insert.table">
+                        Table
+                    </button>
+                    <button class="text-button" data-locale="main.header.insert.table-of-contents">
+                        Table of contents
+                    </button>
+                    <button class="text-button" onclick="insertMetadata(); hideAllMenus(); editor.focus();">
+                        <span data-locale="main.header.insert.document-metadata">Document metadata</span>
+                        <kbd>Ctrl+;</kbd>
+                    </button>
+                </div>
             </div>
-        </noscript>
-    </div>
-    <header>
-        <div>
-            <a href="index.html" style="display: inline-flex; align-items: center; color: var(--text-color); text-decoration: none;">
-                <img src="cohesion/favicon.svg" alt="" width="48">
-                <h2 translate="no" class="header-text">Cohesion</h2>
-            </a>
         </div>
-        <div style="display: flex; gap: 5px;">
-            <button class="secondary hide-on-mobile" data-locale="dialogs.landing.header.editor" onclick="handleStartApplication()">Editor</button>
-            <button class="secondary hide-on-mobile" data-locale="dialogs.landing.header.tools" onclick="window.open('tools.html', '_self')">Tools</button>
-            <button class="secondary hide-on-mobile" data-locale="dialogs.landing.header.documentation" onclick="window.open('https://github.com/flarom/cohesion/wiki')">Documentation</button>
-            <button class="secondary hide-on-mobile" data-locale="dialogs.landing.header.github" onclick="window.open('https://github.com/flarom/cohesion')">GitHub</button>
-            <button class="secondary" onclick="changeTheme();" style="font-size: large;" translate="no"><span class="icon">routine</span></button>
-            <button class="secondary hide-on-pc" onclick="handleMoreMenu();" style="font-size: large;" translate="no"><span class="icon">more_vert</span></button>
+
+        <div class="toolbar-center">
+            <span id="documentTitle" class="hide-on-mobile"></span>
+        </div>
+
+        <div class="toolbar-right">
+            <button class="icon-button" id="toggleSearchHeader" translate="no" title="Search and replace" data-locale-attr="title:main.header.search-and-replace">search</button>
+            <button class="icon-button" id="switchModeBtn" translate="no" title="Read" data-locale-attr="title:main.header.switch-mode.read">import_contacts</button>
+            <button class="icon-button" id="splitViewBtn" translate="no" hidden title="Split view" data-locale-attr="title:main.header.split-view">split_scene</button>
+            <div class="dropdown">
+                <button class="icon-button" translate="no" onmousedown="toggleDropdown('more-menu')" title="More options" data-locale-attr="title:main.header.more-options">more_vert</button>
+                <div class="dropdown-content menu" id="more-menu">
+                    <button class="text-button" onmouseup="fileManager.createNewFile(); hideAllMenus()">
+                        <span data-locale="main.header.more-options.new">New</span>
+                        <kbd>Ctrl+N</kbd>
+                    </button>
+                    <button class="text-button" onmouseup="closeAllDialogs(); showDialogFile('dialog/404.html'); hideAllMenus()">
+                        <span data-locale="main.header.more-options.open">Open</span>
+                        <kbd>Ctrl+O</kbd>
+                    </button>
+                    <button class="text-button" onmouseup="saveCurrentFile(); hideAllMenus()">
+                        <span data-locale="main.header.more-options.save">Save</span>
+                        <kbd>Ctrl+S</kbd>
+                    </button>
+                    <!-- <button class="text-button" onmouseup="shareFileAndShowQR()" data-locale="app.toolbar.more-menu.share">
+                        Share
+                    </button> -->
+                    <!-- <button class="text-button" onmouseup="searchDocuments(); hideAllMenus();">
+                        <span data-locale="app.toolbar.more-menu.search-documents">Search documents</span>
+                        <kbd>Ctrl+K</kbd>
+                    </button> -->
+                    <hr />
+                    <button class="text-button" onmouseup="closeAllDialogs(); showDialogFile('dialog/projectsDialog.html'); hideAllMenus()">
+                        <span data-locale="main.header.more-options.my-projects">My projects</span>
+                    </button>
+                    <button class="text-button" onmouseup="fileManager.openResourcesDialog(); hideAllMenus()">
+                        Resources
+                    </button>
+                    <hr />
+                    <button class="text-button" onmouseup="closeAllDialogs(); showDialogFile('dialog/settings.html'); hideAllMenus()">
+                        <span data-locale="main.header.more-options.settings">Settings</span>
+                        <kbd>Ctrl+,</kbd>
+                    </button>
+                    <hr />
+                    <button class="text-button" onmouseup="window.open('https://github.com/flarom/cohesion/wiki'); hideAllMenus()" data-locale="main.header.more-options.help">
+                        Help
+                    </button>
+                    <button class="text-button" onmouseup="closeAllDialogs(); showMessageFromFile('dialogs/shortcuts.html'); hideAllMenus();">
+                        <span data-locale="main.header.more-options.keyboard-shortcuts">Keyboard shortcuts</span>
+                        <kbd>Ctrl+?</kbd>
+                    </button>
+                    <button class="text-button" onmouseup="closeAllDialogs(); showDialogFile('dialog/aboutDialog.html'); hideAllMenus();">
+                        <span data-locale="main.header.more-options.about-cohesion">About Cohesion</span>
+                        <kbd>F1</kbd>
+                    </button>
+                </div>
+            </div>
         </div>
     </header>
 
-    <section class="hero">
-        <div>
-            <h1><span data-locale="dialogs.landing.hero.title-start">Bring</span> <span id="cycling-word" data-locale="dialogs.landing.hero.title-clarity" style="background-color: var(--quote-green-bg); color: var(--quote-green);" class="highlight">clarity</span> <span data-locale="dialogs.landing.hero.title-end">to your ideas</span></h1>
+    <section class="workspace sidebar-hidden" id="workspace">
+        <!-- MARK: SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
             
-            <p data-locale="dialogs.landing.hero.hero" data-locale-html>Cohesion is a minimal, beautiful, Markdown editor<br>designed for clarity and expression</p>
-            <div style="margin-top: 40px; margin-bottom: 40px; display: flex; gap: 5px;" translate="no">
-                <button class="primary" onclick="handleStartApplication();">
-                    <span class="icon" style="font-size: 1.5em;">edit</span>
-                    <span>
-                        <span data-locale="dialogs.landing.hero.cta">Start creating...</span>
-                        <span id="primary-button-text"></span>
-                    </span>
-                </button>
-                <button class="secondary" data-locale="generic.learn-more" onclick="scrollToFeatures()">
-                    Learn more
-                </button>
-            </div>
-        </div>
-        <div>
-            <img src="cohesion/scrshot.png" alt="">
-        </div>
+        </aside>
+
+        <!-- MARK: MAIN UI -->
+        <main class="main">
+            <section class="screens" id="screens">
+                <article class="screen" id="screenA">
+                    <div class="screen-content">
+                        <textarea id="editor"></textarea>
+                    </div>
+                </article>
+
+                <article class="screen" id="screenB" style="overflow: scroll;" hidden>
+                    <div class="screen-content">
+                        <div id="renderer" class="md-document"></div>
+                    </div>
+                </article>
+            </section>
+        </main>
     </section>
 
-    <section class="normal" id="features">
-        <div class="features-grid">
-            <div class="feature-container row feature-a">
-                <div>
-                    <span class="icon" translate="no">keyboard_keys</span>
-                </div>
-                <div>
-                    <h3 data-locale="dialogs.landing.features.keyboard-centric-design">Keyboard centric design</h3>
-                    <p data-locale="dialogs.landing.features.keyboard-centric-design.paragraph">Write complex documents without taking your hands out of the keyboard.</p>
-                </div>
-            </div>
-
-            <div class="feature-container feature-b">
-                <span class="icon" translate="no">vpn_lock_2</span>
-                <div>
-                    <h3 data-locale="dialogs.landing.features.in-browser-local-storage">In-browser local storage</h3>
-                    <p data-locale="dialogs.landing.features.in-browser-local-storage.paragraph-1">Your files are not sent to us, Cohesion saves your files in your browser data.</p>
-                    <p data-locale="dialogs.landing.features.in-browser-local-storage.paragraph-2">You can also create backups of all your data in a single click.</p>
-                </div>
-            </div>
-
-            <div class="feature-container feature-c">
-                <h2 data-locale="dialogs.landing.features.export-as">Export as</h2>
-                <div style="display: flex; justify-content: space-around; width: 100%;">
-                    <div style="display: flex; flex-direction: column; align-items: center;">
-                        <img src="cohesion/file-icons/text-x-markdown.svg" alt="">
-                        Markdown
-                    </div>
-                    <div style="display: flex; flex-direction: column; align-items: center;">
-                        <img src="cohesion/file-icons/application-pdf.svg" alt="">
-                        PDF
-                    </div>
-                    <div style="display: flex; flex-direction: column; align-items: center;">
-                        <img src="cohesion/file-icons/text-html.svg" alt="">
-                        HTML
-                    </div>
-                </div>
-            </div>
-
-            <div class="feature-container feature-d">
-                <div style="padding: 16px;">
-                    <h2 data-locale="dialogs.landing.features.the-way-you-like">The way you like</h2>
-                    <p data-locale="dialogs.landing.features.the-way-you-like.paragraph">Personalize your editor with themes or even your own CSS.</p>
-                </div>
-                <img src="cohesion/landing/themes-scrnshot.png" alt="">
-            </div>
-
-            <div class="feature-container feature-e">
-                <div>
-                    <h2 data-locale="dialogs.landing.features.instant-search">Instant search</h2>
-                    <p data-locale="dialogs.landing.features.instant-search.paragraph">Quickly find any piece of text using the built-in instant search, streamlining your workflow.</p>
-                </div>
-            </div>
-
-            <div class="feature-container feature-h">
-                <div>
-                    <h2 data-locale="dialogs.landing.features.ideas-organize-themselves">Ideas organize themselves</h2>
-                    <p data-locale="dialogs.landing.features.ideas-organize-themselves.paragraph">Organize your Markdown files with projects, tags and metadata.</p>
-                </div>
-            </div>
-
-            <div class="feature-container feature-f">
-                <h1 data-locale="dialogs.landing.features.free-and-opensource">Free & Open Source</h1>
-                <svg viewBox="0 0 100 150">
-                    <defs>
-                    <radialGradient id="Gradient1" cx="50%" cy="50%" fx="0.441602%" fy="50%" r=".5"><animate attributeName="fx" dur="34s" values="0%;3%;0%" repeatCount="indefinite"></animate><stop offset="0%" stop-color="rgba(255, 0, 255, 1)"></stop><stop offset="100%" stop-color="rgba(255, 0, 255, 0)"></stop></radialGradient>
-                    <radialGradient id="Gradient2" cx="50%" cy="50%" fx="2.68147%" fy="50%" r=".5"><animate attributeName="fx" dur="23.5s" values="0%;3%;0%" repeatCount="indefinite"></animate><stop offset="0%" stop-color="rgba(255, 255, 0, 1)"></stop><stop offset="100%" stop-color="rgba(255, 255, 0, 0)"></stop></radialGradient>
-                    <radialGradient id="Gradient3" cx="50%" cy="50%" fx="0.836536%" fy="50%" r=".5"><animate attributeName="fx" dur="21.5s" values="0%;3%;0%" repeatCount="indefinite"></animate><stop offset="0%" stop-color="rgba(0, 255, 255, 1)"></stop><stop offset="100%" stop-color="rgba(0, 255, 255, 0)"></stop></radialGradient>
-                    <radialGradient id="Gradient4" cx="50%" cy="50%" fx="4.56417%" fy="50%" r=".5"><animate attributeName="fx" dur="23s" values="0%;5%;0%" repeatCount="indefinite"></animate><stop offset="0%" stop-color="rgba(0, 255, 0, 1)"></stop><stop offset="100%" stop-color="rgba(0, 255, 0, 0)"></stop></radialGradient>
-                    <radialGradient id="Gradient5" cx="50%" cy="50%" fx="2.65405%" fy="50%" r=".5"><animate attributeName="fx" dur="24.5s" values="0%;5%;0%" repeatCount="indefinite"></animate><stop offset="0%" stop-color="rgba(0,0,255, 1)"></stop><stop offset="100%" stop-color="rgba(0,0,255, 0)"></stop></radialGradient>
-                    <radialGradient id="Gradient6" cx="50%" cy="50%" fx="0.981338%" fy="50%" r=".5"><animate attributeName="fx" dur="25.5s" values="0%;5%;0%" repeatCount="indefinite"></animate><stop offset="0%" stop-color="rgba(255,0,0, 1)"></stop><stop offset="100%" stop-color="rgba(255,0,0, 0)"></stop></radialGradient>
-                    </defs>
-                    <rect x="13.744%" y="1.18473%" width="100%" height="100%" fill="url(#Gradient1)" transform="rotate(334.41 50 50)"><animate attributeName="x" dur="20s" values="25%;0%;25%" repeatCount="indefinite"></animate><animate attributeName="y" dur="21s" values="0%;25%;0%" repeatCount="indefinite"></animate><animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="7s" repeatCount="indefinite"></animateTransform></rect>
-                    <rect x="-2.17916%" y="35.4267%" width="100%" height="100%" fill="url(#Gradient2)" transform="rotate(255.072 50 50)"><animate attributeName="x" dur="23s" values="-25%;0%;-25%" repeatCount="indefinite"></animate><animate attributeName="y" dur="24s" values="0%;50%;0%" repeatCount="indefinite"></animate><animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="12s" repeatCount="indefinite"></animateTransform>
-                    </rect>
-                    <rect x="9.00483%" y="14.5733%" width="100%" height="100%" fill="url(#Gradient3)" transform="rotate(139.903 50 50)"><animate attributeName="x" dur="25s" values="0%;25%;0%" repeatCount="indefinite"></animate><animate attributeName="y" dur="12s" values="0%;25%;0%" repeatCount="indefinite"></animate><animateTransform attributeName="transform" type="rotate" from="360 50 50" to="0 50 50" dur="9s" repeatCount="indefinite"></animateTransform>
-                    </rect>
-                </svg>
-                <button class="text-button" onclick="window.open('https://github.com/flarom/cohesion'), '_blank'" data-locale="dialogs.landing.features.free-and-opensource.source-code">Source code</button>
-            </div>
-
-            <div class="feature-container feature-g">
-                <div style="display: flex; flex-direction: column; justify-content: center;">
-                    <h1 data-locale="dialogs.landing.features.completely-zen">Completely zen</h1>
-                    <p data-locale="dialogs.landing.features.completely-zen.paragraph-1">Write without any distractions. You don't have to create an account, sign a monthly subscription, watch ads, or train AI.</p>
-                    <p data-locale="dialogs.landing.features.completely-zen.paragraph-2">It's just a text editor.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="filler">
-        <div class="infinite-scroll left">
-            <div class="scroll-content">
-                Cohesion Cohesion Cohesion Cohesion Cohesion Cohesion Cohesion Cohesion Cohesion Cohesion Cohesion
-            </div>
-        </div>
-        <button class="primary filler-start-now" onclick="handleStartApplication()">
-            <span class="icon" style="font-size: 1.5em;">edit</span>
-            <span>
-                <span data-locale="dialogs.landing.hero.cta">Start creating...</span>
-                <span id="primary-button-text2"></span>
-            </span>
-        </button>
-    </section>
-
-    <footer>
-        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-            <div>
-                <h3>Community</h3>
-                <a target="_blank" href="https://github.com/flarom/cohesion">GitHub</a><br>
-                <a target="_blank" href="https://ko-fi.com/flarom">Support us</a>
-            </div>
-            <div>
-                <h3>Learn</h3>
-                <a target="_blank" href="https://github.com/flarom/cohesion/wiki">Documentation</a>
-            </div>
-            <div>
-                <p>© Copyright 2025 Cohesion — this software is licensed under <a target="_blank" href="https://www.gnu.org/licenses/gpl-3.0.html">GPL-3</a>.</p>
-                <p style="display: flex; align-items: center;">
-                    <span class="icon" style="user-select: none;">language</span>
-                    <button class="secondary" onclick="Language.set('en');">American English</button>
-                    <button class="secondary" onclick="Language.set('pt-br');">Português do Brasil</button>
-                </p>
-            </div>
-        </div>
+    <footer class="statusbar" id="status">
+        <div class="status-bar-left"><!-- use statusbarAPI to interact --></div>
+        <div class="status-bar-right"></div>
     </footer>
 
-    <script src="script/settings.js"></script>
+    <script src="script/settingsAPI.js"></script>
     <script src="script/i18n.js"></script>
-    <script src="script/prompts.js"></script>
+    <script src="script/insert.js"></script>
+    <script src="script/fileAPI.js"></script>
+    <script src="script/toastAPI.js"></script>
+    <script src="script/dialog.js"></script>
+    <script src="script/fileManager.js"></script>
+    <script src="script/statusbarAPI.js"></script>
+    <script src="script/showdown/showdown.js"></script>
+    <script src="script/showdown/scriptExecutionButtonExtension.js"></script>
+
+    <script src="script/codemirror/mode/javascript/javascript.js"></script>
+    <script src="script/codemirror/mode/css/css.js"></script>
+    <script src="script/codemirror/mode/clike/clike.js"></script>
+    <script src="script/codemirror/mode/diff/diff.js"></script>
+    <script src="script/codemirror/mode/php/php.js"></script>
+    <script src="script/codemirror/mode/properties/properties.js"></script>
+    <script src="script/codemirror/mode/python/python.js"></script>
+    <script src="script/codemirror/mode/rust/rust.js"></script>
+    <script src="script/codemirror/mode/shell/shell.js"></script>
+    <script src="script/codemirror/mode/sql/sql.js"></script>
+    <script src="script/codemirror/mode/toml/toml.js"></script>
+    <script src="script/codemirror/mode/xml/xml.js"></script>
+    <script src="script/codemirror/mode/yaml/yaml.js"></script>
     <script>
-        // intro
-        window.addEventListener("load", () => {
-            const title = document.getElementById("intro-title");
-            title.style.visibility = "visible"
-            const text = title.innerText.trim();
-            title.innerHTML = "";
+        const workspace = document.getElementById("workspace");
+        const screens = document.getElementById("screens");
+        const screenA = document.getElementById("screenA");
+        const screenB = document.getElementById("screenB");
 
-            [...text].forEach((letter, i) => {
-                const span = document.createElement("span");
-                span.textContent = letter;
-                span.style.animationDelay = `${i * 0.1}s`;
-                title.appendChild(span);
-            });
+        const toggleSidebarBtn = document.getElementById("toggleSidebarBtn");
+        const switchModeBtn = document.getElementById("switchModeBtn");
+        const splitViewBtn = document.getElementById("splitViewBtn");
 
-            const totalTime = text.length * 200;
+        const newDocumentBtn = document.getElementById("newDocumentBtn");
+        const documentTitle = document.getElementById("documentTitle");
+        const renderer = document.getElementById("renderer");
 
-            setTimeout(() => {
-                const intro = document.getElementById("intro-screen");
-                intro.style.opacity = "0";
+        let mode = "a";
+        let splitEnabled = false;
+        let sidebarVisible = false;
+        let selectedDirectoryId = "";
+        let currentFileId = null;
 
-                setTimeout(() => intro.remove(), 1800);
-            }, totalTime);
+        const expandedDirectories = new Set([""]);
+
+        function render() {
+            const isModeA = mode === "a";
+            const isSplit = mode === "b" && splitEnabled;
+
+            screenA.hidden = !isModeA && !isSplit;
+            screenB.hidden = isModeA;
+            screens.classList.toggle("mode-both", isSplit);
+
+            screenB.classList.toggle("onSplitScreen", isSplit);
+
+            workspace.classList.toggle("sidebar-hidden", !sidebarVisible);
+
+            switchModeBtn.textContent = isModeA ? "import_contacts" : "edit";
+            switchModeBtn.title = isModeA ? "Read" : "Edit";
+            switchModeBtn.setAttribute("data-locale-attr", isModeA ? "title:main.header.switch-mode.read" : "title:main.header.switch-mode.edit");
+            switchModeBtn.classList.toggle("active", mode === "b");
+            translateElement(switchModeBtn);
+            splitViewBtn.classList.toggle("hidden", mode !== "b");
+            splitViewBtn.classList.toggle("active", splitEnabled);
+        }
+
+        toggleSidebarBtn.addEventListener("click", () => {
+            toggleSidebar();
         });
 
-        function loadSettings() {
-            // theme
-            const theme = Settings.getSetting("theme");
-            if (theme) document.body.className = theme;
-            if (Settings.getSetting("theme") === "theme-custom") {
-                applyCustomTheme(Settings.getSetting("theme-custom-value", ""));
+        switchModeBtn.addEventListener("click", () => {
+            mode = mode === "a" ? "b" : "a";
+            render();
+        });
+
+        splitViewBtn.addEventListener("click", () => {
+            if (mode !== "b") {
+                return;
             }
+
+            splitEnabled = !splitEnabled;
+            render();
+        });
+
+        render();
+
+        // MARK: SETTINGS
+        function loadSettings() {
+            // appearance
+            //// theme
+            const theme = Settings.getSetting("theme", "theme-auto");
+            document.body.className = theme;
+            //// fonts
+            const root = document.documentElement;
+
+            const editorFont = Settings.getSetting("editorFont");
+            const paragraphFont = Settings.getSetting("paragraphFont");
+            const titleFont = Settings.getSetting("titleFont");
+
+            if (editorFont) root.style.setProperty("--font-editor", editorFont);
+            if (paragraphFont) root.style.setProperty("--font-text", paragraphFont);
+            if (titleFont) root.style.setProperty("--font-title", titleFont);
         }
+
         loadSettings();
 
-        (() => {
-            const btnText = document.getElementById('primary-button-text');
-            const btnText2 = document.getElementById('primary-button-text2');
-            let showCursor = false;
-            setInterval(() => {
-                showCursor = !showCursor;
-                btnText.innerText = showCursor ? '|' : '';
-                btnText2.textContent = showCursor ? '|' : '';
-            }, 600);
+        // MARK: EDITOR
+        const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+            lineNumbers: true,
+            mode: "markdown",
+            theme: "material-darker",
+            lineWrapping: true,
+            keyMap: "sublime",
+            extraKeys: {
+                Enter: "newlineAndIndentContinueMarkdownList",  // Pressing Enter continues markdown lists
+                "Ctrl-Space": "autocomplete",                   // Trigger autocomplete with Ctrl-Space
+                //"Tab": _snippetTab,                               // Custom snippet tab function
+                //"Shift-Tab": _snippetShiftTab,                  // Custom snippet shift-tab function
+                'Alt-Left': 'goLineStartSmart',
+                'Alt-Right': 'goLineEnd'
+            },
+            styleActiveLine: true,
+        });
+        editor.focus();
 
-            const words = [
-                { text: 'structure',  datalocale: 'dialogs.landing.hero.title-structure',  bg: 'var(--quote-yellow-bg)', border: 'var(--quote-yellow)'},
-                { text: 'focus',      datalocale: 'dialogs.landing.hero.title-focus',      bg: 'var(--quote-red-bg)',    border: 'var(--quote-red)'},
-                { text: 'simplicity', datalocale: 'dialogs.landing.hero.title-simplicity', bg: 'var(--quote-purple-bg)', border: 'var(--quote-purple)'},
-                { text: 'cohesion',   datalocale: 'dialogs.landing.hero.title-cohesion',   bg: 'var(--quote-blue-bg)',   border: 'var(--quote-blue)'},
-                { text: 'clarity',    datalocale: 'dialogs.landing.hero.title-clarity',    bg: 'var(--quote-green-bg)',  border: 'var(--quote-green)'},
-            ];
-            const element = document.getElementById('cycling-word');
-            let index = 0;
+        // Initialize file manager
+        (async () => {
+            await fileManager.initializeFileManager();
+            await updateTitle();
 
-            setTimeout(() => {
-                element.style.width = Math.ceil(element.getBoundingClientRect().width) + 'px';
-            }, 0);
-
-            setInterval(() => {
-                const word = words[index];
-                element.style.backgroundColor = word.bg;
-                element.style.color = word.border;
-                
-                const temp = document.createElement('span');
-                temp.className = 'cycle-item';
-                temp.style.position = 'absolute';
-                temp.style.visibility = 'hidden';
-                temp.style.transform = 'none';
-                temp.textContent = word.text;
-                temp.dataset.locale = word.datalocale;
-                element.appendChild(temp);
-
-                translateWithin(element);
-
-                const cs = getComputedStyle(element);
-                const paddingH = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
-                const borderH = parseFloat(cs.borderLeftWidth) + parseFloat(cs.borderRightWidth);
-                const newWidth = Math.ceil(temp.getBoundingClientRect().width + paddingH + borderH);
-
-
-                temp.remove();
-
-                element.style.width = newWidth + 'px';
-
-                requestAnimationFrame(() => {
-                    element.innerHTML = `<span class="cycle-item" data-locale="${word.datalocale}">${word.text}</span>`;
-                    translateWithin(element);
-                });
-
-                index = (index + 1) % words.length;
-            }, 2000);
+            if (fileManager.projects.length === 0) {
+                showDialogFile("dialog/projectsDialog.html", {introSequence: true});
+            }
         })();
 
-        async function handleStartApplication() {
-            if (/Mobi|Android/i.test(navigator.userAgent)) {
-                if (await promptConfirm(`<h2>It looks like you're using a mobile device</h2>
-                <p>Cohesion works on phones and tablets, but editing Markdown may feel less comfortable on touch-based screens.</p>
-                <p>For the best experience, we recommend using Cohesion on a desktop or any device with a physical keyboard.</p>
-                <p>Continue anyway?</p>`) == false) {
-                    return;
+        // MARK: RENDERER
+        const converter = new showdown.Converter({
+            extensions: ["scriptExecutionButton"],
+        });
+
+        converter.setOption('ghCompatibleHeaderId', true);
+        converter.setOption('parseImgDimensions', true);
+        converter.setOption('simplifiedAutoLink', true);
+        converter.setOption('literalMidWordUnderscores', true);
+        converter.setOption('strikethrough', true);
+        converter.setOption('tables', true);
+        converter.setOption('tasklists', true);
+        converter.setOption('smoothLivePreview', true);
+        converter.setOption('requireSpaceBeforeHeadingText', true);
+        converter.setOption('openLinksInNewWindow', true);
+        converter.setOption('backslashEscapesHTMLTags', true);
+        converter.setOption('emoji', true);
+        converter.setOption('underline', true);
+        converter.setOption('metadata', true);
+        converter.setOption('splitAdjacentBlockquotes', true);
+        converter.setOption('moreStyling', true);
+        converter.setOption('imageTitleAsLegend', true);
+
+        let updateTimeout;
+
+        editor.on("change", () => {
+            
+            clearTimeout(updateTimeout);
+            updateTimeout = setTimeout(() => {
+                const markdownText = editor.getValue();
+                const html = converter.makeHtml(markdownText);
+                renderer.innerHTML = html;
+                
+                // Autosave the current file
+                fileManager.autosaveCurrentFile();
+            }, 500);
+        });
+
+        async function updateTitle() {
+            if (!fileManager.currentProjectId) {
+                documentTitle.innerHTML = "";
+                document.title = "Cohesion";
+                return;
+            }
+
+            const projectLabel = fileManager.currentProjectId.split("/").pop();
+            const title = await file.getMarkdownTitle(fileManager.currentFileId);
+            // documentTitle.innerHTML = projectLabel + "/" + (title || "New document");
+            documentTitle.innerHTML = `<span class="file-title">${title || "New document"}</span> <span class="project-label">${projectLabel}</span>`;
+            document.title = `${title} - Cohesion`;
+            return;
+        }
+
+        // MARK: Keyboard shortcuts
+        // File
+        //// ctrl+s save file
+        document.addEventListener("keydown", (event) => {
+            if (event.ctrlKey && event.key === "s") {
+                event.preventDefault();
+                saveCurrentFile();
+            }
+        });
+        // View
+        //// ctrl+p switch between the three view modes (editor, renderer, split)
+        document.addEventListener("keydown", (event) => {
+            if (event.ctrlKey && event.key === "p") {
+                event.preventDefault();
+                if (mode === "a") {
+                    mode = "b";
+                    splitEnabled = false;
+                } else if (mode === "b" && !splitEnabled) {
+                    splitEnabled = true;
+                } else {
+                    mode = "a";
+                    splitEnabled = false;
+                }
+                render();
+                editor.focus();
+            }
+        });
+        //// ctrl+' toggle sidebar
+        document.addEventListener("keydown", (event) => {
+            if (event.ctrlKey && event.key === "'") {
+                event.preventDefault();
+                toggleSidebar();
+            }
+        });
+        //// esc focus editor
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                editor.focus();
+                if (mode === "b" && !splitEnabled) {
+                    mode = "a";
+                    render();
                 }
             }
+        });
+        // Format
+        //// ctrl+b bold
+        document.addEventListener("keydown", (event) => {
+            if (event.ctrlKey && event.key === "b") {
+                event.preventDefault();
+                insert.wrap("**", "**", "Bold text");
+            }
+        });
+        //// ctrl+i italic
+        document.addEventListener("keydown", (event) => {
+            if (event.ctrlKey && event.key === "i") {
+                event.preventDefault();
+                insert.wrap("*", "*", "Italic text");
+            }
+        });
+        // Insert
+        //// F6 insert date and time
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "F6") {
+                event.preventDefault();
+                insert.atCursor(strftime(Settings.getSetting('timeFormatting', '%d/%m/%Y %H:%M')), true);
+            }
+        });
+        // Misc
+        //// F1 open about dialog
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "F1") {
+                event.preventDefault();
+                closeAllDialogs();
+                showDialogFile('dialog/aboutDialog.html');
+            }
+        });
+        //// Ctrl+, open settings
+        document.addEventListener("keydown", (event) => {
+            if (event.ctrlKey && event.key === ",") {
+                event.preventDefault();
+                closeAllDialogs();
+                showDialogFile('dialog/settings.html');
+            }
+        });
+        //// Ctrl+Ç test shortcut that will be removed at some point
+        document.addEventListener("keydown", (event) => {
+            if (event.ctrlKey && event.key === "ç") {
+                event.preventDefault();
+                insert.snippet("$CURSOR_NUMBER");
+            }
+        });
 
-            window.open('app', '_self');
-        }
-
-        function changeTheme() {
-            let current = Settings.getSetting('theme');
-            if (current === 'theme-dark') {
-                Settings.setSetting('theme', 'theme-light');
+        function toggleSidebar(show = "auto") {
+            if (show === "auto") {
+                sidebarVisible = !sidebarVisible;
+            } else if (show === "true") {
+                sidebarVisible = true;
             } else {
-                Settings.setSetting('theme', 'theme-dark');
+                sidebarVisible = false;
             }
-            loadSettings();
+
+            Settings.setSetting("sidebarVisible", sidebarVisible);
+            
+            render();
         }
 
-        async function handleMoreMenu() {
-            const selection = await promptSelect("More options", ["Editor", "Tools", "Documentation", "GitHub"]);
+        toggleSidebar(Settings.getSetting("sidebarVisible", "true"));
 
-            switch (selection) {
-                case 0: handleStartApplication(); break;
-                case 1: window.open('tools.html', '_self'); break;
-                case 2: window.open('https://github.com/flarom/cohesion/wiki'); break;
-                case 3: window.open('https://github.com/flarom/cohesion'); break;
+        async function saveCurrentFile() {
+            if (!fileManager.currentProjectId || !fileManager.currentFileId) {
+                Toast.show("Open a project and select a file first", "warning");
+                return;
             }
-        }
 
-        function scrollToFeatures() {
-            document.getElementById('features').scrollIntoView({ behavior: 'smooth' });
+            const title = await file.getMarkdownTitle(fileManager.currentFileId);
+            showDialogFile('dialog/saveFileDialog.html', {filename: title || "New document"});
         }
     </script>
 </body>
+
 </html>

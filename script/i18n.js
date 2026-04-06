@@ -19,19 +19,19 @@ const I18n = {
     cache: {},
 
     async load(lang) {
-    if (lang === "en") return null;
+        if (lang === "en") return null;
 
-    if (!this.cache[lang]) {
-        const res = await fetch(`./locale/${lang}.json`);
-        const json = await res.json();
+        if (!this.cache[lang]) {
+            const res = await fetch(`./locale/${lang}.json`);
+            const json = await res.json();
 
-        this.cache[lang] = {
-        meta: json.meta,
-        strings: flattenSections(json.strings)
-        };
-    }
+            this.cache[lang] = {
+            meta: json.meta,
+            strings: flattenSections(json.strings)
+            };
+        }
 
-    return this.cache[lang];
+        return this.cache[lang];
     },
 
     interpolate(str, el) {
@@ -136,9 +136,25 @@ const I18n = {
         });
     },
 
-    getMeta(lang = Language.get()) {
+    async getMeta(lang = Language.get()) {
+        if (lang === "en") {
+            return {
+                name: "English",
+                nativeName: "English",
+                direction: "ltr",
+                status: "Native",
+                translators: [
+                    {
+                        name: "Cohesion",
+                        role: "Translator",
+                        links: {}
+                    }
+                ]
+            }
+        }
+        await this.load(lang);
         return this.cache[lang]?.meta || null;
-    },
+    }
 };
 
 function interpolate(str, vars = {}) {

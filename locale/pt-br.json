@@ -1,10 +1,9 @@
 {
     "meta": {
-        "code": "pt-br",
         "name": "Portuguese (Brazil)",
         "nativeName": "Português do Brasil",
         "direction": "ltr",
-        "status": "90%",
+        "status": "work in progress",
         "translators": [
             {
                 "name": "Flarom",
@@ -19,394 +18,109 @@
     },
 
     "strings": {
-        "GENERIC": {
-            "generic.more-menu": "Mais opções",
-            "generic.learn-more": "Saiba mais",
-            "generic.undo": "Desfazer",
-            "generic.redo": "Refazer",
-            "generic.search": "Buscar",
-            "generic.yes": "Sim",
-            "generic.no": "Não",
-            "generic.cancel": "Cancelar",
-            "generic.save": "Salvar"
+        "COMMON": {
+            "common.ok": "OK",
+            "common.cancel": "Cancelar",
+            "common.yes": "Sim",
+            "common.no": "Não",
+            "common.close": "Fechar",
+            "common.open": "Abrir",
+            "common.save": "Salvar",
+            "common.delete": "Excluir",
+            "common.edit": "Editar",
+            "common.view": "Visualizar",
+            "common.help": "Ajuda"
         },
-
-        "APP": {
-            "TOOLBAR": {
-                "app.toolbar.toggle-sidebar": "Alternar barra lateral",
-                "app.toolbar.new-document": "Novo documento",
-                "app.toolbar.insert-menu": "Inserir",
-                "app.toolbar.insert-menu.date-and-time": "Data e hora",
-                "app.toolbar.insert-menu.image":"Imagem",
-                "app.toolbar.insert-menu.audio":"Áudio",
-                "app.toolbar.insert-menu.video":"Vídeo",
-                "app.toolbar.insert-menu.block": "Bloco",
-                "app.toolbar.insert-menu.table": "Tabela",
-                "app.toolbar.insert-menu.table-of-contents": "Índice",
-                "app.toolbar.insert-menu.document-meta": "Metadados do documento",
-                "app.toolbar.insert-menu.web-embed": "Incorporação da web",
-                "app.toolbar.highlighter": "Marca texto",
-                "app.toolbar.comments": "Comentários",
-                "app.toolbar.read": "Ler",
-                "app.toolbar.write": "Escrever",
-                "app.toolbar.more-menu.new": "Novo",
-                "app.toolbar.more-menu.open": "Abrir",
-                "app.toolbar.more-menu.save": "Salvar",
-                "app.toolbar.more-menu.share": "Compartilhar",
-                "app.toolbar.more-menu.search-documents": "Buscar documentos",
-                "app.toolbar.more-menu.resources": "Recursos",
-                "app.toolbar.more-menu.settings": "Configurações",
-                "app.toolbar.more-menu.help": "Ajuda",
-                "app.toolbar.more-menu.markdown-cheat-sheet": "Cola de Markdown",
-                "app.toolbar.more-menu.keyboard-shortcuts": "Atalhos de teclado",
-                "app.toolbar.more-menu.about-cohesion": "Sobre o Cohesion"
-            },
-            "SIDEBAR": {
-                "app.sidebar.create-new-document": "Criar novo documento",
-                "app.sidebar.project-menu.export": "Exportar projeto",
-                "app.sidebar.project-menu.rename": "Renomear projeto",
-                "app.sidebar.project-menu.delete": "Deletar projeto",
-                "app.sidebar.file-menu.duplicate": "Duplicar",
-                "app.sidebar.file-menu.download": "Salvar",
-                "app.sidebar.file-menu.delete": "Deletar",
-                "app.sidebar.file.readtime": "{readTime} para ler"
-            },
-            "SEARCH HEADER": {
-                "app.search-header.previous-result": "Resultado anterior",
-                "app.search-header.next-result": "Resultado seguinte",
-                "app.search-header.match-casing": "Diferenciar maíusculas de minusculas",
-                "app.search-header.regular-expression": "Expressão regular",
-                "app.search-header.replace": "Substituír"
-            },
-            "REPLACE HEADER": {
-                "app.replace-header.replace": "Substituír",
-                "app.replace-header.replace-all": "Subs. todos"
-            },
-            "EDITOR CONTEXT MENU": {
-                "app.editor.context-menu.bold": "Negrito",
-                "app.editor.context-menu.italic": "Itálico",
-                "app.editor.context-menu.underline": "Sublinhado",
-                "app.editor.context-menu.strikethrough": "Riscado",
-                "app.editor.context-menu.preformatted": "Preformatado",
-                "app.editor.context-menu.highlight": "Demarcado",
-                "app.editor.context-menu.link": "Link",
-                "app.editor.context-menu.cut": "Recortar",
-                "app.editor.context-menu.copy": "Copiar",
-                "app.editor.context-menu.paste": "Colar",
-                "app.editor.context-menu.delete": "Deletar",
-                "app.editor.context-menu.select-all": "Selecionar tudo"
-            },
-            "STATUS BAR": {
-                "app.status-bar.cursor.single": "Ln {line}, Col {col}",
-                "app.status-bar.cursor.single.selected": "Ln {line}, Col {col} ({count} Selecionado)",
-                "app.status-bar.cursor.multi": "{count} Cursores",
-                "app.status-bar.cursor.multi.selected": "{count} Cursores ({selected} Selecionado)",
-                "app.status-bar.editor-mode.read-mode": "Modo de leitura",
-                "app.status-bar.editor-mode.edit-mode": "Modo de edição",
-                "app.status-bar-document-size.characters": "Caracteres",
-                "app.status-bar-document-size.words": "Palavras"
-            }
+        "MAIN": {
+            "main.header.toggle-sidebar": "Alternar barra lateral",
+            "main.header.new-document": "Novo documento",
+            "main.header.undo": "Desfazer",
+            "main.header.redo": "Refazer",
+            "main.header.insert": "Inserir",
+            "main.header.insert.date-and-time": "Data e hora",
+            "main.header.insert.file": "Arquivo",
+            "main.header.insert.table": "Tabela",
+            "main.header.insert.table-of-contents": "Índice",
+            "main.header.insert.document-metadata": "Metadados do documento",
+            "main.header.search": "Localizar e substituir",
+            "main.header.switch-mode.read": "Ler",
+            "main.header.switch-mode.edit": "Editar",
+            "main.header.split-view": "Visualização dividida",
+            "main.header.more-options": "Mais opções",
+            "main.header.more-options.new": "Novo",
+            "main.header.more-options.open": "Abrir",
+            "main.header.more-options.save": "Salvar",
+            "main.header.more-options.my-projects": "Meus projetos",
+            "main.header.more-options.settings": "Preferências",
+            "main.header.more-options.help": "Ajuda",
+            "main.header.more-options.keyboard-shortcuts": "Atalhos de teclado",
+            "main.header.more-options.about-cohesion": "Sobre o Cohesion",
+            "main.sidebar.file-menu.duplicate": "Duplicar",
+            "main.sidebar.file-menu.save": "Salvar",
+            "main.sidebar.file-menu.delete": "Excluir"
         },
-
-        "ABOUT": {
-            "MAIN": {
-                "dialogs.about.main.landing-page": "Página inicial",
-                "dialogs.about.main.report-an-issue": "Denunciar um problema",
-                "dialogs.about.main.credits": "Créditos",
-                "dialogs.about.main.legal": "Legal"
-            },
-            "CREDITS": {
-                "dialogs.about.credits.back": "Voltar",
-                "dialogs.about.credits.libraries": "Bibliotecas",
-                "dialogs.about.credits.libraries.text-editor": "Editor de texto",
-                "dialogs.about.credits.libraries.markdown-parser": "Conversor de Markdown",
-                "dialogs.about.credits.libraries.compressor": "Compressor",
-                "dialogs.about.credits.libraries.pdf-export": "Exportação para PDF",
-                "dialogs.about.credits.libraries.syntax-highlight": "Highlight de sintaxe",
-                "dialogs.about.credits.graphics": "Gráficos",
-                "dialogs.about.credits.graphics.symbolic-icons": "Ícones simbólicos",
-                "dialogs.about.credits.graphics.colored-icons": "Ícones coloridos",
-                "dialogs.about.credits.general-inspiration": "Inspiração no geral",
-                "dialogs.about.credits.general-inspiration.original-app-icon": "Ícone original do aplicativo",
-                "dialogs.about.credits.general-inspiration.layout-and-design": "Leiaute e design"
-            },
-            "LEGAL": {
-                "dialogs.about.credits.general-inspiration.design-guidelines": "Diretrizes de design",
-                "dialogs.about.legal.back": "Voltar",
-                "dialogs.about.legal.notice": "Este aplicativo não oferece absolutamente nenhuma garantia. Ele é licenciado sob a {licenseLink}."
-            }
-        },
-
-        "CHEATSHEET": {
-            "dialogs.cheatsheet.headers": "Títulos",
-            "dialogs.cheatsheet.headers.header1": "Título 1",
-            "dialogs.cheatsheet.headers.header2": "Título 2",
-            "dialogs.cheatsheet.headers.header3": "Título 3",
-            "dialogs.cheatsheet.styling": "Estilo",
-            "dialogs.cheatsheet.styling.emphasize": "Enfatizar.",
-            "dialogs.cheatsheet.styling.strong": "Grifar.",
-            "dialogs.cheatsheet.styling.marked-text": "Texto demarcado.",
-            "dialogs.cheatsheet.styling.mistaken-text": "Texto incorreto.",
-            "dialogs.cheatsheet.styling.underlined-text": "Texto sublinhado.",
-            "dialogs.cheatsheet.styling.quoted-text": "Texto citado.",
-            "dialogs.cheatsheet.styling.subscript": "<span style='opacity: 50%;'>H</span>~<sub style='opacity: 50%;'>2</sub>~<span style='opacity: 50%;'>O é um liquido.</span>",
-            "dialogs.cheatsheet.styling.superscript": "<span style='opacity: 50%;'>2</span>^<sup style='opacity: 50%;'>10</sup>^<span style='opacity: 50%;'> é 1024.</span>",
-            "dialogs.cheatsheet.lists": "Listas",
-            "dialogs.cheatsheet.lists.ul.item": "Item",
-            "dialogs.cheatsheet.lists.ol.item-1": "Primeiro item",
-            "dialogs.cheatsheet.lists.ol.item-2": "Segundo item",
-            "dialogs.cheatsheet.lists.ol.item-3": "Terceiro item",
-            "dialogs.cheatsheet.lists.tl.incomplete": "Item incompleto",
-            "dialogs.cheatsheet.lists.tl.complete": "Item completo",
-            "dialogs.cheatsheet.links": "Links",
-            "dialogs.cheatsheet.links.link-1": "<span style='opacity: 50%;'>Visite</span> &lt;https://example.com&gt;<span style='opacity: 50%;'>.</span>",
-            "dialogs.cheatsheet.links.link-2": "<span style='opacity: 50%;'>Um</span> [link](https://example.com)<span style='opacity: 50%;'>.</span>",
-            "dialogs.cheatsheet.links.link-3": "<span style='opacity: 50%;'>Um endereço de email:</span> &lt;mail@example.com&gt;<span style='opacity: 50%;'>.</span>",
-            "dialogs.cheatsheet.links.link-4": "<span style='opacity: 50%;'>Uma imagem:</span> ![Alt](resources/image.png)<span style='opacity: 50%;'>.</span>",
-            "dialogs.cheatsheet.code": "Código",
-            "dialogs.cheatsheet.code.inline": "<span style='opacity: 50%;'>Um </span>`<code style='opacity: 50%;'>código em linha</code>`<span style='opacity: 50%;'>.</span>",
-            "dialogs.cheatsheet.code.block": "// Um bloco de código",
-            "dialogs.cheatsheet.code.highlighted": "// Um bloco de código demarcado",
-            "dialogs.cheatsheet.tables": "Tabelas",
-            "dialogs.cheatsheet.tables.table-1": "Item       | Valor\n---------- | -----\nComputador | $1600\nTelefone   | $12\nCano       | $1",
-            "dialogs.cheatsheet.tables.table-2": "|   Coluna 1   |           Coluna 2 |\n|:------------:| ------------------:|\n| Centralizado | alinhado à direita |",
-            "dialogs.cheatsheet.definition-lists": "Listas de definição",
-            "dialogs.cheatsheet.definition-lists-definition": "Ferramenta de conversão de texto-para-HTML",
-            "dialogs.cheatsheet.abbreviations": "Abreviações",
-            "dialogs.cheatsheet.abbreviations.html": "<span style='opacity: 50%;'>Markdown converte texto para </span> <abbr title='Linguagem de Marcação de HiperTexto'>HTML</abbr><span style='opacity: 50%;'>.</span><br>\n\n*[HTML]: Linguagem de Marcação de HiperTexto",
-            "dialogs.cheatsheet.learn-more": "Visite a {cohesionWiki} para aprender mais."
-        },
-
-        "LANDING": {
-            "HEADER": {
-                "dialogs.landing.header.editor": "Editor",
-                "dialogs.landing.header.tools": "Ferramentas",
-                "dialogs.landing.header.documentation": "Documentação",
-                "dialogs.landing.header.github": "GitHub"
-            },
-            "HERO": {
-                "dialogs.landing.hero.title-start": "Traga ",
-                "dialogs.landing.hero.title-end": " para suas ideias",
-                "dialogs.landing.hero.title-clarity": "clareza",
-                "dialogs.landing.hero.title-structure": "estrutura",
-                "dialogs.landing.hero.title-focus": "foco",
-                "dialogs.landing.hero.title-simplicity": "simplicidade",
-                "dialogs.landing.hero.title-cohesion": "coesão",
-                "dialogs.landing.hero.hero": "Cohesion é um editor Markdown, minimo e lindo,<br>designado para clareza e expressão",
-                "dialogs.landing.hero.cta": "Começar a criar..."
-            },
-            "FEATURES": {
-                "dialogs.landing.features.keyboard-centric-design": "Design teclado centrico",
-                "dialogs.landing.features.keyboard-centric-design.paragraph": "Escreva documentos complexos sem tirar suas mãos do teclado.",
-                "dialogs.landing.features.in-browser-local-storage": "Armazenamento local no navegador",
-                "dialogs.landing.features.in-browser-local-storage.paragraph-1": "Seus arquivos não são enviados para nós, Cohesion salva seus arquivos no seu navegador.",
-                "dialogs.landing.features.in-browser-local-storage.paragraph-2": "Você também pode criar backups de todos seus dados com um único clique.",
-                "dialogs.landing.features.export-as": "Exportar como",
-                "dialogs.landing.features.the-way-you-like": "Como você gosta",
-                "dialogs.landing.features.the-way-you-like.paragraph": "Personalize seu editor com temas ou até seu próprio CSS.",
-                "dialogs.landing.features.instant-search": "Busca instantânea",
-                "dialogs.landing.features.instant-search.paragraph": "Encontre rapidamente qualquer fragmento de texto usando a ferramenta de busca inclusa, otimizando seu fluxo de trabalho.",
-                "dialogs.landing.features.ideas-organize-themselves": "Ideias se organizam",
-                "dialogs.landing.features.ideas-organize-themselves.paragraph": "Organize seus arquivos Markdown com projetos, tags e metadados.",
-                "dialogs.landing.features.free-and-opensource": "Grátis e de código fonte aberto",
-                "dialogs.landing.features.free-and-opensource.source-code": "Código fonte",
-                "dialogs.landing.features.completely-zen": "Completamente zen",
-                "dialogs.landing.features.completely-zen.paragraph-1": "Escreva sem nenhuma distração. Você não precisa criar uma conta, pagar uma assinatura mensal, assistir anúncios, ou treinar IA.",
-                "dialogs.landing.features.completely-zen.paragraph-2": "É só um editor de texto."
-            }
-        },
-
         "SETTINGS": {
-            "APPEARENCE": {
-                "dialogs.settings.main.appearence": "Aparência",
-                "dialogs.settings.main.appearence.theme.epaper": "ePaper",
-                "dialogs.settings.main.appearence.theme.light": "Claro",
-                "dialogs.settings.main.appearence.theme.cream": "Creme",
-                "dialogs.settings.main.appearence.theme.nord": "Nord",
-                "dialogs.settings.main.appearence.theme.dark": "Escuro",
-                "dialogs.settings.main.appearence.theme.monokai": "Monokai",
-                "dialogs.settings.main.appearence.theme.gruvbox-dark": "Gruvbox Escuro",
-                "dialogs.settings.main.appearence.theme.oled": "OLED",
-                "dialogs.settings.main.appearence.theme.custom": "Personalizado",
-                "dialogs.settings.main.appearence.fonts.editor-font": "Fonte do editor",
-                "dialogs.settings.main.appearence.fonts.paragraph-font": "Fonte em parágrafos de texto",
-                "dialogs.settings.main.appearence.fonts.title-font": "Fonte em títulos"
-            },
-            "LANGUAGE": {
-                "dialogs.settings.main.language": "Idioma",
-                "dialogs.settings.main.translating": "Ajude a traduzir o Cohesion"
-            },
-            "SUGGESTIONS": {
-
-                "dialogs.settings.main.suggestions": "Sugestões",
-                "dialogs.settings.main.suggestions.suggest-document-words": "Sugerir palavras do documento",
-                "dialogs.settings.main.suggestions-suggest-emojis": "Sugerir emojis",
-                "dialogs.settings.main.suggestions-suggest-resources": "Sugerir recursos",
-                "dialogs.settings.main.suggestions-suggest-slash-commands": "Sugerir comandos de barra"
-            },
-            "BEHAVIOR": {
-                "dialogs.settings.main.behavior": "Comportamento",
-                "dialogs.settings.main.behavior.auto-close-brackets": "Auto-completar parênteses",
-                "dialogs.settings.main.behavior.auto-close-markdown-notation": "Auto-completar notação de Markdown",
-                "dialogs.settings.main.behavior.auto-close-ml-tags": "Auto-completar notação de ML",
-                "dialogs.settings.main.behavior.line-numbers": "Números de linha",
-                "dialogs.settings.main.behavior.full-width": "Largura total",
-                "dialogs.settings.main.behavior.highlight-active-line": "Destacar linha ativa",
-                "dialogs.settings.main.behavior.highlight-similar-symbols": "Destacar simbolos similares",
-                "dialogs.settings.main.behavior.follow-links": "Abrir links com Ctrl+Clique",
-                "dialogs.settings.main.behavior.rtl-text-align": "Texto alinhado como RTL"
-            },
-            "DATE AND TIME": {
-                "dialogs.settings.main.date-and-time": "Data e hora",
-                "dialogs.settings.main.date-and-time.day": "Dia",
-                "dialogs.settings.main.date-and-time.day.tooltip.btn2": "Nome completo do dia da semana (ex., 'Domingo')",
-                "dialogs.settings.main.date-and-time.day.tooltip.btn1": "Nome abreviado do dia da semana (ex., 'Dom' para Domingo)",
-                "dialogs.settings.main.date-and-time.day.tooltip.btn3": "Dia do mês com zero na frente (01-31)",
-                "dialogs.settings.main.date-and-time.day.tooltip.btn14": "Dia do mês sem zero na frente (1-31)",
-                "dialogs.settings.main.date-and-time.month": "Mês",
-                "dialogs.settings.main.date-and-time.month.tooltip.btn5": "Nome completo do mês (ex., 'Setembro')",
-                "dialogs.settings.main.date-and-time.month.tooltip.btn4": "Nome abreviado do mês (ex., 'Set' para Setembro)",
-                "dialogs.settings.main.date-and-time.month.tooltip.btn6": "Número do mês com zero na frente (01-12)",
-                "dialogs.settings.main.date-and-time.month.tooltip.btn15": "Número do mês sem zero na frente (1-12)",
-                "dialogs.settings.main.date-and-time.year": "Ano",
-                "dialogs.settings.main.date-and-time.year.tooltip.btn8": "Ano completo com século (ex., '2024')",
-                "dialogs.settings.main.date-and-time.year.tooltip.btn7": "Ano sem século, em dois digitos (ex., '24' para 2024)",
-                "dialogs.settings.main.date-and-time.hour": "Hora",
-                "dialogs.settings.main.date-and-time.hour.tooltip.btn9": "Hora (relógio de 24 horas) com zero na frente (00-23)",
-                "dialogs.settings.main.date-and-time.hour.tooltip.btn16": "Hora (relógio de 24 horas) sem zero na frente (0-23)",
-                "dialogs.settings.main.date-and-time.hour.tooltip.btn10": "Hora (relógio de 12 horas) com zero na frente (01-12)",
-                "dialogs.settings.main.date-and-time.hour.tooltip.btn17": "Hora (relógio de 12 horas) sem zero na frente (1-12)",
-                "dialogs.settings.main.date-and-time.hour.tooltip.btn11": "Indicador de AM ou PM",
-                "dialogs.settings.main.date-and-time.minute": "Minuto",
-                "dialogs.settings.main.date-and-time.minute.tooltip.btn12": "Minuto com zero na frente (00-59)",
-                "dialogs.settings.main.date-and-time.minute.tooltip.btn18": "Minuto sem zero na frente (0-59)",
-                "dialogs.settings.main.date-and-time.second": "Segundo",
-                "dialogs.settings.main.date-and-time.second.tooltip.btn13": "Segundo com zero na frente (00-59)",
-                "dialogs.settings.main.date-and-time.second.tooltip.btn19": "Segundo sem zero na frente (0-59)",
-                "dialogs.settings.main.date-and-time.learn-more": "Saiba mais sobre a sintaxe de data e hora"
-            },
-            "DOCUMENT METADATA": {
-                "dialogs.settings.main.document-metadata": "Metadados do documento",
-                "dialogs.settings.main.document-metadata.edit-metadata": "Editar metadados",
-                "dialogs.settings.main.document-metadata.learn-more": "Saiba mais sobre a sintaxe de metadados",
-                "dialogs.settings.main.document-metadata.editor-auto-meta": "Inserir bloco de metadados automaticamente em novos documentos"
-            },
-            "STATUS BAR": {
-                "dialogs.settings.main.status-bar": "Barra de status",
-                "dialogs.settings.main.status-bar.cursor-position": "Posição do cursor",
-                "dialogs.settings.main.status-bar.editor-mode": "Modo do editor",
-                "dialogs.settings.main.status-bar.document-size": "Tamanho do documento"
-            },
-            "BACKUPS": {
-                "dialogs.settings.main.backups": "Backups",
-                "dialogs.settings.main.backups.backup-reminder": "Lembrete mensal de backup",
-                "dialogs.settings.main.backups.download-backup": "Baixar backup",
-                "dialogs.settings.main.backups.download-backup.description": "Exportar seus documentos como um arquivo zip",
-                "dialogs.settings.main.backups.export": "Exportar",
-                "dialogs.settings.main.backups.import-backup": "Importar backup",
-                "dialogs.settings.main.backups.import-backup.description": "Importar documentos de um arquivo zip",
-                "dialogs.settings.main.backups.import": "Importar",
-                "dialogs.settings.main.backups.replace-with-backup": "Substituír por um backup",
-                "dialogs.settings.main.backups.replace-with-backup.description": "Importar documentos de um arquivo zip, substituíndo seus arquivos atuais",
-                "dialogs.settings.main.backups.replace": "Substituír",
-                "dialogs.settings.main.backups.delete-empty-files": "Deletar arquivos vazios",
-                "dialogs.settings.main.backups.delete-empty-files.description": "Deletar todos arquivos que não tenham nenhum texto ou meta",
-                "dialogs.settings.main.backups.delete": "Deletar"
-            },
-            "EXTENSIONS": {
-                "dialogs.settings.main.extensions": "Extensões",
-                "dialogs.settings.main.extensions.add-extension": "Adicionar extensão",
-                "dialogs.settings.main.extensions.import-from-file": "Importar de arquivo",
-                "dialogs.settings.main.extensions.update-all-extensions": "Atualizar todas extensões",
-                "dialogs.settings.main.extensions.get-extensions": "Baixar extensões",
-                "dialogs.settings.main.extensions.read-documentation": "Ler documentação online",
-                "dialogs.settings.main.extensions.update-extension": "Atualizar extensão",
-                "dialogs.settings.main.extensions.edit-source-code": "Editar código fonte",
-                "dialogs.settings.main.extensions.delete-extension": "Deletar extensão"
-            }
+            "dialogs.settings.appearence.title": "Aparência",
+            "dialogs.settings.appearence.theme.auto": "Automático",
+            "dialogs.settings.appearence.theme.light": "Claro",
+            "dialogs.settings.appearence.theme.cream": "Creme",
+            "dialogs.settings.appearence.theme.dark": "Escuro",
+            "dialogs.settings.appearence.theme.epaper": "ePaper",
+            "dialogs.settings.appearence.theme.nord": "Nord",
+            "dialogs.settings.appearence.theme.solarized-dark": "Solarizado Escuro",
+            "dialogs.settings.appearence.theme.gruvbox-dark": "Gruvbox Escuro",
+            "dialogs.settings.appearence.theme.monokai": "Monokai",
+            "dialogs.settings.appearence.theme.oled": "OLED",
+            "dialogs.settings.appearence.font.editor": "Fonte do editor",
+            "dialogs.settings.appearence.font.paragraph": "Fonte dos paragrafos",
+            "dialogs.settings.appearence.font.title": "Fonte dos títulos",
+            "dialogs.settings.language.title": "Idioma",
+            "dialogs.settings.language.label": "Idioma",
+            "dialogs.settings.language.help": "Ajude a traduzir o Cohesion",
+            "dialogs.settings.behavior.title": "Comportamento",
+            "dialogs.settings.behavior.show-splash-screen": "Mostrar tela de início ao iniciar",
+            "dialogs.settings.behavior.time-formatting": "Formatação de data e hora",
+            "dialogs.settings.behavior.time-formatting.reset": "Redefinir",
+            "dialogs.settings.behavior.time-formatting.remove": "Remover",
+            "dialogs.settings.behavior.time-formatting.day": "Dia",
+            "dialogs.settings.behavior.time-formatting.day.btn1": "Nome completo do dia da semana (ex: 'Domingo')",
+            "dialogs.settings.behavior.time-formatting.day.btn2": "Nome abreviado do dia da semana (ex: 'Dom' para Domingo)",
+            "dialogs.settings.behavior.time-formatting.day.btn3": "Dia do mês com zero à esquerda (01-31)",
+            "dialogs.settings.behavior.time-formatting.day.btn4": "Dia do mês sem zero à esquerda (1-31)",
+            "dialogs.settings.behavior.time-formatting.month": "Mês",
+            "dialogs.settings.behavior.time-formatting.month.btn1": "Nome completo do mês (ex: 'Setembro')",
+            "dialogs.settings.behavior.time-formatting.month.btn2": "Nome abreviado do mês (ex: 'Set' para Setembro)",
+            "dialogs.settings.behavior.time-formatting.month.btn3": "Mês como número com zero à esquerda (01-12)",
+            "dialogs.settings.behavior.time-formatting.month.btn4": "Mês como número sem zero à esquerda (1-12)",
+            "dialogs.settings.behavior.time-formatting.year": "Ano",
+            "dialogs.settings.behavior.time-formatting.year.btn1": "Ano com quatro dígitos (ex: '2024')",
+            "dialogs.settings.behavior.time-formatting.year.btn2": "Ano com dois dígitos (ex: '24')",
+            "dialogs.settings.behavior.time-formatting.hour": "Hora",
+            "dialogs.settings.behavior.time-formatting.hour.btn1": "Hora (relógio de 24 horas) com zero à esquerda (00-23)",
+            "dialogs.settings.behavior.time-formatting.hour.btn2": "Hora (relógio de 24 horas) sem zero à esquerda (0-23)",
+            "dialogs.settings.behavior.time-formatting.hour.btn3": "Hora (relógio de 12 horas) com zero à esquerda (01-12)",
+            "dialogs.settings.behavior.time-formatting.hour.btn4": "Hora (relógio de 12 horas) sem zero à esquerda (1-12)",
+            "dialogs.settings.behavior.time-formatting.hour.btn5": "Indicador de AM e PM",
+            "dialogs.settings.behavior.time-formatting.minute": "Minuto",
+            "dialogs.settings.behavior.time-formatting.second": "Segundo",
+            "dialogs.settings.behavior.time-formatting.minute.btn1": "Minuto com zero à esquerda (00-59)",
+            "dialogs.settings.behavior.time-formatting.minute.btn2": "Minuto sem zero à esquerda (0-59)",
+            "dialogs.settings.behavior.time-formatting.second.btn1": "Segundo com zero à esquerda (00-59)",
+            "dialogs.settings.behavior.time-formatting.second.btn2": "Segundo sem zero à esquerda (0-59)"
         },
-
-        "SHORTCUTS": {
-            "DOCUMENTS": {
-                "dialogs.shortcuts.documents": "Documentos",
-                "dialogs.shortcuts.documents.new-document": "Novo documento",
-                "dialogs.shortcuts.documents.open-document": "Abrir documento",
-                "dialogs.shortcuts.documents.save-document": "Salvar documento",
-                "dialogs.shortcuts.documents.delete-document": "Deletar documento",
-                 "dialogs.shortcuts.documents.switch-between-first-ten-documents": "Alternar entre os primeiros dez documentos"
-            },
-            "MARKDOWN": {
-                "dialogs.shortcuts.markdown": "Markdown",
-                "dialogs.shortcuts.markdown.bold": "Negrito",
-                "dialogs.shortcuts.markdown.italic": "Itálico",
-                "dialogs.shortcuts.markdown.unordered-list": "Lista não ordenada",
-                "dialogs.shortcuts.markdown.heading": "Título",
-                "dialogs.shortcuts.markdown.document-metadata-block": "Bloco de metadados do documento",
-                "dialogs.shortcuts.markdown.date-and-time": "Data e hora",
-                "dialogs.shortcuts.markdown.date-and-time-custom-format": "Data e hora (formato personalizado)",
-                "dialogs.shortcuts.markdown.link": "Link",
-                "dialogs.shortcuts.markdown.separator": "Separador"
-            },
-            "COPY PASTE": {
-                "dialogs.shortcuts.copy-paste": "Copiar e colar",
-                "dialogs.shortcuts.copy-paste.cut": "Recortar",
-                "dialogs.shortcuts.copy-paste.copy": "Copiar",
-                "dialogs.shortcuts.copy-paste.paste": "Colar"
-            },
-            "UNDO REDO": {
-                "dialogs.shortcuts.undo-redo": "Desfazer e refazer",
-                "dialogs.shortcuts.undo-redo.undo": "Desfazer",
-                "dialogs.shortcuts.undo-redo.redo": "Refazer"
-            },
-            "SELECTION": {
-                "dialogs.shortcuts.selection": "Seleção",
-                "dialogs.shortcuts.selection.select-all": "Selecionar tudo",
-                "dialogs.shortcuts.selection.select-next-instance": "Selecionar próxima instância",
-                "dialogs.shortcuts.selection.select-area": "Selecionar área",
-                "dialogs.shortcuts.selection.add-cursor": "Adicionar cursor",
-                "dialogs.shortcuts.selection.add-cursor-above": "Adicionar cursor acima",
-                "dialogs.shortcuts.selection.add-cursor-bellow": "Adicionar cursor abaixo",
-                "dialogs.shortcuts.selection.drag-click": "Botão esquerdo do mouse e arrastar / toque duplo e arrastar no trackpad",
-                "dialogs.shortcuts.selection.left-click": "Clique esquerdo"
-            },
-            "NAVIGATION": {
-                "dialogs.shortcuts.navigation": "Navegação",
-                "dialogs.shortcuts.navigation.focus-on-editor": "Focar no editor",
-                "dialogs.shortcuts.navigation.show-hide-rendered-document": "Mostrar/Esconder documento renderizado",
-                "dialogs.shortcuts.navigation.show-settings": "Mostrar configurações",
-                "dialogs.shortcuts.navigation.show-keyboard-shortcuts": "Mostrar atalhos de teclado",
-                "dialogs.shortcuts.navigation.show-resource-manager": "Mostrar gerenciador de recursos",
-                "dialogs.shortcuts.navigation.show-about": "Sobre o Cohesion",
-                "dialogs.shortcuts.navigation.show-hide-application-menu": "Mostrar/Esconder menu da aplicação",
-                "dialogs.shortcuts.navigation.show-hide-documents-sidebar": "Mostrar/Esconder barra lateral de documentos",
-                "dialogs.shortcuts.navigation.show-hide-insert-menu": "Mostrar/Esconder menu de inserção",
-                 "dialogs.shortcuts.navigation.fullscreen": "Tela cheia"
-            },
-            "EDITING": {
-                "dialogs.shortcuts.editing": "Editando",
-                "dialogs.shortcuts.editing.move-up": "Mover linha para cima",
-                "dialogs.shortcuts.editing.move-down": "Mover linha para baixo",
-                "dialogs.shortcuts.editing.duplicate-line": "Duplicar linha",
-                "dialogs.shortcuts.editing.sort-lines": "Ordenar linhas",
-                "dialogs.shortcuts.editing.reverse-sort-lines": "Ordenar linhas em ordem reversa"
-            },
-            "SEARCH": {
-                "dialogs.shortcuts.search": "Busca",
-                "dialogs.shortcuts.search.find": "Localizar",
-                "dialogs.shortcuts.search.find-and-replace": "Localizar e substituir",
-                "dialogs.shortcuts.search.go-to-line": "Ir para linha",
-                "dialogs.shortcuts.search.search-documents": "Buscar documentos"
-            }
+        "SPLASH": {
+            "dialogs.splash.recent-files": "Arquivos recentes",
+            "dialogs.splash.github": "GitHub",
+            "dialogs.splash.documentation": "Documentação",
+            "dialogs.splash.donate": "Doar"
         },
-
-        "MISC": {
-            "IMPORT FILE DIALOG": {
-                "dialogs.import-file.title": "Arraste e solte um arquivo aqui",
-                "dialogs.import-file.subtitle": "Ou clique para escolher um arquivo"
-            },
-            "SHARE DIALOG": {
-                "dialogs.share.message": "Compartilhar esse arquivo irá gerar um link público temporário que é válido por 2 horas. Qualquer um com esse link conseguirá ver o documento. Prosseguir?"
-            }
+        "SAVE FILE DIALOG": {
+            "dialogs.save-file": "Salvar arquivo",
+            "dialogs.save-file.file-name": "Nome do arquivo",
+            "dialogs.save-file.format": "Formato",
+            "dialogs.save-file.format.markdown": "Documento Markdown",
+            "dialogs.save-file.format.html": "Página HTML",
+            "dialogs.save-file.format.pdf": "Documento PDF"
         }
     }
 }

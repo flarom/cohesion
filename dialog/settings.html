@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <meta name="dialog-show-close-button" content="true">
+    <meta name="dialog-prefered-width" content="772">
+
+    <style>
+        .themes-row {
+            display: flex;
+            gap: 8px !important;
+            align-items: center;
+            overflow-x: scroll;
+
+            hr {
+                height: 32px;
+                border: none;
+                border-left: 1px solid var(--border-light-color)
+            }
+        }
+        .theme-button {
+            min-height: 64px;
+            min-width: 64px;
+            border-radius: 999px;
+            transition: all .3s ease;
+            border: none;
+            outline: none;
+            /* cursor: pointer; */
+
+            &.selected,
+            &:focus-visible {
+                outline: 2px solid var(--accent);
+            }
+            &:focus-visible.selected {
+                outline: 4px solid var(--accent);
+            }
+        }
+        .theme-button#theme-auto {
+            background: linear-gradient(125deg,#222226 0%, #222226 49%, #f5f5f5 51%, #f5f5f5 100%);
+            box-shadow: 0px 0px 0px 0px var(--accent) inset;
+            &:hover { box-shadow: 0px 0px 0px 16px var(--accent) inset }
+        }
+        .theme-button#theme-light {
+            background-color: #3c3c3c; /* always use --text-color */
+            box-shadow: 0px 0px 0px 26px #f5f5f5 inset; /* always use --background-color */
+            &:hover { box-shadow: 0px 0px 0px 16px #f5f5f5 inset; }
+        }
+        .theme-button#theme-dark {
+            background-color: #dddddd;
+            box-shadow: 0px 0px 0px 26px #222226 inset;
+            &:hover { box-shadow: 0px 0px 0px 16px #222226 inset; }
+        }
+        .theme-button#theme-cream {
+            background-color: #4b3a25;
+            box-shadow: 0px 0px 0px 26px #fdf6e3 inset;
+            &:hover { box-shadow: 0px 0px 0px 16px #fdf6e3 inset; }
+        }
+        .theme-button#theme-monokai {
+            background-color: #f8f8f2;
+            box-shadow: 0px 0px 0px 26px #272822 inset;
+            &:hover { box-shadow: 0px 0px 0px 16px #272822 inset; }
+        }
+        .theme-button#theme-solarized-dark {
+            background-color: #a4babd;
+            box-shadow: 0px 0px 0px 26px #002b36 inset;
+            &:hover { box-shadow: 0px 0px 0px 16px #002b36 inset; }
+        }
+        .theme-button#theme-nord {
+            background-color: #d8dee9;
+            box-shadow: 0px 0px 0px 26px #2e3440 inset;
+            &:hover { box-shadow: 0px 0px 0px 16px #2e3440 inset; }
+        }
+        .theme-button#theme-gruvbox-dark {
+            background-color: #d5c4a1;
+            box-shadow: 0px 0px 0px 26px #282828 inset;
+            &:hover { box-shadow: 0px 0px 0px 16px #282828 inset; }
+        }
+        .theme-button#theme-oled {
+            background-color: #e0e0e0;
+            box-shadow: 0px 0px 0px 26px #000000 inset;
+            &:hover { box-shadow: 0px 0px 0px 16px #000000 inset; }
+        }
+        .theme-button#theme-epaper {
+            background-color: #1a1a1a;
+            box-shadow: 0px 0px 0px 26px #ffffff inset;
+            &:hover { box-shadow: 0px 0px 0px 16px #ffffff inset; }
+        }
+
+        .infolink {
+                font-size: small;
+            }
+    </style>
+</head>
+<body>
+    <main class="padding">
+        <section>
+            <h2 data-locale="dialogs.settings.appearence.title">Appearance</h2>
+            <div class="row themes-row" id="themes-row">
+                <button class="theme-button" id="theme-auto" title="Auto" onclick="Settings.setSetting('theme', 'theme-auto');loadSettings(); updateSelectedTheme()" data-locale-attr="title:dialogs.settings.appearence.theme.auto"></button>
+                <button class="theme-button" id="theme-light" title="Light" onclick="Settings.setSetting('theme', 'theme-light');loadSettings(); updateSelectedTheme()" data-locale-attr="title:dialogs.settings.appearence.theme.light"></button>
+                <button class="theme-button" id="theme-cream" title="Cream" onclick="Settings.setSetting('theme', 'theme-cream');loadSettings(); updateSelectedTheme()" data-locale-attr="title:dialogs.settings.appearence.theme.cream"></button>
+                <button class="theme-button" id="theme-dark" title="Dark" onclick="Settings.setSetting('theme', 'theme-dark');loadSettings(); updateSelectedTheme()" data-locale-attr="title:dialogs.settings.appearence.theme.dark"></button>
+                <hr>
+                <button class="theme-button" id="theme-epaper" title="ePaper" onclick="Settings.setSetting('theme', 'theme-epaper');loadSettings(); updateSelectedTheme()" data-locale-attr="title:dialogs.settings.appearence.theme.epaper"></button>
+                <button class="theme-button" id="theme-nord" title="Nord" onclick="Settings.setSetting('theme', 'theme-nord');loadSettings(); updateSelectedTheme()" data-locale-attr="title:dialogs.settings.appearence.theme.nord"></button>
+                <button class="theme-button" id="theme-solarized-dark" title="Solarized Dark" onclick="Settings.setSetting('theme', 'theme-solarized-dark');loadSettings(); updateSelectedTheme()" data-locale-attr="title:dialogs.settings.appearence.theme.solarized-dark"></button>
+                <button class="theme-button" id="theme-gruvbox-dark" title="Gruvbox Dark" onclick="Settings.setSetting('theme', 'theme-gruvbox-dark');loadSettings(); updateSelectedTheme()" data-locale-attr="title:dialogs.settings.appearence.theme.gruvbox-dark"></button>
+                <button class="theme-button" id="theme-monokai" title="Monokai" onclick="Settings.setSetting('theme', 'theme-monokai');loadSettings(); updateSelectedTheme()" data-locale-attr="title:dialogs.settings.appearence.theme.monokai"></button>
+                <button class="theme-button" id="theme-oled" title="OLED" onclick="Settings.setSetting('theme', 'theme-oled');loadSettings(); updateSelectedTheme()" data-locale-attr="title:dialogs.settings.appearence.theme.oled"></button>
+            </div>
+        </section>
+        <section>
+            <div class="row">
+                <label for="editor-font" data-locale="dialogs.settings.appearence.font.editor">Editor font</label>
+                <input type="text" list="default-fonts" name="editor-font" id="editor-font" placeholder="Ubuntu Mono" oninput="Settings.setSetting('editorFont', this.value); loadSettings();">
+            </div>
+            <div class="row">
+                <label for="paragraph-font" data-locale="dialogs.settings.appearence.font.paragraph">Paragraph font</label>
+                <input type="text" list="default-fonts" name="paragraph-font" id="paragraph-font" placeholder="Ubuntu" oninput="Settings.setSetting('paragraphFont', this.value); loadSettings();">
+            </div>
+            <div class="row">
+                <label for="title-font" data-locale="dialogs.settings.appearence.font.title">Title font</label>
+                <input type="text" list="default-fonts" name="title-font" id="title-font" placeholder="Ubuntu" oninput="Settings.setSetting('titleFont', this.value); loadSettings();">
+            </div>
+            <datalist id="default-fonts">
+                <option value="Ubuntu"></option>
+                <option value="Ubuntu Mono"></option>
+                <option value="Sans serif"></option>
+                <option value="Serif"></option>
+                <option value="Monospace"></option>
+                <option value="Cursive"></option>
+            </datalist>
+        </section>
+        <section>
+            <h2 data-locale="dialogs.settings.language.title">Language</h2>
+            <div class="row">
+                <label for="language" data-locale="dialogs.settings.language.label">Language</label>
+                <select name="language" id="language" onchange="Language.set(this.value)">
+                    <option value="en">English</option>
+                    <option value="pt-br">Português do Brasil</option>
+                </select>
+            </div>
+            <div class="row">
+                <span style="display: flex; align-items: center; gap: 5px;">
+                    <span class="icon">info</span>
+                    <a href="https://github.com/flarom/cohesion/wiki/Translating" class="infolink" data-locale="dialogs.settings.language.help" target="_blank">Help translating Cohesion</a>
+                </span>
+            </div>
+        </section>
+        <section>
+            <h2 data-locale="dialogs.settings.behavior.title">Behavior</h2>
+            <div class="row">
+                <label for="show-splash-screen" data-locale="dialogs.settings.behavior.show-splash-screen">Show splash screen on startup</label>
+                <label class="switch">
+                    <input type="checkbox" id="show-splash-screen" onchange="Settings.setSetting('showSplashScreen', this.checked)" />
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </section>
+        <section>
+            <div class="row">
+                <label for="time-formatting" data-locale="dialogs.settings.behavior.time-formatting">Time formatting</label>
+                <div class="flex j-end g-8">
+                    <input type="text" id="time-formatting" value="%d/%m/%Y %H:%M" oninput="Settings.setSetting('timeFormatting', this.value)">
+                    <button class="icon-button" translate="no" onclick="resetTimeFormatting()"title="Reset" data-locale-attr="title:dialogs.settings.behavior.time-formatting.reset">refresh</button>
+                    <button class="icon-button" translate="no" onclick="removeLastDateBlock()" title="Remove" data-locale-attr="title:dialogs.settings.behavior.time-formatting.remove">backspace</button>
+                </div>
+            </div>
+            <div class="row">
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; user-select: none;">
+                    <div>
+                        <h3 data-locale="dialogs.settings.behavior.time-formatting.day">Day</h3>
+                        <button class="text-button" id="btn-time-day-1" onclick="insertDateTimeOption('%A')" title="Full weekday name (e.g 'Sunday')" data-locale-attr="title:dialogs.settings.behavior.time-formatting.day.btn1"></button>
+                        <button class="text-button" id="btn-time-day-2" onclick="insertDateTimeOption('%a')" title="Abbreviated weekday name (e.g 'Sun' for Sunday)" data-locale-attr="title:dialogs.settings.behavior.time-formatting.day.btn2"></button>
+                        <button class="text-button" id="btn-time-day-3" onclick="insertDateTimeOption('%d')" title="Day of the month with leading zero (01-31)" data-locale-attr="title:dialogs.settings.behavior.time-formatting.day.btn3"></button>
+                        <button class="text-button" id="btn-time-day-4" onclick="insertDateTimeOption('%-d')" title="Day of the month without leading zero (1-31)" data-locale-attr="title:dialogs.settings.behavior.time-formatting.day.btn4"></button>
+                    </div>
+                    <div>
+                        <h3 data-locale="dialogs.settings.behavior.time-formatting.month">Month</h3>
+                        <button class="text-button" id="btn-time-month-1" onclick="insertDateTimeOption('%B')" title="Full month name (e.g 'September')" data-locale-attr="title:dialogs.settings.behavior.time-formatting.month.btn1"></button>
+                        <button class="text-button" id="btn-time-month-2" onclick="insertDateTimeOption('%b')" title="Abbreviated month name (e.g 'Sep' for September)" data-locale-attr="title:dialogs.settings.behavior.time-formatting.month.btn2"></button>
+                        <button class="text-button" id="btn-time-month-3" onclick="insertDateTimeOption('%m')" title="Month as a number with leading zero (01-12)" data-locale-attr="title:dialogs.settings.behavior.time-formatting.month.btn3"></button>
+                        <button class="text-button" id="btn-time-month-4" onclick="insertDateTimeOption('%-m')" title="Month as a number without leading zero (1-12)" data-locale-attr="title:dialogs.settings.behavior.time-formatting.month.btn4"></button>
+                    </div>
+                    <div>
+                        <h3 data-locale="dialogs.settings.behavior.time-formatting.year">Year</h3>
+                        <button class="text-button" id="btn-time-year-1" onclick="insertDateTimeOption('%Y')" title="Full year with century (e.g '2024')" data-locale-attr="title:dialogs.settings.behavior.time-formatting.year.btn1"></button>
+                        <button class="text-button" id="btn-time-year-2" onclick="insertDateTimeOption('%y')" title="Year without century, as two digits (e.g '24')" data-locale-attr="title:dialogs.settings.behavior.time-formatting.year.btn2"></button>
+                    </div>
+                    <div>
+                        <h3 data-locale="dialogs.settings.behavior.time-formatting.hour">Hour</h3>
+                        <button class="text-button" id="btn-time-hour-1" onclick="insertDateTimeOption('%H')" title="Hour (24-hour clock) with leading zero (00-23)" data-locale-attr="title:dialogs.settings.behavior.time-formatting.hour.btn1"></button>
+                        <button class="text-button" id="btn-time-hour-2" onclick="insertDateTimeOption('%-H')" title="Hour (24-hour clock) without leading zero (0-23)" data-locale-attr="title:dialogs.settings.behavior.time-formatting.hour.btn2"></button>
+                        <button class="text-button" id="btn-time-hour-3" onclick="insertDateTimeOption('%I')" title="Hour (12-hour clock) with leading zero (01-12)" data-locale-attr="title:dialogs.settings.behavior.time-formatting.hour.btn3"></button>
+                        <button class="text-button" id="btn-time-hour-4" onclick="insertDateTimeOption('%-I')" title="Hour (12-hour clock) without leading zero (1-12)" data-locale-attr="title:dialogs.settings.behavior.time-formatting.hour.btn4"></button>
+                        <button class="text-button" id="btn-time-hour-5" onclick="insertDateTimeOption('%p')" title="AM or PM indicator" data-locale-attr="title:dialogs.settings.behavior.time-formatting.hour.btn5"></button>
+                    </div>
+                    <div>
+                        <h3 data-locale="dialogs.settings.behavior.time-formatting.minute">Minute</h3>
+                        <button class="text-button" id="btn-time-minute-1" onclick="insertDateTimeOption('%M')" title="Minute with leading zero (00-59)" data-locale-attr="title:dialogs.settings.behavior.time-formatting.minute.btn1"></button>
+                        <button class="text-button" id="btn-time-minute-2" onclick="insertDateTimeOption('%-M')" title="Minute without leading zero (0-59)" data-locale-attr="title:dialogs.settings.behavior.time-formatting.minute.btn2"></button>
+                    </div>
+                    <div>
+                        <h3 data-locale="dialogs.settings.behavior.time-formatting.second">Second</h3>
+                        <button class="text-button" id="btn-time-second-1" onclick="insertDateTimeOption('%S')" title="Second with leading zero (00-59)" data-locale-attr="title:dialogs.settings.behavior.time-formatting.second.btn1"></button>
+                        <button class="text-button" id="btn-time-second-2" onclick="insertDateTimeOption('%-S')" title="Second without leading zero (0-59)" data-locale-attr="title:dialogs.settings.behavior.time-formatting.second.btn2"></button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <span style="display: flex; align-items: center; gap: 5px;">
+                    <span class="icon">info</span>
+                    <a href="https://github.com/flarom/cohesion/wiki/Time-Formatting" class="infolink" data-locale="dialogs.settings.behavior.time-formatting.learn-more" target="_blank">Learn more about time formatting</a>
+                </span>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        (() => {
+            const themesContainer = document.getElementById("themes-row");
+            setHorizontalScroll(themesContainer, true);
+
+            const txtFontEditor = document.getElementById("editor-font");
+            const txtFontParagraph = document.getElementById("paragraph-font");
+            const txtFontTitle = document.getElementById("title-font");
+            txtFontEditor.value = Settings.getSetting("editorFont", "Ubuntu Mono");
+            txtFontParagraph.value = Settings.getSetting("paragraphFont", "Ubuntu");
+            txtFontTitle.value = Settings.getSetting("titleFont", "Ubuntu");
+
+            // lang
+            const selLanguage = document.getElementById("language");
+            selLanguage.value = Settings.getSetting("language", 'en');
+
+            // behavior
+            const chkShowSplashScreen = document.getElementById("show-splash-screen");
+            chkShowSplashScreen.checked = Settings.getSetting("showSplashScreen", "true") === "true";
+
+            // time formatting
+            const txtTimeFormatting = document.getElementById("time-formatting");
+            txtTimeFormatting.value = Settings.getSetting("timeFormatting", "%d/%m/%Y %H:%M");
+            document.getElementById("btn-time-day-1").innerHTML = strftime("%A");
+            document.getElementById("btn-time-day-2").innerHTML = strftime("%a");
+            document.getElementById("btn-time-day-3").innerHTML = strftime("%d");
+            document.getElementById("btn-time-day-4").innerHTML = strftime("%-d");
+
+            document.getElementById("btn-time-month-1").innerHTML = strftime("%B");
+            document.getElementById("btn-time-month-2").innerHTML = strftime("%b");
+            document.getElementById("btn-time-month-3").innerHTML = strftime("%m");
+            document.getElementById("btn-time-month-4").innerHTML = strftime("%-m");
+
+            document.getElementById("btn-time-year-1").innerHTML = strftime("%Y");
+            document.getElementById("btn-time-year-2").innerHTML = strftime("%y");
+
+            document.getElementById("btn-time-hour-1").innerHTML = strftime("%H");
+            document.getElementById("btn-time-hour-2").innerHTML = strftime("%-H");
+            document.getElementById("btn-time-hour-3").innerHTML = strftime("%I");
+            document.getElementById("btn-time-hour-4").innerHTML = strftime("%-I");
+            document.getElementById("btn-time-hour-5").innerHTML = strftime("%p");
+
+            document.getElementById("btn-time-minute-1").innerHTML = strftime("%M");
+            document.getElementById("btn-time-minute-2").innerHTML = strftime("%-M");
+
+            document.getElementById("btn-time-second-1").innerHTML = strftime("%S");
+            document.getElementById("btn-time-second-2").innerHTML = strftime("%-S");
+        })();
+
+        // theme  
+        function updateSelectedTheme() {
+            const theme = Settings.getSetting("theme", "theme-auto");
+            document.querySelectorAll("button.theme-button").forEach(btn => btn.classList.remove("selected"));
+
+            const selectedBtn = document.getElementById(theme);
+
+            // const editCustomBtn = document.getElementById('theme-edit-custom');
+            // const deleteCustomBtn = document.getElementById('theme-delete-custom');
+            if (selectedBtn) selectedBtn.classList.add("selected");
+            // if (selectedBtn.id == 'theme-custom') { editCustomBtn.style.display = 'block'; deleteCustomBtn.style.display = 'block'; }
+            // else { editCustomBtn.style.display = 'none'; deleteCustomBtn.style.display = 'none'; } 
+        }
+        
+        updateSelectedTheme();
+
+        // time formatting
+        function insertDateTimeOption(block) {
+            const input = document.getElementById("time-formatting");
+            let value = input.value;
+
+            input.value = value + block;
+            input.focus();
+            Settings.setSetting("timeFormatting", input.value);
+        }
+
+        function removeLastDateBlock() {
+            const input = document.getElementById("time-formatting");
+            let value = input.value;
+
+            const lastPercentIndex = value.lastIndexOf("%");
+
+            if (lastPercentIndex !== -1) {
+                value = value.substring(0, lastPercentIndex);
+            } else {
+                value = "";
+            }
+
+            input.value = value;
+            input.focus();
+            Settings.setSetting("timeFormatting", value);
+        }
+
+        function resetTimeFormatting() {
+            const defaultValue = "%d/%m/%Y %H:%M";
+            const input = document.getElementById("time-formatting");
+            input.value = defaultValue;
+            input.focus();
+            Settings.setSetting("timeFormatting", defaultValue);
+        }
+    </script>
+</body>
+</html>

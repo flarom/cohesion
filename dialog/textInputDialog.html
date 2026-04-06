@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="dialog-preferred-width" content="460">
+</head>
+<body>
+    <hr class="toolbar-spacer">
+    <form id="textInputForm" class="padding">
+        <div>
+            <label id="dialogTextLabel" for="dialogTextInput">Insert text:</label>
+            <input id="dialogTextInput" name="dialogTextInput" type="text" autocomplete="off" autofocus placeholder="Enter text here..." >
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="text-button">Confirm</button>
+            <button type="button" class="text-button" id="cancelTextInput">Cancel</button>
+        </div>
+    </form>
+
+    <script>
+        (() => {
+            const form = document.getElementById("textInputForm");
+            const label = document.getElementById("dialogTextLabel");
+            const input = document.getElementById("dialogTextInput");
+            const cancelButton = document.getElementById("cancelTextInput");
+            const args = typeof window.dialogArgs === "function" ? window.dialogArgs() : {};
+
+            if (typeof args.labelText === "string" && args.labelText.trim()) {
+                label.textContent = args.labelText;
+            }
+
+            if (typeof args.placeholder === "string") {
+                input.placeholder = args.placeholder;
+            }
+
+            if (typeof args.initialValue === "string") {
+                input.value = args.initialValue;
+            }
+
+            form.addEventListener("submit", (event) => {
+                event.preventDefault();
+                if (typeof window.dialogReturn === "function") {
+                    window.dialogReturn(input.value);
+                }
+            });
+
+            cancelButton.addEventListener("click", () => {
+                if (typeof window.dialogCancel === "function") {
+                    window.dialogCancel(null);
+                } else if (typeof window.dialogReturn === "function") {
+                    window.dialogReturn(null);
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

@@ -11,9 +11,9 @@
 })(function(CodeMirror) {
   var defaults = {
     pairs: "()[]{}''\"\"",
-    closeBefore: ")]}'\":;",
+    closeBefore: ")]}'\":;>",
     triples: "",
-    explode: "[]{}<>"
+    explode: "[]{}"
   };
 
   var Pos = CodeMirror.Pos;

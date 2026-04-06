@@ -179,8 +179,8 @@
       Down: function() {handle.moveFocus(1);},
       PageUp: function() {handle.moveFocus(-handle.menuSize() + 1, true);},
       PageDown: function() {handle.moveFocus(handle.menuSize() - 1, true);},
-      // Home: function() {handle.setFocus(0);},
-      // End: function() {handle.setFocus(handle.length - 1);},
+      Home: function() {handle.setFocus(0);},
+      End: function() {handle.setFocus(handle.length - 1);},
       Enter: handle.pick,
       Tab: handle.pick,
       Esc: handle.close
@@ -290,7 +290,7 @@
       var height = box.bottom - box.top, spaceAbove = box.top - (pos.bottom - pos.top) - 2
       if (winH - box.top < spaceAbove) { // More room at the top
         if (height > spaceAbove) hints.style.height = (height = spaceAbove) + "px";
-        hints.style.top = ((top = pos.top - height) + offsetTop) + "px";
+        hints.style.top = ((top = pos.top - height) - offsetTop) + "px";
         below = false;
       } else {
         hints.style.height = (winH - box.top - 2) + "px";
