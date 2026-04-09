@@ -49,14 +49,7 @@
         </main>
     </div>
     <div id="dialog-page-details" class="dialog-page">
-        <hr class="toolbar-spacer">
         <main class="padding">
-            <!-- <section>
-                <button class="row" onclick="toggleDialogPage('main')">
-                    <span class="icon">chevron_backward</span>
-                    <label>Back</label>
-                </button>
-            </section> -->
             <section>
                 <button class="row" onclick="window.open('https://github.com/flarom/cohesion')">
                     <label>GitHub repository</label>
@@ -74,14 +67,7 @@
         </main>
     </div>
     <div id="dialog-page-credits" class="dialog-page">
-        <hr class="toolbar-spacer">
         <main class="padding">
-            <!-- <section>
-                <button class="row" onclick="toggleDialogPage('main')">
-                    <span class="icon">chevron_backward</span>
-                    <label>Back</label>
-                </button>
-            </section> -->
             <section>
                 <h3>Created by</h3>
                 <div class="row">
@@ -106,14 +92,7 @@
         </main>
     </div>
     <div id="dialog-page-legal" class="dialog-page">
-        <hr class="toolbar-spacer">
         <main class="padding">
-            <!-- <section>
-                <button class="row" onclick="toggleDialogPage('main')">
-                    <span class="icon">chevron_backward</span>
-                    <label>Back</label>
-                </button>
-            </section> -->
             <section>
                 <p>Copyright © 2026 Flarom.</p>
                 <p>This application comes without any warranty whatsoever. See the <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer">GNU General Public License, version 3 or later</a> for more details.</p>
@@ -125,9 +104,11 @@
         function xToggleDialogPage(pageId, title) {
             toggleDialogPage(pageId);
             if (pageId === 'main') {
+                updateDialogToolbarOverlay(true);
                 updateDialogToolbarLeft('');
                 updateDialogToolbarCenter('');
             } else {
+                updateDialogToolbarOverlay(false);
                 updateDialogToolbarLeft(`<button class=icon-button onclick='xToggleDialogPage("main")' translate=no title='Back'>chevron_backward</button>`);
                 updateDialogToolbarCenter(title);
             }

@@ -96,7 +96,7 @@
                         <span data-locale="main.header.more-options.my-projects">My projects</span>
                     </button>
                     <button class="text-button" onmouseup="fileManager.openResourcesDialog(); hideAllMenus()">
-                        Resources
+                        <span data-locale="main.header.more-options.resources">Resources</span>
                     </button>
                     <hr />
                     <button class="text-button" onmouseup="closeAllDialogs(); showDialogFile('dialog/settings.html'); hideAllMenus()">
@@ -309,19 +309,104 @@
         converter.setOption('imageTitleAsLegend', true);
 
         let updateTimeout;
+        let rendererResourceUrls = [];
+
+        function revokeRendererResourceUrls() {
+            for (const url of rendererResourceUrls) {
+                URL.revokeObjectURL(url);
+            }
+            rendererResourceUrls = [];
+        }
+
+        function looksLikeResourcePath(pathValue = "") {
+            const value = String(pathValue || "").trim();
+            return /^(?:\.\/)?resources\//i.test(value);
+        }
+
+        function getMimeTypeByFileName(fileName = "") {
+            const lowerName = String(fileName || "").toLowerCase();
+
+            if (lowerName.endsWith(".png")) return "image/png";
+            if (lowerName.endsWith(".jpg") || lowerName.endsWith(".jpeg")) return "image/jpeg";
+            if (lowerName.endsWith(".gif")) return "image/gif";
+            if (lowerName.endsWith(".webp")) return "image/webp";
+            if (lowerName.endsWith(".svg")) return "image/svg+xml";
+            if (lowerName.endsWith(".bmp")) return "image/bmp";
+            if (lowerName.endsWith(".ico")) return "image/x-icon";
+
+            if (lowerName.endsWith(".pdf")) return "application/pdf";
+            if (lowerName.endsWith(".json")) return "application/json";
+            if (lowerName.endsWith(".txt") || lowerName.endsWith(".md")) return "text/plain";
+
+            return "application/octet-stream";
+        }
+
+        // This function finds all img and a elements in the renderer that have src or href attributes pointing to resources,
+        // reads those resources from the file system, creates object URLs for them, and updates the elements to use those object URLs.
+        // It also keeps track of the created object URLs so they can be revoked later to free up memory.
+        async function resolveRendererResourcePaths() {
+            revokeRendererResourceUrls();
+
+            if (!fileManager.currentProjectId) {
+                return;
+            }
+
+            const candidates = [
+                ...renderer.querySelectorAll("img[src]"),
+                ...renderer.querySelectorAll("a[href]")
+            ];
+
+            for (const element of candidates) {
+                const attributeName = element.tagName === "A" ? "href" : "src";
+                const originalPath = element.getAttribute(attributeName) || "";
+
+                if (!looksLikeResourcePath(originalPath)) {
+                    continue;
+                }
+
+                const relativeResourcePath = originalPath
+                    .replace(/^\.\//, "")
+                    .replace(/^resources\//i, "")
+                    .split("?")[0]
+                    .split("#")[0];
+                const decodedResourcePath = decodeURIComponent(relativeResourcePath);
+
+                if (!decodedResourcePath) {
+                    continue;
+                }
+
+                const resourceId = `${fileManager.currentProjectId}/resources/${decodedResourcePath}`;
+                const resourceEntry = await file.readFile(resourceId);
+
+                if (!resourceEntry || resourceEntry.type !== "file") {
+                    continue;
+                }
+
+                const blob = resourceEntry.content instanceof Blob
+                    ? resourceEntry.content
+                    : new Blob([resourceEntry.content], { type: getMimeTypeByFileName(resourceEntry.name) });
+
+                const objectUrl = URL.createObjectURL(blob);
+                rendererResourceUrls.push(objectUrl);
+                element.setAttribute(attributeName, objectUrl);
+            }
+        }
 
         editor.on("change", () => {
             
             clearTimeout(updateTimeout);
-            updateTimeout = setTimeout(() => {
+            updateTimeout = setTimeout(async () => {
                 const markdownText = editor.getValue();
                 const html = converter.makeHtml(markdownText);
                 renderer.innerHTML = html;
+                await resolveRendererResourcePaths();
                 
                 // Autosave the current file
                 fileManager.autosaveCurrentFile();
             }, 500);
         });
+
+        window.addEventListener("beforeunload", revokeRendererResourceUrls);
 
         async function updateTitle() {
             if (!fileManager.currentProjectId) {

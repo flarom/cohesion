@@ -51,16 +51,30 @@
             width: 32px;
             border-radius: 16px;
             border: none;
-            transition: width 0.2s ease-in-out, box-shadow 0.2s;
+            transition: width 0.2s ease-in-out, outline 0.2s, outline-offset 0.2s;
+            outline: 4px solid var(--background-color-2);
+            outline-offset: -3px;
         }
-
+        
         .color-grid .color-option:hover {
-            box-shadow: 0 0 0 4px var(--hover-color);
+            outline: 0px solid var(--background-color-2);
+            outline-offset: 0px;
+        }
+        
+        .color-grid .color-option:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 0px;
+        }
+        
+        .color-grid .color-option.selected {
+            width: 80px;
+            outline: 0px solid var(--background-color-2);
+            outline-offset: 0px;
         }
 
-        .color-grid .color-option.selected {
-            box-shadow: 0 0 0 4px var(--hover-color);
-            width: 80px;
+        .color-grid .color-option.selected:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 0px;
         }
     </style>
 </head>

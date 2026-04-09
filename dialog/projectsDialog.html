@@ -12,13 +12,16 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(128px, 8px));
             gap: 8px;
+            padding: 8px;
+            padding-top: 48px;
 
             .project-item {
                 position: relative;
                 background-color: var(--background-color-2);
+                box-shadow: var(--shadow-light);
                 color: var(--text-color);
                 font-size: medium;
-                border: 1px solid var(--border-field-color);
+                border: 0px;
                 width: 128px;
                 height: 128px;
                 display: flex;
@@ -86,10 +89,7 @@
     </style>
 </head>
 <body>
-    <hr class="toolbar-spacer">
-    <div class="padding">
-        <div class="project-grid" id="project-grid"></div>
-    </div>
+    <div class="project-grid" id="project-grid"></div>
     <script>
         (() => {
             const args = typeof window.dialogArgs === "function" ? window.dialogArgs() : {};

@@ -115,25 +115,25 @@ function getDialogOverlay(dialogId = null) {
             ? CSS.escape(dialogId)
             : dialogId;
 
-        const byDataId = document.querySelector(`dialog.prompt-overlay[data-dialog-id="${escapedId}"]`);
+        const byDataId = document.querySelector(`dialog.dialog-overlay[data-dialog-id="${escapedId}"]`);
         if (byDataId) {
             return byDataId;
         }
 
         const byElementId = document.getElementById(dialogId);
-        if (byElementId && byElementId.matches("dialog.prompt-overlay")) {
+        if (byElementId && byElementId.matches("dialog.dialog-overlay")) {
             return byElementId;
         }
 
         return null;
     }
 
-    const openOverlays = Array.from(document.querySelectorAll("dialog.prompt-overlay[open]"));
+    const openOverlays = Array.from(document.querySelectorAll("dialog.dialog-overlay[open]"));
     if (openOverlays.length > 0) {
         return openOverlays[openOverlays.length - 1];
     }
 
-    const overlays = Array.from(document.querySelectorAll("dialog.prompt-overlay"));
+    const overlays = Array.from(document.querySelectorAll("dialog.dialog-overlay"));
     return overlays.length > 0 ? overlays[overlays.length - 1] : null;
 }
 
@@ -186,6 +186,31 @@ function updateDialogToolbarRight(content, dialogId = null) {
     return updateDialogToolbarSection("toolbar-right", content, dialogId);
 }
 
+function updateDialogToolbarOverlay(overlay, dialogId = null) {
+    const dialog = getDialogOverlay(dialogId);
+    if (!dialog) {
+        console.warn("No dialog found to update toolbar overlay.");
+        return false;
+    }
+    const toolbar = dialog.querySelector(".toolbar");
+    const content = dialog.querySelector(".dialog-content");
+    if (!toolbar) {
+        console.warn("Toolbar not found in dialog.");
+        return false;
+    }
+    if (overlay) {
+        toolbar.classList.remove("no-overlay");
+        if (content.style.maxHeight) {
+            content.style.maxHeight = `calc(${content.style.maxHeight} + 50px)`;
+        }
+    } else {
+        toolbar.classList.add("no-overlay");
+        if (content.style.maxHeight) {
+            content.style.maxHeight = `calc(${content.style.maxHeight} - 50px)`;
+        }
+    }
+}
+
 function setHorizontalScroll(element, smooth = false) {
     element.addEventListener("wheel", (e) => {
         if (e.deltaY === 0) return; // only handle vertical scroll
@@ -200,19 +225,23 @@ function setHorizontalScroll(element, smooth = false) {
 
 // MARK: dialog pages
 function toggleDialogPage(pageId) {
-    // hide all pages in the current dialog
-    const dialog = document.querySelector('.prompt-overlay[open] .prompt-dialog');
+    // Find the dialog overlay that contains this call
+    const dialog = document.querySelector('dialog.dialog-overlay[open]');
     if (!dialog) return;
 
-    const pages = dialog.querySelectorAll('.dialog-page');
+    // Get all pages within the dialog-content
+    const dialogContent = dialog.querySelector('.dialog-content');
+    if (!dialogContent) return;
+
+    const pages = dialogContent.querySelectorAll('.dialog-page');
     pages.forEach(page => page.classList.remove('active'));
 
-    // show the selected page
-    const targetPage = dialog.querySelector(`#dialog-page-${pageId}`);
+    // Show the selected page
+    const targetPage = dialogContent.querySelector(`#dialog-page-${pageId}`);
     if (targetPage) {
         targetPage.classList.add('active');
     } else {
-        console.warn(`Dialog page with id "${pageId}" not found.`);
+        console.warn(`Dialog page with id "dialog-page-${pageId}" not found.`);
     }
 }
 
@@ -262,6 +291,7 @@ async function showDialogFile(filePath, args = {}) {
         const toolbarLeft = getMeta("dialog-toolbar-left", "");
         const toolbarCenter = getMeta("dialog-toolbar-center", "");
         const toolbarRight = getMeta("dialog-toolbar-right", "");
+        const toolbarOverlay = getMetaBool("dialog-toolbar-overlay", true);
 
         // inject dialog css
         const dialogId = crypto.randomUUID();
@@ -290,19 +320,16 @@ async function showDialogFile(filePath, args = {}) {
             : null;
 
         // dialog host + panel
-        const overlay = document.createElement("dialog");
-        overlay.className = "prompt-overlay " + (showBg ? "" : "nobg");
-        overlay.dataset.dialog = "";
-        overlay.dataset.dialogId = dialogId;
-
-        const dialog = document.createElement("div");
-        dialog.className = useBigDialog ? "prompt-big-dialog" : "prompt-dialog";
+        const dialog = document.createElement("dialog");
+        dialog.className = "dialog-overlay" + (showBg ? "" : "nobg");
+        dialog.dataset.dialog = "";
+        dialog.dataset.dialogId = dialogId;
 
         if (!useBigDialog) {
-            overlay.style.maxWidth = `${width}px`;
+            dialog.style.maxWidth = `${width}px`;
             if (height > 0) {
-                overlay.style.height = "100%";
-                overlay.style.maxHeight = `${height}px`;
+                dialog.style.height = "100%";
+                dialog.style.maxHeight = `${height}px`;
             }
         }
 
@@ -313,6 +340,10 @@ async function showDialogFile(filePath, args = {}) {
         // toolbar
         const toolbar = document.createElement("div");
         toolbar.className = "toolbar";
+
+        if (!toolbarOverlay) {
+            toolbar.classList.add("no-overlay");
+        }
 
         const left = document.createElement("div");
         left.className = "toolbar-left";
@@ -342,11 +373,22 @@ async function showDialogFile(filePath, args = {}) {
         content.className = "dialog-content";
         content.append(...doc.body.childNodes);
 
-        dialog.append(toolbar, content);
-        overlay.appendChild(dialog);
-        document.body.appendChild(overlay);
+        if (!useBigDialog) {
+            content.style.maxWidth = `${width}px`;
+            if (height > 0) {
+                content.style.height = "100%";
+                if (!toolbarOverlay) {
+                    content.style.maxWidth = `calc(${width}px - 48px)`;
+                } else {
+                    content.style.maxHeight = `${height}px`;
+                }
+            }
+        }
 
-        translateWithin(overlay);
+        dialog.append(toolbar, content);
+        document.body.appendChild(dialog);
+
+        translateWithin(dialog);
 
         return await new Promise((resolve) => {
             const cleanup = () => {
@@ -356,8 +398,8 @@ async function showDialogFile(filePath, args = {}) {
                 }
 
                 injectedStyles.forEach((el) => el.remove());
-                overlay.removeEventListener("close", onClose);
-                overlay.remove();
+                dialog.removeEventListener("close", onClose);
+                dialog.remove();
 
                 if (previousFocusedElement) {
                     previousFocusedElement.focus();
@@ -367,30 +409,30 @@ async function showDialogFile(filePath, args = {}) {
             const controller = {
                 args: dialogArgs,
                 return(value) {
-                    overlay.__dialogResult = value;
-                    if (overlay.open) {
-                        overlay.close("return");
+                    dialog.__dialogResult = value;
+                    if (dialog.open) {
+                        dialog.close("return");
                     }
                 },
                 cancel(value = null) {
-                    overlay.__dialogResult = value;
-                    if (overlay.open) {
-                        overlay.close("cancel");
+                    dialog.__dialogResult = value;
+                    if (dialog.open) {
+                        dialog.close("cancel");
                     }
                 },
                 close() {
-                    if (overlay.open) {
-                        overlay.close("close");
+                    if (dialog.open) {
+                        dialog.close("close");
                     }
                 }
             };
 
             const onClose = () => {
-                const hasDialogResult = Object.prototype.hasOwnProperty.call(overlay, "__dialogResult");
+                const hasDialogResult = Object.prototype.hasOwnProperty.call(dialog, "__dialogResult");
                 const result = hasDialogResult
-                    ? overlay.__dialogResult
-                    : overlay.returnValue && !["close", "cancel"].includes(overlay.returnValue)
-                        ? overlay.returnValue
+                    ? dialog.__dialogResult
+                    : dialog.returnValue && !["close", "cancel"].includes(dialog.returnValue)
+                        ? dialog.returnValue
                         : null;
 
                 cleanup();
@@ -419,12 +461,12 @@ async function showDialogFile(filePath, args = {}) {
             });
 
             closeButton.addEventListener("click", () => controller.close());
-            overlay.addEventListener("close", onClose, { once: true });
+            dialog.addEventListener("close", onClose, { once: true });
 
-            if (typeof overlay.showModal === "function") {
-                overlay.showModal();
+            if (typeof dialog.showModal === "function") {
+                dialog.showModal();
             } else {
-                overlay.setAttribute("open", "open");
+                dialog.setAttribute("open", "open");
             }
 
             const focusable = dialog.querySelector(
@@ -468,7 +510,7 @@ async function showConfirmDialog(options = {}) {
         : null;
 
     const overlay = document.createElement("dialog");
-    overlay.className = "prompt-overlay";
+    overlay.className = "dialog-overlay";
     overlay.dataset.dialog = "";
     overlay.dataset.dialogId = crypto.randomUUID();
 
@@ -642,7 +684,7 @@ async function showInputDialog(options = {}) {
         : null;
 
     const overlay = document.createElement("dialog");
-    overlay.className = "prompt-overlay";
+    overlay.className = "dialog-overlay";
     overlay.dataset.dialog = "";
     overlay.style.maxWidth = "fit-content";
     overlay.dataset.dialogId = crypto.randomUUID();
@@ -789,7 +831,7 @@ async function showTextEditorDialog(options = {}) {
         : null;
 
     const overlay = document.createElement("dialog");
-    overlay.className = "prompt-overlay";
+    overlay.className = "dialog-overlay";
     overlay.dataset.dialog = "";
     overlay.dataset.dialogId = crypto.randomUUID();
     overlay.style.width = "calc(100vw - 24px)";

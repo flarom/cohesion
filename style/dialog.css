@@ -80,6 +80,7 @@ dialog .toolbar {
     pointer-events: none;
     background-color: transparent;
     border: none;
+    z-index: 99;
 }
 
 dialog .toolbar .icon-button {
@@ -120,14 +121,16 @@ dialog .toolbar .dialog-window-control:hover {
     background-color: var(--hover-color);
 }
 
-dialog hr.toolbar-spacer {
-    margin-bottom: 32px;
-    border: none;
-    height: 0;
+dialog .toolbar.no-overlay {
+    position: static;
 }
 
 dialog .padding {
     padding: 10px;
+}
+
+dialog:has(.toolbar.no-overlay) .padding {
+    padding-top: 0px;
 }
 
 .button-row {
