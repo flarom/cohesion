@@ -29,12 +29,30 @@
             text-align: center;
             outline: none !important;
         }
+
+        .preview-viewport {
+            border-bottom: 1px solid var(--border-light-color);
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            display: block;
+            margin: 0;
+            transform-origin: 0 0;
+            user-select: none;
+            -webkit-user-drag: none;
+            cursor: default;
+        }
     </style>
 </head>
 <body>
     <main>
         <section>
-            <img src="" alt="" id="previewImage" style="border-bottom: 1px solid var(--border-light-color);">
+            <div class="preview-viewport" id="previewViewport">
+                <img src="" alt="" id="previewImage" class="preview-image" draggable="false">
+            </div>
             <input type="text" name="fileName" id="fileName" class="x-file-name-input">
         </section>
         <div style="padding: 0px 10px 10px 10px;">
@@ -63,6 +81,10 @@
             const imageHTMLInput = document.getElementById("imageHTML");
             const copyImageHTMLBtn = document.getElementById("copyImageHTML");
             const imagePreview = document.getElementById("previewImage");
+            const previewViewport = document.getElementById("previewViewport");
+            const downloadFileBtn = document.getElementById("downloadFileBtn");
+            const deleteFileBtn = document.getElementById("deleteFileBtn");
+
             const originalName = String(args.name || "invalidImage.png").trim() || "invalidImage.png";
             let currentName = originalName;
             let currentResourceId = String(args.id || "").trim();
@@ -104,6 +126,91 @@
                 imageMarkdownInput.value = `![Alt text](resources/${safeName})`;
                 imageHTMLInput.value = `<img src="resources/${safeName}" alt="Alt text">`;
             };
+
+            const zoomState = {
+                scale: 1,
+                minScale: 1,
+                maxScale: 8,
+                tx: 0,
+                ty: 0,
+                mouseDrag: null,
+                touchDrag: null,
+                pinch: null,
+            };
+
+            const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+            const updateCursor = () => {
+                if (zoomState.mouseDrag || zoomState.touchDrag) {
+                    imagePreview.style.cursor = "grabbing";
+                    return;
+                }
+
+                imagePreview.style.cursor = zoomState.scale > 1 ? "grab" : "default";
+            };
+
+            const getBounds = () => {
+                const viewportWidth = previewViewport.clientWidth;
+                const viewportHeight = previewViewport.clientHeight;
+                const contentWidth = imagePreview.offsetWidth * zoomState.scale;
+                const contentHeight = imagePreview.offsetHeight * zoomState.scale;
+
+                const minTx = contentWidth > viewportWidth ? viewportWidth - contentWidth : (viewportWidth - contentWidth) / 2;
+                const maxTx = contentWidth > viewportWidth ? 0 : (viewportWidth - contentWidth) / 2;
+                const minTy = contentHeight > viewportHeight ? viewportHeight - contentHeight : (viewportHeight - contentHeight) / 2;
+                const maxTy = contentHeight > viewportHeight ? 0 : (viewportHeight - contentHeight) / 2;
+
+                return { minTx, maxTx, minTy, maxTy };
+            };
+
+            const applyTransform = () => {
+                const { minTx, maxTx, minTy, maxTy } = getBounds();
+                zoomState.tx = clamp(zoomState.tx, minTx, maxTx);
+                zoomState.ty = clamp(zoomState.ty, minTy, maxTy);
+                imagePreview.style.transform = `translate(${zoomState.tx}px, ${zoomState.ty}px) scale(${zoomState.scale})`;
+                updateCursor();
+            };
+
+            const zoomAtClientPoint = (nextScale, clientX, clientY) => {
+                const rect = previewViewport.getBoundingClientRect();
+                const boundedScale = clamp(nextScale, zoomState.minScale, zoomState.maxScale);
+
+                if (boundedScale === zoomState.scale) {
+                    return;
+                }
+
+                const anchorX = clientX - rect.left;
+                const anchorY = clientY - rect.top;
+                const sourceX = (anchorX - zoomState.tx) / zoomState.scale;
+                const sourceY = (anchorY - zoomState.ty) / zoomState.scale;
+
+                zoomState.scale = boundedScale;
+                zoomState.tx = anchorX - sourceX * zoomState.scale;
+                zoomState.ty = anchorY - sourceY * zoomState.scale;
+                applyTransform();
+            };
+
+            const resetZoom = () => {
+                zoomState.scale = 1;
+                zoomState.tx = 0;
+                zoomState.ty = 0;
+                zoomState.mouseDrag = null;
+                zoomState.touchDrag = null;
+                zoomState.pinch = null;
+                imagePreview.style.transform = "translate(0px, 0px) scale(1)";
+                updateCursor();
+            };
+
+            const distanceBetweenTouches = (touchA, touchB) => {
+                const dx = touchA.clientX - touchB.clientX;
+                const dy = touchA.clientY - touchB.clientY;
+                return Math.hypot(dx, dy);
+            };
+
+            const midpointBetweenTouches = (touchA, touchB) => ({
+                x: (touchA.clientX + touchB.clientX) / 2,
+                y: (touchA.clientY + touchB.clientY) / 2,
+            });
 
             const commitRename = async () => {
                 const nextName = fileNameInput.value.trim();
@@ -148,6 +255,155 @@
             updateDerivedFields(originalName);
 
             imagePreview.src = args.url || "resources/invalidImage.png";
+            imagePreview.addEventListener("load", resetZoom);
+
+            previewViewport.addEventListener("wheel", (event) => {
+                event.preventDefault();
+
+                const zoomFactor = event.deltaY < 0 ? 1.1 : 0.9;
+                zoomAtClientPoint(zoomState.scale * zoomFactor, event.clientX, event.clientY);
+            }, { passive: false });
+
+            imagePreview.addEventListener("mousedown", (event) => {
+                if (event.button !== 0 || zoomState.scale <= 1) {
+                    return;
+                }
+
+                event.preventDefault();
+                zoomState.mouseDrag = {
+                    startX: event.clientX,
+                    startY: event.clientY,
+                    startTx: zoomState.tx,
+                    startTy: zoomState.ty,
+                };
+                updateCursor();
+            });
+
+            window.addEventListener("mousemove", (event) => {
+                if (!zoomState.mouseDrag) {
+                    return;
+                }
+
+                const dx = event.clientX - zoomState.mouseDrag.startX;
+                const dy = event.clientY - zoomState.mouseDrag.startY;
+                zoomState.tx = zoomState.mouseDrag.startTx + dx;
+                zoomState.ty = zoomState.mouseDrag.startTy + dy;
+                applyTransform();
+            });
+
+            window.addEventListener("mouseup", () => {
+                if (!zoomState.mouseDrag) {
+                    return;
+                }
+
+                zoomState.mouseDrag = null;
+                updateCursor();
+            });
+
+            previewViewport.addEventListener("touchstart", (event) => {
+                if (event.touches.length === 2) {
+                    event.preventDefault();
+                    const touchA = event.touches[0];
+                    const touchB = event.touches[1];
+                    const startDistance = distanceBetweenTouches(touchA, touchB);
+
+                    if (!startDistance) {
+                        return;
+                    }
+
+                    zoomState.pinch = {
+                        startDistance,
+                        startScale: zoomState.scale,
+                        startTx: zoomState.tx,
+                        startTy: zoomState.ty,
+                        startMidpoint: midpointBetweenTouches(touchA, touchB),
+                    };
+                    zoomState.touchDrag = null;
+                    updateCursor();
+                    return;
+                }
+
+                if (event.touches.length === 1 && zoomState.scale > 1) {
+                    event.preventDefault();
+                    const touch = event.touches[0];
+                    zoomState.touchDrag = {
+                        startX: touch.clientX,
+                        startY: touch.clientY,
+                        startTx: zoomState.tx,
+                        startTy: zoomState.ty,
+                    };
+                    zoomState.pinch = null;
+                    updateCursor();
+                }
+            }, { passive: false });
+
+            previewViewport.addEventListener("touchmove", (event) => {
+                if (event.touches.length === 2 && zoomState.pinch) {
+                    event.preventDefault();
+
+                    const touchA = event.touches[0];
+                    const touchB = event.touches[1];
+                    const currentDistance = distanceBetweenTouches(touchA, touchB);
+                    const currentMidpoint = midpointBetweenTouches(touchA, touchB);
+                    const rect = previewViewport.getBoundingClientRect();
+
+                    const nextScale = clamp(
+                        zoomState.pinch.startScale * (currentDistance / zoomState.pinch.startDistance),
+                        zoomState.minScale,
+                        zoomState.maxScale
+                    );
+
+                    const sourceX = (zoomState.pinch.startMidpoint.x - rect.left - zoomState.pinch.startTx) / zoomState.pinch.startScale;
+                    const sourceY = (zoomState.pinch.startMidpoint.y - rect.top - zoomState.pinch.startTy) / zoomState.pinch.startScale;
+
+                    zoomState.scale = nextScale;
+                    zoomState.tx = currentMidpoint.x - rect.left - sourceX * zoomState.scale;
+                    zoomState.ty = currentMidpoint.y - rect.top - sourceY * zoomState.scale;
+                    applyTransform();
+                    return;
+                }
+
+                if (event.touches.length === 1 && zoomState.touchDrag && zoomState.scale > 1) {
+                    event.preventDefault();
+                    const touch = event.touches[0];
+                    const dx = touch.clientX - zoomState.touchDrag.startX;
+                    const dy = touch.clientY - zoomState.touchDrag.startY;
+
+                    zoomState.tx = zoomState.touchDrag.startTx + dx;
+                    zoomState.ty = zoomState.touchDrag.startTy + dy;
+                    applyTransform();
+                }
+            }, { passive: false });
+
+            previewViewport.addEventListener("touchend", (event) => {
+                if (event.touches.length < 2) {
+                    zoomState.pinch = null;
+                }
+
+                if (zoomState.scale <= 1) {
+                    zoomState.touchDrag = null;
+                }
+
+                if (event.touches.length === 1 && zoomState.scale > 1) {
+                    const touch = event.touches[0];
+                    zoomState.touchDrag = {
+                        startX: touch.clientX,
+                        startY: touch.clientY,
+                        startTx: zoomState.tx,
+                        startTy: zoomState.ty,
+                    };
+                }
+
+                if (!zoomState.pinch && !zoomState.touchDrag) {
+                    updateCursor();
+                }
+            });
+
+            previewViewport.addEventListener("touchcancel", () => {
+                zoomState.touchDrag = null;
+                zoomState.pinch = null;
+                updateCursor();
+            });
 
             copyImageMarkdownBtn.addEventListener("click", async () => {
                 await navigator.clipboard.writeText(imageMarkdownInput.value);
@@ -176,6 +432,40 @@
                 if (event.key === "Enter") {
                     event.preventDefault();
                     fileNameInput.blur();
+                }
+            });
+
+            downloadFileBtn.addEventListener("click", () => {
+                if (!currentResourceId) {
+                    return;
+                }
+                const link = document.createElement("a");
+                link.href = args.url || "resources/invalidImage.png";
+                link.download = currentName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                hideAllMenus();
+            });
+
+            deleteFileBtn.addEventListener("click", async () => {
+                if (!currentResourceId) {
+                    return;
+                }
+
+                const confirmDelete = confirm("Are you sure you want to delete this resource? This action cannot be undone.");
+
+                if (!confirmDelete) {
+                    return;
+                }
+
+                try {
+                    await file.removeFile(currentResourceId);
+                    Toast.show("Resource deleted", "check");
+                    window.dialogReturn(true);
+                } catch (error) {
+                    console.error("Error deleting resource:", error);
+                    Toast.show("Could not delete resource", "error");
                 }
             });
         })();

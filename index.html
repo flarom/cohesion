@@ -288,8 +288,43 @@
         editor.focus();
 
         // Initialize file manager
+        async function requestPersistentStorageIfPossible() {
+            const alreadyRequested = Settings.getSetting("persistentStorageRequested", "false") === "true";
+
+            if (!navigator.storage || typeof navigator.storage.persist !== "function") {
+                return;
+            }
+
+            try {
+                if (typeof navigator.storage.persisted === "function") {
+                    const isPersisted = await navigator.storage.persisted();
+                    if (isPersisted) {
+                        Settings.setSetting("persistentStorageStatus", "granted");
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.warn("Could not verify persistent storage state:", error);
+            }
+
+            if (alreadyRequested) {
+                return;
+            }
+
+            Settings.setSetting("persistentStorageRequested", "true");
+
+            try {
+                const granted = await navigator.storage.persist();
+                Settings.setSetting("persistentStorageStatus", granted ? "granted" : "denied");
+            } catch (error) {
+                console.warn("Error requesting persistent storage:", error);
+                Settings.setSetting("persistentStorageStatus", "error");
+            }
+        }
+
         (async () => {
             await fileManager.initializeFileManager();
+            await requestPersistentStorageIfPossible();
             await updateTitle();
 
             if (fileManager.projects.length === 0) {
