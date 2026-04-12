@@ -186,31 +186,6 @@ function updateDialogToolbarRight(content, dialogId = null) {
     return updateDialogToolbarSection("toolbar-right", content, dialogId);
 }
 
-function updateDialogToolbarOverlay(overlay, dialogId = null) {
-    const dialog = getDialogOverlay(dialogId);
-    if (!dialog) {
-        console.warn("No dialog found to update toolbar overlay.");
-        return false;
-    }
-    const toolbar = dialog.querySelector(".toolbar");
-    const content = dialog.querySelector(".dialog-content");
-    if (!toolbar) {
-        console.warn("Toolbar not found in dialog.");
-        return false;
-    }
-    if (overlay) {
-        toolbar.classList.remove("no-overlay");
-        if (content.style.maxHeight) {
-            content.style.maxHeight = `calc(${content.style.maxHeight} + 50px)`;
-        }
-    } else {
-        toolbar.classList.add("no-overlay");
-        if (content.style.maxHeight) {
-            content.style.maxHeight = `calc(${content.style.maxHeight} - 50px)`;
-        }
-    }
-}
-
 function setHorizontalScroll(element, smooth = false) {
     element.addEventListener("wheel", (e) => {
         if (e.deltaY === 0) return; // only handle vertical scroll

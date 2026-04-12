@@ -210,3 +210,67 @@
 .md-document table.csv-table tbody tr:first-child td:last-child {
     border-top-right-radius: 10px;
 }
+
+/* MARK: MISC */
+
+.md-document details {
+    position: relative;
+    display: inline-block;
+
+    summary {
+        padding: 6px 12px;
+        list-style: none;
+        font-size: 0.9rem;
+        border-radius: 8px;
+        border: 1px solid var(--border-field-color);
+        color: var(--button-color);
+        background-color: var(--field-color);
+        user-select: none;
+        display: inline-flex;
+        align-items: center;
+
+        &:hover {
+            background-color: var(--hover-color);
+        }
+        &::before {
+            content: "info";
+            font-family: "Material Symbols Rounded";
+            display: inline-block;
+            margin-right: 8px;
+        }
+    }
+    &[open] summary {
+        background-color: var(--accent);
+        border-color: var(--accent);
+        color: var(--button-color-2);
+    }
+
+    &::details-content {
+
+        transform-origin: top left;
+        background: var(--background-color-2);
+        box-shadow: var(--shadow-light);
+        position: absolute;
+        padding: 0px 4px;
+        left: 0;
+        top: 35px;
+        width: 512px;
+        border-radius: 12px;
+        right: 0;
+    }
+    &[open]::details-content {
+        animation: detailsAnimateDown 0.6s ease forwards;
+    }
+}
+
+@keyframes detailsAnimateDown {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

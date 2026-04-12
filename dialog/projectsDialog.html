@@ -10,9 +10,11 @@
     <style>
         .project-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(128px, 8px));
             gap: 8px;
             padding: 8px;
+            height: calc(600px - 2px);
+            overflow-y: scroll;
+            grid-template-columns: repeat(auto-fill, minmax(128px, 8px));
             padding-top: 48px;
 
             .project-item {
@@ -98,7 +100,7 @@
             const newProjectBtn = document.getElementById("newProjectBtn");
             
             if (args.introSequence) {
-                const promptOverlay = document.querySelector(".prompt-dialog");
+                const promptOverlay = document.querySelector(".dialog-overlay");
                 if (promptOverlay) {
                     promptOverlay.classList.add("introAnimation");
                 }
@@ -223,6 +225,12 @@
                     button.addEventListener("dblclick", async (e) => {
                         e.stopPropagation();
                         await openProject(project.id);
+                    });
+                    button.addEventListener("keydown", async (e) => {
+                        if (e.key === "Enter") {
+                            e.preventDefault();
+                            await openProject(project.id);
+                        }
                     });
 
                     projectGrid.appendChild(button);

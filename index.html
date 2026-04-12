@@ -93,7 +93,8 @@
                     </button> -->
                     <hr />
                     <button class="text-button" onmouseup="closeAllDialogs(); showDialogFile('dialog/projectsDialog.html'); hideAllMenus()">
-                        <span data-locale="main.header.more-options.my-projects">My projects</span>
+                        <span data-locale="main.header.more-options.projects">Projects</span>
+                        <kbd>Ctrl+J</kbd>
                     </button>
                     <button class="text-button" onmouseup="fileManager.openResourcesDialog(); hideAllMenus()">
                         <span data-locale="main.header.more-options.resources">Resources</span>
@@ -111,7 +112,7 @@
                         <span data-locale="main.header.more-options.keyboard-shortcuts">Keyboard shortcuts</span>
                         <kbd>Ctrl+?</kbd>
                     </button>
-                    <button class="text-button" onmouseup="closeAllDialogs(); showDialogFile('dialog/aboutDialog.html'); hideAllMenus();">
+                    <button class="text-button" onmouseup="closeAllDialogs(); showDialogFile('dialog/about.html'); hideAllMenus();">
                         <span data-locale="main.header.more-options.about-cohesion">About Cohesion</span>
                         <kbd>F1</kbd>
                     </button>
@@ -158,6 +159,7 @@
     <script src="script/fileManager.js"></script>
     <script src="script/statusbarAPI.js"></script>
     <script src="script/showdown/showdown.js"></script>
+    <script src="script/extensionsAPI.js"></script>
     <script src="script/showdown/scriptExecutionButtonExtension.js"></script>
 
     <script src="script/codemirror/mode/javascript/javascript.js"></script>
@@ -252,6 +254,13 @@
             if (editorFont) root.style.setProperty("--font-editor", editorFont);
             if (paragraphFont) root.style.setProperty("--font-text", paragraphFont);
             if (titleFont) root.style.setProperty("--font-title", titleFont);
+
+            // behavior
+            if (Settings.getSetting("statusShow", "true") === "true"){
+                root.style.setProperty('--status-h', '30px');
+            } else { 
+                root.style.setProperty('--status-h', '0px');
+            }
         }
 
         loadSettings();
@@ -266,10 +275,13 @@
             extraKeys: {
                 Enter: "newlineAndIndentContinueMarkdownList",  // Pressing Enter continues markdown lists
                 "Ctrl-Space": "autocomplete",                   // Trigger autocomplete with Ctrl-Space
-                //"Tab": _snippetTab,                               // Custom snippet tab function
-                //"Shift-Tab": _snippetShiftTab,                  // Custom snippet shift-tab function
                 'Alt-Left': 'goLineStartSmart',
-                'Alt-Right': 'goLineEnd'
+                'Alt-Right': 'goLineEnd',
+                "Shift-Alt-Up": "addCursorToPrevLine",
+                "Shift-Alt-Down": "addCursorToNextLine",
+                "Alt-Up": "swapLineUp",
+                "Alt-Down": "swapLineDown",
+                "Ctrl-J": false, // suppress joinLines
             },
             styleActiveLine: true,
         });
@@ -284,6 +296,138 @@
                 showDialogFile("dialog/projectsDialog.html", {introSequence: true});
             }
         })();
+
+        // MARK: STATUS BAR
+        StatusBar.removeAll();
+
+        function minPos(a, b) {
+            if (a.line < b.line) return a;
+            if (a.line > b.line) return b;
+            return a.ch < b.ch ? a : b;
+        }
+
+        function maxPos(a, b) {
+            if (a.line > b.line) return a;
+            if (a.line < b.line) return b;
+            return a.ch > b.ch ? a : b;
+        }
+
+        if (Settings.getSetting("statusCursorPos", "true") == "true") {
+            StatusBar.register({
+                id: "cursorPos",
+                side: "left",
+
+                render() {
+                    return `
+                        <label>
+                            <span
+                                data-locale="main.status-bar.cursor.single"
+                                data-locale-vars='{"line":1,"col":1}'>
+                                Ln 1, Col 1
+                            </span>
+                        </label>
+                    `;
+                },
+
+                update(el) {
+                    const span = el.querySelector("span");
+
+                    const selections = editor.listSelections();
+                    const cursor = editor.getCursor();
+
+                    const cursorCount = selections.length;
+                    let totalSelected = 0;
+
+                    for (const sel of selections) {
+                        const from = sel.anchor;
+                        const to = sel.head;
+
+                        if (from.line === to.line && from.ch === to.ch) continue;
+
+                        const text = editor.getRange(
+                            minPos(from, to),
+                            maxPos(from, to)
+                        );
+
+                        totalSelected += text.length;
+                    }
+
+                    // single cursor
+                    if (cursorCount === 1) {
+                        if (totalSelected > 0) {
+                            span.textContent =
+                                `Ln ${cursor.line + 1}, Col ${cursor.ch + 1} (${totalSelected} Selected)`;
+
+                            span.dataset.locale = "main.status-bar.cursor.single.selected";
+                            span.dataset.localeVars = JSON.stringify({
+                                line: cursor.line + 1,
+                                col: cursor.ch + 1,
+                                count: totalSelected
+                            });
+                        } else {
+                            span.textContent =
+                                `Ln ${cursor.line + 1}, Col ${cursor.ch + 1}`;
+
+                            span.dataset.locale = "main.status-bar.cursor.single";
+                            span.dataset.localeVars = JSON.stringify({
+                                line: cursor.line + 1,
+                                col: cursor.ch + 1
+                            });
+                        }
+                    }
+                    // multiple cursors
+                    else {
+                        if (totalSelected > 0) {
+                            span.textContent =
+                                `${cursorCount} Cursors (${totalSelected} Selected)`;
+
+                            span.dataset.locale = "main.status-bar.cursor.multi.selected";
+                            span.dataset.localeVars = JSON.stringify({
+                                count: cursorCount,
+                                selected: totalSelected
+                            });
+                        } else {
+                            span.textContent =
+                                `${cursorCount} Cursors`;
+
+                            span.dataset.locale = "main.status-bar.cursor.multi";
+                            span.dataset.localeVars = JSON.stringify({
+                                count: cursorCount
+                            });
+                        }
+                    }
+
+                    translateElement(span);
+                }
+            });
+
+            editor.on("cursorActivity", () => StatusBar.update("cursorPos"));
+        }
+
+        if (Settings.getSetting("statusDocumentSize", "true") == "true") {
+            StatusBar.register({
+                id: "docSize",
+                side: "right",
+
+                render() {
+                    return `<label><span>0 <span data-locale="app.status-bar-document-size.characters">Characters</span>, 0 <span data-locale="app.status-bar-document-size.words">Words</span></span></label>`;
+                },
+
+                update(el) {
+                    const content = editor.getValue();
+                    const chars = content.length;
+                    const words = content.trim().split(/\s+/).filter(Boolean).length;
+
+                    el.querySelector("label").innerHTML =
+                        `<span>${chars} <span data-locale="app.status-bar-document-size.characters">Characters</span>, ${words} <span data-locale="app.status-bar-document-size.words">Words</span></span>`;
+
+                    translateWithin(el.querySelector("label"))
+                }
+            });
+
+            editor.on("keyHandled", () => StatusBar.update("docSize"));
+            editor.on("change", () => StatusBar.update("docSize"));
+        }
 
         // MARK: RENDERER
         const converter = new showdown.Converter({
@@ -496,7 +640,7 @@
             if (event.key === "F1") {
                 event.preventDefault();
                 closeAllDialogs();
-                showDialogFile('dialog/aboutDialog.html');
+                showDialogFile('dialog/about.html');
             }
         });
         //// Ctrl+, open settings
@@ -505,6 +649,14 @@
                 event.preventDefault();
                 closeAllDialogs();
                 showDialogFile('dialog/settings.html');
+            }
+        });
+        //// Ctrl+J open projects dialog
+        document.addEventListener("keydown", (event) => {
+            if (event.ctrlKey && event.key === "j") {
+                event.preventDefault();
+                closeAllDialogs();
+                showDialogFile('dialog/projectsDialog.html');
             }
         });
         //// Ctrl+Ç test shortcut that will be removed at some point
@@ -540,6 +692,11 @@
             const title = await file.getMarkdownTitle(fileManager.currentFileId);
             showDialogFile('dialog/saveFileDialog.html', {filename: title || "New document"});
         }
+
+        async function updateExtensions() { 
+            await Extensions.runAll();
+        }
+        updateExtensions();
     </script>
 </body>
 

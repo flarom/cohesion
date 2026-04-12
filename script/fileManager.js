@@ -391,7 +391,7 @@ const fileManager = {
             return;
         }
 
-        await showDialogFile("dialog/resourcesDialog.html", {
+        await showDialogFile("dialog/resources.html", {
             projectId: this.currentProjectId
         });
     }

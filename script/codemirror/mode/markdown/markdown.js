@@ -57,6 +57,9 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
   if (modeCfg.xml === undefined)
     modeCfg.xml = true;
 
+  if (modeCfg.metadata === undefined)
+    modeCfg.metadata = true;
+
   // Allow token types to be overridden by user-provided token types.
   if (modeCfg.tokenTypeOverrides === undefined)
     modeCfg.tokenTypeOverrides = {};
@@ -81,7 +84,13 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     em: "em",
     strong: "strong",
     strikethrough: "strikethrough",
-    emoji: "emoji"
+    emoji: "emoji",
+    metadataLine: "md-meta-line",
+    metadataStart: "md-meta-start",
+    metadataEnd: "md-meta-end",
+    metadataKey: "md-meta-key",
+    metadataSeparator: "md-meta-separator",
+    metadataValue: "md-meta-value"
   };
 
   for (var tokenType in tokenTypes) {
@@ -98,6 +107,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
   ,   textRE = /^[^#!\[\]*_\\<>` "'(~:]+/
   ,   fencedCodeRE = /^(~~~+|```+)[ \t]*([\w\/+#-]*)[^\n`]*$/
   ,   linkDefRE = /^\s*\[[^\]]+?\]:.*$/ // naive link-definition
+  ,   metadataStartRE = /^ {0,3}(---|\u00AB\u00AB\u00AB)\s*$/
   ,   punctuation = /[!"#$%&'()*+,\-.\/:;<=>?@\[\\\]^_`{|}~\xA1\xA7\xAB\xB6\xB7\xBB\xBF\u037E\u0387\u055A-\u055F\u0589\u058A\u05BE\u05C0\u05C3\u05C6\u05F3\u05F4\u0609\u060A\u060C\u060D\u061B\u061E\u061F\u066A-\u066D\u06D4\u0700-\u070D\u07F7-\u07F9\u0830-\u083E\u085E\u0964\u0965\u0970\u0AF0\u0DF4\u0E4F\u0E5A\u0E5B\u0F04-\u0F12\u0F14\u0F3A-\u0F3D\u0F85\u0FD0-\u0FD4\u0FD9\u0FDA\u104A-\u104F\u10FB\u1360-\u1368\u1400\u166D\u166E\u169B\u169C\u16EB-\u16ED\u1735\u1736\u17D4-\u17D6\u17D8-\u17DA\u1800-\u180A\u1944\u1945\u1A1E\u1A1F\u1AA0-\u1AA6\u1AA8-\u1AAD\u1B5A-\u1B60\u1BFC-\u1BFF\u1C3B-\u1C3F\u1C7E\u1C7F\u1CC0-\u1CC7\u1CD3\u2010-\u2027\u2030-\u2043\u2045-\u2051\u2053-\u205E\u207D\u207E\u208D\u208E\u2308-\u230B\u2329\u232A\u2768-\u2775\u27C5\u27C6\u27E6-\u27EF\u2983-\u2998\u29D8-\u29DB\u29FC\u29FD\u2CF9-\u2CFC\u2CFE\u2CFF\u2D70\u2E00-\u2E2E\u2E30-\u2E42\u3001-\u3003\u3008-\u3011\u3014-\u301F\u3030\u303D\u30A0\u30FB\uA4FE\uA4FF\uA60D-\uA60F\uA673\uA67E\uA6F2-\uA6F7\uA874-\uA877\uA8CE\uA8CF\uA8F8-\uA8FA\uA8FC\uA92E\uA92F\uA95F\uA9C1-\uA9CD\uA9DE\uA9DF\uAA5C-\uAA5F\uAADE\uAADF\uAAF0\uAAF1\uABEB\uFD3E\uFD3F\uFE10-\uFE19\uFE30-\uFE52\uFE54-\uFE61\uFE63\uFE68\uFE6A\uFE6B\uFF01-\uFF03\uFF05-\uFF0A\uFF0C-\uFF0F\uFF1A\uFF1B\uFF1F\uFF20\uFF3B-\uFF3D\uFF3F\uFF5B\uFF5D\uFF5F-\uFF65]|\uD800[\uDD00-\uDD02\uDF9F\uDFD0]|\uD801\uDD6F|\uD802[\uDC57\uDD1F\uDD3F\uDE50-\uDE58\uDE7F\uDEF0-\uDEF6\uDF39-\uDF3F\uDF99-\uDF9C]|\uD804[\uDC47-\uDC4D\uDCBB\uDCBC\uDCBE-\uDCC1\uDD40-\uDD43\uDD74\uDD75\uDDC5-\uDDC9\uDDCD\uDDDB\uDDDD-\uDDDF\uDE38-\uDE3D\uDEA9]|\uD805[\uDCC6\uDDC1-\uDDD7\uDE41-\uDE43\uDF3C-\uDF3E]|\uD809[\uDC70-\uDC74]|\uD81A[\uDE6E\uDE6F\uDEF5\uDF37-\uDF3B\uDF44]|\uD82F\uDC9F|\uD836[\uDE87-\uDE8B]/
   ,   expandedTab = "    " // CommonMark specifies tab as 4 spaces
 
@@ -113,6 +123,105 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 
   function lineIsEmpty(line) {
     return !line || !/\S/.test(line.string)
+  }
+
+  function metadataLineType(extraType) {
+    return tokenTypes.metadataLine + (extraType ? " " + extraType : "");
+  }
+
+  function metadataKeyClass(key) {
+    var normalized = key.toLowerCase().replace(/[^a-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "");
+    return "md-meta-key-name-" + (normalized || "unknown");
+  }
+
+  function looksLikeMetadataBlock(stream, delimiter) {
+    var endRE = delimiter == "---" ? /^ {0,3}---\s*$/ : /^ {0,3}\u00BB\u00BB\u00BB\s*$/;
+    var keyValueRE = /^\s*[^:\s][^:]*\s*:/;
+    var hasKeyValue = false;
+    var hasEnd = false;
+
+    for (var i = 1; i <= 200; i++) {
+      var nextLine = stream.lookAhead(i);
+      if (nextLine == null) break;
+
+      if (endRE.test(nextLine)) {
+        hasEnd = true;
+        break;
+      }
+
+      if (keyValueRE.test(nextLine)) {
+        hasKeyValue = true;
+      }
+    }
+
+    return hasKeyValue && hasEnd;
+  }
+
+  function buildMetadataLineTokens(line, state) {
+    var tokens = [];
+    var endRE = state.metadataDelimiter == "---" ? /^ {0,3}---\s*$/ : /^ {0,3}\u00BB\u00BB\u00BB\s*$/;
+
+    if (state.metadataLineNumber === 0 && metadataStartRE.test(line)) {
+      tokens.push({text: line, style: metadataLineType(tokenTypes.metadataStart)});
+      return {tokens: tokens, isEnd: false};
+    }
+
+    if (endRE.test(line)) {
+      tokens.push({text: line, style: metadataLineType(tokenTypes.metadataEnd)});
+      return {tokens: tokens, isEnd: true};
+    }
+
+    var keyValueMatch = line.match(/^(\s*)([^:]+?)(\s*)(:)(\s*)(.*)$/);
+    if (!keyValueMatch) {
+      tokens.push({text: line, style: metadataLineType()});
+      return {tokens: tokens, isEnd: false};
+    }
+
+    var keyText = keyValueMatch[2].trim();
+    var keyStyle = metadataLineType(tokenTypes.metadataKey + " " + metadataKeyClass(keyText));
+    var separatorStyle = metadataLineType(tokenTypes.metadataSeparator);
+    var valueStyle = metadataLineType(tokenTypes.metadataValue);
+
+    if (keyValueMatch[1]) tokens.push({text: keyValueMatch[1], style: metadataLineType()});
+    if (keyValueMatch[2]) tokens.push({text: keyValueMatch[2], style: keyStyle});
+    if (keyValueMatch[3]) tokens.push({text: keyValueMatch[3], style: metadataLineType()});
+    tokens.push({text: keyValueMatch[4], style: separatorStyle});
+    if (keyValueMatch[5]) tokens.push({text: keyValueMatch[5], style: metadataLineType()});
+    if (keyValueMatch[6]) tokens.push({text: keyValueMatch[6], style: valueStyle});
+
+    return {tokens: tokens, isEnd: false};
+  }
+
+  function metadataBlock(stream, state) {
+    if (state.metadataLineTokenIndex >= state.metadataLineTokens.length) {
+      var builtLine = buildMetadataLineTokens(stream.string, state);
+      state.metadataLineTokens = builtLine.tokens;
+      state.metadataLineTokenIndex = 0;
+      state.metadataLineIsEnd = builtLine.isEnd;
+    }
+
+    if (!state.metadataLineTokens.length) {
+      stream.skipToEnd();
+      return metadataLineType();
+    }
+
+    var token = state.metadataLineTokens[state.metadataLineTokenIndex++];
+    stream.pos += token.text.length;
+
+    if (state.metadataLineTokenIndex >= state.metadataLineTokens.length) {
+      state.metadataLineTokens = [];
+      state.metadataLineTokenIndex = 0;
+      state.metadataLineNumber++;
+      if (state.metadataLineIsEnd) {
+        state.metadataDelimiter = null;
+        state.metadataLineIsEnd = false;
+        state.metadataLineNumber = 0;
+        state.block = blockNormal;
+        state.f = inlineNormal;
+      }
+    }
+
+    return token.style;
   }
 
   function markHeaderText(stream, state) {
@@ -218,9 +327,20 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     );
 
     var isHr = (state.list === false || prevLineIsHr || prevLineLineIsEmpty) &&
-      state.indentation <= maxNonCodeIndentation && stream.match(hrRE);
+      state.indentation <= maxNonCodeIndentation && stream.match(hrRE, false);
 
     var match = null;
+    var metadataStartMatch = stream.match(metadataStartRE, false);
+    if (modeCfg.metadata && !state.seenNonMetaContent && !state.metadataDelimiter && metadataStartMatch && looksLikeMetadataBlock(stream, metadataStartMatch[1])) {
+      state.metadataDelimiter = stream.match(metadataStartRE, true)[1];
+      state.block = metadataBlock;
+      state.f = metadataBlock;
+      state.metadataLineTokens = [];
+      state.metadataLineTokenIndex = 0;
+      state.metadataLineIsEnd = false;
+      state.metadataLineNumber = 0;
+      return switchBlock(stream, state, state.block);
+    }
     if (state.indentationDiff >= 4 && (prevLineIsIndentedCode || state.prevLine.fencedCodeEnd ||
          state.prevLine.header || prevLineLineIsEmpty)) {
       stream.skipToEnd();
@@ -842,7 +962,14 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         trailingSpaceNewLine: false,
         strikethrough: false,
         emoji: false,
-        fencedEndRE: null
+        fencedEndRE: null,
+
+        seenNonMetaContent: false,
+        metadataDelimiter: null,
+        metadataLineTokens: [],
+        metadataLineTokenIndex: 0,
+        metadataLineIsEnd: false,
+        metadataLineNumber: 0
       };
     },
 
@@ -885,7 +1012,14 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         trailingSpace: s.trailingSpace,
         trailingSpaceNewLine: s.trailingSpaceNewLine,
         md_inside: s.md_inside,
-        fencedEndRE: s.fencedEndRE
+        fencedEndRE: s.fencedEndRE,
+
+        seenNonMetaContent: s.seenNonMetaContent,
+        metadataDelimiter: s.metadataDelimiter,
+        metadataLineTokens: s.metadataLineTokens.slice(0),
+        metadataLineTokenIndex: s.metadataLineTokenIndex,
+        metadataLineIsEnd: s.metadataLineIsEnd,
+        metadataLineNumber: s.metadataLineNumber
       };
     },
 
@@ -901,7 +1035,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         state.atxHeaderTextStarted = false;
         state.hr = false;
 
-        if (stream.match(/^\s*$/, true)) {
+        if (!state.metadataDelimiter && stream.match(/^\s*$/, true)) {
           blankLine(state);
           return null;
         }
@@ -919,11 +1053,18 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         if (!state.localState) {
           state.f = state.block;
           if (state.f != htmlBlock) {
-            var indentation = stream.match(/^\s*/, true)[0].replace(/\t/g, expandedTab).length;
+            var indentation = 0;
+            if (state.f != metadataBlock) {
+              indentation = stream.match(/^\s*/, true)[0].replace(/\t/g, expandedTab).length;
+            }
             state.indentation = indentation;
             state.indentationDiff = null;
-            if (indentation > 0) return null;
+            if (indentation > 0 && state.f != metadataBlock) return null;
           }
+        }
+
+        if (!state.metadataDelimiter && !state.seenNonMetaContent && modeCfg.metadata && !metadataStartRE.test(stream.string) && /\S/.test(stream.string)) {
+          state.seenNonMetaContent = true;
         }
       }
       return state.f(stream, state);

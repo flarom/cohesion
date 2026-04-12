@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="dialog-prefered-width" content="900">
+    <meta name="dialog-prefered-height" content="600">
+    <meta name="dialog-toolbar-left" content="<button class='icon-button' id='add-resource-btn' title='Add resource'>add_box</button>">
+    <meta name="dialog-toolbar-right" content="<button class='icon-button' id='switch-view-mode-btn' title='Switch view mode'>grid_view</button>">
+
+    <style>
+        .resource-container {
+            display: grid;
+            gap: 8px;
+            padding: 8px;
+            height: calc(600px - 2px);
+            overflow-y: scroll;
+            grid-template-columns: repeat(auto-fill, minmax(128px, 8px));
+            padding-top: 48px;
+
+            .resource-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+                padding: 0px;
+                border: none;
+                border-radius: 12px;
+                background-color: var(--background-color-2);
+                box-shadow: var(--shadow-light);
+                color: var(--text-color);
+                position: relative;
+                max-height: 200px;
+                min-height: 200px;
+                max-width: 142px;
+                min-width: 142px;
+
+                .file-dropdown {
+                    opacity: 0;
+                    position: absolute;
+                    top: 4px;
+                    right: 4px;
+                    transition: opacity 0.2s;
+                }
+
+                &:focus-visible { outline: 2px solid var(--accent); .file-dropdown { opacity: 1; }}
+                &:focus-within .file-dropdown { opacity: 1; }
+                &:hover { .file-dropdown { opacity: 1; }}
+                .dropdown.show { opacity: 1; }
+
+                .dropdown-content {
+                    right: -5px
+                }
+
+                .icon-button {
+                    background-color: var(--background-color-2);
+                    &:hover {
+                        background-color: var(--hover-color);
+                    }
+                }
+
+                .file-img-thumbnail {
+                    width: 142px;
+                    height: 142px;
+                    object-fit: cover;
+                    border-radius: 12px 12px 0 0;
+                }
+
+                .file-icon {
+                    font-size: 32px;
+                    color: var(--subtle-color);
+                }
+
+                .file-info {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 4px;
+                    padding-bottom: 4px;
+
+                    span:first-child {
+                        font-size: medium;
+                        color: var(--text-color);
+                        word-break: break-all;
+                    }
+                    span:last-child {
+                        font-size: small;
+                        color: var(--subtle-color);
+                    }
+                }
+            }
+        }
+
+        .resource-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+
+            .resource-item {
+                flex-direction: row;
+                padding: 8px;
+                border-radius: 1px;
+                max-width: none;
+                min-width: 0;
+                max-height: none;
+                min-height: 0;
+
+                .file-img-thumbnail {
+                    width: 32px;
+                    height: 32px;
+                }
+                .file-dropdown {
+                    opacity: 1;
+                    top: 8px;
+                    right: 8px;
+                }
+                .file-info {
+                    display: flex;
+                    flex-direction: row;
+                    gap: 16px;
+                    align-items: center;
+                }
+            }
+            .resource-item:first-of-type {
+                border-radius: 15px 15px 1px 1px;
+            }
+            .resource-item:last-of-type {
+                border-radius: 1px 1px 15px 15px;
+            }
+            .resource-item:only-of-type {
+                border-radius: 15px;
+            }
+        }
+
+        .resource-container.empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <section class="resource-container resource-grid" id="resource-list"></section>
+
+    <script>
+        (() => {
+            const args = typeof window.dialogArgs === "function" ? window.dialogArgs() : {};
+            const projectId = String(args.projectId || fileManager.currentProjectId || "").trim();
+            const resourcesPath = projectId ? `${projectId}/resources` : "";
+
+            const resourceContainer = document.getElementById("resource-list");
+            const switchViewModeBtn = document.getElementById("switch-view-mode-btn");
+            const addResourceBtn = document.getElementById("add-resource-btn");
+
+            let resources = [];
+            let viewMode = "grid";
+
+            const isImageName = (name) => /\.(png|jpe?g|gif|webp|svg|bmp|ico)$/i.test(String(name || ""));
+
+            const getUniqueResourceName = (baseName) => {
+                const normalizedName = String(baseName || "resource").trim() || "resource";
+                const dotIndex = normalizedName.lastIndexOf(".");
+                const base = dotIndex > 0 ? normalizedName.slice(0, dotIndex) : normalizedName;
+                const ext = dotIndex > 0 ? normalizedName.slice(dotIndex) : "";
+
+                const names = new Set(resources.map((entry) => entry.name.toLowerCase()));
+                if (!names.has(normalizedName.toLowerCase())) {
+                    return normalizedName;
+                }
+
+                let counter = 1;
+                while (true) {
+                    const candidate = `${base} (${counter})${ext}`;
+                    if (!names.has(candidate.toLowerCase())) {
+                        return candidate;
+                    }
+                    counter += 1;
+                }
+            };
+
+            const renderList = () => {
+                resourceContainer.innerHTML = "";
+                resourceContainer.classList.remove("empty-state");
+
+                if (resources.length === 0) {
+                    resourceContainer.innerHTML = "<p>This project has no resources.</p>";
+                    resourceContainer.classList.add("empty-state");
+                    return;
+                }
+
+                for (const entry of resources) {
+                    const button = document.createElement("button");
+                    button.className = "resource-item";
+                    button.innerHTML = `
+                        <div class="dropdown file-dropdown">
+                            <button class="icon-button" translate="no" onmousedown="toggleDropdown('${entry.name}-menu')">more_vert</button>
+                            <div class="dropdown-content menu" id="${entry.name}-menu">
+                                <button class="text-button" data-file-copy-id="${entry.name}">Copy markdown</button>
+                                <button class="text-button" data-file-rename-id="${entry.name}">Rename</button>
+                                <hr>
+                                <button class="text-button" data-file-download-id="${entry.name}">Download</button>
+                                <hr>
+                                <button class="text-button danger" data-file-delete-id="${entry.name}">Delete</button>
+                            </div>
+                        </div>
+                        ${isImageName(entry.name) ? `<img src="${URL.createObjectURL(new Blob([entry.content], { type: "application/octet-stream" }))}" alt="${entry.name}" class="file-img-thumbnail">` : `<span class="icon file-icon" style="color:var(--text-color)" translate="no">insert_drive_file</span>`}
+                        <div class="file-info">
+                            <span>${entry.name}</span>
+                            <span>${entry.content instanceof Blob ? `${Math.ceil(entry.content.size / 1024)} KB` : "Text"}</span>
+                        </div>
+                    `;
+
+                    const copyBtn = button.querySelector(`[data-file-copy-id="${entry.name}"]`);
+                    copyBtn.addEventListener("mouseup", async () => {
+                        const markdown = `![${entry.name}](resources/${encodeURIComponent(entry.name)})`;
+                        await navigator.clipboard.writeText(markdown);
+                        Toast.show("Markdown copied to clipboard", "check");
+                        hideAllMenus();
+                    });
+
+                    const renameBtn = button.querySelector(`[data-file-rename-id="${entry.name}"]`);
+                    renameBtn.addEventListener("mouseup", async () => {
+                        const currentNameExtension = entry.name.includes(".") ? entry.name.slice(entry.name.lastIndexOf(".")) : "";
+
+                        let newName = await showInputDialog({label: "Enter new file name", defaultValue: entry.name});
+                        if (newName && newName.trim() && newName.trim() !== entry.name) {
+                            // if the new name doesn't have an extension but the old name does, keep the old extension
+                            if (!newName.includes(".") && currentNameExtension) {
+                                newName += currentNameExtension;
+                            }
+
+                            const uniqueName = getUniqueResourceName(newName.trim());
+                            await file.renameFile(entry.id, uniqueName);
+                            await loadResources();
+                            Toast.show("Resource renamed", "check");
+                            hideAllMenus();
+                        }
+                    });
+
+                    const downloadBtn = button.querySelector(`[data-file-download-id="${entry.name}"]`);
+                    downloadBtn.addEventListener("mouseup", () => {
+                        const blob = entry.content instanceof Blob ? entry.content : new Blob([entry.content], { type: "application/octet-stream" });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = entry.name;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        hideAllMenus();
+                    });
+
+                    const deleteBtn = button.querySelector(`[data-file-delete-id="${entry.name}"]`);
+                    deleteBtn.addEventListener("mouseup", async () => {
+                        await file.removeFile(entry.id);
+                        await loadResources();
+                        Toast.show("Resource deleted", "check");
+                        hideAllMenus();
+                    });
+
+                    button.addEventListener("dblclick", async () => {
+                        const markdown = `![${entry.name}](resources/${encodeURIComponent(entry.name)})`;
+                        await navigator.clipboard.writeText(markdown);
+                        Toast.show("Markdown copied to clipboard", "check");
+                        hideAllMenus();
+                        closeAllDialogs();
+                    });
+
+                    resourceContainer.appendChild(button);
+                }
+            };
+
+            const loadResources = async () => {
+                if (!projectId) {
+                    Toast.show("Open a project first", "error");
+                    closeAllDialogs();
+                    return;
+                }
+
+                await file.ensureDirectoryExistsById(resourcesPath);
+                resources = await file.listDirectory(resourcesPath, true);
+                resources = resources.filter((entry) => entry.type === "file").sort((a, b) => a.name.localeCompare(b.name));
+
+                renderList();
+            };
+            
+            // switch between grid and list view modes  
+            switchViewModeBtn.addEventListener("click", () => {
+                viewMode = viewMode === "grid" ? "list" : "grid";
+                resourceContainer.className = `resource-container resource-${viewMode}`;
+                switchViewModeBtn.textContent = viewMode === "grid" ? "grid_view" : "view_list";
+
+                Settings.setSetting("resourcesPreferedViewMode", viewMode);
+            });
+
+            // switch view mode based on settings  
+            viewMode = Settings.getSetting("resourcesPreferedViewMode", "grid");
+            resourceContainer.className = `resource-container resource-${viewMode}`;
+            switchViewModeBtn.textContent = viewMode === "grid" ? "grid_view" : "view_list"; 
+
+            addResourceBtn.addEventListener("click", async () => {
+                const input = document.createElement("input");
+                input.type = "file";
+                input.multiple = true;
+                input.onchange = async () => {
+                    const files = Array.from(input.files || []);
+                    if (files.length === 0) {
+                        return;
+                    }
+
+                    for (const selectedFile of files) {
+                        const uniqueName = getUniqueResourceName(selectedFile.name);
+                        await file.createFile(uniqueName, selectedFile, resourcesPath);
+                    }
+
+                    await loadResources();
+                    Toast.show("Resource uploaded", "check");
+                };
+                input.click();
+            });
+
+            loadResources();
+        })();
+    </script>
+</body>
+</html>

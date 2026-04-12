@@ -313,6 +313,10 @@ input:checked + .slider:before {
     color: var(--text-color);
 }
 
+.statusbar .status-bar-item {
+    user-select: none;
+}
+
 /* MARK: MOBILE */
 
 .hide-on-desktop {
@@ -365,7 +369,7 @@ input:checked + .slider:before {
     }
 
     .hide-on-mobile {
-        display: none;
+        display: none !important;
     }
 
     .hide-on-desktop {

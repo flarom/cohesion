@@ -125,11 +125,20 @@ dialog .toolbar.no-overlay {
     position: static;
 }
 
+dialog .dialog-content {
+    overflow: scroll;
+}
+
 dialog .padding {
     padding: 10px;
 }
 
-dialog:has(.toolbar.no-overlay) .padding {
+dialog .padding-top {
+    padding: 48px 10px 10px 10px;
+}
+
+dialog:has(.toolbar.no-overlay) .padding,
+dialog:has(.toolbar.no-overlay) .padding-top {
     padding-top: 0px;
 }
 
@@ -330,7 +339,7 @@ dialog main {
             display: flex;
             flex-direction: row;
             align-items: center;
-            gap: 16px;
+            gap: 8px;
             padding: 10px;
             background-color: var(--background-color-2);
             box-shadow: var(--shadow-light);

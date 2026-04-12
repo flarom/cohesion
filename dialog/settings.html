@@ -6,6 +6,7 @@
     <title>Settings</title>
     <meta name="dialog-show-close-button" content="true">
     <meta name="dialog-prefered-width" content="772">
+    <meta name="dialog-prefered-height" content="800">
 
     <style>
         .themes-row {
@@ -151,10 +152,17 @@
         </section>
         <section>
             <h2 data-locale="dialogs.settings.behavior.title">Behavior</h2>
-            <div class="row">
+            <!-- <div class="row">
                 <label for="show-splash-screen" data-locale="dialogs.settings.behavior.show-splash-screen">Show splash screen on startup</label>
                 <label class="switch">
                     <input type="checkbox" id="show-splash-screen" onchange="Settings.setSetting('showSplashScreen', this.checked)" />
+                    <span class="slider"></span>
+                </label>
+            </div> -->
+            <div class="row">
+                <label for="status-bar" data-locale="dialogs.settings.behavior.show-status-bar">Show status bar</label>
+                <label class="switch">
+                    <input type="checkbox" id="status-bar" onchange="Settings.setSetting('statusShow', this.checked); loadSettings();" />
                     <span class="slider"></span>
                 </label>
             </div>
@@ -235,8 +243,10 @@
             selLanguage.value = Settings.getSetting("language", 'en');
 
             // behavior
-            const chkShowSplashScreen = document.getElementById("show-splash-screen");
-            chkShowSplashScreen.checked = Settings.getSetting("showSplashScreen", "true") === "true";
+            // const chkShowSplashScreen = document.getElementById("show-splash-screen");
+            const chkStatusBar = document.getElementById("status-bar");
+            // chkShowSplashScreen.checked = Settings.getSetting("showSplashScreen", "true") === "true";
+            chkStatusBar.checked = Settings.getSetting("statusShow", "true") === "true";
 
             // time formatting
             const txtTimeFormatting = document.getElementById("time-formatting");

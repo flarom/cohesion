@@ -15,7 +15,7 @@
             padding: 8px;
             height: calc(600px - 2px);
             overflow-y: scroll;
-            grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(142px, 8px));
             padding-top: 48px;
 
             .resource-item {
@@ -29,35 +29,10 @@
                 background-color: var(--background-color-2);
                 box-shadow: var(--shadow-light);
                 color: var(--text-color);
-                position: relative;
                 max-height: 200px;
                 min-height: 200px;
                 max-width: 142px;
                 min-width: 142px;
-
-                .file-dropdown {
-                    opacity: 0;
-                    position: absolute;
-                    top: 4px;
-                    right: 4px;
-                    transition: opacity 0.2s;
-                }
-
-                &:focus-visible { outline: 2px solid var(--accent); .file-dropdown { opacity: 1; }}
-                &:focus-within .file-dropdown { opacity: 1; }
-                &:hover { .file-dropdown { opacity: 1; }}
-                .dropdown.show { opacity: 1; }
-
-                .dropdown-content {
-                    right: -5px
-                }
-
-                .icon-button {
-                    background-color: var(--background-color-2);
-                    &:hover {
-                        background-color: var(--hover-color);
-                    }
-                }
 
                 .file-img-thumbnail {
                     width: 142px;
@@ -108,17 +83,21 @@
                 .file-img-thumbnail {
                     width: 32px;
                     height: 32px;
-                }
-                .file-dropdown {
-                    opacity: 1;
-                    top: 8px;
-                    right: 8px;
+                    border-radius: 8px;
                 }
                 .file-info {
                     display: flex;
                     flex-direction: row;
                     gap: 16px;
                     align-items: center;
+                    width: 100%;
+
+                    span:last-child {
+                        font-size: small;
+                        color: var(--subtle-color);
+                        flex: 2;
+                        text-align: right;
+                    }
                 }
             }
             .resource-item:first-of-type {
@@ -154,6 +133,7 @@
 
             let resources = [];
             let viewMode = "grid";
+            const MAX_DRAG_PREVIEW_SIZE = 142;
 
             const isImageName = (name) => /\.(png|jpe?g|gif|webp|svg|bmp|ico)$/i.test(String(name || ""));
 
@@ -192,24 +172,52 @@
                     const button = document.createElement("button");
                     button.className = "resource-item";
                     button.innerHTML = `
-                        <div class="dropdown file-dropdown">
-                            <button class="icon-button" translate="no" onmousedown="toggleDropdown('${entry.name}-menu')">more_vert</button>
-                            <div class="dropdown-content menu" id="${entry.name}-menu">
-                                <button class="text-button" data-file-copy-id="${entry.name}">Copy markdown</button>
-                                <button class="text-button" data-file-rename-id="${entry.name}">Rename</button>
-                                <hr>
-                                <button class="text-button" data-file-download-id="${entry.name}">Download</button>
-                                <hr>
-                                <button class="text-button danger" data-file-delete-id="${entry.name}">Delete</button>
-                            </div>
-                        </div>
                         ${isImageName(entry.name) ? `<img src="${URL.createObjectURL(new Blob([entry.content], { type: "application/octet-stream" }))}" alt="${entry.name}" class="file-img-thumbnail">` : `<span class="icon file-icon" style="color:var(--text-color)" translate="no">insert_drive_file</span>`}
                         <div class="file-info">
                             <span>${entry.name}</span>
                             <span>${entry.content instanceof Blob ? `${Math.ceil(entry.content.size / 1024)} KB` : "Text"}</span>
                         </div>
                     `;
+                    button.draggable = true;
 
+                    button.addEventListener("click", async () => {
+                        await showDialogFile("dialog/resourceInfo.html", { url: `${URL.createObjectURL(new Blob([entry.content], { type: "application/octet-stream" }))}`, name: entry.name, id: entry.id });
+                        await loadResources();
+                    });
+
+                    button.addEventListener("dragstart", (e) => {
+                        const markdown = `![${entry.name}](resources/${encodeURIComponent(entry.name)})`;
+                        e.dataTransfer.setData("text/markdown", markdown);
+                        e.dataTransfer.setData("text/plain", markdown);
+
+                        // Use a capped-size drag ghost to avoid huge previews for large images.
+                        const thumbnail = button.querySelector(".file-img-thumbnail");
+                        if (thumbnail instanceof HTMLImageElement) {
+                            const sourceWidth = thumbnail.naturalWidth || thumbnail.width || MAX_DRAG_PREVIEW_SIZE;
+                            const sourceHeight = thumbnail.naturalHeight || thumbnail.height || MAX_DRAG_PREVIEW_SIZE;
+                            const scale = Math.min(1, MAX_DRAG_PREVIEW_SIZE / Math.max(sourceWidth, sourceHeight));
+                            const dragWidth = Math.max(24, Math.round(sourceWidth * scale));
+                            const dragHeight = Math.max(24, Math.round(sourceHeight * scale));
+
+                            const canvas = document.createElement("canvas");
+                            canvas.width = dragWidth;
+                            canvas.height = dragHeight;
+
+                            const context = canvas.getContext("2d");
+                            if (context) {
+                                context.drawImage(thumbnail, 0, 0, dragWidth, dragHeight);
+                                e.dataTransfer.setDragImage(canvas, Math.floor(dragWidth / 2), Math.floor(dragHeight / 2));
+                            }
+                        }
+
+                        closeAllDialogs();
+                    });
+
+                    button.addEventListener("contextmenu", (e) => {
+                        e.preventDefault();
+                    });
+
+                    /*
                     const copyBtn = button.querySelector(`[data-file-copy-id="${entry.name}"]`);
                     copyBtn.addEventListener("mouseup", async () => {
                         const markdown = `![${entry.name}](resources/${encodeURIComponent(entry.name)})`;
@@ -258,14 +266,15 @@
                         Toast.show("Resource deleted", "check");
                         hideAllMenus();
                     });
+                    */
 
-                    button.addEventListener("dblclick", async () => {
-                        const markdown = `![${entry.name}](resources/${encodeURIComponent(entry.name)})`;
-                        await navigator.clipboard.writeText(markdown);
-                        Toast.show("Markdown copied to clipboard", "check");
-                        hideAllMenus();
-                        closeAllDialogs();
-                    });
+                    // button.addEventListener("dblclick", async () => {
+                    //     const markdown = `![${entry.name}](resources/${encodeURIComponent(entry.name)})`;
+                    //     await navigator.clipboard.writeText(markdown);
+                    //     Toast.show("Markdown copied to clipboard", "check");
+                    //     hideAllMenus();
+                    //     closeAllDialogs();
+                    // });
 
                     resourceContainer.appendChild(button);
                 }

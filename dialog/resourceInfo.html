@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About resource</title>
+    <meta name="dialog-preferred-width" content="520">
+    <meta name="dialog-toolbar-right" content="
+        <div class='dropdown file-dropdown'>
+            <button class='icon-button' translate='no' onmousedown='toggleDropdown(`file-options-menu`)'>more_vert</button>
+            <div class='dropdown-content menu' id='file-options-menu'>
+                <button class='text-button' id='downloadFileBtn'>Download</button>
+                <hr>
+                <button class='text-button danger' id='deleteFileBtn'>Delete</button>
+            </div>
+        </div>
+    ">
+
+    <style>
+        .x-file-name-input {
+            width: 100% !important;
+            margin: 0px !important;
+            padding: 0px !important;
+            font-size: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--background-color) !important;
+            color: var(--text-color);
+            text-align: center;
+            outline: none !important;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <section>
+            <img src="" alt="" id="previewImage" style="border-bottom: 1px solid var(--border-light-color);">
+            <input type="text" name="fileName" id="fileName" class="x-file-name-input">
+        </section>
+        <div style="padding: 0px 10px 10px 10px;">
+            <section>
+                <div class="row">
+                    <label for="imageMarkdown">Markdown</label>
+                    <input type="text" name="imageMarkdown" id="imageMarkdown" value="![Alt text](resources/invalidImage.png)" readonly>
+                    <button class="icon-button" id="copyImageMarkdown">content_copy</button>
+                </div>
+                <div class="row">
+                    <label for="imageHTML">HTML</label>
+                    <input type="text" name="imageHTML" id="imageHTML" value='<img src="resources/invalidImage.png" alt="Alt text">' readonly>
+                    <button class="icon-button" id="copyImageHTML">content_copy</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        (() => {
+            const args = typeof window.dialogArgs === "function" ? window.dialogArgs() : {};
+
+            const fileNameInput = document.getElementById("fileName");
+            const imageMarkdownInput = document.getElementById("imageMarkdown");
+            const copyImageMarkdownBtn = document.getElementById("copyImageMarkdown");
+            const imageHTMLInput = document.getElementById("imageHTML");
+            const copyImageHTMLBtn = document.getElementById("copyImageHTML");
+            const imagePreview = document.getElementById("previewImage");
+            const originalName = String(args.name || "invalidImage.png").trim() || "invalidImage.png";
+            let currentName = originalName;
+            let currentResourceId = String(args.id || "").trim();
+            const resourceParentPath = fileManager.currentProjectId ? `${fileManager.currentProjectId}/resources` : "";
+
+            const getUniqueResourceName = async (baseName) => {
+                const normalizedName = String(baseName || "resource").trim() || "resource";
+                const dotIndex = normalizedName.lastIndexOf(".");
+                const base = dotIndex > 0 ? normalizedName.slice(0, dotIndex) : normalizedName;
+                const ext = dotIndex > 0 ? normalizedName.slice(dotIndex) : "";
+
+                if (!resourceParentPath) {
+                    return normalizedName;
+                }
+
+                const entries = await file.listDirectory(resourceParentPath, true);
+                const usedNames = new Set(
+                    entries
+                        .filter((entry) => entry.type === "file" && entry.id !== currentResourceId)
+                        .map((entry) => entry.name.toLowerCase())
+                );
+
+                if (!usedNames.has(normalizedName.toLowerCase())) {
+                    return normalizedName;
+                }
+
+                let counter = 1;
+                while (true) {
+                    const candidate = `${base} (${counter})${ext}`;
+                    if (!usedNames.has(candidate.toLowerCase())) {
+                        return candidate;
+                    }
+                    counter += 1;
+                }
+            };
+
+            const updateDerivedFields = (name) => {
+                const safeName = String(name || "").trim() || originalName;
+                imageMarkdownInput.value = `![Alt text](resources/${safeName})`;
+                imageHTMLInput.value = `<img src="resources/${safeName}" alt="Alt text">`;
+            };
+
+            const commitRename = async () => {
+                const nextName = fileNameInput.value.trim();
+
+                if (!currentResourceId) {
+                    return;
+                }
+
+                if (!nextName) {
+                    fileNameInput.value = currentName;
+                    updateDerivedFields(currentName);
+                    return;
+                }
+
+                if (nextName === currentName) {
+                    return;
+                }
+
+                const uniqueName = await getUniqueResourceName(nextName);
+
+                if (uniqueName !== fileNameInput.value.trim()) {
+                    fileNameInput.value = uniqueName;
+                }
+
+                updateDerivedFields(uniqueName);
+
+                try {
+                    await file.renameFile(currentResourceId, uniqueName);
+                    currentResourceId = file.buildId(uniqueName, resourceParentPath);
+                    currentName = uniqueName;
+                    fileNameInput.value = currentName;
+                    Toast.show("Resource renamed", "check");
+                } catch (error) {
+                    console.error("Error renaming resource:", error);
+                    Toast.show("Could not rename resource", "error");
+                    fileNameInput.value = currentName;
+                    updateDerivedFields(currentName);
+                }
+            };
+
+            fileNameInput.value = originalName;
+            updateDerivedFields(originalName);
+
+            imagePreview.src = args.url || "resources/invalidImage.png";
+
+            copyImageMarkdownBtn.addEventListener("click", async () => {
+                await navigator.clipboard.writeText(imageMarkdownInput.value);
+                Toast.show("Markdown copied to clipboard", "check");
+                closeAllDialogs();
+            });
+            copyImageHTMLBtn.addEventListener("click", async () => {
+                await navigator.clipboard.writeText(imageHTMLInput.value);
+                Toast.show("HTML copied to clipboard", "check");
+                closeAllDialogs();
+            });
+
+            fileNameInput.addEventListener("input", () => {
+                const name = fileNameInput.value.trim();
+
+                if(name !== "") {
+                    updateDerivedFields(name);
+                }
+            });
+
+            fileNameInput.addEventListener("change", () => {
+                commitRename();
+            });
+
+            fileNameInput.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    fileNameInput.blur();
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

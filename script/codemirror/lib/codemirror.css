@@ -383,7 +383,29 @@ span.CodeMirror-selectedtext { background: none; }
   font-style: normal;
 }
 
-.CodeMirror-line:has(.cm-hr) { text-align: center; letter-spacing: 1ch;}
+.cm-md-meta-start,
+.cm-md-meta-end {
+  color: var(--subtle-color);
+}
+
+.cm-md-meta-key {
+  color: var(--title-color);
+  font-weight: 600;
+}
+
+.cm-md-meta-separator {
+  color: var(--subtle-color);
+}
+
+.cm-md-meta-value {
+  color: var(--text-color);
+}
+
+.CodeMirror-line:has(.cm-hr) {
+  text-align: center;
+  letter-spacing: 1ch;
+  border-bottom: 1px solid var(--border-dark-color) !important;
+}
 
 .cm-trailing-space-a {
   border-radius: 4px 0px 0px 4px;
