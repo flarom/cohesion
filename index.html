@@ -150,17 +150,18 @@
         <div class="status-bar-right"></div>
     </footer>
 
-    <script src="script/settingsAPI.js"></script>
+    <script src="script/settings.js"></script>
     <script src="script/i18n.js"></script>
     <script src="script/insert.js"></script>
-    <script src="script/fileAPI.js"></script>
-    <script src="script/toastAPI.js"></script>
+    <script src="script/file.js"></script>
+    <script src="script/toast.js"></script>
     <script src="script/dialog.js"></script>
     <script src="script/fileManager.js"></script>
-    <script src="script/statusbarAPI.js"></script>
+    <script src="script/statusbar.js"></script>
     <script src="script/showdown/showdown.js"></script>
-    <script src="script/extensionsAPI.js"></script>
+    <script src="script/extensions.js"></script>
     <script src="script/showdown/scriptExecutionButtonExtension.js"></script>
+    <script src="script/showdown/mediaRendererExtension.js"></script>
 
     <script src="script/codemirror/mode/javascript/javascript.js"></script>
     <script src="script/codemirror/mode/css/css.js"></script>
@@ -466,7 +467,7 @@
 
         // MARK: RENDERER
         const converter = new showdown.Converter({
-            extensions: ["scriptExecutionButton"],
+            extensions: ["scriptExecutionButton", "mediaRenderer"],
         });
 
         converter.setOption('ghCompatibleHeaderId', true);
@@ -505,13 +506,20 @@
         function getMimeTypeByFileName(fileName = "") {
             const lowerName = String(fileName || "").toLowerCase();
 
-            if (lowerName.endsWith(".png")) return "image/png";
-            if (lowerName.endsWith(".jpg") || lowerName.endsWith(".jpeg")) return "image/jpeg";
+            if (lowerName.endsWith(".apng")) return "image/apng";
+            if (lowerName.endsWith(".avif")) return "image/avif";
             if (lowerName.endsWith(".gif")) return "image/gif";
-            if (lowerName.endsWith(".webp")) return "image/webp";
+            if (lowerName.endsWith(".jpg") || lowerName.endsWith(".jpeg") || lowerName.endsWith(".jfif") || lowerName.endsWith(".pjpeg") || lowerName.endsWith(".pjp")) return "image/jpeg";
+            if (lowerName.endsWith(".png")) return "image/png";
             if (lowerName.endsWith(".svg")) return "image/svg+xml";
-            if (lowerName.endsWith(".bmp")) return "image/bmp";
-            if (lowerName.endsWith(".ico")) return "image/x-icon";
+            if (lowerName.endsWith(".webp")) return "image/webp";
+
+            if (lowerName.endsWith(".webm")) return "video/webm";
+            if (lowerName.endsWith(".mp4")) return "video/mp4";
+
+            if (lowerName.endsWith(".ogg")) return "audio/ogg"; // could be audio or video, but we'll assume audio since it's more common
+            if (lowerName.endsWith(".wav")) return "audio/wav";
+            if (lowerName.endsWith(".mp3")) return "audio/mpeg";
 
             if (lowerName.endsWith(".pdf")) return "application/pdf";
             if (lowerName.endsWith(".json")) return "application/json";
@@ -520,7 +528,7 @@
             return "application/octet-stream";
         }
 
-        // This function finds all img and a elements in the renderer that have src or href attributes pointing to resources,
+        // This function finds all media/link elements in the renderer that have src or href attributes pointing to resources,
         // reads those resources from the file system, creates object URLs for them, and updates the elements to use those object URLs.
         // It also keeps track of the created object URLs so they can be revoked later to free up memory.
         async function resolveRendererResourcePaths() {
@@ -532,6 +540,8 @@
 
             const candidates = [
                 ...renderer.querySelectorAll("img[src]"),
+                ...renderer.querySelectorAll("video[src]"),
+                ...renderer.querySelectorAll("audio[src]"),
                 ...renderer.querySelectorAll("a[href]")
             ];
 

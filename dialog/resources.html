@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="dialog-prefered-width" content="900">
     <meta name="dialog-prefered-height" content="600">
-    <meta name="dialog-toolbar-left" content="<button class='icon-button' id='add-resource-btn' title='Add resource'>add_box</button>">
-    <meta name="dialog-toolbar-right" content="<button class='icon-button' id='switch-view-mode-btn' title='Switch view mode'>grid_view</button>">
+    <meta name="dialog-toolbar-left" content="<button class='icon-button' id='add-resource-btn' title='Add resource' data-locale-attr='title:dialogs.resources.add-resource'>add_box</button>">
+    <meta name="dialog-toolbar-right" content="<button class='icon-button' id='switch-view-mode-btn' title='Switch view mode' data-locale-attr='title:dialogs.resources.switch-view-mode'>grid_view</button>">
 
     <style>
         .resource-container {
@@ -216,65 +216,6 @@
                     button.addEventListener("contextmenu", (e) => {
                         e.preventDefault();
                     });
-
-                    /*
-                    const copyBtn = button.querySelector(`[data-file-copy-id="${entry.name}"]`);
-                    copyBtn.addEventListener("mouseup", async () => {
-                        const markdown = `![${entry.name}](resources/${encodeURIComponent(entry.name)})`;
-                        await navigator.clipboard.writeText(markdown);
-                        Toast.show("Markdown copied to clipboard", "check");
-                        hideAllMenus();
-                    });
-
-                    const renameBtn = button.querySelector(`[data-file-rename-id="${entry.name}"]`);
-                    renameBtn.addEventListener("mouseup", async () => {
-                        const currentNameExtension = entry.name.includes(".") ? entry.name.slice(entry.name.lastIndexOf(".")) : "";
-
-                        let newName = await showInputDialog({label: "Enter new file name", defaultValue: entry.name});
-                        if (newName && newName.trim() && newName.trim() !== entry.name) {
-                            // if the new name doesn't have an extension but the old name does, keep the old extension
-                            if (!newName.includes(".") && currentNameExtension) {
-                                newName += currentNameExtension;
-                            }
-
-                            const uniqueName = getUniqueResourceName(newName.trim());
-                            await file.renameFile(entry.id, uniqueName);
-                            await loadResources();
-                            Toast.show("Resource renamed", "check");
-                            hideAllMenus();
-                        }
-                    });
-
-                    const downloadBtn = button.querySelector(`[data-file-download-id="${entry.name}"]`);
-                    downloadBtn.addEventListener("mouseup", () => {
-                        const blob = entry.content instanceof Blob ? entry.content : new Blob([entry.content], { type: "application/octet-stream" });
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement("a");
-                        a.href = url;
-                        a.download = entry.name;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                        hideAllMenus();
-                    });
-
-                    const deleteBtn = button.querySelector(`[data-file-delete-id="${entry.name}"]`);
-                    deleteBtn.addEventListener("mouseup", async () => {
-                        await file.removeFile(entry.id);
-                        await loadResources();
-                        Toast.show("Resource deleted", "check");
-                        hideAllMenus();
-                    });
-                    */
-
-                    // button.addEventListener("dblclick", async () => {
-                    //     const markdown = `![${entry.name}](resources/${encodeURIComponent(entry.name)})`;
-                    //     await navigator.clipboard.writeText(markdown);
-                    //     Toast.show("Markdown copied to clipboard", "check");
-                    //     hideAllMenus();
-                    //     closeAllDialogs();
-                    // });
 
                     resourceContainer.appendChild(button);
                 }

@@ -37,6 +37,7 @@
 
     --danger:               #ff8881; 
     --danger-bg:            #ff888133;
+    --danger-bg-hover:      #ff888155;
 
     --shadow:               0px 0px 10px #00000055;
     --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
@@ -86,6 +87,7 @@
 
     --danger:               #ca2121; 
     --danger-bg:            #ca212133;
+    --danger-bg-hover:      #ca212155;
 
     --shadow:               0px 0px 8px #00000022;
     --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
@@ -135,6 +137,7 @@
 
     --danger:               #ca2121;
     --danger-bg:            #ca212133;
+    --danger-bg-hover:      #ca212155;
 
     --shadow:               0px 0px 8px #00000022;
     --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
@@ -185,6 +188,7 @@
 
         --danger:               #ff8881; 
         --danger-bg:            #ff888133;
+        --danger-bg-hover:      #ff888155;
 
         --shadow:               0px 0px 10px #00000055;
         --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
@@ -238,6 +242,7 @@
 
     --danger:               #a83232; 
     --danger-bg:            #a8323233;
+    --danger-bg-hover:      #a8323255;
 
     --shadow:               0px 0px 6px #00000015;
     --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
@@ -287,6 +292,7 @@
 
     --danger:               #f92672;
     --danger-bg:            #f9267233;
+    --danger-bg-hover:      #f9267255;
 
     --shadow:               0px 0px 10px #00000055;
     --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.2);
@@ -336,6 +342,7 @@
 
     --danger:               #dc322f;
     --danger-bg:            #dc322f33;
+    --danger-bg-hover:      #dc322f55;
 
     --shadow:               0px 0px 10px #00000055;
     --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.2);
@@ -385,6 +392,7 @@
 
     --danger:               #bf616a;
     --danger-bg:            #bf616a33;
+    --danger-bg-hover:      #bf616a55;
 
     --shadow:               0px 0px 10px #00000055;
     --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.2);
@@ -434,6 +442,7 @@
 
     --danger:               #fb4934;
     --danger-bg:            #fb493433;
+    --danger-bg-hover:      #fb493455;
 
     --shadow:               0px 0px 10px #00000055;
     --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.2);
@@ -483,6 +492,7 @@
 
     --danger:               #ff0066;
     --danger-bg:            #ff006633;
+    --danger-bg-hover:      #ff006655;
 
     --shadow:               0px 0px 15px #00000099;
     --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.5);
@@ -536,7 +546,8 @@
 
     --danger:               #000000;
     --danger-bg:            #00000011;
-
+    --danger-bg-hover:      #00000022;
+    
     --shadow:               0px 0px 3px #00000011;
     --shadow-light:         0px 1px 2px rgba(0, 0, 0, 0.05);
 

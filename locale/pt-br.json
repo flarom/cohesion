@@ -94,6 +94,7 @@
             "dialogs.settings.language.help": "Ajude a traduzir o Cohesion",
             "dialogs.settings.behavior.title": "Comportamento",
             "dialogs.settings.behavior.show-splash-screen": "Mostrar tela de início ao iniciar",
+            "dialogs.settings.behavior.show-status-bar": "Mostrar barra de status",
             "dialogs.settings.behavior.time-formatting": "Formatação de data e hora",
             "dialogs.settings.behavior.time-formatting.reset": "Redefinir",
             "dialogs.settings.behavior.time-formatting.remove": "Remover",
@@ -121,7 +122,8 @@
             "dialogs.settings.behavior.time-formatting.minute.btn1": "Minuto com zero à esquerda (00-59)",
             "dialogs.settings.behavior.time-formatting.minute.btn2": "Minuto sem zero à esquerda (0-59)",
             "dialogs.settings.behavior.time-formatting.second.btn1": "Segundo com zero à esquerda (00-59)",
-            "dialogs.settings.behavior.time-formatting.second.btn2": "Segundo sem zero à esquerda (0-59)"
+            "dialogs.settings.behavior.time-formatting.second.btn2": "Segundo sem zero à esquerda (0-59)",
+            "dialogs.settings.behavior.time-formatting.learn-more": "Saiba mais sobre formatação de data e hora"
         },
         "SPLASH": {
             "dialogs.splash.recent-files": "Arquivos recentes",
@@ -136,6 +138,11 @@
             "dialogs.save-file.format.markdown": "Documento Markdown",
             "dialogs.save-file.format.html": "Página HTML",
             "dialogs.save-file.format.pdf": "Documento PDF"
+        },
+        "RESOURCES": {
+            "dialogs.resources.add-resource": "Adicionar recurso",
+            "dialogs.resources.switch-view-mode": "Alternar modo de exibição",
+            "dialogs.resources.download": "Baixar"
         }
     }
 }

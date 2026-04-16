@@ -519,6 +519,8 @@ async function showConfirmDialog(options = {}) {
 
     const message = document.createElement("h3");
     message.style.margin = "0"
+    message.style.marginTop = "4px";
+    message.style.marginBottom = "4px";
     message.textContent = String(config.message ?? defaults.message);
 
     const detail = document.createElement("p");

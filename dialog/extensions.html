@@ -3,324 +3,404 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="dialog-prefered-width" content="900">
-    <meta name="dialog-prefered-height" content="600">
-    <meta name="dialog-toolbar-left" content="<button class='icon-button' id='add-resource-btn' title='Add resource'>add_box</button>">
-    <meta name="dialog-toolbar-right" content="<button class='icon-button' id='switch-view-mode-btn' title='Switch view mode'>grid_view</button>">
+    <meta name="dialog-prefered-width" content="800">
+    <meta name="dialog-prefered-height" content="650">
+    <meta name="dialog-toolbar-left" content="<button class='icon-button' id='import-extension-btn' title='Import extension' data-locale-attr='title:dialogs.extensions.import'>add_box</button>">
+    <meta name="dialog-toolbar-right" content="<button class='icon-button' id='upgrade-all-btn' title='Upgrade all extensions' data-locale-attr='title:dialogs.extensions.upgrade-all'>update</button>">
 
     <style>
-        .resource-container {
-            display: grid;
-            gap: 8px;
-            padding: 8px;
-            height: calc(600px - 2px);
-            overflow-y: scroll;
-            grid-template-columns: repeat(auto-fill, minmax(128px, 8px));
+        .extensions-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
             padding-top: 48px;
-
-            .resource-item {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 12px;
-                padding: 0px;
-                border: none;
-                border-radius: 12px;
-                background-color: var(--background-color-2);
-                box-shadow: var(--shadow-light);
-                color: var(--text-color);
-                position: relative;
-                max-height: 200px;
-                min-height: 200px;
-                max-width: 142px;
-                min-width: 142px;
-
-                .file-dropdown {
-                    opacity: 0;
-                    position: absolute;
-                    top: 4px;
-                    right: 4px;
-                    transition: opacity 0.2s;
-                }
-
-                &:focus-visible { outline: 2px solid var(--accent); .file-dropdown { opacity: 1; }}
-                &:focus-within .file-dropdown { opacity: 1; }
-                &:hover { .file-dropdown { opacity: 1; }}
-                .dropdown.show { opacity: 1; }
-
-                .dropdown-content {
-                    right: -5px
-                }
-
-                .icon-button {
-                    background-color: var(--background-color-2);
-                    &:hover {
-                        background-color: var(--hover-color);
-                    }
-                }
-
-                .file-img-thumbnail {
-                    width: 142px;
-                    height: 142px;
-                    object-fit: cover;
-                    border-radius: 12px 12px 0 0;
-                }
-
-                .file-icon {
-                    font-size: 32px;
-                    color: var(--subtle-color);
-                }
-
-                .file-info {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    gap: 4px;
-                    padding-bottom: 4px;
-
-                    span:first-child {
-                        font-size: medium;
-                        color: var(--text-color);
-                        word-break: break-all;
-                    }
-                    span:last-child {
-                        font-size: small;
-                        color: var(--subtle-color);
-                    }
-                }
-            }
         }
 
-        .resource-list {
+        .extensions-list {
+            flex: 1;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 1px;
-
-            .resource-item {
-                flex-direction: row;
-                padding: 8px;
-                border-radius: 1px;
-                max-width: none;
-                min-width: 0;
-                max-height: none;
-                min-height: 0;
-
-                .file-img-thumbnail {
-                    width: 32px;
-                    height: 32px;
-                }
-                .file-dropdown {
-                    opacity: 1;
-                    top: 8px;
-                    right: 8px;
-                }
-                .file-info {
-                    display: flex;
-                    flex-direction: row;
-                    gap: 16px;
-                    align-items: center;
-                }
-            }
-            .resource-item:first-of-type {
-                border-radius: 15px 15px 1px 1px;
-            }
-            .resource-item:last-of-type {
-                border-radius: 1px 1px 15px 15px;
-            }
-            .resource-item:only-of-type {
-                border-radius: 15px;
-            }
         }
 
-        .resource-container.empty-state {
+        .extension-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0 8px 0 8px;
+            border: none;
+            background-color: var(--background-color-2);
+            color: var(--text-color);
+            border-bottom: 1px solid var(--background-color-1);
+        }
+
+        .extension-item:first-child {
+            border-radius: 12px 12px 0 0;
+            margin: 8px 8px 0 8px;
+            border-bottom: 1px solid var(--background-color-1);
+            border-left: 1px solid var(--background-color-1);
+            border-right: 1px solid var(--background-color-1);
+            border-top: 1px solid var(--background-color-1);
+        }
+
+        .extension-item:last-child {
+            border-radius: 0 0 12px 12px;
+            margin: 0 8px 8px 8px;
+            border-bottom: 1px solid var(--background-color-1);
+            border-left: 1px solid var(--background-color-1);
+            border-right: 1px solid var(--background-color-1);
+        }
+
+        .extension-item:only-child {
+            border-radius: 12px;
+            margin: 8px;
+            border: 1px solid var(--background-color-1);
+        }
+
+        .extension-icon {
+            margin: 5px 0px 5px 5px;
+            font-size: 28px;
+            min-width: 48px;
+            min-height: 48px;
+            max-width: 48px;
+            max-height: 48px;
+            text-align: center;
+            font-family: "Material Symbols Rounded";
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 7px;
+            user-select: none;
+        }
+
+        .extension-info {
+            flex: 1;
+            min-width: 0;
+            user-select: none;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .extension-header {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .extension-title {
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: var(--text-color);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .extension-version {
+            font-size: 0.75rem;
+            color: var(--subtle-color);
+            padding: 2px 6px;
+            background-color: var(--background-color-1);
+            border-radius: 3px;
+        }
+
+        .extension-author {
+            font-size: 0.8rem;
+            color: var(--subtle-color);
+        }
+
+        .extension-docs-link {
+            font-size: 0.8rem;
+            color: var(--link-color);
+            margin-left: 8px;
+        }
+
+        .extension-actions {
+            display: flex;
+            gap: 6px;
+            margin-left: 12px;
+            margin-right: 12px;
+        }
+
+        .action-btn {
+            border: none;
+            background: none;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-size: 18px;
+            min-width: 32px;
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn:hover {
+            background-color: var(--hover-color);
+            color: var(--text-color);
+        }
+
+        .empty-state {
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 40px 20px;
+            color: var(--subtle-color);
+            text-align: center;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+        }
+
+        .empty-state-text {
+            font-size: 0.95rem;
         }
     </style>
 </head>
 <body>
-    <section class="resource-container resource-grid" id="resource-list"></section>
+    <section class="extensions-container">
+        <div class="extensions-list" id="extensions-list"></div>
+    </section>
 
     <script>
         (() => {
-            const args = typeof window.dialogArgs === "function" ? window.dialogArgs() : {};
-            const projectId = String(args.projectId || fileManager.currentProjectId || "").trim();
-            const resourcesPath = projectId ? `${projectId}/resources` : "";
+            const extensionsList = document.getElementById("extensions-list");
+            const importExtensionBtn = document.getElementById("import-extension-btn");
+            const upgradeAllBtn = document.getElementById("upgrade-all-btn");
 
-            const resourceContainer = document.getElementById("resource-list");
-            const switchViewModeBtn = document.getElementById("switch-view-mode-btn");
-            const addResourceBtn = document.getElementById("add-resource-btn");
-
-            let resources = [];
-            let viewMode = "grid";
-
-            const isImageName = (name) => /\.(png|jpe?g|gif|webp|svg|bmp|ico)$/i.test(String(name || ""));
-
-            const getUniqueResourceName = (baseName) => {
-                const normalizedName = String(baseName || "resource").trim() || "resource";
-                const dotIndex = normalizedName.lastIndexOf(".");
-                const base = dotIndex > 0 ? normalizedName.slice(0, dotIndex) : normalizedName;
-                const ext = dotIndex > 0 ? normalizedName.slice(dotIndex) : "";
-
-                const names = new Set(resources.map((entry) => entry.name.toLowerCase()));
-                if (!names.has(normalizedName.toLowerCase())) {
-                    return normalizedName;
-                }
-
-                let counter = 1;
-                while (true) {
-                    const candidate = `${base} (${counter})${ext}`;
-                    if (!names.has(candidate.toLowerCase())) {
-                        return candidate;
-                    }
-                    counter += 1;
-                }
-            };
+            let extensions = [];
 
             const renderList = () => {
-                resourceContainer.innerHTML = "";
-                resourceContainer.classList.remove("empty-state");
+                extensionsList.innerHTML = "";
 
-                if (resources.length === 0) {
-                    resourceContainer.innerHTML = "<p>This project has no resources.</p>";
-                    resourceContainer.classList.add("empty-state");
-                    return;
-                }
-
-                for (const entry of resources) {
-                    const button = document.createElement("button");
-                    button.className = "resource-item";
-                    button.innerHTML = `
-                        <div class="dropdown file-dropdown">
-                            <button class="icon-button" translate="no" onmousedown="toggleDropdown('${entry.name}-menu')">more_vert</button>
-                            <div class="dropdown-content menu" id="${entry.name}-menu">
-                                <button class="text-button" data-file-copy-id="${entry.name}">Copy markdown</button>
-                                <button class="text-button" data-file-rename-id="${entry.name}">Rename</button>
-                                <hr>
-                                <button class="text-button" data-file-download-id="${entry.name}">Download</button>
-                                <hr>
-                                <button class="text-button danger" data-file-delete-id="${entry.name}">Delete</button>
-                            </div>
-                        </div>
-                        ${isImageName(entry.name) ? `<img src="${URL.createObjectURL(new Blob([entry.content], { type: "application/octet-stream" }))}" alt="${entry.name}" class="file-img-thumbnail">` : `<span class="icon file-icon" style="color:var(--text-color)" translate="no">insert_drive_file</span>`}
-                        <div class="file-info">
-                            <span>${entry.name}</span>
-                            <span>${entry.content instanceof Blob ? `${Math.ceil(entry.content.size / 1024)} KB` : "Text"}</span>
+                if (extensions.length === 0) {
+                    extensionsList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">extension</div>
+                            <div class="empty-state-text">No extensions installed</div>
+                            <p style="font-size: 0.85rem; margin: 8px 0 0 0;">Create or import extensions to get started</p>
                         </div>
                     `;
-
-                    const copyBtn = button.querySelector(`[data-file-copy-id="${entry.name}"]`);
-                    copyBtn.addEventListener("mouseup", async () => {
-                        const markdown = `![${entry.name}](resources/${encodeURIComponent(entry.name)})`;
-                        await navigator.clipboard.writeText(markdown);
-                        Toast.show("Markdown copied to clipboard", "check");
-                        hideAllMenus();
-                    });
-
-                    const renameBtn = button.querySelector(`[data-file-rename-id="${entry.name}"]`);
-                    renameBtn.addEventListener("mouseup", async () => {
-                        const currentNameExtension = entry.name.includes(".") ? entry.name.slice(entry.name.lastIndexOf(".")) : "";
-
-                        let newName = await showInputDialog({label: "Enter new file name", defaultValue: entry.name});
-                        if (newName && newName.trim() && newName.trim() !== entry.name) {
-                            // if the new name doesn't have an extension but the old name does, keep the old extension
-                            if (!newName.includes(".") && currentNameExtension) {
-                                newName += currentNameExtension;
-                            }
-
-                            const uniqueName = getUniqueResourceName(newName.trim());
-                            await file.renameFile(entry.id, uniqueName);
-                            await loadResources();
-                            Toast.show("Resource renamed", "check");
-                            hideAllMenus();
-                        }
-                    });
-
-                    const downloadBtn = button.querySelector(`[data-file-download-id="${entry.name}"]`);
-                    downloadBtn.addEventListener("mouseup", () => {
-                        const blob = entry.content instanceof Blob ? entry.content : new Blob([entry.content], { type: "application/octet-stream" });
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement("a");
-                        a.href = url;
-                        a.download = entry.name;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                        hideAllMenus();
-                    });
-
-                    const deleteBtn = button.querySelector(`[data-file-delete-id="${entry.name}"]`);
-                    deleteBtn.addEventListener("mouseup", async () => {
-                        await file.removeFile(entry.id);
-                        await loadResources();
-                        Toast.show("Resource deleted", "check");
-                        hideAllMenus();
-                    });
-
-                    button.addEventListener("dblclick", async () => {
-                        const markdown = `![${entry.name}](resources/${encodeURIComponent(entry.name)})`;
-                        await navigator.clipboard.writeText(markdown);
-                        Toast.show("Markdown copied to clipboard", "check");
-                        hideAllMenus();
-                        closeAllDialogs();
-                    });
-
-                    resourceContainer.appendChild(button);
-                }
-            };
-
-            const loadResources = async () => {
-                if (!projectId) {
-                    Toast.show("Open a project first", "error");
-                    closeAllDialogs();
                     return;
                 }
 
-                await file.ensureDirectoryExistsById(resourcesPath);
-                resources = await file.listDirectory(resourcesPath, true);
-                resources = resources.filter((entry) => entry.type === "file").sort((a, b) => a.name.localeCompare(b.name));
+                extensions.forEach((ext, index) => {
+                    const item = document.createElement("div");
+                    item.className = "extension-item";
 
+                    const iconColor = ext.color || "var(--text-color)";
+                    const iconEl = document.createElement("span");
+                    iconEl.className = "extension-icon";
+                    iconEl.style.color = iconColor;
+                    iconEl.style.backgroundColor = `color-mix(in srgb, ${iconColor} 20%, transparent)`;
+                    iconEl.textContent = ext.icon || "extension";
+                    iconEl.setAttribute("translate", "no");
+                    item.appendChild(iconEl);
+
+                    const infoEl = document.createElement("div");
+                    infoEl.className = "extension-info";
+                    infoEl.id = `extension-info-${index}`;
+                    infoEl.innerHTML = `
+                        <div class="extension-header">
+                            <span class="extension-title">${ext.title || "Untitled Extension"}</span>
+                        </div>
+                        <div>
+                            ${ext.author ? `<span class="extension-author">by ${ext.author}</span>` : ""}
+                            ${ext.version ? `<span class="extension-version">v${ext.version}</span>` : ""}
+                            ${ext.documentationLink ? `<a href="${ext.documentationLink}" target="_blank" class="extension-docs-link">Documentation</a>` : ""}
+                        </div>
+                    `;
+                    item.appendChild(infoEl);
+
+                    const actionsEl = document.createElement("div");
+                    actionsEl.className = "extension-actions";
+                    actionsEl.innerHTML = `
+                        <div class="dropdown extension-dropdown">
+                            <button class="icon-button" translate="no" onmousedown="toggleDropdown('${index}-menu')">more_vert</button>
+                            <div class="dropdown-content menu" id="${index}-menu">
+                                <button class="text-button" data-ext-edit-id="${index}">Edit code</button>
+                                ${ext.updateLink ? `<button class="text-button" data-ext-upgrade-id="${index}">Upgrade</button>` : ""}
+                                <hr>
+                                <button class="text-button" data-ext-download-id="${index}">Download file</button>
+                                <hr>
+                                <button class="text-button danger" data-ext-delete-id="${index}">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                    item.appendChild(actionsEl);
+
+                    infoEl.addEventListener("dblclick", async () => {
+                        hideAllMenus();
+                        await openExtensionEditor(index);
+                    });
+                    iconEl.addEventListener("dblclick", async () => {
+                        hideAllMenus();
+                        await openExtensionEditor(index);
+                    });
+
+                    const editBtn = actionsEl.querySelector(`[data-ext-edit-id="${index}"]`);
+                    editBtn.addEventListener("mouseup", async () => {
+                        hideAllMenus();
+                        await openExtensionEditor(index);
+                    });
+                    const upgradeBtn = actionsEl.querySelector(`[data-ext-upgrade-id="${index}"]`);
+                    if (upgradeBtn) {
+                        upgradeBtn.addEventListener("mouseup", async () => {
+                            hideAllMenus();
+                            const result = await Extensions.upgradeFromLink(index);
+                            if (result.updated) {
+                                Toast.show(`Updated to v${result.newVersion}`, "check");
+                            } else {
+                                Toast.show(result.reason || result.error || "Update failed", "error");
+                            }
+                            await loadExtensions();
+                        });
+                    }
+                    const downloadBtn = actionsEl.querySelector(`[data-ext-download-id="${index}"]`);
+                    downloadBtn.addEventListener("mouseup", async () => {
+                        hideAllMenus();
+                        await Extensions.export(index);
+                    });
+                    const deleteBtn = actionsEl.querySelector(`[data-ext-delete-id="${index}"]`);
+                    deleteBtn.addEventListener("mouseup", async () => {
+                        hideAllMenus();
+                        
+                        const confirmDelete = await showConfirmDialog({
+                            message: `Delete "${ext.title}"?`,
+                            detail: "This action cannot be undone.",
+                            denyButtonText: getTranslation("common.cancel", "Cancel"),
+                            confirmButtonText: getTranslation("common.delete", "Delete"),
+                            confirmButtonDestructive: true,
+                        });
+
+                        if (!confirmDelete) return;
+
+                        await Extensions.delete(index);
+                        await loadExtensions();
+                    });
+
+
+                    extensionsList.appendChild(item);
+                });
+            };
+
+            const loadExtensions = async () => {
+                extensions = await Extensions.getAll();
                 renderList();
             };
-            
-            // switch between grid and list view modes  
-            switchViewModeBtn.addEventListener("click", () => {
-                viewMode = viewMode === "grid" ? "list" : "grid";
-                resourceContainer.className = `resource-container resource-${viewMode}`;
-                switchViewModeBtn.textContent = viewMode === "grid" ? "grid_view" : "view_list";
 
-                Settings.setSetting("resourcesPreferedViewMode", viewMode);
+            const openExtensionEditor = async (index) => {
+                const ext = index !== undefined ? await Extensions.get(index) : null;
+                const code = ext?.code || `/**
+ * @extension
+ * @title New Extension
+ * @author 
+ * @version 0.1.0
+ * @description 
+ * @documentationLink 
+ * @updateLink 
+ * @icon extension
+ * @color 
+ */
+
+// Your extension code here
+`;
+
+                const result = await showTextEditorDialog({
+                    value: code,
+                    mode: "javascript",
+                });
+
+                // Check if user confirmed the edit
+                if (!result?.confirmed || !result?.value) {
+                    return;
+                }
+
+                const codeString = result.value.trim();
+
+                if (codeString.length > 0) {
+                    try {
+                        if (index !== undefined) {
+                            await Extensions.update(index, codeString);
+                            Toast.show("Extension updated", "check");
+                        } else {
+                            await Extensions.import(codeString);
+                            Toast.show("Extension created", "check");
+                        }
+                        await loadExtensions();
+                    } catch (err) {
+                        Toast.show(err.message || "Error saving extension", "error");
+                    }
+                }
+            };
+
+            importExtensionBtn.addEventListener("click", async () => {
+                const code = await Extensions.pickFile();
+                if (code) {
+                    await Extensions.import(code);
+                    await loadExtensions();
+                    Toast.show("Extension imported", "check");
+                }
             });
 
-            // switch view mode based on settings  
-            viewMode = Settings.getSetting("resourcesPreferedViewMode", "grid");
-            resourceContainer.className = `resource-container resource-${viewMode}`;
-            switchViewModeBtn.textContent = viewMode === "grid" ? "grid_view" : "view_list"; 
-
-            addResourceBtn.addEventListener("click", async () => {
-                const input = document.createElement("input");
-                input.type = "file";
-                input.multiple = true;
-                input.onchange = async () => {
-                    const files = Array.from(input.files || []);
-                    if (files.length === 0) {
-                        return;
+            upgradeAllBtn.addEventListener("click", async () => {
+                const results = await Extensions.upgradeAllFromLinks();
+                
+                let message = "";
+                let updated = 0;
+                for (const result of results) {
+                    if (result.updated) {
+                        updated++;
                     }
+                }
 
-                    for (const selectedFile of files) {
-                        const uniqueName = getUniqueResourceName(selectedFile.name);
-                        await file.createFile(uniqueName, selectedFile, resourcesPath);
-                    }
+                if (updated === 0) {
+                    Toast.show("All extensions are up to date", "info");
+                } else {
+                    Toast.show(`${updated} extension(s) updated`, "check");
+                }
 
-                    await loadResources();
-                    Toast.show("Resource uploaded", "check");
-                };
-                input.click();
+                await loadExtensions();
             });
 
-            loadResources();
+            extensionsList.addEventListener("click", async (e) => {
+                const btn = e.target.closest(".text-button");
+                if (!btn) return;
+
+                const index = parseInt(btn.dataset.index);
+                const ext = await Extensions.get(index);
+
+                if (btn.classList.contains("edit")) {
+                    hideAllMenus()
+                    await openExtensionEditor(index);
+                } else if (btn.classList.contains("upgrade")) {
+                    const result = await Extensions.upgradeFromLink(index);
+                    if (result.updated) {
+                        Toast.show(`Updated to v${result.newVersion}`, "check");
+                    } else {
+                        Toast.show(result.reason || result.error || "Update failed", "error");
+                    }
+                    await loadExtensions();
+                } else if (btn.textContent.includes("download")) {
+                    await Extensions.export(index);
+                } else if (btn.classList.contains("delete")) {
+                    if (confirm(`Delete "${ext.title}"?`)) {
+                        await Extensions.delete(index);
+                        await loadExtensions();
+                        Toast.show("Extension deleted", "check");
+                    }
+                }
+            });
+
+            loadExtensions();
         })();
     </script>
 </body>

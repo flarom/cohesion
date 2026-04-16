@@ -121,6 +121,10 @@ span.icon {
     color: var(--danger);
 }
 
+.text-button.danger:hover {
+    background-color: var(--danger-bg-hover);
+}
+
 .icon-button {
     font-size: x-large;
     font-family: "Material Symbols Rounded";
