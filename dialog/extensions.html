@@ -152,16 +152,18 @@
             justify-content: center;
             gap: 12px;
             padding: 40px 20px;
-            color: var(--subtle-color);
             text-align: center;
+            user-select: none;
         }
 
         .empty-state-icon {
             font-size: 48px;
+            font-family: "Material Symbols Rounded";
         }
 
         .empty-state-text {
             font-size: 0.95rem;
+            color: var(--subtle-color);
         }
     </style>
 </head>
@@ -186,7 +188,6 @@
                         <div class="empty-state">
                             <div class="empty-state-icon">extension</div>
                             <div class="empty-state-text">No extensions installed</div>
-                            <p style="font-size: 0.85rem; margin: 8px 0 0 0;">Create or import extensions to get started</p>
                         </div>
                     `;
                     return;
@@ -369,35 +370,6 @@
                 }
 
                 await loadExtensions();
-            });
-
-            extensionsList.addEventListener("click", async (e) => {
-                const btn = e.target.closest(".text-button");
-                if (!btn) return;
-
-                const index = parseInt(btn.dataset.index);
-                const ext = await Extensions.get(index);
-
-                if (btn.classList.contains("edit")) {
-                    hideAllMenus()
-                    await openExtensionEditor(index);
-                } else if (btn.classList.contains("upgrade")) {
-                    const result = await Extensions.upgradeFromLink(index);
-                    if (result.updated) {
-                        Toast.show(`Updated to v${result.newVersion}`, "check");
-                    } else {
-                        Toast.show(result.reason || result.error || "Update failed", "error");
-                    }
-                    await loadExtensions();
-                } else if (btn.textContent.includes("download")) {
-                    await Extensions.export(index);
-                } else if (btn.classList.contains("delete")) {
-                    if (confirm(`Delete "${ext.title}"?`)) {
-                        await Extensions.delete(index);
-                        await loadExtensions();
-                        Toast.show("Extension deleted", "check");
-                    }
-                }
             });
 
             loadExtensions();
