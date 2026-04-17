@@ -1076,3 +1076,42 @@ async function showTextEditorDialog(options = {}) {
         }, 0);
     });
 }
+
+// MARK: Inject CSS
+
+const customStyle = {
+    injectedStyles: new Map(),
+
+    add(id, css) {
+        let style = document.getElementById('extension-injected-styles');
+        
+        if (!style) {
+            style = document.createElement('style');
+            style.id = 'extension-injected-styles';
+            document.head.appendChild(style);
+        }
+        
+        this.injectedStyles.set(id, css);
+        this.updateStyleSheet();
+    },
+
+    remove(id) {
+        if (this.injectedStyles.delete(id)) {
+            this.updateStyleSheet();
+        }
+    },
+
+    update(id, css) {
+        if (this.injectedStyles.has(id)) {
+            this.injectedStyles.set(id, css);
+            this.updateStyleSheet();
+        }
+    },
+
+    updateStyleSheet() {
+        const style = document.getElementById('extension-injected-styles');
+        if (style) {
+            style.textContent = Array.from(this.injectedStyles.values()).join('\n');
+        }
+    }
+};

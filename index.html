@@ -165,6 +165,7 @@
     <script src="script/extensions.js"></script>
     <script src="script/showdown/scriptExecutionButtonExtension.js"></script>
     <script src="script/showdown/mediaRendererExtension.js"></script>
+    <script src="script/showdown/extension/blocks.js"></script>
 
     <script src="script/codemirror/mode/javascript/javascript.js"></script>
     <script src="script/codemirror/mode/css/css.js"></script>
@@ -470,7 +471,7 @@
 
         // MARK: RENDERER
         const converter = new showdown.Converter({
-            extensions: ["scriptExecutionButton", "mediaRenderer"],
+            extensions: ["scriptExecutionButton", "mediaRenderer", "blocks"],
         });
 
         converter.setOption('ghCompatibleHeaderId', true);
