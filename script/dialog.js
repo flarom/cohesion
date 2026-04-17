@@ -128,11 +128,7 @@ function getDialogOverlay(dialogId = null) {
         return null;
     }
 
-    const openOverlays = Array.from(document.querySelectorAll("dialog.dialog-overlay[open]"));
-    if (openOverlays.length > 0) {
-        return openOverlays[openOverlays.length - 1];
-    }
-
+    // When dialogId is null, return the topmost (most recently added) dialog
     const overlays = Array.from(document.querySelectorAll("dialog.dialog-overlay"));
     return overlays.length > 0 ? overlays[overlays.length - 1] : null;
 }
@@ -974,6 +970,8 @@ async function showTextEditorDialog(options = {}) {
 
             cleanup();
             resolve(result);
+
+            customStyle.remove('editor-dialog-textarea');
         };
 
         const onCancel = (event) => {
@@ -997,6 +995,19 @@ async function showTextEditorDialog(options = {}) {
         });
 
         cm.setSize("100%", "100%");
+        cm.getWrapperElement().classList.add("editor-dialog-textarea");
+
+        customStyle.add('editor-dialog-textarea', `
+            .CodeMirror-line {
+                padding-left: 0ch !important;
+            }
+            .CodeMirror-line:has(.cm-md-header-1) { padding-left: 0ch !important; }
+            .CodeMirror-line:has(.cm-md-header-2) { padding-left: 0ch !important; }
+            .CodeMirror-line:has(.cm-md-header-3) { padding-left: 0ch !important; }
+            .CodeMirror-line:has(.cm-md-header-4) { padding-left: 0ch !important; }
+            .CodeMirror-line:has(.cm-md-header-5) { padding-left: 0ch !important; }
+            .CodeMirror-line:has(.cm-md-header-6) { padding-left: 0ch !important; }
+        `);
 
         const writeSelectionOrAllToClipboard = async () => {
             const selected = cm.getSelection();

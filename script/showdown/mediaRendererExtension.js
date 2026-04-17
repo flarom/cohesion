@@ -1,3 +1,15 @@
+/**
+ * MediaRendererExtension - Handles rendering of different media types
+ * 
+ * Supports built-in media types (images, videos, audio) and extensible
+ * custom handlers registered via MediaRendererRegistry API.
+ * 
+ * Extensions can register custom handlers:
+ * @example
+ * MediaRendererRegistry.register("extension", async (attributes) => {
+ *   return "<custom-element>...</custom-element>";
+ * });
+ */
 (function () {
     const IMAGE_EXTENSIONS = new Set([
         "apng",
@@ -12,8 +24,15 @@
         "svg",
         "webp"
     ]);
-    const VIDEO_EXTENSIONS = new Set(["webm", "mp4"]);
-    const AUDIO_EXTENSIONS = new Set(["wav", "mp3", "ogg"]);
+    const VIDEO_EXTENSIONS = new Set([
+        "webm",
+        "mp4"
+    ]);
+    const AUDIO_EXTENSIONS = new Set([
+        "wav",
+        "mp3",
+        "ogg"
+    ]);
 
     function decodeEntities(value) {
         return String(value || "")
@@ -115,9 +134,143 @@
                         return fullMatch;
                     }
 
+                    // Try custom handlers registered by extensions
+                    if (MediaRendererRegistry.has(extension)) {
+                        // Mark this element for async processing
+                        // Store the original src path in data attribute for later use
+                        const attrs = attrsToString({
+                            ...attributes,
+                            "data-media-handler": extension,
+                            "data-custom-media": "true",
+                            "data-original-src": src  // Store original src before it gets replaced with blob URL
+                        });
+                        return `<img ${attrs}>`;
+                    }
+
                     return fullMatch;
                 });
             }
         }];
     });
+})();
+
+/**
+ * Global API for registering custom media handlers
+ * 
+ * Allows extensions to register handlers for custom file types
+ * that will be rendered in the preview.
+ * 
+ * Handlers receive attributes object and can return HTML string
+ * (for sync handlers) or Promise<string> (for async handlers).
+ * 
+ * @example
+ * // Simple handler
+ * MediaRendererRegistry.register("gltf", (attributes) => {
+ *     return `<model-viewer src="${attributes.src}"></model-viewer>`;
+ * });
+ * 
+ * @example
+ * // Async handler with resource loading
+ * MediaRendererRegistry.register("xyz", async (attributes) => {
+ *     const data = await fetch(attributes.src).then(r => r.text());
+ *     return `<pre>${escapeHtml(data)}</pre>`;
+ * });
+ */
+window.MediaRendererRegistry = (() => {
+    const handlers = new Map();
+
+    return {
+        /**
+         * Register a handler for a file extension
+         * @param {string} extension - File extension (without dot)
+         * @param {Function} handler - Handler function(attributes) => string | Promise<string>
+         */
+        register(extension, handler) {
+            if (typeof extension !== "string" || !extension) {
+                console.error("Invalid extension:", extension);
+                return false;
+            }
+            if (typeof handler !== "function") {
+                console.error("Handler must be a function");
+                return false;
+            }
+
+            const ext = extension.toLowerCase();
+            handlers.set(ext, handler);
+            return true;
+        },
+
+        /**
+         * Unregister a handler for a file extension
+         * @param {string} extension - File extension (without dot)
+         */
+        unregister(extension) {
+            const ext = extension.toLowerCase();
+            return handlers.delete(ext);
+        },
+
+        /**
+         * Check if handler exists for extension
+         * @param {string} extension - File extension (without dot)
+         */
+        has(extension) {
+            const ext = extension.toLowerCase();
+            return handlers.has(ext);
+        },
+
+        /**
+         * Get handler for extension
+         * @param {string} extension - File extension (without dot)
+         */
+        get(extension) {
+            const ext = extension.toLowerCase();
+            return handlers.get(ext);
+        },
+
+        async getContent(attributes) {
+            if (attributes.fileContent) {
+                if (attributes.fileContent instanceof Blob) {
+                    return await attributes.fileContent.text();
+                }
+                return String(attributes.fileContent);
+            }
+            return null;
+        },
+
+        /**
+         * Render media using registered handler
+         * @param {string} extension - File extension (without dot)
+         * @param {Object} attributes - Element attributes
+         * @returns {Promise<string|null>} HTML string or null if no handler
+         */
+        async render(extension, attributes) {
+            const ext = extension.toLowerCase();
+            const handler = handlers.get(ext);
+
+            if (!handler) {
+                return null;
+            }
+
+            try {
+                return await Promise.resolve(handler(attributes));
+            } catch (error) {
+                console.error(`[MediaRendererRegistry] Error rendering ${ext}:`, error);
+                return null;
+            }
+        },
+
+        /**
+         * Get all registered extensions
+         */
+        getRegistered() {
+            return Array.from(handlers.keys());
+        },
+
+        /**
+         * Clear all handlers
+         */
+        clearAll() {
+            handlers.clear();
+        }
+    };
 })();

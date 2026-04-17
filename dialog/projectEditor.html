@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="dialog-preferred-width" content="520">
     <meta name="dialog-toolbar-overlay" content="false">
+    <meta name="dialog-toolbar-center" content="<span data-locale='dialogs.project-editor.title.edit-project'>Edit project</span>">
     <style>
         .icon-grid {
             display: flex;
@@ -83,45 +84,45 @@
     <main class="padding">
         <section>
             <div class="row">
-                <label for="project-name">Project name</label>
+                <label for="project-name" data-locale="dialogs.project-editor.project-name">Project name</label>
                 <input type="text" id="project-name" maxlength="64" required>
             </div>
         </section>
         <section>
             <div class="row" style="padding: 8px 0px 8px 0px; overflow: hidden;">
                 <div id="project-icon-grid" class="icon-grid" role="radiogroup" aria-label="Project icon">
-                    <button type="button" class="icon-button icon-option" data-icon="folder" aria-label="folder" title="Folder" translate="no">folder</button>
-                    <button type="button" class="icon-button icon-option" data-icon="draft" aria-label="draft" title="Draft" translate="no">draft</button>
-                    <button type="button" class="icon-button icon-option" data-icon="bookmark" aria-label="bookmark" title="Bookmark" translate="no">bookmark</button>
-                    <button type="button" class="icon-button icon-option" data-icon="star" aria-label="star" title="Star" translate="no">star</button>
-                    <button type="button" class="icon-button icon-option" data-icon="flag" aria-label="flag" title="Flag" translate="no">flag</button>
-                    <button type="button" class="icon-button icon-option" data-icon="palette" aria-label="palette" title="Palette" translate="no">palette</button>
-                    <button type="button" class="icon-button icon-option" data-icon="code" aria-label="code" title="Code" translate="no">code</button>
-                    <button type="button" class="icon-button icon-option" data-icon="settings" aria-label="settings" title="Settings" translate="no">settings</button>
-                    <button type="button" class="icon-button icon-option" data-icon="home" aria-label="home" title="Home" translate="no">home</button>
-                    <button type="button" class="icon-button icon-option" data-icon="work" aria-label="work" title="Work" translate="no">work</button>
-                    <button type="button" class="icon-button icon-option" data-icon="school" aria-label="school" title="School" translate="no">school</button>
-                    <button type="button" class="icon-button icon-option" data-icon="shopping_bag" aria-label="shopping_bag" title="Shopping Bag" translate="no">shopping_bag</button>
-                    <button type="button" class="icon-button icon-option" data-icon="travel" aria-label="travel" title="Travel" translate="no">travel</button>
+                    <button type="button" class="icon-button icon-option" translate="no" data-icon="folder"       aria-label="folder"       title="Folder"       data-locale-attr="title:dialogs.project-editor.icon.folder">folder</button>
+                    <button type="button" class="icon-button icon-option" translate="no" data-icon="draft"        aria-label="draft"        title="Draft"        data-locale-attr="title:dialogs.project-editor.icon.draft">draft</button>
+                    <button type="button" class="icon-button icon-option" translate="no" data-icon="bookmark"     aria-label="bookmark"     title="Bookmark"     data-locale-attr="title:dialogs.project-editor.icon.bookmark">bookmark</button>
+                    <button type="button" class="icon-button icon-option" translate="no" data-icon="star"         aria-label="star"         title="Star"         data-locale-attr="title:dialogs.project-editor.icon.star">star</button>
+                    <button type="button" class="icon-button icon-option" translate="no" data-icon="flag"         aria-label="flag"         title="Flag"         data-locale-attr="title:dialogs.project-editor.icon.flag">flag</button>
+                    <button type="button" class="icon-button icon-option" translate="no" data-icon="palette"      aria-label="palette"      title="Palette"      data-locale-attr="title:dialogs.project-editor.icon.palette">palette</button>
+                    <button type="button" class="icon-button icon-option" translate="no" data-icon="code"         aria-label="code"         title="Code"         data-locale-attr="title:dialogs.project-editor.icon.code">code</button>
+                    <button type="button" class="icon-button icon-option" translate="no" data-icon="settings"     aria-label="settings"     title="Settings"     data-locale-attr="title:dialogs.project-editor.icon.settings">settings</button>
+                    <button type="button" class="icon-button icon-option" translate="no" data-icon="home"         aria-label="home"         title="Home"         data-locale-attr="title:dialogs.project-editor.icon.home">home</button>
+                    <button type="button" class="icon-button icon-option" translate="no" data-icon="work"         aria-label="work"         title="Work"         data-locale-attr="title:dialogs.project-editor.icon.work">work</button>
+                    <button type="button" class="icon-button icon-option" translate="no" data-icon="school"       aria-label="school"       title="School"       data-locale-attr="title:dialogs.project-editor.icon.school">school</button>
+                    <button type="button" class="icon-button icon-option" translate="no" data-icon="shopping_bag" aria-label="shopping_bag" title="Shopping Bag" data-locale-attr="title:dialogs.project-editor.icon.shopping-bag">shopping_bag</button>
+                    <button type="button" class="icon-button icon-option" translate="no" data-icon="travel"       aria-label="travel"       title="Travel"       data-locale-attr="title:dialogs.project-editor.icon.travel">travel</button>
                 </div>
             </div>
             <div class="row">
                 <div id="project-color-grid" class="color-grid" role="radiogroup" aria-label="Project color">
-                    <button type="button" class="color-option" data-color="var(--text-color)" aria-label="var(--text-color)" title="Text color" style="background-color: var(--text-color);"></button>
-                    <button type="button" class="color-option" data-color="var(--color-red)" aria-label="var(--color-red)" title="Red" style="background-color: var(--color-red);"></button>
-                    <button type="button" class="color-option" data-color="var(--color-orange)" aria-label="var(--color-orange)" title="Orange" style="background-color: var(--color-orange);"></button>
-                    <button type="button" class="color-option" data-color="var(--color-yellow)" aria-label="var(--color-yellow)" title="Yellow" style="background-color: var(--color-yellow);"></button>
-                    <button type="button" class="color-option" data-color="var(--color-green)" aria-label="var(--color-green)" title="Green" style="background-color: var(--color-green);"></button>
-                    <button type="button" class="color-option" data-color="var(--color-blue)" aria-label="var(--color-blue)" title="Blue" style="background-color: var(--color-blue);"></button>
-                    <button type="button" class="color-option" data-color="var(--color-purple)" aria-label="var(--color-purple)" title="Purple" style="background-color: var(--color-purple);"></button>
-                    <button type="button" class="color-option" data-color="var(--color-pink)" aria-label="var(--color-pink)" title="Pink" style="background-color: var(--color-pink);"></button>
+                    <button type="button" class="color-option" data-color="var(--text-color)"   aria-label="var(--text-color)"   title="Text color" data-locale-attr="title:dialogs.project-editor.color.text-color" style="background-color: var(--text-color);"></button>
+                    <button type="button" class="color-option" data-color="var(--color-red)"    aria-label="var(--color-red)"    title="Red"        data-locale-attr="title:dialogs.project-editor.color.red"        style="background-color: var(--color-red);"></button>
+                    <button type="button" class="color-option" data-color="var(--color-orange)" aria-label="var(--color-orange)" title="Orange"     data-locale-attr="title:dialogs.project-editor.color.orange"     style="background-color: var(--color-orange);"></button>
+                    <button type="button" class="color-option" data-color="var(--color-yellow)" aria-label="var(--color-yellow)" title="Yellow"     data-locale-attr="title:dialogs.project-editor.color.yellow"     style="background-color: var(--color-yellow);"></button>
+                    <button type="button" class="color-option" data-color="var(--color-green)"  aria-label="var(--color-green)"  title="Green"      data-locale-attr="title:dialogs.project-editor.color.green"      style="background-color: var(--color-green);"></button>
+                    <button type="button" class="color-option" data-color="var(--color-blue)"   aria-label="var(--color-blue)"   title="Blue"       data-locale-attr="title:dialogs.project-editor.color.blue"       style="background-color: var(--color-blue);"></button>
+                    <button type="button" class="color-option" data-color="var(--color-purple)" aria-label="var(--color-purple)" title="Purple"     data-locale-attr="title:dialogs.project-editor.color.purple"     style="background-color: var(--color-purple);"></button>
+                    <button type="button" class="color-option" data-color="var(--color-pink)"   aria-label="var(--color-pink)"   title="Pink"       data-locale-attr="title:dialogs.project-editor.color.pink"       style="background-color: var(--color-pink);"></button>
                 </div>
             </div>
         </section>
 
         <section class="button-row">
-            <button class="text-button" type="button" id="project-cancel">Cancel</button>
-            <button class="text-button primary" type="button" id="project-confirm">Save</button>
+            <button class="text-button" type="button" id="project-cancel" data-locale="common.cancel">Cancel</button>
+            <button class="text-button primary" type="button" id="project-confirm" data-locale="common.save">Save</button>
         </section>
     </main>
 
@@ -152,7 +153,11 @@
 
             scrollToSelectedIcon();
 
-            projectNameInput.value = String(initialData.name || "");
+            projectNameInput.value = String(initialData.name || getTranslation("dialogs.projects.new-project", "New Project"));
+
+            if (initialData.name === "") {
+                updateDialogToolbarCenter("<span data-locale='dialogs.project-editor.title.new-project'>New project</span>")
+            }
 
             let selectedIcon = String(initialData.icon || "folder");
             if (!availableIcons.has(selectedIcon)) {
@@ -207,7 +212,7 @@
 
             updateSelectedColor(selectedColor);
 
-            const confirmText = typeof args.confirmText === "string" && args.confirmText.trim() ? args.confirmText : "Save";
+            const confirmText = typeof args.confirmText === "string" && args.confirmText.trim() ? args.confirmText : getTranslation("common.save", "Save");
             document.getElementById("project-confirm").textContent = confirmText;
 
             document.getElementById("project-cancel").addEventListener("click", () => {

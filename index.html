@@ -25,6 +25,8 @@
 
     <script src="script/codemirror/mode/markdown/markdown.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+
+    <link rel="manifest" href="/manifest.webmanifest" />
 </head>
 
 <body class="theme-auto">
@@ -92,7 +94,7 @@
                         <kbd>Ctrl+K</kbd>
                     </button> -->
                     <hr />
-                    <button class="text-button" onmouseup="closeAllDialogs(); showDialogFile('dialog/projectsDialog.html'); hideAllMenus()">
+                    <button class="text-button" onmouseup="closeAllDialogs(); showDialogFile('dialog/projects.html'); hideAllMenus()">
                         <span data-locale="main.header.more-options.projects">Projects</span>
                         <kbd>Ctrl+J</kbd>
                     </button>
@@ -103,9 +105,6 @@
                     <button class="text-button" onmouseup="closeAllDialogs(); showDialogFile('dialog/settings.html'); hideAllMenus()">
                         <span data-locale="main.header.more-options.settings">Settings</span>
                         <kbd>Ctrl+,</kbd>
-                    </button>
-                    <button class="text-button" onmouseup="closeAllDialogs(); showDialogFile('dialog/extensions.html'); hideAllMenus()">
-                        <span data-locale="main.header.more-options.extensions">Extensions</span>
                     </button>
                     <hr />
                     <button class="text-button" onmouseup="window.open('https://github.com/flarom/cohesion/wiki'); hideAllMenus()" data-locale="main.header.more-options.help">
@@ -293,6 +292,12 @@
         editor.focus();
 
         // Initialize file manager
+
+        async function updateExtensions() { 
+            await Extensions.runAll();
+        }
+        updateExtensions();
+
         async function requestPersistentStorageIfPossible() {
             const alreadyRequested = Settings.getSetting("persistentStorageRequested", "false") === "true";
 
@@ -333,7 +338,13 @@
             await updateTitle();
 
             if (fileManager.projects.length === 0) {
-                showDialogFile("dialog/projectsDialog.html", {introSequence: true});
+                showDialogFile("dialog/projects.html", {introSequence: true});
+                
+                // download default extensions, if there's no projects and no extensions already installed
+                const installedExtensions = await Extensions.getAll();
+                if (installedExtensions.length === 0) {
+                    Extensions.importFromRepoUrl("extensions/blocks.js");
+                }
             }
         })();
 
@@ -535,6 +546,7 @@
         // This function finds all media/link elements in the renderer that have src or href attributes pointing to resources,
         // reads those resources from the file system, creates object URLs for them, and updates the elements to use those object URLs.
         // It also keeps track of the created object URLs so they can be revoked later to free up memory.
+        // Additionally, it processes custom media elements created by MediaRendererRegistry BEFORE blob URLs are created.
         async function resolveRendererResourcePaths() {
             revokeRendererResourceUrls();
 
@@ -542,6 +554,66 @@
                 return;
             }
 
+            // FIRST: Process custom media elements to use original paths
+            // This must be done BEFORE we replace src attributes with blob URLs
+            const customMediaElements = renderer.querySelectorAll("[data-custom-media='true']");
+
+            for (const element of customMediaElements) {
+                const handlerName = element.getAttribute("data-media-handler");
+                const originalSrc = element.getAttribute("data-original-src");
+                
+                if (!handlerName || !originalSrc) continue;
+
+                // Collect all attributes except internal data attributes
+                const attributes = {};
+                for (const attr of element.attributes) {
+                    if (!attr.name.startsWith("data-")) {
+                        attributes[attr.name] = attr.value;
+                    }
+                }
+
+                // Set src to the original path (not the blob URL)
+                attributes.src = originalSrc;
+
+                try {
+                    // Try to read the file and pass it to the handler
+                    if (looksLikeResourcePath(originalSrc)) {
+                        const relativeResourcePath = originalSrc
+                            .replace(/^\.\//, "")
+                            .replace(/^resources\//i, "")
+                            .split("?")[0]
+                            .split("#")[0];
+                        const decodedResourcePath = decodeURIComponent(relativeResourcePath);
+
+                        if (decodedResourcePath) {
+                            const resourceId = `${fileManager.currentProjectId}/resources/${decodedResourcePath}`;
+                            const resourceEntry = await file.readFile(resourceId);
+
+                            if (resourceEntry && resourceEntry.type === "file") {
+                                // Pass the file content/blob to the handler
+                                attributes.fileContent = resourceEntry.content;
+                                attributes.fileName = resourceEntry.name;
+                            }
+                        }
+                    }
+
+                    // Call the handler to render the element
+                    const html = await MediaRendererRegistry.render(handlerName, attributes);
+
+                    if (html) {
+                        // Create a temporary container to parse the HTML safely
+                        const temp = document.createElement("div");
+                        temp.innerHTML = html;
+                        
+                        // Replace the element with the handler's output
+                        element.replaceWith(...temp.childNodes);
+                    }
+                } catch (error) {
+                    console.error(`Error processing custom media handler "${handlerName}":`, error);
+                }
+            }
+
+            // SECOND: Process regular media/link elements and create blob URLs
             const candidates = [
                 ...renderer.querySelectorAll("img[src]"),
                 ...renderer.querySelectorAll("video[src]"),
@@ -705,14 +777,14 @@
             if (event.ctrlKey && event.key === "j") {
                 event.preventDefault();
                 closeAllDialogs();
-                showDialogFile('dialog/projectsDialog.html');
+                showDialogFile('dialog/projects.html');
             }
         });
         //// Ctrl+Ç test shortcut that will be removed at some point
-        document.addEventListener("keydown", (event) => {
+        document.addEventListener("keydown", async (event) => {
             if (event.ctrlKey && event.key === "ç") {
-                event.preventDefault();
-                insert.snippet("$CURSOR_NUMBER");
+                const n = await Extensions.getAll();
+                console.log(n.length);
             }
         });
 
@@ -741,11 +813,6 @@
             const title = await file.getMarkdownTitle(fileManager.currentFileId);
             showDialogFile('dialog/saveFileDialog.html', {filename: title || "New document"});
         }
-
-        async function updateExtensions() { 
-            await Extensions.runAll();
-        }
-        updateExtensions();
     </script>
 </body>
 

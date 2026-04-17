@@ -257,18 +257,19 @@ function translateWithin(root) {
     I18n.applyWithin(root);
 }
 
-function getTranslation(key, fallback = "") {
+function getTranslation(key, fallback = "", vars = {}) {
     const lang = Language.get();
 
     if (lang === "en") {
-        return fallback;
+        return interpolate(fallback, vars);
     }
 
     const data = I18n.cache[lang];
 
     if (!data || !data.strings) {
-        return fallback;
+        return interpolate(fallback, vars);
     }
 
-    return data.strings[key] ?? fallback;
+    const translation = data.strings[key] ?? fallback;
+    return interpolate(translation, vars);
 }

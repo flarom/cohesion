@@ -209,7 +209,7 @@ const fileManager = {
                 <span class="file-name">${title}</span>
             </button>
             <div class="dropdown">
-                <button class="icon-button" translate="no" onmousedown="toggleDropdown('file-dropdown-${fileEntry.id}')" title="File options">more_horiz</button>
+                <button class="icon-button" translate="no" onmousedown="toggleDropdown('file-dropdown-${fileEntry.id}')">more_horiz</button>
                 <div class="dropdown-content menu" id="file-dropdown-${fileEntry.id}">
                     <button class="text-button" data-duplicate-id="${fileEntry.id} " data-locale="main.sidebar.file-menu.duplicate">Duplicate</button>
                     <button class="text-button" data-export-id="${fileEntry.id}" data-locale="main.sidebar.file-menu.save">Save</button>

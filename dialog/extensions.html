@@ -6,7 +6,7 @@
     <meta name="dialog-prefered-width" content="800">
     <meta name="dialog-prefered-height" content="650">
     <meta name="dialog-toolbar-left" content="<button class='icon-button' id='import-extension-btn' title='Import extension' data-locale-attr='title:dialogs.extensions.import'>add_box</button>">
-    <meta name="dialog-toolbar-right" content="<button class='icon-button' id='upgrade-all-btn' title='Upgrade all extensions' data-locale-attr='title:dialogs.extensions.upgrade-all'>update</button>">
+    <meta name="dialog-toolbar-right" content="<button class='icon-button' id='upgrade-all-btn' title='Update all extensions' data-locale-attr='title:dialogs.extensions.upgrade-all'>update</button>">
 
     <style>
         .extensions-container {
@@ -228,7 +228,7 @@
                             <button class="icon-button" translate="no" onmousedown="toggleDropdown('${index}-menu')">more_vert</button>
                             <div class="dropdown-content menu" id="${index}-menu">
                                 <button class="text-button" data-ext-edit-id="${index}">Edit code</button>
-                                ${ext.updateLink ? `<button class="text-button" data-ext-upgrade-id="${index}">Upgrade</button>` : ""}
+                                ${ext.updateLink ? `<button class="text-button" data-ext-upgrade-id="${index}">Update</button>` : ""}
                                 <hr>
                                 <button class="text-button" data-ext-download-id="${index}">Download file</button>
                                 <hr>

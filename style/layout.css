@@ -19,6 +19,7 @@ body {
     height: 100%;
     margin: 0;
     font-family: var(--font-text);
+    font-display: swap;
     color: var(--text-color);
     background: var(--background-color);
 }

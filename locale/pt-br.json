@@ -43,7 +43,7 @@
                 "main.header.insert.table": "Tabela",
                 "main.header.insert.table-of-contents": "Índice",
                 "main.header.insert.document-metadata": "Metadados do documento",
-                "main.header.search": "Localizar e substituir",
+                "main.header.search-and-replace": "Localizar e substituir",
                 "main.header.switch-mode.read": "Ler",
                 "main.header.switch-mode.edit": "Editar",
                 "main.header.split-view": "Visualização dividida",
@@ -123,7 +123,9 @@
             "dialogs.settings.behavior.time-formatting.minute.btn2": "Minuto sem zero à esquerda (0-59)",
             "dialogs.settings.behavior.time-formatting.second.btn1": "Segundo com zero à esquerda (00-59)",
             "dialogs.settings.behavior.time-formatting.second.btn2": "Segundo sem zero à esquerda (0-59)",
-            "dialogs.settings.behavior.time-formatting.learn-more": "Saiba mais sobre formatação de data e hora"
+            "dialogs.settings.behavior.time-formatting.learn-more": "Saiba mais sobre formatação de data e hora",
+            "dialogs.settings.extensions.title": "Extensões",
+            "dialogs.settings.extensions.label": "Gerenciar extensões"
         },
         "SPLASH": {
             "dialogs.splash.recent-files": "Arquivos recentes",
@@ -143,6 +145,46 @@
             "dialogs.resources.add-resource": "Adicionar recurso",
             "dialogs.resources.switch-view-mode": "Alternar modo de exibição",
             "dialogs.resources.download": "Baixar"
+        },
+        "PROJECTS": {
+            "dialogs.projects.create-new-project": "Criar novo projeto",
+            "dialogs.projects.new-project": "Novo projeto",
+            "dialogs.projects.empty-state.title": "Bem-vindo ao Cohesion",
+            "dialogs.projects.empty-state.description": "Vamos começar criando um novo projeto.",
+            "dialogs.projects.project-menu.properties": "Propriedades",
+            "dialogs.projects.project-menu.duplicate": "Duplicar",
+            "dialogs.projects.project-menu.export": "Exportar",
+            "dialogs.projects.project-menu.delete": "Excluir",
+            "dialogs.projects.project-file-count": "{fileCount} arquivos",
+            "dialogs.projects.delete-confirmation.message": "Excluir este projeto?",
+            "dialogs.projects.delete-confirmation.detail": "O projeto \"{projectName}\" será excluído permanentemente. Esta ação não pode ser desfeita."
+        },
+        "PROJECT EDITOR": {
+            "dialogs.project-editor.title.edit-project": "Editar projeto",
+            "dialogs.project-editor.title.new-project": "Novo projeto",
+            "dialogs.project-editor.project-name": "Nome do projeto",
+            "dialogs.project-editor.icon.folder": "Pasta",
+            "dialogs.project-editor.icon.draft": "Rascunho",
+            "dialogs.project-editor.icon.bookmark": "Marca páginas",
+            "dialogs.project-editor.icon.star": "Estrela",
+            "dialogs.project-editor.icon.flag": "Bandeira",
+            "dialogs.project-editor.icon.palette": "Paleta",
+            "dialogs.project-editor.icon.code": "Código",
+            "dialogs.project-editor.icon.settings": "Configurações",
+            "dialogs.project-editor.icon.home": "Casa",
+            "dialogs.project-editor.icon.work": "Trabalho",
+            "dialogs.project-editor.icon.school": "Escola",
+            "dialogs.project-editor.icon.shopping-bag": "Sacola de compras",
+            "dialogs.project-editor.icon.travel": "Viagem",
+            "dialogs.project-editor.color.text-color": "Cor do texto",
+            "dialogs.project-editor.color.red": "Vermelho",
+            "dialogs.project-editor.color.orange": "Laranja",
+            "dialogs.project-editor.color.yellow": "Amarelo",
+            "dialogs.project-editor.color.green": "Verde",
+            "dialogs.project-editor.color.blue": "Azul",
+            "dialogs.project-editor.color.purple": "Roxo",
+            "dialogs.project-editor.color.pink": "Rosa",
+            "dialogs.project-editor.create": "Criar"
         }
     }
 }

@@ -3,37 +3,38 @@
     padding: 20px;
     max-width: 900px;
     margin: 0 auto;
+    font-size: 1rem;
 }
 
 /* MARK: HEADER */
 .md-document h1 {
     font-family: var(--font-title);
-    font-size: 2.5rem;
+    font-size: 2.986rem;
     margin-bottom: 16px;
 }
 .md-document h2 {
     font-family: var(--font-title);
-    font-size: 1.8rem;
+    font-size: 2.488rem;
     margin-bottom: 12px;
 }
 .md-document h3 {
     font-family: var(--font-title);
-    font-size: 1.4rem;
+    font-size: 2.074rem;
     margin-bottom: 8px;
 }
 .md-document h4 {
     font-family: var(--font-title);
-    font-size: 1.2rem;
+    font-size: 1.728rem;
     margin-bottom: 6px;
 }
 .md-document h5 {
     font-family: var(--font-title);
-    font-size: 1rem;
+    font-size: 1.44rem;
     margin-bottom: 4px;
 }
 .md-document h6 {
     font-family: var(--font-title);
-    font-size: 0.9rem;
+    font-size: 1.2rem;
     margin-bottom: 2px;
 }
 

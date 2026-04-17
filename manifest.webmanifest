@@ -1,0 +1,15 @@
+{
+    "name": "Cohesion",
+    "short_name": "Cohesion",
+    "description": "An accountless, minimal, free and open-source markdown editor for technical writing.",
+    "display": "standalone",
+    "start_url": "index.html",
+    "background_color": "#222226",
+    "icons": [
+        {
+            "src": "static/favicon.svg",
+            "sizes": "192x192",
+            "type": "image/svg+xml"
+        }
+    ]
+}

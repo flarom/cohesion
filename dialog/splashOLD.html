@@ -311,7 +311,7 @@
             };
 
             createProjectBtn.addEventListener("click", async () => {
-                const payload = await showDialogFile("dialog/projectEditorDialog.html", {
+                const payload = await showDialogFile("dialog/projectEditor.html", {
                     title: "Create project",
                     confirmText: "Create",
                     initialData: {
@@ -341,7 +341,7 @@
                 }
 
                 const metadata = await file.getProjectMetadata(selectedProject.id);
-                const payload = await showDialogFile("dialog/projectEditorDialog.html", {
+                const payload = await showDialogFile("dialog/projectEditor.html", {
                     title: "Edit project",
                     confirmText: "Save",
                     initialData: {

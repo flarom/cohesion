@@ -6,7 +6,7 @@
     <title>Cohesion</title>
     <meta name="dialog-prefered-width" content="900">
     <meta name="dialog-prefered-height" content="600">
-    <meta name="dialog-toolbar-left" content="<button class=icon-button translate=no title='Create new project' id='newProjectBtn'>add_box</button>">
+    <meta name="dialog-toolbar-left" content="<button class=icon-button translate=no title='Create new project' id='newProjectBtn' data-locale-attr='title:dialogs.projects.create-new-project'>add_box</button>">
     <style>
         .project-grid {
             display: grid;
@@ -112,10 +112,10 @@
             };
 
             const newProject = () => async () => {
-                const payload = await showDialogFile("dialog/projectEditorDialog.html",{
-                    confirmText: "Create",
+                const payload = await showDialogFile("dialog/projectEditor.html",{
+                    confirmText: getTranslation("dialogs.project-editor.create", "Create"),
                     initialData: {
-                        name: "New project",
+                        name: "",
                         icon: "folder",
                         color: "var(--text-color)"
                     }
@@ -143,11 +143,12 @@
                     projectGrid.innerHTML = `
                         <div class="empty-state">
                             <span class="icon" translate="no">front_hand</span>
-                            <h1>Welcome to Cohesion</h1>
-                            <span class="empty-state-text">Let's get started by creating a new project.</span>
+                            <h1 data-locale="dialogs.projects.empty-state.title">Welcome to Cohesion</h1>
+                            <span class="empty-state-text" data-locale="dialogs.projects.empty-state.description">Let's get started by creating a new project.</span>
                         </div>
                     `;
                     updateDialogToolbarRight(""); // remove close button
+                    translateWithin(projectGrid);
                     await fileManager.closeProject();
                     return;
                 }
@@ -161,27 +162,29 @@
                         <div class="dropdown project-dropdown">
                             <button class="icon-button" translate="no" onmousedown="toggleDropdown('${project.id}-menu')">more_vert</button>
                             <div class="dropdown-content menu align-left" id="${project.id}-menu">
-                                <button class="text-button" data-proj-properties-id="${project.id}">Properties</button>
+                                <button class="text-button" data-proj-properties-id="${project.id}" data-locale="dialogs.projects.project-menu.properties">Properties</button>
                                 <hr>
-                                <button class="text-button">Duplicate</button>
-                                <button class="text-button">Export</button>
+                                <button class="text-button" data-locale="dialogs.projects.project-menu.duplicate">Duplicate</button>
+                                <button class="text-button" data-locale="dialogs.projects.project-menu.export">Export</button>
                                 <hr>
-                                <button class="text-button danger" data-proj-delete-id="${project.id}">Delete</button>
+                                <button class="text-button danger" data-proj-delete-id="${project.id}" data-locale="dialogs.projects.project-menu.delete">Delete</button>
                             </div>
                         </div>
                         <span class="icon project-icon" style="color:${metadata.color}" translate="no">${metadata.icon || "folder"}</span>
                         <div>
                             <div class="project-name">${project.name}</div>
-                            <div class="project-file-count">${await getFileCount(project.id)} files</div>
+                            <div class="project-file-count" data-locale="dialogs.projects.project-file-count" data-locale-vars='{"fileCount": ${await getFileCount(project.id)}}'> ${await getFileCount(project.id)} files</div>
                         </div>
                     `;
+
+                    translateWithin(button);
 
                     const propertiesButton = button.querySelector(`[data-proj-properties-id="${project.id}"]`);
                     propertiesButton.addEventListener("mouseup", async (e) => {
                         e.stopPropagation();
                         const metadata = await file.getProjectMetadata(project.id);
 
-                        const payload = await showDialogFile("dialog/projectEditorDialog.html", {
+                        const payload = await showDialogFile("dialog/projectEditor.html", {
                             initialData: {
                                 name: project.name,
                                 icon: metadata.icon,
@@ -209,10 +212,9 @@
                     const deleteButton = button.querySelector(`[data-proj-delete-id="${project.id}"]`);
                     deleteButton.addEventListener("mouseup", async (e) => {
                         e.stopPropagation();
-                        // const confirmDelete = confirm(`Are you sure you want to delete the project "${project.name}"? This action cannot be undone.`);
                         const confirmDelete = await showConfirmDialog({
-                            message: "Delete this project?",
-                            detail: `The project "${project.name}" will be permanently deleted. This action cannot be undone.`,
+                            message: getTranslation('dialogs.projects.delete-confirmation.message', 'Delete Project'),
+                            detail: getTranslation('dialogs.projects.delete-confirmation.detail', 'The project "{projectName}" will be permanently deleted. This action cannot be undone.', { projectName: project.name }),
                             confirmButtonText: getTranslation('common.delete', 'Delete'),
                             confirmButtonDestructive: true,
                         });

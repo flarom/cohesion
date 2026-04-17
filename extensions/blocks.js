@@ -1,7 +1,7 @@
 /**
  * @extension
  * @title Blocks and Admonitions
- * @author flarom
+ * @author Cohesion
  * @version 1.0.0
  * @description Allows creation of custom block elements like admonitions, details, etc. using a simple markdown syntax.
  * @updateLink
