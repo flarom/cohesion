@@ -668,6 +668,7 @@
                 
                 // Autosave the current file
                 fileManager.autosaveCurrentFile();
+                updateTitle();
             }, 500);
         });
 
@@ -681,7 +682,7 @@
             }
 
             const projectLabel = fileManager.currentProjectId.split("/").pop();
-            const title = await file.getMarkdownTitle(fileManager.currentFileId);
+            const title = await file.getTitleFromMarkdownContent(editor.getValue());
             // documentTitle.innerHTML = projectLabel + "/" + (title || "New document");
             documentTitle.innerHTML = `<span class="file-title">${title || "New document"}</span> <span class="project-label">${projectLabel}</span>`;
             document.title = `${title} - Cohesion`;

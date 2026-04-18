@@ -558,24 +558,15 @@ const file = {
     },
 
     // MARK: Miscellaneous operations
-    async getMarkdownTitle(id) {
-        // There are three ways to get a title for a markdown file:
-        // - the first line of the content, hard cutting at 64 characters so it doesn't get too long
-        // - searching for lines that start with "# " or "## " and so on, which are common markdown title formats
-        //   preferably the first one that appears in the content, and with the least amount of "#" characters, so we get the most relevant title
-        // - searching for a "title" property in the file's metadata, considering markdown files can have metadata in the form of YAML front matter
-        //   (the part between "---" or "««« and »»»" at the beginning of the file), and if a "title" property is found there, we use it as the title
-        // The returned value can not contain `/` characters
-        // If none of these methods yield a title, we fallback to using "New document" as the title.
-        // When returning a title, we also make sure to check if theres already a file with that name in the same directory, and if so, we return "Title (n)" where n is the lowest number that makes the title unique in that directory.
+    getTitleFromMarkdownContent(content = "") {
+        // Extracts a title from markdown content string using three methods:
+        // 1. Search for YAML front matter "title" property
+        // 2. Search for markdown headers (# ## ### etc)
+        // 3. Use the first line of content as fallback
+        // The returned value cannot contain `/` characters
+        // If none of these methods yield a title, returns "New document"
 
-        const fileEntry = await this.readFile(id);
-        if (!fileEntry || fileEntry.type !== "file") {
-            throw new Error(`File \"${id}\" not found.`);
-        }
-
-        const content = fileEntry.content || "";
-        const lines = content.split("\n");
+        const lines = String(content || "").split("\n");
 
         // Check for YAML front matter title
         if (lines[0].trim() === "---") {
@@ -610,7 +601,21 @@ const file = {
         lines[0] = lines[0].replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
         // Fallback to first line
-        let title = lines[0].trim().slice(0, 64) || "New document";
+        return lines[0].trim().slice(0, 64) || "New document";
+    },
+
+    async getMarkdownTitle(id) {
+        // Gets the title for a markdown file, checking for duplicates in the same directory
+        // Uses getTitleFromMarkdownContent to extract the title from the file content
+        // If the title already exists in the directory, returns "Title (n)" where n is the lowest number that makes the title unique
+
+        const fileEntry = await this.readFile(id);
+        if (!fileEntry || fileEntry.type !== "file") {
+            throw new Error(`File \"${id}\" not found.`);
+        }
+
+        const content = fileEntry.content || "";
+        let title = this.getTitleFromMarkdownContent(content);
 
         // Check if title already exists in the same directory
         if (title === "New document" || title.startsWith("New document (")) {

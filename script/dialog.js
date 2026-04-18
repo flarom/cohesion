@@ -998,15 +998,15 @@ async function showTextEditorDialog(options = {}) {
         cm.getWrapperElement().classList.add("editor-dialog-textarea");
 
         customStyle.add('editor-dialog-textarea', `
-            .CodeMirror-line {
+            .editor-dialog-textarea .CodeMirror-line {
                 padding-left: 0ch !important;
             }
-            .CodeMirror-line:has(.cm-md-header-1) { padding-left: 0ch !important; }
-            .CodeMirror-line:has(.cm-md-header-2) { padding-left: 0ch !important; }
-            .CodeMirror-line:has(.cm-md-header-3) { padding-left: 0ch !important; }
-            .CodeMirror-line:has(.cm-md-header-4) { padding-left: 0ch !important; }
-            .CodeMirror-line:has(.cm-md-header-5) { padding-left: 0ch !important; }
-            .CodeMirror-line:has(.cm-md-header-6) { padding-left: 0ch !important; }
+            .editor-dialog-textarea .CodeMirror-line:has(.cm-md-header-1) { padding-left: 0ch !important; }
+            .editor-dialog-textarea .CodeMirror-line:has(.cm-md-header-2) { padding-left: 0ch !important; }
+            .editor-dialog-textarea .CodeMirror-line:has(.cm-md-header-3) { padding-left: 0ch !important; }
+            .editor-dialog-textarea .CodeMirror-line:has(.cm-md-header-4) { padding-left: 0ch !important; }
+            .editor-dialog-textarea .CodeMirror-line:has(.cm-md-header-5) { padding-left: 0ch !important; }
+            .editor-dialog-textarea .CodeMirror-line:has(.cm-md-header-6) { padding-left: 0ch !important; }
         `);
 
         const writeSelectionOrAllToClipboard = async () => {

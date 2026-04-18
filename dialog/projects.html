@@ -237,6 +237,12 @@
 
                     projectGrid.appendChild(button);
                 }
+
+                // set focus to the first project
+                const firstProjectButton = projectGrid.querySelector(".project-item");
+                if (firstProjectButton) {
+                    firstProjectButton.focus();
+                }
             };
 
             const getFileCount = async (projectId) => {
