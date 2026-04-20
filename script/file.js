@@ -563,8 +563,27 @@ const file = {
         // 1. Search for YAML front matter "title" property
         // 2. Search for markdown headers (# ## ### etc)
         // 3. Use the first line of content as fallback
-        // The returned value cannot contain `/` characters
+        // The returned value cannot contain illegal characters like `/`
         // If none of these methods yield a title, returns "New document"
+
+        const sanitizeTitle = (title) => {
+            title = title.replace(/\//g, ""); // remove `/` to avoid issues with file paths
+            title = title.replace(/\\/g, ""); // remove `\` to avoid issues with windows file paths
+            
+            
+            title = title.replace(/\./g, ""); // remove `.` to avoid issues with file extensions and hidden files
+
+            title = title.replace(/</g, "&lt;").replace(/>/g, "&gt;"); // substitute `<` and `>` characters with entities to avoid HTML injection
+
+            title = title.replace(/"/g, "&quot;").replace(/'/g, "&#39;"); // substitute `"` and `'` characters with entities to allow them in titles without breaking HTML
+            
+            // If the title ends up empty after sanitization, return "New document"
+            if (!title.trim()) {
+                return "New document";
+            }
+
+            return title;
+        };
 
         const lines = String(content || "").split("\n");
 
@@ -576,7 +595,7 @@ const file = {
                 }
                 const match = lines[i].match(/^title:\s*(.+)$/);
                 if (match) {
-                    return match[1].trim().slice(0, 64);
+                    return sanitizeTitle(match[1].trim()).slice(0, 64);
                 }
             }
         }
@@ -585,7 +604,8 @@ const file = {
         for (const line of lines) {
             const headerMatch = line.match(/^(#{1,6})\s+(.*)$/);
             if (headerMatch) {
-                const title = headerMatch[2].trim().slice(0, 64);
+                const rawTitle = headerMatch[2].trim();
+                const title = sanitizeTitle(rawTitle).slice(0, 64);
                 if (title) {
                     return title;
                 }
@@ -593,15 +613,8 @@ const file = {
             }
         }
 
-        // Remove any `/` characters from the first line to avoid issues with file paths
-        lines[0] = lines[0].replace(/\//g, "");
-        // Substitute `<` and `>` characters with entities to avoid potential HTML injection issues in titles
-        lines[0] = lines[0].replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        // Substitute `"` and `'` characters with entities to allow them in titles without breaking HTML rendering and avoid potential security issues
-        lines[0] = lines[0].replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-
         // Fallback to first line
-        return lines[0].trim().slice(0, 64) || "New document";
+        return sanitizeTitle(lines[0]).trim().slice(0, 64) || "New document";
     },
 
     async getMarkdownTitle(id) {

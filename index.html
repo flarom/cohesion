@@ -49,7 +49,7 @@
                     <button class="text-button" data-locale="main.header.insert.file">
                         File
                     </button>
-                    <button class="text-button" data-locale="main.header.insert.table">
+                    <button class="text-button" onmouseup="closeAllDialogs(); insertTable(); hideAllMenus()" data-locale="main.header.insert.table">
                         Table
                     </button>
                     <button class="text-button" data-locale="main.header.insert.table-of-contents">
@@ -160,6 +160,7 @@
     <script src="script/dialog.js"></script>
     <script src="script/fileManager.js"></script>
     <script src="script/statusbar.js"></script>
+    <script src="script/widget.js"></script>
     <script src="script/showdown/showdown.js"></script>
     <script src="script/extensions.js"></script>
     <script src="script/showdown/scriptExecutionButtonExtension.js"></script>
@@ -344,6 +345,7 @@
                 const installedExtensions = await Extensions.getAll();
                 if (installedExtensions.length === 0) {
                     Extensions.importFromRepoUrl("extensions/blocks.js");
+                    Extensions.importFromRepoUrl("extensions/markdownTableFormat.js");
                 }
             }
         })();

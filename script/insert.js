@@ -622,3 +622,8 @@ function strftime(format, date = new Date()) {
 function insertMetadata() {
     
 }
+
+async function insertTable() {
+	const md = await showDialogFile('dialog/table.html')
+	insert.atCursor(md)
+}

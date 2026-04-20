@@ -470,3 +470,33 @@ span.CodeMirror-selectedtext { background: none; }
   opacity: 100;
   border-bottom: 2px dotted var(--accent);
 }
+
+.widget-line {
+  padding-left: 7ch;
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+  flex-wrap: wrap;
+  background-color: var(--background-color);
+  cursor: default;
+}
+
+.widget-button {
+  background-color: transparent;
+  color: var(--subtle-color);
+  padding: 0px;
+  border: none;
+  font: inherit;
+  &::before {content: "[";}
+  &::after { content: "]";}
+  transition: all 0s;
+}
+
+.widget-button:hover {
+  color: var(--text-color);
+}
+
+.widget-muted {
+  opacity: 0.75;
+  font-size: 0.82rem;
+}

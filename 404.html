@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page not found - Cohesion</title>
+    <style>
+        :root {
+            --font-editor:          "Ubuntu Mono", monospace;
+            --font-title:           "Ubuntu", sans-serif;
+            --font-text:            "Ubuntu", sans-serif;
+            --active-line:          #36363a;
+
+            --background-color:     #222226;
+            --background-color-2:   #2e2e32;
+            --background-color-3:   #434347;
+
+            --field-color:          #434347;
+
+            --border-dark-color:    #050505;
+            --border-light-color:   #434347;
+            --border-field-color:   transparent;
+
+            --hover-color:          #3b3a3e;
+
+            --title-color:          #ffffff;
+            --button-color:         #ffffff;
+            --button-color-2:       #ffffff;
+            --text-color:           #dddddd;
+            --subtle-color:         #6e6e6e;
+
+            --accent:               #3584e4; 
+            --selection-color:      #3584e433;
+            --link-color:           #99c1f1;
+
+            --danger:               #ff8881; 
+            --danger-bg:            #ff888133;
+            --danger-bg-hover:      #ff888155;
+
+            --shadow:               0px 0px 10px #00000055;
+            --shadow-light:         0px 1px 3px rgba(0, 0, 0, 0.1);
+            
+            --color-pink:           #ff66ad;
+            --color-purple:         #dd92ff; 
+            --color-blue:           #818eff;
+            --color-green:          #9aff81; 
+            --color-yellow:         #fff781;
+            --color-orange:         #ffb347;
+            --color-red:            #ff8881;
+
+            --color-pink-bg:        #4b2a3a;
+            --color-purple-bg:      #4b3a53; 
+            --color-blue-bg:        #3a3c51;
+            --color-green-bg:       #3f533a; 
+            --color-yellow-bg:      #53513a;
+            --color-orange-bg:      #533f2a;
+            --color-red-bg:         #533b3a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--background-color);
+            color: var(--text-color);
+            font-family: var(--font-text);
+            display: grid;
+            place-items: center;
+            padding: 2rem 1rem;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .wallpaper-credit {
+            position: fixed;
+            left: 12px;
+            bottom: 12px;
+            z-index: 20;
+            font-size: 0.85rem;
+            color: var(--text-color);
+            background: var(--background-color);
+            border: 1px solid var(--border-light-color);
+            border-radius: 999px;
+            padding: 0.35rem 0.65rem;
+            text-decoration: none;
+            backdrop-filter: blur(3px);
+        }
+
+        .wallpaper-credit:hover {
+            color: var(--link-color);
+            background: var(--hover-color);
+        }
+
+        main {
+            width: min(920px, 100%);
+            background: var(--background-color);
+            border: 1px solid var(--border-light-color);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            display: grid;
+            gap: 1rem;
+            animation: fadeIn 420ms ease-out;
+        }
+
+        .stats {
+            display: flex;
+            gap: 0.65rem;
+            flex-wrap: wrap;
+            padding: 10px;
+            border-top: 1px solid var(--border-light-color);
+            user-select: none;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: top;
+            padding: 10px 10px 0px 10px;
+            user-select: none;
+        }
+
+        .header .left {
+            display: flex;
+            align-items: top;
+            gap: 0.5rem;
+            flex: 0.1;
+        }
+
+        .header .center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 0.25rem;
+            flex: 1;
+
+            .subtle {
+                color: var(--subtle-color);
+                font-size: 0.9rem;
+            }
+        }
+
+        .header .right {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 0.1;
+        }
+
+        .pill {
+            background: var(--background-color-2);
+            border-radius: 999px;
+            padding: 0.4rem 0.8rem;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            min-width: 86px;
+            text-align: center;
+        }
+
+        button {
+            background-color: transparent;
+            min-width: 32px;
+            max-width: 32px;
+            min-height: 32px;
+            max-height: 32px;
+            border-radius: 12px;
+            border: 0;
+            padding:0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button:hover {
+            background-color: var(--hover-color);
+        }
+
+        .text-zone {
+            font-family: var(--font-editor);
+            background: transparent;
+            min-height: 256px;
+            line-height: 1.8;
+            font-size: clamp(1rem, 2.4vw, 1.25rem);
+            letter-spacing: 0.03em;
+            white-space: pre-wrap;
+            word-break: break-word;
+            user-select: none;
+            transition: opacity 180ms ease, transform 180ms ease, filter 180ms ease;
+            padding: 0px 10px 0px 10px;
+        }
+
+        .text-zone.transitioning {
+            opacity: 0.25;
+            transform: translateY(4px);
+            filter: blur(1px);
+        }
+
+        .char {
+            color: var(--subtle-color);
+            transition: color 120ms ease, opacity 120ms ease, background-color 120ms ease;
+            border-left: 1px solid transparent;
+        }
+
+        .char.correct {
+            color: var(--ok);
+        }
+
+        .char.incorrect {
+            color: var(--danger);
+            /* background-color: var(--danger-bg); */
+            text-decoration: wavy underline var(--danger);
+        }
+
+        .char.current {
+            border-left: 1px solid var(--title-color);
+            animation: blinkCursor 7s step-start infinite;
+        }
+
+        @keyframes blinkCursor {
+            0% { border-color: transparent; }
+            10% { border-color: var(--title-color); }
+            20% { border-color: transparent; }
+            30% { border-color: var(--color-blue); }
+            40% { border-color: transparent; }
+            50% { border-color: var(--color-green); }
+            60% { border-color: transparent; }
+            70% { border-color: var(--color-yellow); }
+            80% { border-color: transparent; }
+            90% { border-color: var(--color-red); }
+            100% { border-color: transparent; }
+        }
+
+        textarea {
+            position: fixed;
+            left: -9999px;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .stats {
+                width: 100%;
+            }
+
+            .pill {
+                flex: 1;
+                min-width: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="header">
+            <div class="left">
+                <button onclick="window.open('index.html', '_self')"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg></button>
+            </div>
+            <div class="center">
+                <span id="titleStat">404 not found</span>
+                <span class="subtle" id="authStat">loading...</span>
+            </div>
+            <div class="right"></div>
+        </div>
+
+        <section class="text-zone" id="quoteDisplay" aria-live="polite"></section>
+
+        <textarea id="typingInput" placeholder="Type here..." spellcheck="false" autocomplete="off" autofocus></textarea>
+
+        <div class="stats">
+            <div class="pill" id="timeStat">Time: 0.0s</div>
+            <div class="pill" id="wpmStat">WPM: 0</div>
+            <div class="pill" id="accStat">Accuracy: 100%</div>
+        </div>
+    </main>
+
+    <a id="wallpaperCredit" class="wallpaper-credit" href="#" target="_blank" rel="noopener noreferrer">Wallpaper by Unknown</a>
+
+    <script>
+        const WALLPAPERS = [
+            {
+                imageUrl: "https://flarom.neocities.org/gallery/2026/131.png",
+                authorName: "flarom",
+                authorUrl: "https://flarom.neocities.org"
+            }
+        ];
+
+        const FIRST_ROUND_PREFIX = "404 not found, ";
+        const PREFETCH_THRESHOLD = 20;
+        const SMART_END_MIN_LENGTH = 128;
+        const EXTREME_HARD_LIMIT = 256;
+        const FALLBACK_POEMS = [
+            {
+                title: "Second 404",
+                author: "The poetry API itself failed",
+                text: "Another tab, another road. I asked the wire for verses and the wire replied with silence. So I type in the glow of a missing page, where every keystroke builds the bridge the server forgot to keep."
+            },
+            {
+                title: "Packet Night",
+                author: "The poetry API itself failed",
+                text: "Packets leave like fireflies through midnight cables, blinking with addresses and hope. Some return with stars, some never come back. In this small timeout, I learn that waiting is also part of code."
+            },
+            {
+                title: "Not Found, Still Here",
+                author: "The poetry API itself failed",
+                text: "The route is gone but not the traveler. The link is broken but not the question. Even when the map says not found, the cursor keeps walking, letter by letter, toward a page that exists only when written."
+            },
+            {
+                title: "Kernel Rain",
+                author: "The poetry API itself failed",
+                text: "Fans hum like distant weather while logs fall softly in the dark. A warning blooms, then fades. Between one compile and the next, I hear the patient heart of silicon rehearsing dawn."
+            },
+            {
+                title: "Ping",
+                author: "The poetry API itself failed",
+                text: "I send a small hello across the noise. If it returns, I smile. If it times out, I send again. Persistence is the first protocol, and faith the second."
+            }
+        ];
+
+        const quoteDisplay = document.getElementById("quoteDisplay");
+        const typingInput = document.getElementById("typingInput");
+        const timeStat = document.getElementById("timeStat");
+        const wpmStat = document.getElementById("wpmStat");
+        const accStat = document.getElementById("accStat");
+        const titleStat = document.getElementById("titleStat");
+        const authStat = document.getElementById("authStat");
+        const wallpaperCredit = document.getElementById("wallpaperCredit");
+
+        let currentText = "";
+        let firstRoundCompleted = false;
+        let isFirstRound = false;
+        let roundFinished = false;
+        let startTime = null;
+        let timerId = null;
+        let cachedPoetry = null;
+        let prefetchPromise = null;
+        let nextRoundLoading = false;
+        let pendingStatsReset = false;
+        let totalErrors = 0;
+        let lastCheckedLength = 0;
+
+        typingInput.disabled = true;
+
+        function applyRandomWallpaper() {
+            if (!Array.isArray(WALLPAPERS) || WALLPAPERS.length === 0) {
+                return;
+            }
+
+            const selected = WALLPAPERS[Math.floor(Math.random() * WALLPAPERS.length)];
+            if (!selected || !selected.imageUrl) {
+                return;
+            }
+
+            document.body.style.backgroundImage = `url('${selected.imageUrl}')`;
+            wallpaperCredit.textContent = `Wallpaper by ${selected.authorName || "Unknown"}`;
+            wallpaperCredit.href = selected.authorUrl || "#";
+        }
+
+        function updateStats(elapsedSeconds, typed, correct, errors = 0) {
+            const safeSeconds = Math.max(elapsedSeconds, 0);
+            const minutes = safeSeconds / 60;
+            const words = typed / 5;
+            const wpm = minutes > 0 ? Math.round(words / minutes) : 0;
+            const accuracy = currentText.length > 0 ? Math.max(0, 100 - (errors / currentText.length) * 100) : 100;
+
+            timeStat.textContent = `Time: ${safeSeconds.toFixed(1)}s`;
+            wpmStat.textContent = `WPM: ${wpm}`;
+            accStat.textContent = `Accuracy: ${Math.round(accuracy)}%`;
+        }
+
+        function updateInfo(title, author) {
+            titleStat.textContent = title ? `${title}` : "";
+            authStat.textContent = author ? `${author}` : "Unknown";
+        }
+
+        function renderText(target, typed) {
+            quoteDisplay.innerHTML = "";
+            let correct = 0;
+
+            target.split("").forEach((char, index) => {
+                const span = document.createElement("span");
+                span.className = "char";
+                span.textContent = char === " " ? "\u00A0" : char;
+
+                const typedChar = typed[index];
+                if (typedChar == null) {
+                    if (index === typed.length) {
+                        span.classList.add("current");
+                    }
+                } else if (typedChar === char) {
+                    span.classList.add("correct");
+                    correct += 1;
+                } else {
+                    span.classList.add("incorrect");
+                }
+
+                quoteDisplay.appendChild(span);
+            });
+
+            return correct;
+        }
+
+        function resetTimer() {
+            if (timerId) {
+                clearInterval(timerId);
+                timerId = null;
+            }
+            startTime = null;
+        }
+
+        function startTimerIfNeeded() {
+            if (startTime || roundFinished || currentText.length === 0) {
+                return;
+            }
+
+            if (pendingStatsReset) {
+                updateStats(0, 0, 0, 0);
+                pendingStatsReset = false;
+            }
+
+            startTime = performance.now();
+            timerId = setInterval(() => {
+                const elapsed = (performance.now() - startTime) / 1000;
+                const typed = typingInput.value.length;
+                updateStats(elapsed, typed, 0, totalErrors);
+            }, 100);
+        }
+
+        function finishRound() {
+            if (roundFinished) {
+                return;
+            }
+
+            roundFinished = true;
+            if (timerId) {
+                clearInterval(timerId);
+                timerId = null;
+            }
+
+            const elapsed = startTime ? (performance.now() - startTime) / 1000 : 0;
+            const typed = typingInput.value.length;
+            updateStats(elapsed, typed, 0, totalErrors);
+
+            if (!firstRoundCompleted && isFirstRound) {
+                firstRoundCompleted = true;
+            }
+
+            startNextRound();
+        }
+
+        function prepareRound(text, options = {}) {
+            const { clearInput = true, firstRound = false, title = "", author = "Unknown" } = options;
+            currentText = text;
+            isFirstRound = firstRound;
+            roundFinished = false;
+            if (clearInput) {
+                typingInput.value = "";
+            }
+
+            resetTimer();
+            pendingStatsReset = true;
+            totalErrors = 0;
+            lastCheckedLength = 0;
+            updateInfo(title, author);
+            renderText(currentText, typingInput.value);
+            typingInput.focus();
+        }
+
+        async function fetchPoetryText() {
+            try {
+                const response = await fetch("https://poetrydb.org/random");
+                if (!response.ok) {
+                    throw new Error("Poetry API unavailable");
+                }
+
+                const data = await response.json();
+                console.log(data);
+
+                const poem = Array.isArray(data) ? data[0] : null;
+                if (!poem || !Array.isArray(poem.lines) || poem.lines.length === 0) {
+                    throw new Error("Poem is empty");
+                }
+
+                const lines = poem.lines.filter((line) => line && line.trim().length > 0);
+                const joined = lines.join(" ").replace(/\s+/g, " ").trim();
+                if (joined.length < 20) {
+                    throw new Error("Poem is too short");
+                }
+
+                // After a minimum length, try to end at a sentence boundary
+                if (joined.length <= SMART_END_MIN_LENGTH) {
+                    return {
+                        text: joined,
+                        title: poem.title || "Untitled poem",
+                        author: poem.author || "Unknown"
+                    };
+                }
+
+                const searchUntil = Math.min(joined.length, EXTREME_HARD_LIMIT);
+                let punctuationIndex = -1;
+
+                for (let i = SMART_END_MIN_LENGTH; i < searchUntil; i += 1) {
+                    if (/[.!?]/.test(joined[i])) {
+                        punctuationIndex = i;
+                        break;
+                    }
+                }
+
+                if (punctuationIndex >= 0) {
+                    return {
+                        text: joined.slice(0, punctuationIndex + 1).trim(),
+                        title: poem.title || "Untitled poem",
+                        author: poem.author || "Unknown"
+                    };
+                }
+
+                // Hard limit to avoid extremely long poems, even if no good punctuation was found
+                if (joined.length <= EXTREME_HARD_LIMIT) {
+                    return {
+                        text: joined,
+                        title: poem.title || "Untitled poem",
+                        author: poem.author || "Unknown"
+                    };
+                }
+
+                return {
+                    text: joined.slice(0, EXTREME_HARD_LIMIT).trim(),
+                    title: poem.title || "Untitled poem",
+                    author: poem.author || "Unknown"
+                };
+            } catch (_error) {
+                const random = FALLBACK_POEMS[Math.floor(Math.random() * FALLBACK_POEMS.length)];
+                return random;
+            }
+        }
+
+        function queuePoetryPrefetch() {
+            if (cachedPoetry || prefetchPromise) {
+                return;
+            }
+
+            prefetchPromise = fetchPoetryText()
+                .then((text) => {
+                    cachedPoetry = text;
+                })
+                .finally(() => {
+                    prefetchPromise = null;
+                });
+        }
+
+        async function getPoetryTextForRound() {
+            if (cachedPoetry) {
+                const text = cachedPoetry;
+                cachedPoetry = null;
+                return text;
+            }
+
+            return fetchPoetryText();
+        }
+
+        function maybePrefetchNearEnd() {
+            if (roundFinished || currentText.length === 0) {
+                return;
+            }
+
+            const hasRenderedText = quoteDisplay.textContent && quoteDisplay.textContent.trim().length > 0;
+            if (!hasRenderedText) {
+                return;
+            }
+
+            const remaining = currentText.length - typingInput.value.length;
+            if (remaining <= PREFETCH_THRESHOLD) {
+                queuePoetryPrefetch();
+            }
+        }
+
+        async function startNextRound() {
+            if (nextRoundLoading) {
+                return;
+            }
+
+            nextRoundLoading = true;
+            typingInput.disabled = true;
+            quoteDisplay.classList.add("transitioning");
+
+            try {
+                await new Promise((resolve) => setTimeout(resolve, 140));
+                const nextPoem = await getPoetryTextForRound();
+                prepareRound(nextPoem.text, {
+                    clearInput: true,
+                    firstRound: false,
+                    title: nextPoem.title,
+                    author: nextPoem.author
+                });
+            } finally {
+                quoteDisplay.classList.remove("transitioning");
+                nextRoundLoading = false;
+                typingInput.disabled = false;
+                typingInput.focus();
+            }
+        }
+
+        window.addEventListener("click", () => {
+            typingInput.focus();
+        });
+
+        typingInput.addEventListener("input", () => {
+            if (roundFinished || currentText.length === 0) {
+                return;
+            }
+
+            startTimerIfNeeded();
+
+            const typed = typingInput.value;
+            if (typed.length > lastCheckedLength) {
+                const newCharIndex = typed.length - 1;
+                if (typed[newCharIndex] !== currentText[newCharIndex]) {
+                    totalErrors++;
+                }
+            }
+            lastCheckedLength = typed.length;
+
+            renderText(currentText, typed);
+            const elapsed = startTime ? (performance.now() - startTime) / 1000 : 0;
+            updateStats(elapsed, typed.length, 0, totalErrors);
+            maybePrefetchNearEnd();
+
+            if (typed.length >= currentText.length) {
+                finishRound();
+            }
+        });
+
+        async function initGame() {
+            applyRandomWallpaper();
+            const firstPoem = await getPoetryTextForRound();
+            prepareRound(`${FIRST_ROUND_PREFIX}${firstPoem.text}`, {
+                clearInput: true,
+                firstRound: true,
+                title: firstPoem.title,
+                author: firstPoem.author
+            });
+            typingInput.disabled = false;
+            typingInput.focus();
+        }
+
+        initGame();
+    </script>
+</body>
+</html>
