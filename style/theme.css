@@ -20,7 +20,7 @@
     --field-color:          #434347;
 
     --border-dark-color:    #050505;
-    --border-light-color:   #434347;
+    --border-light-color:   #4c4c50;
     --border-field-color:   transparent;
 
     --hover-color:          #3b3a3e;
@@ -171,7 +171,7 @@
         --field-color:          #434347;
 
         --border-dark-color:    #050505;
-        --border-light-color:   #434347;
+        --border-light-color:   #4c4c50;
         --border-field-color:   transparent;
 
         --hover-color:          #3b3a3e;
@@ -474,9 +474,9 @@
 
     --field-color:          #111111;
 
-    --border-dark-color:    #2a2a2a;
-    --border-light-color:   #2a2a2a;
-    --border-field-color:   #2a2a2a;
+    --border-dark-color:    #333333;
+    --border-light-color:   #333333;
+    --border-field-color:   #333333;
 
     --hover-color:          #1a1a1a;
 
@@ -566,4 +566,54 @@
     --color-yellow-bg:      #eeeeee;
     --color-orange-bg:      #eeeeee;
     --color-red-bg:         #eeeeee;
+}
+
+/* MARK: HIGH CONTRAST THEME */
+.theme-high-contrast {
+    --active-line:          #1f1f1f;
+
+    --background-color:     #000000;
+    --background-color-2:   #000000;
+    --background-color-3:   #111111;
+
+    --field-color:          #000000;
+
+    --border-dark-color:    #ffffff;
+    --border-light-color:   #ffffff;
+    --border-field-color:   #ffffff;
+
+    --hover-color:          #1a1a1a;
+
+    --title-color:          #ffffff;
+    --button-color:         #ffffff;
+    --button-color-2:       #000000;
+    --text-color:           #ffffff;
+    --subtle-color:         #bcbcbc;
+
+    --accent:               #66a3ff;
+    --selection-color:      #66a3ff55;
+    --link-color:           #8fc2ff;
+
+    --danger:               #ff5c7a;
+    --danger-bg:            #ff5c7a33;
+    --danger-bg-hover:      #ff5c7a55;
+
+    --shadow:               0px 0px 0px #00000000;
+    --shadow-light:         0px 0px 0px #00000000;
+
+    --color-pink:           #ff9dd1;
+    --color-purple:         #d4b3ff;
+    --color-blue:           #8fc2ff;
+    --color-green:          #9cff9c;
+    --color-yellow:         #ffe28f;
+    --color-orange:         #ffc78f;
+    --color-red:            #ff8fa4;
+
+    --color-pink-bg:        #3d0825;
+    --color-purple-bg:      #2b1c4f;
+    --color-blue-bg:        #0d2952;
+    --color-green-bg:       #0f3a0f;
+    --color-yellow-bg:      #3b3300;
+    --color-orange-bg:      #3b2200;
+    --color-red-bg:         #3b0f17;
 }
