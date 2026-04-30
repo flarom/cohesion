@@ -137,10 +137,7 @@
         "SAVE FILE DIALOG": {
             "dialogs.save-file": "Salvar arquivo",
             "dialogs.save-file.file-name": "Nome do arquivo",
-            "dialogs.save-file.format": "Formato",
-            "dialogs.save-file.format.markdown": "Documento Markdown",
-            "dialogs.save-file.format.html": "Página HTML",
-            "dialogs.save-file.format.pdf": "Documento PDF"
+            "dialogs.save-file.format": "Formato"
         },
         "RESOURCES": {
             "dialogs.resources.add-resource": "Adicionar recurso",

@@ -648,3 +648,311 @@ const file = {
         return title;
     }
 }
+
+const fileExporters = {};
+
+const fileExporter = {
+    add: function(mime, title, exec) {
+        if (typeof exec !== "function") {
+            throw new Error("Exporter exec must be a function.");
+        }
+        fileExporters[mime] = {
+            title,
+            exec
+        };
+    },
+    get: function(mime) {
+        return fileExporters[mime] || null;
+    },
+    list: function() {
+        return Object.keys(fileExporters);
+    },
+    entries: function() {
+        return Object.entries(fileExporters);
+    },
+    export: function(mime, options = {}) {
+        // executes the exporter 'exec' function for the given mime type, which should return a blob or a URL to download
+        const exporter = this.get(mime);
+        if (!exporter) {
+            throw new Error(`No exporter found for MIME type: ${mime}`);
+        }
+        return exporter.exec(options);
+    }
+}
+
+// default exporters
+fileExporter.add("text/markdown", "Markdown (.md)", async (options) => {
+    const title = options.title || "Untitled";
+    const content = editor.getValue();
+    const blob = new Blob([content || ""], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${title}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    return { url, fileName: `${title}.md` };
+});
+
+fileExporter.add("text/html", "HTML (.html)", async (options) => {
+    const title = options.title || "Untitled";
+    const text = editor.getValue();
+    const documentContent = converter.makeHtml(text);
+    const documentMeta = converter.getMetadata();
+    const content = `<!-- Made with Cohesion - https://flarom.github.io/cohesion -->
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <meta name="generator" content="Cohesion">
+                ${documentMeta.keywords ? `<meta name="keywords" content="${documentMeta.keywords}">` : ""}
+                ${documentMeta.tags ? `<meta name="keywords" content="${documentMeta.tags}">` : ""}
+                ${documentMeta.author ? `<meta name="author" content="${documentMeta.author}">` : ""}
+                ${documentMeta.description ? `<meta name="description" content="${documentMeta.description}">` : ""}
+                <title>`.trim().replace(/\s+/g, " ") + title + `</title>
+                <style>
+                    * {
+                        max-width: 21cm;
+                        margin: 0 auto;
+                        padding: 0;
+                        box-sizing: border-box;
+                    }
+
+                    body {
+                        font-family: system-ui, -apple-system, sans-serif;
+                        line-height: 1.6;
+                        font-size: 16px;
+                        color: #222;
+                        background: #fff;
+                        max-width: 720px;
+                        margin: 40px auto;
+                        padding: 0 16px;
+                    }
+
+                    h1, h2, h3, h4, h5, h6 {
+                        line-height: 1.25;
+                        margin-top: 1.5em;
+                        margin-bottom: 0.5em;
+                        font-weight: 600;
+                    }
+
+                    hr {
+                        border: none;
+                        border-top: 1px solid #666;
+                        margin: 2em 0;
+                    }
+
+                    p {
+                        margin: 1em 0;
+                    }
+
+                    a {
+                        color: #0066cc;
+                        text-decoration: none;
+                    }
+
+                    a:hover {
+                        text-decoration: underline;
+                    }
+
+                    ul, ol {
+                        margin: 1em 0 1em 1.5em;
+                    }
+
+                    li {
+                        margin: 0.25em 0;
+                    }
+
+                    code {
+                        font-size: 14px;
+                        font-family: monospace;
+                        background: #f4f4f4;
+                        padding: 2px 4px;
+                        border-radius: 4px;
+                    }
+
+                    pre {
+                        background: #f4f4f4;
+                        padding: 12px;
+                        overflow-x: auto;
+                        border-radius: 6px;
+                    }
+
+                    blockquote {
+                        border-left: 4px solid #ddd;
+                        padding-left: 1em;
+                        margin: 1em 0;
+                        color: #555;
+                    }
+
+                    img {
+                        max-width: 100%;
+                        height: auto;
+                        display: block;
+                        margin: 1em 0;
+                    }
+
+                    table {
+                        border-collapse: collapse;
+                        margin: 1em 0;
+                        width: 100%;
+                    }
+
+                    table, th, td {
+                        border: 1px solid #ddd;
+                    }
+                </style>
+            </head>
+            <body>
+                `.trim().replace(/\s+/g, " ") + documentContent + `
+            </body>
+            </html>`.trim().replace(/\s+/g, " ");
+    const blob = new Blob([content || ""], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${title}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    return { url, fileName: `${title}.html` };
+});
+
+fileExporter.add("application/pdf", "PDF (.pdf)", async (options) => {
+    const html2PdfBundleUrl = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+
+    const ensureHtml2PdfLoaded = (() => {
+        let html2PdfLoadPromise = null;
+
+        return () => {
+            if (typeof html2pdf !== "undefined") {
+                return Promise.resolve(html2pdf);
+            }
+
+            if (!html2PdfLoadPromise) {
+                html2PdfLoadPromise = new Promise((resolve, reject) => {
+                    const existingScript = document.querySelector(`script[src="${html2PdfBundleUrl}"]`);
+
+                    if (existingScript) {
+                        existingScript.addEventListener("load", () => resolve(window.html2pdf), { once: true });
+                        existingScript.addEventListener("error", () => reject(new Error("Failed to load html2pdf.")), { once: true });
+                        return;
+                    }
+
+                    const script = document.createElement("script");
+                    script.src = html2PdfBundleUrl;
+                    script.async = true;
+                    script.onload = () => resolve(window.html2pdf);
+                    script.onerror = () => reject(new Error("Failed to load html2pdf."));
+                    document.head.appendChild(script);
+                });
+            }
+
+            return html2PdfLoadPromise;
+        };
+    })();
+
+    const html2Pdf = await ensureHtml2PdfLoaded();
+
+    const title = options.title || "Untitled";
+    const text = editor.getValue();
+    const documentContent = converter.makeHtml(text);
+    const documentMeta = converter.getMetadata();
+    const htmlContent = `<!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <meta name="generator" content="Cohesion">
+                ${documentMeta.keywords ? `<meta name="keywords" content="${documentMeta.keywords}">` : ""}
+                ${documentMeta.tags ? `<meta name="keywords" content="${documentMeta.tags}">` : ""}
+                ${documentMeta.author ? `<meta name="author" content="${documentMeta.author}">` : ""}
+                ${documentMeta.description ? `<meta name="description" content="${documentMeta.description}">` : ""}
+                <title>${title}</title>
+                <style>
+                    html, body {
+                        width: 100%;
+                        margin: 0;
+                        padding: 0;
+                    }
+
+                    body {
+                        width: 100%;
+                        color: #000;
+                        font-family: system-ui, -apple-system, sans-serif;
+                        line-height: 1.6;
+                        font-size: 16px;
+                    }
+
+                    .pdf-document {
+                        width: 100%;
+                        box-sizing: border-box;
+                        padding: 0;
+                    }
+
+                    p, h1, h2, h3, h4, h5, h6, blockquote, pre, table, ul, ol, img, figure {
+                        break-inside: avoid;
+                        page-break-inside: avoid;
+                    }
+
+                    p, blockquote, ul, ol, pre, table, figure {
+                        orphans: 3;
+                        widows: 3;
+                    }
+
+                    p {
+                        margin: 1em 0;
+                        overflow-wrap: anywhere;
+                    }
+
+                    h1, h2, h3, h4, h5, h6 {
+                        line-height: 1.25;
+                        margin: 1.5em 0 0.5em;
+                        page-break-after: avoid;
+                    }
+
+                    img {
+                        max-width: 100%;
+                    }
+                    table {
+                        border-collapse: collapse;
+                    }
+                    table, th, td {
+                        border: 1px solid black;
+                    }
+                    th, td {
+                        padding: 5px;
+                    }
+                    th {
+                        font-weight: bold;
+                    }
+                </style>
+            </head>
+            <body>
+                ${documentContent}
+            </body>
+            </html>`;
+
+    const optionsConfig = {
+        margin: 0.5,
+        filename: `${title}.pdf`,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        pagebreak: {
+            mode: ["css", "legacy"],
+            avoid: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "blockquote", "pre", "table", "ul", "ol", "img", "figure"]
+        },
+        jsPDF: { unit: "in", format: "letter", orientation: "portrait" }
+    };
+
+    await html2Pdf().set(optionsConfig).from(htmlContent).save();
+
+    return { fileName: `${title}.pdf` };
+});
+

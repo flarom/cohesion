@@ -19,11 +19,7 @@
             </div>
             <div class="row">
                 <label for="export-as" data-locale="dialogs.save-file.format">Format</label>
-                <select id="export-as" name="export-as">
-                    <option value="md" data-locale="dialogs.save-file.format.markdown">Markdown document</option>
-                    <option value="html" data-locale="dialogs.save-file.format.html">HTML page</option>
-                    <option value="pdf" data-locale="dialogs.save-file.format.pdf">PDF document</option>
-                </select>
+                <select id="export-as" name="export-as"></select>
             </div>
         </section>
         <section class="button-row">
@@ -36,236 +32,57 @@
         (() => {
             const args = typeof window.dialogArgs === "function" ? window.dialogArgs() : {};
             const fileNameInput = document.getElementById("file-name");
+            const exportAsSelect = document.getElementById("export-as");
 
             if (typeof args.filename === "string" && args.filename.trim()) {
                 fileNameInput.value = args.filename;
+            }
+
+            if (typeof fileExporter !== "undefined" && typeof fileExporter.entries === "function") {
+                const exporters = fileExporter.entries();
+
+                for (const [mime, exporter] of exporters) {
+                    const option = document.createElement("option");
+                    option.value = mime;
+                    option.textContent = exporter?.title || mime;
+                    exportAsSelect.appendChild(option);
+                }
+
+                if (exportAsSelect.options.length > 0) {
+                    exportAsSelect.selectedIndex = 0;
+                }
             }
 
             fileNameInput.focus();
             fileNameInput.select();
         })();
 
-        function handleSaveSelection() {
+        async function handleSaveSelection() {
             const fileNameInput = document.getElementById("file-name");
             const exportAsSelect = document.getElementById("export-as");
 
             const fileName = fileNameInput.value.trim();
-            const exportFormat = exportAsSelect.value;
+            const exportMime = exportAsSelect.value;
 
             if (!fileName || fileName.indexOf("/") > -1 || fileName.indexOf("\\") > -1) {
                 Toast.show("Please enter a valid file name", "warning");
                 return;
             }
 
-            switch (exportFormat) {
-                case "md":
-                    exportMd();
-                    break;
-                case "html":
-                    exportStyledHtml();
-                    break;
-                case "pdf":
-                    exportPdf();
-                    break;
-                default:
-                    Toast.show("Unsupported export format selected.", "error");
+            if (typeof fileExporter === "undefined" || typeof fileExporter.export !== "function") {
+                Toast.show("Export is unavailable right now.", "error");
+                return;
             }
-            window.dialogReturn(true);
-        }
 
-        function exportMd() {
-            const fileNameInput = document.getElementById("file-name");
-            const text = editor.getValue();
-            downloadString(fileNameInput.value + ".md", text);
-        }
-
-        function exportStyledHtml() {
-            const fileNameInput = document.getElementById("file-name");
-            const text = editor.getValue();
-            const documentContent = converter.makeHtml(text);
-            const documentMeta = converter.getMetadata();
-            const htmlContent = 
-            `<!-- Made with Cohesion - https://flarom.github.io/cohesion -->
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <meta name="generator" content="Cohesion">
-                ${documentMeta.keywords ? `<meta name="keywords" content="${documentMeta.keywords}">` : ""}
-                ${documentMeta.tags ? `<meta name="keywords" content="${documentMeta.tags}">` : ""}
-                ${documentMeta.author ? `<meta name="author" content="${documentMeta.author}">` : ""}
-                ${documentMeta.description ? `<meta name="description" content="${documentMeta.description}">` : ""}
-                <title>`.trim().replace(/\s+/g, " ") + fileNameInput.value + `</title>
-                <style>
-                    * {
-                        max-width: 21cm;
-                        margin: 0 auto;
-                        padding: 0;
-                        box-sizing: border-box;
-                    }
-
-                    body {
-                        font-family: system-ui, -apple-system, sans-serif;
-                        line-height: 1.6;
-                        font-size: 16px;
-                        color: #222;
-                        background: #fff;
-                        max-width: 720px;
-                        margin: 40px auto;
-                        padding: 0 16px;
-                    }
-
-                    h1, h2, h3, h4, h5, h6 {
-                        line-height: 1.25;
-                        margin-top: 1.5em;
-                        margin-bottom: 0.5em;
-                        font-weight: 600;
-                    }
-
-                    hr {
-                        border: none;
-                        border-top: 1px solid #666;
-                        margin: 2em 0;
-                    }
-
-                    p {
-                        margin: 1em 0;
-                    }
-
-                    a {
-                        color: #0066cc;
-                        text-decoration: none;
-                    }
-
-                    a:hover {
-                        text-decoration: underline;
-                    }
-
-                    ul, ol {
-                        margin: 1em 0 1em 1.5em;
-                    }
-
-                    li {
-                        margin: 0.25em 0;
-                    }
-
-                    code {
-                        font-size: 14px;
-                        font-family: monospace;
-                        background: #f4f4f4;
-                        padding: 2px 4px;
-                        border-radius: 4px;
-                    }
-
-                    pre {
-                        background: #f4f4f4;
-                        padding: 12px;
-                        overflow-x: auto;
-                        border-radius: 6px;
-                    }
-
-                    blockquote {
-                        border-left: 4px solid #ddd;
-                        padding-left: 1em;
-                        margin: 1em 0;
-                        color: #555;
-                    }
-
-                    img {
-                        max-width: 100%;
-                        height: auto;
-                        display: block;
-                        margin: 1em 0;
-                    }
-
-                    table {
-                        border-collapse: collapse;
-                        margin: 1em 0;
-                        width: 100%;
-                    }
-
-                    table, th, td {
-                        border: 1px solid #ddd;
-                    }
-                </style>
-            </head>
-            <body>
-                `.trim().replace(/\s+/g, " ") + documentContent + `
-            </body>
-            </html>`.trim().replace(/\s+/g, " ");
-            downloadString(fileNameInput.value + ".html", htmlContent);
-        }
-
-        function exportPdf() {
-            const fileNameInput = document.getElementById("file-name");
-            const text = editor.getValue();
-            const documentContent = converter.makeHtml(text);
-            const documentMeta = converter.getMetadata();
-            const htmlContent = 
-            `<!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <meta name="generator" content="Cohesion">
-                ${documentMeta.keywords ? `<meta name="keywords" content="${documentMeta.keywords}">` : ""}
-                ${documentMeta.tags ? `<meta name="keywords" content="${documentMeta.tags}">` : ""}
-                ${documentMeta.author ? `<meta name="author" content="${documentMeta.author}">` : ""}
-                ${documentMeta.description ? `<meta name="description" content="${documentMeta.description}">` : ""}
-                <title>` + fileNameInput.value + `</title>
-                <style>
-                    body {
-                        max-width: 800px;
-                        margin: 0px auto;
-                        color: #000;
-                    }
-                    img {
-                        max-width: 100%;
-                    }
-                    table {
-                        border-collapse: collapse;
-                    }
-                    table, th, td {
-                        border: 1px solid black;
-                    }
-                    th, td {
-                        padding: 5px;
-                    }
-                    th {
-                        font-weight: bold;
-                    }
-                </style>
-            </head>
-            <body>
-                ` + documentContent + `
-            </body>
-            </html>`;
-            
-            // convert using html2pdf library
-            const opt = {
-                margin:       0.5,
-                filename:     fileNameInput.value + '.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
-            html2pdf().set(opt).from(htmlContent).save();
-        }
-
-        function downloadString(filename, content) {
-            const blob = new Blob([content], { type: "text/plain" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            try {
+                await Promise.resolve(fileExporter.export(exportMime, { title: fileName }));
+                window.dialogReturn(true);
+            } catch (error) {
+                console.error(error);
+                Toast.show(error?.message || "Export failed.", "error");
+            }
         }
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </body>
 
 </html>

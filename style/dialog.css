@@ -114,7 +114,6 @@ dialog .toolbar .dialog-window-control {
     font-weight: bold;
     transition: all 0.3s ease;
     background-color: var(--field-color);
-    cursor: auto;
 }
 
 dialog .toolbar .dialog-window-control:hover {
