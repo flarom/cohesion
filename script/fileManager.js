@@ -234,7 +234,7 @@ const fileManager = {
                 await this.selectFile(newFile.id);
                 await this.loadFiles();
                 this.renderSidebar();
-                Toast.show("File duplicated", "check");
+                toast.show("File duplicated", "check");
             });
 
             const exportBtn = fileItem.querySelector("[data-export-id]");
@@ -249,7 +249,7 @@ const fileManager = {
             deleteBtn.addEventListener("click", async (e) => {
                 e.stopPropagation();
                 await this.deleteFile(fileEntry.id);
-                Toast.show("File deleted", "delete");
+                toast.show("File deleted", "delete");
             });
 
             fileList.appendChild(fileItem);
@@ -280,7 +280,7 @@ const fileManager = {
 
     async createNewFile() {
         if (!this.currentProjectId) {
-            Toast.show("Open a project first", "warning");
+            toast.show("Open a project first", "warning");
             return;
         }
 
@@ -303,7 +303,7 @@ const fileManager = {
         }
 
         if (this.files.length === 1) {
-            Toast.show("Cannot delete the last file", "warning");
+            toast.show("Cannot delete the last file", "warning");
             return;
         }
 
@@ -387,7 +387,7 @@ const fileManager = {
 
     async openResourcesDialog() {
         if (!this.currentProjectId) {
-            Toast.show("Open a project first", "warning");
+            toast.show("Open a project first", "warning");
             return;
         }
 

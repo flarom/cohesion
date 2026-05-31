@@ -257,10 +257,10 @@
                     currentResourceId = file.buildId(uniqueName, resourceParentPath);
                     currentName = uniqueName;
                     fileNameInput.value = currentName;
-                    Toast.show("Resource renamed", "check");
+                    toast.show("Resource renamed", "check");
                 } catch (error) {
                     console.error("Error renaming resource:", error);
-                    Toast.show("Could not rename resource", "error");
+                    toast.show("Could not rename resource", "error");
                     fileNameInput.value = currentName;
                     updateDerivedFields(currentName);
                 }
@@ -440,12 +440,12 @@
 
             copyImageMarkdownBtn.addEventListener("click", async () => {
                 await navigator.clipboard.writeText(imageMarkdownInput.value);
-                Toast.show("Markdown copied to clipboard", "check");
+                toast.show("Markdown copied to clipboard", "check");
                 closeAllDialogs();
             });
             copyImageHTMLBtn.addEventListener("click", async () => {
                 await navigator.clipboard.writeText(imageHTMLInput.value);
-                Toast.show("HTML copied to clipboard", "check");
+                toast.show("HTML copied to clipboard", "check");
                 closeAllDialogs();
             });
 
@@ -501,11 +501,11 @@
 
                 try {
                     await file.removeFile(currentResourceId);
-                    Toast.show("Resource deleted", "check");
+                    toast.show("Resource deleted", "check");
                     window.dialogReturn(true);
                 } catch (error) {
                     console.error("Error deleting resource:", error);
-                    Toast.show("Could not delete resource", "error");
+                    toast.show("Could not delete resource", "error");
                 }
             });
         })();

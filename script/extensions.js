@@ -85,7 +85,7 @@ const Extensions = (() => {
             await fn();
         } catch (e) {
             console.error("[Extension error]", e);
-            Toast.show("Extension error: " + e.message, "error");
+            toast.show("Extension error: " + e.message, "error");
         }
     }
 
@@ -107,7 +107,7 @@ const Extensions = (() => {
             const meta = parseMetadata(code);
 
             if (!meta) {
-                Toast.show("Invalid extension format", "error");
+                toast.show("Invalid extension format", "error");
                 return null;
             }
 
@@ -194,7 +194,7 @@ const Extensions = (() => {
 
             } catch (err) {
                 console.error(err);
-                Toast.show("Import failed: " + err.toString(), "error");
+                toast.show("Import failed: " + err.toString(), "error");
                 return null;
             }
         },

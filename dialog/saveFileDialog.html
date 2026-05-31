@@ -65,12 +65,12 @@
             const exportMime = exportAsSelect.value;
 
             if (!fileName || fileName.indexOf("/") > -1 || fileName.indexOf("\\") > -1) {
-                Toast.show("Please enter a valid file name", "warning");
+                toast.show("Please enter a valid file name", "warning");
                 return;
             }
 
             if (typeof fileExporter === "undefined" || typeof fileExporter.export !== "function") {
-                Toast.show("Export is unavailable right now.", "error");
+                toast.show("Export is unavailable right now.", "error");
                 return;
             }
 
@@ -79,7 +79,7 @@
                 window.dialogReturn(true);
             } catch (error) {
                 console.error(error);
-                Toast.show(error?.message || "Export failed.", "error");
+                toast.show(error?.message || "Export failed.", "error");
             }
         }
     </script>

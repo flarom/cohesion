@@ -1,3 +1,10 @@
+/*
+Settings
+========
+
+Provides functions to set, get, and remove settings using localStorage, with support for ignoring comments in values.
+*/
+
 const settingsStorageKey = "COHESION_SETTINGS_";
 
 const Settings = {

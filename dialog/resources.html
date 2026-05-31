@@ -223,7 +223,7 @@
 
             const loadResources = async () => {
                 if (!projectId) {
-                    Toast.show("Open a project first", "error");
+                    toast.show("Open a project first", "error");
                     closeAllDialogs();
                     return;
                 }
@@ -265,7 +265,7 @@
                     }
 
                     await loadResources();
-                    Toast.show("Resource uploaded", "check");
+                    toast.show("Resource uploaded", "check");
                 };
                 input.click();
             });

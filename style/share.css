@@ -24,12 +24,6 @@ body {
     background: var(--background-color);
 }
 
-body {
-    display: grid;
-    grid-template-rows: var(--toolbar-h) 1fr var(--status-h);
-    overflow: hidden;
-}
-
 span.icon {
     font-family: "Material Symbols Rounded";
     display: inline-flex;
@@ -50,6 +44,44 @@ span.icon {
 .flex.g-8 { gap: 8px; }
 .flex.g-12 { gap: 12px; }
 .flex.g-16 { gap: 16px; }
+
+footer {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    background-color: var(--background-color-2);
+    padding: 20px;
+    border-top: 1px solid var(--border-dark-color);
+
+    section {
+        display: flex;
+        align-items: start;
+        justify-content: start;
+
+        &:last-of-type {
+            justify-content: end;
+        }
+
+        .col {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    footer {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        padding: 10px;
+
+        section {
+            justify-content: center;
+        }
+    }
+}
 
 /* MARK: TOOLBAR */
 

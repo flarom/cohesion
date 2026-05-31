@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document on Cohesion</title>
+    <link rel="shortcut icon" href="cohesion/favicon.svg" type="image/x-icon" />
+    
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="Document on Cohesion">
+    <meta name="description" content="Markdown document shared using Cohesion.">
+    <meta name="keywords" content="Cohesion, Markdown, Document Sharing, Online Editor">
+    <meta name="language" content="en">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://flarom.github.io/cohesion/share">
+    <meta property="og:title" content="Document on Cohesion">
+    <meta property="og:description" content="Markdown document shared using Cohesion.">
+    <meta property="og:image" content="https://flarom.github.io/cohesion/static/cards/shared.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://flarom.github.io/cohesion/share">
+    <meta property="twitter:title" content="Document on Cohesion">
+    <meta property="twitter:description" content="Markdown document shared using Cohesion.">
+    <meta property="twitter:image" content="https://flarom.github.io/cohesion/static/cards/shared.png">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://flarom.github.io/cohesion/share">
+
+    <!-- PWA meta tags -->
+    <meta name="application-name" content="Cohesion">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta content="#303030" name="theme-color" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+
+    <link rel="stylesheet" href="style/theme.css" priority="high">
+    <link rel="stylesheet" href="style/share.css" priority="high">
+    <link rel="stylesheet" href="style/document.css" priority="high">
+    <link rel="stylesheet" href="style/dialog.css">
+</head>
+<body class="theme-auto">
+    <div id="preview" class="md-document" style="min-height: 100vh;">
+        <noscript>
+            <h2>JavaScript Required</h2>
+            <p>This page requires JavaScript to function properly. Please enable JavaScript in your browser settings and refresh the page.</p>
+        </noscript>
+    </div>
+    <footer>
+        <section>
+            <div class="col">
+                <span style="font-family: var(--font-title); font-size: 2.986rem; margin-bottom: 16px; font-weight: 400; user-select: none;">Cohesion</span>
+                <a href="index.html">Editor</a>
+                <a href="https://github.com/flarom/cohesion" target="_blank">GitHub</a>
+                <a href="https://github.com/flarom/cohesion/wiki" target="_blank">Documentation</a>
+            </div>
+        </section>
+        <section>
+            <div class="col">
+                <button class="text-button" onclick="downloadDocument()">Download document</button>
+                <button class="text-button" onclick="editOnCohesion()">Edit on Cohesion</button>
+            </div>
+        </section>
+    </footer>
+
+    <input type="file" id="fileInput" accept=".md,.markdown,.txt,text/markdown,text/plain" style="display:none" />
+
+    <script src="script/file.js"></script>
+    <script src="script/settings.js"></script>
+    <script src="script/i18n.js"></script>
+    <script src="script/dialog.js"></script>
+    <script src="script/showdown/showdown.js"></script>
+    <script src="script/showdown/extension/blocks.js"></script>
+    <script>
+        // load settings
+        function loadSettings(){
+            const theme = Settings.getSetting("theme", "theme-auto");
+            document.body.className = theme;
+
+            const root = document.documentElement;
+
+            const editorFont = Settings.getSetting("editorFont");
+            const paragraphFont = Settings.getSetting("paragraphFont");
+            const titleFont = Settings.getSetting("titleFont");
+
+            if (editorFont) root.style.setProperty("--font-editor", editorFont);
+            if (paragraphFont) root.style.setProperty("--font-text", paragraphFont);
+            if (titleFont) root.style.setProperty("--font-title", titleFont);
+        }
+
+        function changeTheme() {
+            let current = Settings.getSetting('theme');
+            if (current === 'theme-dark') {
+                Settings.setSetting('theme', 'theme-light');
+            } else {
+                Settings.setSetting('theme', 'theme-dark');
+            }
+            loadSettings();
+        }
+
+        loadSettings();
+
+        const constMarkdown = ``
+
+        let markdown = constMarkdown;
+
+       function sanitizeMarkdown(text) {
+            return text.replace(
+                /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi,
+                (match, offset) => {
+                    console.warn(
+                        "Removed inline event:",
+                        {
+                            removed: match,
+                            position: offset
+                        }
+                    );
+                    return '';
+                }
+            );
+        }
+
+        function detectInlineEvents(text) {
+            return /<[^>]*\bon[a-z]+\s*=/gi.test(text);
+        }
+
+        function extractMetadata(markdown) {
+            if (!markdown) return {};
+
+            const metaMatch = markdown.match(/«««([\s\S]*?)»»»/);
+            let metaText = null;
+
+            if (metaMatch) {
+                metaText = metaMatch[1];
+            } else {
+                const yamlMatch = markdown.match(/^---\s*\n([\s\S]*?)\n---/);
+                if (yamlMatch) metaText = yamlMatch[1];
+            }
+
+            if (!metaText) return {};
+
+            const metaLines = metaText.split('\n').map(l => l.trim()).filter(Boolean);
+            const metadata = {};
+            metaLines.forEach(line => {
+                const parts = line.split(':');
+                if (parts.length >= 2) {
+                    const key = parts.shift().trim();
+                    const value = parts.join(':').trim();
+                    if (key) metadata[key] = value;
+                }
+            });
+
+            return metadata;
+        }
+
+        async function showSecurityWarning() {
+            await showDialog(
+                `<main class="padding">
+                    <h2>Security Vulnerability Detected</h2>
+                    <p>This document contains potentially dangerous event handlers.</p>
+                    <p>This preview was sanitized for your protection. But <strong>saving or editing this document may expose you to security risks.</strong></p>
+                    <p>You may encounter buttons and input fields not working as intended, or unexpected behaviors.</p>
+                </main>`,
+                true
+            );
+        }
+
+        const converter = new showdown.Converter({
+            metadata: true,
+            extensions: [
+                'blocks'
+            ],
+        });
+
+        const preview = document.getElementById("preview");
+
+        async function loadMarkdownFromURLParams() {
+            const params = new URLSearchParams(window.location.search);
+
+            if (params.has('f')) {
+                const id = params.get('f');
+
+                fetch(`https://tempfiles.flarowom.workers.dev/${id}`)
+                    .then(async res => {
+                        if (!res.ok) {
+
+                            markdown = `
+# File unavailable
+
+The file with ID \`${id}\` is not currently publicly available to be displayed.
+
+You may ask who sent you this document to share it again.
+
+---
+
+[Report an issue](https://github.com/flarom/cohesion/issues) • [Homepage](index)`;
+
+                            preview.innerHTML = converter.makeHtml(markdown);
+                            return;
+                        }
+
+                        const text = await res.text();
+
+                        if (detectInlineEvents(text)) {
+                            markdown = sanitizeMarkdown(text);
+                            await showSecurityWarning();
+                        } else {
+                            markdown = text;
+                        }
+
+                        try {
+                            const metadata = extractMetadata(markdown);
+                            converter.getMetadata = function() { return metadata; };
+                        } catch (e) { }
+
+                        preview.innerHTML = converter.makeHtml(markdown);
+
+                        //document.title = getFileTitleFromText(text) + " - Cohesion";
+                    })
+                    .catch(err => {
+                        console.error(err);
+
+                        markdown = `
+# Unable to connect
+
+Please try again later.
+
+~~~
+${err.message}
+~~~
+
+---
+
+[Homepage](index)`;
+
+                        preview.innerHTML = converter.makeHtml(markdown);
+                    });
+
+                return;
+            }
+
+            if (markdown) {
+                if (detectInlineEvents(markdown)) {
+                    try {
+                        const metadata = extractMetadata(markdown);
+                        converter.getMetadata = function() { return metadata; };
+                    } catch (e) { }
+                    preview.innerHTML = converter.makeHtml(sanitizeMarkdown(markdown));
+                    showSecurityWarning();
+                } else {
+                    try {
+                        const metadata = extractMetadata(markdown);
+                        converter.getMetadata = function() { return metadata; };
+                    } catch (e) { }
+                    preview.innerHTML = converter.makeHtml(markdown);
+                }
+            } else {
+                markdown = `
+# No document provided
+
+There is no document ID specified in the URL.
+
+You may ask who sent you this document to share it again, properly.
+
+---
+
+[Report an issue](https://github.com/flarom/cohesion/issues) • [Homepage](index)`;
+
+                preview.innerHTML = converter.makeHtml(markdown);
+            }
+        }
+
+        function editOnCohesion() {
+            if (detectInlineEvents(markdown)) {
+                showConfirmDialog('This document contains possible malicious event handlers. Downloading may expose you to security risks. Continue?', true).then((confirmed) => {
+                    if (confirmed) {
+                        addFile();
+                    }
+                });
+            } else {
+                addFile();
+            }
+
+            async function addFile() {
+                try {
+                    const sharedProjectId = "Shared";
+                    let sharedProject = await file.readFile(sharedProjectId);
+
+                    if (!sharedProject || sharedProject.type !== "directory") {
+                        sharedProject = await file.createProject("Shared");
+                    }
+
+                    const baseTitle = file.getTitleFromMarkdownContent(markdown || "");
+                    const normalizedBaseTitle = String(baseTitle || "New document").trim() || "New document";
+                    let fileName = `${normalizedBaseTitle}.md`;
+                    let fileId = file.buildId(fileName, sharedProject.id);
+                    let counter = 1;
+
+                    // Keep file names unique inside the shared project.
+                    while (await file.readFile(fileId)) {
+                        fileName = `${normalizedBaseTitle} (${counter}).md`;
+                        fileId = file.buildId(fileName, sharedProject.id);
+                        counter += 1;
+                    }
+
+                    const createdFile = await file.createFile(fileName, markdown || "", sharedProject.id);
+
+                    Settings.setSetting("activeProjectId", sharedProject.id);
+                    Settings.setSetting("lastOpenedFileIds", JSON.stringify([createdFile.id]));
+                    Settings.setSetting(`lastOpenedFileIds:${sharedProject.id}`, JSON.stringify([createdFile.id]));
+
+                    window.location.href = "index.html";
+                } catch (error) {
+                    console.error("Failed to add shared file:", error);
+                    window.toast?.show?.("Could not open document in Cohesion", "error");
+                }
+            }
+        }
+
+        function downloadDocument() {
+            if (detectInlineEvents(markdown)) {
+                showConfirmDialog('This document contains possible malicious event handlers. Downloading may expose you to security risks. Continue?', true).then((confirmed) => {
+                    if (confirmed) {
+                        downloadFile();
+                    }
+                });
+            } else {
+                downloadFile();
+            }
+
+            function downloadFile() {
+                const blob = new Blob([markdown], { type: 'text/markdown' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = file.getTitleFromMarkdownContent(markdown) + '.md';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        }
+
+        loadMarkdownFromURLParams();
+    </script>
+</body>
+</html>

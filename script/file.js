@@ -956,3 +956,99 @@ fileExporter.add("application/pdf", "PDF (.pdf)", async (options) => {
     return { fileName: `${title}.pdf` };
 });
 
+fileExporter.add("sharefile", "Share file", async (options) => {
+    const title = options.title || "Untitled";
+    const content = editor.getValue();
+
+    toast.show('Please wait...', 'satellite_alt');
+
+    try {
+        const id = await shareFile(content);
+        const link = `https://flarom.github.io/cohesion/share?f=${id}`;
+
+        console.log(link);
+
+        const qrUrl = createQRCode(link, 240);
+        console.log(qrUrl);
+
+        const expireTimestmp = new Date(Date.now() + 2 * 60 * 60 * 1000);
+        const hh = expireTimestmp.getHours().toString().padStart(2, "0");
+        const mm = expireTimestmp.getMinutes().toString().padStart(2, "0");
+        const expireTime = `${hh}:${mm}`;
+
+        const html = `
+            <!DOCTYPE html>
+            <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Save file</title>
+                    <meta name="dialog-prefered-width" content="500">
+                </head>
+                <body>
+                    <main class="padding">
+                        <section>
+                            <div style="display:flex;align-items:center;padding:10px;justify-content:center;">
+                                <img src="${qrUrl}" alt="QR Code" style="width:240px; height:240px; padding:10px; background-color:#ffffff; border-radius:10px; box-shadow: var(--shadow)" />
+                            </div>
+                        </section>
+                        <section>
+                            <div class="row">
+                                <input id="qr-link-field" readonly='true' type='text' style='text-align:center;margin:0;width:100%' value='${link}'/>
+                                <button id="qr-copy-btn" translate='no' class='icon-button'>content_copy</button>
+                            </div>
+                            <div class="row" style="justify-content:center;">
+                                <span style="font-size:tiny">Link is valid until ${expireTime}</span>
+                            </div>
+                        </section>
+                    </main>
+                </body>
+                <script>
+                    setTimeout(() => {
+                        const input = document.getElementById("qr-link-field");
+                        const btn = document.getElementById("qr-copy-btn");
+
+                        if (btn && input) {
+                            btn.addEventListener("click", () => {
+                                toast.show("Copied to clipboard", "check");
+                                input.select();
+                                input.setSelectionRange(0, 99999);
+                                navigator.clipboard.writeText(input.value);
+                            });
+                        }
+
+                        input.select();
+                        input.setSelectionRange(0, 99999);
+                        navigator.clipboard.writeText(input.value);
+                        toast.show("Link copied to clipboard", "check");
+                    }, 50);
+                </script>
+            </html>
+        `;
+
+        await showDialog(html);
+    }
+    catch (err) {
+        console.error("QR share failed:", err);
+        toast.show("Failed to share this file", "error");
+    }
+});
+
+async function shareFile(text) {
+    const resp = await fetch("https://tempfiles.flarowom.workers.dev/upload", {
+        method: "POST",
+        body: text,
+    });
+
+    const json = await resp.json();
+
+    const id = json.url.split("/").pop();
+
+    return id;
+}
+
+function createQRCode(link, size = 200) {
+    const encoded = encodeURIComponent(link);
+    const url = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encoded}&color=2e3436&bgcolor=ffffff`;
+    return url;
+}

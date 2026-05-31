@@ -250,12 +250,12 @@
 
             const getSelectedProject = async () => {
                 if (!selectedProjectId) {
-                    Toast.show("Select a project first", "warning");
+                    toast.show("Select a project first", "warning");
                     return null;
                 }
                 const project = await file.readFile(selectedProjectId);
                 if (!project || project.type !== "directory") {
-                    Toast.show("Selected project does not exist anymore", "error");
+                    toast.show("Selected project does not exist anymore", "error");
                     await loadProjects();
                     return null;
                 }
@@ -331,7 +331,7 @@
                 const project = await file.createProject(uniqueName, payload);
                 selectedProjectId = project.id;
                 await loadProjects();
-                Toast.show("Project created", "check");
+                toast.show("Project created", "check");
             });
 
             editProjectBtn.addEventListener("click", async () => {
@@ -372,7 +372,7 @@
                 }
 
                 await loadProjects();
-                Toast.show("Project updated", "check");
+                toast.show("Project updated", "check");
             });
 
             deleteProjectBtn.addEventListener("click", async () => {
@@ -402,7 +402,7 @@
 
                 selectedProjectId = null;
                 await loadProjects();
-                Toast.show("Project deleted", "delete");
+                toast.show("Project deleted", "delete");
             });
 
             duplicateProjectBtn.addEventListener("click", async () => {
@@ -414,7 +414,7 @@
                 const duplicated = await file.duplicateProject(selectedProject.id);
                 selectedProjectId = duplicated.id;
                 await loadProjects();
-                Toast.show("Project duplicated", "check");
+                toast.show("Project duplicated", "check");
             });
 
             importProjectBtn.addEventListener("click", async () => {
@@ -426,7 +426,7 @@
                 const importedProject = await file.importDirectoryZip(zipFile);
                 selectedProjectId = importedProject.id;
                 await loadProjects();
-                Toast.show("Project imported", "check");
+                toast.show("Project imported", "check");
             });
 
             exportProjectBtn.addEventListener("click", async () => {
@@ -436,7 +436,7 @@
                 }
 
                 await file.exportDirectoryZip(selectedProject.id);
-                Toast.show("Project exported", "download");
+                toast.show("Project exported", "download");
             });
 
             loadProjects();

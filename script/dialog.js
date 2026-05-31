@@ -1,3 +1,17 @@
+/*
+Cohesion Dialog API
+===================
+
+Provides a flexible dialog system for Cohesion, allowing extensions to create custom dialogs with
+support for multiple pages, toolbars, and a JavaScript bridge for communication between the dialog
+and the main application.
+
+Also includes some built-in dialogs:
+- showConfirmDialog(options)    : Shows a confirmation dialog with customizable message, buttons, and callbacks.
+- showInputDialog(options)      : Shows a dialog with an input field, allowing the user to enter text and confirm or cancel.
+- showTextEditorDialog(options) : Shows a dialog with a full text editor, supporting syntax highlighting and large content.
+*/
+
 // MARK: Dropdown Menu Logic
 function toggleDropdown(menuId) {
     const menu = document.getElementById(menuId);
@@ -216,239 +230,252 @@ function toggleDialogPage(pageId) {
     }
 }
 
+// MARK: Show Dialog
+async function showDialog(html, args = {}, baseUrl = null) {
+    ensureDialogBridge();
+
+    // parse dialog html
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+    const dialogArgs = args && typeof args === "object" ? args : {};
+
+    // meta helpers
+    const getMeta = (name, fallback = null) => {
+        const meta = doc.querySelector(`meta[name="${name}"]`);
+        return meta ? meta.content : fallback;
+    };
+
+    const getMetaBool = (name, fallback = true) => {
+        const value = getMeta(name);
+        if (value === null) return fallback;
+        return ["true", "1", "yes", "on"].includes(value.toLowerCase());
+    };
+
+    const getMetaInt = (name, fallback) => {
+        const value = parseInt(getMeta(name), 10);
+        return Number.isFinite(value) ? value : fallback;
+    };
+
+    // meta settings
+    const showCloseButton = getMetaBool("dialog-show-close-button", true);
+    const useBigDialog = getMetaBool("dialog-big", false);
+    const showAnimation = getMetaBool("dialog-animate", true);
+    const showBg = getMetaBool("dialog-show-bg", true);
+    const width = getMetaInt("dialog-prefered-width", getMetaInt("dialog-preferred-width", 400));
+    const height = getMetaInt("dialog-prefered-height", getMetaInt("dialog-preferred-height", 0));
+
+    const toolbarLeft = getMeta("dialog-toolbar-left", "");
+    const toolbarCenter = getMeta("dialog-toolbar-center", "");
+    const toolbarRight = getMeta("dialog-toolbar-right", "");
+    const toolbarOverlay = getMetaBool("dialog-toolbar-overlay", true);
+
+    // inject dialog css
+    const dialogId = crypto.randomUUID();
+    const injectedStyles = [];
+
+    doc.querySelectorAll("style").forEach((style) => {
+        const clone = document.createElement("style");
+        clone.textContent = style.textContent;
+        clone.dataset.dialogStyle = dialogId;
+        document.head.appendChild(clone);
+        injectedStyles.push(clone);
+    });
+
+    doc.querySelectorAll('link[rel="stylesheet"]').forEach((link) => {
+        const clone = document.createElement("link");
+        const href = link.getAttribute("href");
+        clone.rel = "stylesheet";
+        if (href && baseUrl) {
+            clone.href = new URL(href, baseUrl).toString();
+        } else {
+            clone.href = href || "";
+        }
+        clone.dataset.dialogStyle = dialogId;
+        document.head.appendChild(clone);
+        injectedStyles.push(clone);
+    });
+
+    const previousFocusedElement = document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+
+    // dialog host + panel
+    const dialog = document.createElement("dialog");
+    dialog.className = "dialog-overlay" + (showBg ? "" : "nobg");
+    dialog.dataset.dialog = "";
+    dialog.dataset.dialogId = dialogId;
+
+    if (!useBigDialog) {
+        dialog.style.maxWidth = `${width}px`;
+        if (height > 0) {
+            dialog.style.height = "100%";
+            dialog.style.maxHeight = `${height}px`;
+        }
+    }
+
+    if (!showAnimation) {
+        dialog.classList.add("no-animation");
+    }
+
+    // toolbar
+    const toolbar = document.createElement("div");
+    toolbar.className = "toolbar";
+
+    if (!toolbarOverlay) {
+        toolbar.classList.add("no-overlay");
+    }
+
+    const left = document.createElement("div");
+    left.className = "toolbar-left";
+    left.innerHTML = toolbarLeft;
+
+    const center = document.createElement("div");
+    center.className = "toolbar-center";
+    center.innerHTML = toolbarCenter;
+
+    const right = document.createElement("div");
+    right.className = "toolbar-right";
+    right.innerHTML = toolbarRight;
+
+    const closeButton = document.createElement("button");
+    closeButton.textContent = "close";
+    closeButton.className = "icon-button dialog-window-control";
+    closeButton.setAttribute("translate", "no");
+
+    if (showCloseButton) {
+        right.appendChild(closeButton);
+    }
+
+    toolbar.append(left, center, right);
+
+    // content
+    const content = document.createElement("div");
+    content.className = "dialog-content";
+    content.append(...doc.body.childNodes);
+
+    if (!useBigDialog) {
+        content.style.maxWidth = `${width}px`;
+        if (height > 0) {
+            content.style.height = "100%";
+            if (!toolbarOverlay) {
+                content.style.maxWidth = `calc(${width}px - 48px)`;
+            } else {
+                content.style.maxHeight = `${height}px`;
+            }
+        }
+    }
+
+    dialog.append(toolbar, content);
+    document.body.appendChild(dialog);
+
+    translateWithin(dialog);
+
+    return await new Promise((resolve) => {
+        const cleanup = () => {
+            const idx = dialogControllerStack.indexOf(controller);
+            if (idx >= 0) {
+                dialogControllerStack.splice(idx, 1);
+            }
+
+            injectedStyles.forEach((el) => el.remove());
+            dialog.removeEventListener("close", onClose);
+            dialog.remove();
+
+            if (previousFocusedElement) {
+                previousFocusedElement.focus();
+            }
+        };
+
+        const controller = {
+            args: dialogArgs,
+            return(value) {
+                dialog.__dialogResult = value;
+                if (dialog.open) {
+                    dialog.close("return");
+                }
+            },
+            cancel(value = null) {
+                dialog.__dialogResult = value;
+                if (dialog.open) {
+                    dialog.close("cancel");
+                }
+            },
+            close() {
+                if (dialog.open) {
+                    dialog.close("close");
+                }
+            }
+        };
+
+        const onClose = () => {
+            const hasDialogResult = Object.prototype.hasOwnProperty.call(dialog, "__dialogResult");
+            const result = hasDialogResult
+                ? dialog.__dialogResult
+                : dialog.returnValue && !["close", "cancel"].includes(dialog.returnValue)
+                    ? dialog.returnValue
+                    : null;
+
+            cleanup();
+            resolve(result);
+        };
+
+        dialogControllerStack.push(controller);
+
+        // Execute embedded dialog scripts only after the controller exists,
+        // so dialogArgs() can read this dialog initialization data.
+        content.querySelectorAll("script").forEach((oldScript) => {
+            const newScript = document.createElement("script");
+
+            if (oldScript.src) {
+                const src = oldScript.getAttribute("src");
+                if (src && baseUrl) {
+                    newScript.src = new URL(src, baseUrl).toString();
+                } else {
+                    newScript.src = src || "";
+                }
+            } else {
+                newScript.textContent = oldScript.textContent;
+            }
+
+            [...oldScript.attributes].forEach((attr) =>
+                newScript.setAttribute(attr.name, attr.value)
+            );
+
+            oldScript.replaceWith(newScript);
+        });
+
+        closeButton.addEventListener("click", () => controller.close());
+        dialog.addEventListener("close", onClose, { once: true });
+
+        if (typeof dialog.showModal === "function") {
+            dialog.showModal();
+        } else {
+            dialog.setAttribute("open", "open");
+        }
+
+        const focusable = dialog.querySelector(
+            "[autofocus], [href], input, select, textarea, [tabindex]:not([tabindex='-1'])"
+        );
+
+        if (focusable instanceof HTMLElement) {
+            focusable.focus();
+            console.log("Focused element in dialog:", focusable);
+        }
+    });
+}
+
 // MARK: Show Dialog File
 async function showDialogFile(filePath, args = {}) {
     try {
-        ensureDialogBridge();
-
         const response = await fetch(filePath);
         if (!response.ok) {
             throw new Error(`Failed loading file: ${response.statusText}`);
         }
 
         const htmlContent = await response.text();
-
-        // parse dialog html
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlContent, "text/html");
         const sourceUrl = new URL(filePath, window.location.href);
-        const dialogArgs = args && typeof args === "object" ? args : {};
 
-        // meta helpers
-        const getMeta = (name, fallback = null) => {
-            const meta = doc.querySelector(`meta[name="${name}"]`);
-            return meta ? meta.content : fallback;
-        };
-
-        const getMetaBool = (name, fallback = true) => {
-            const value = getMeta(name);
-            if (value === null) return fallback;
-            return ["true", "1", "yes", "on"].includes(value.toLowerCase());
-        };
-
-        const getMetaInt = (name, fallback) => {
-            const value = parseInt(getMeta(name), 10);
-            return Number.isFinite(value) ? value : fallback;
-        };
-
-        // meta settings
-        const showCloseButton = getMetaBool("dialog-show-close-button", true);
-        const useBigDialog = getMetaBool("dialog-big", false);
-        const showAnimation = getMetaBool("dialog-animate", true);
-        const showBg = getMetaBool("dialog-show-bg", true);
-        const width = getMetaInt("dialog-prefered-width", getMetaInt("dialog-preferred-width", 400));
-        const height = getMetaInt("dialog-prefered-height", getMetaInt("dialog-preferred-height", 0));
-
-        const toolbarLeft = getMeta("dialog-toolbar-left", "");
-        const toolbarCenter = getMeta("dialog-toolbar-center", "");
-        const toolbarRight = getMeta("dialog-toolbar-right", "");
-        const toolbarOverlay = getMetaBool("dialog-toolbar-overlay", true);
-
-        // inject dialog css
-        const dialogId = crypto.randomUUID();
-        const injectedStyles = [];
-
-        doc.querySelectorAll("style").forEach((style) => {
-            const clone = document.createElement("style");
-            clone.textContent = style.textContent;
-            clone.dataset.dialogStyle = dialogId;
-            document.head.appendChild(clone);
-            injectedStyles.push(clone);
-        });
-
-        doc.querySelectorAll('link[rel="stylesheet"]').forEach((link) => {
-            const clone = document.createElement("link");
-            const href = link.getAttribute("href");
-            clone.rel = "stylesheet";
-            clone.href = href ? new URL(href, sourceUrl).toString() : "";
-            clone.dataset.dialogStyle = dialogId;
-            document.head.appendChild(clone);
-            injectedStyles.push(clone);
-        });
-
-        const previousFocusedElement = document.activeElement instanceof HTMLElement
-            ? document.activeElement
-            : null;
-
-        // dialog host + panel
-        const dialog = document.createElement("dialog");
-        dialog.className = "dialog-overlay" + (showBg ? "" : "nobg");
-        dialog.dataset.dialog = "";
-        dialog.dataset.dialogId = dialogId;
-
-        if (!useBigDialog) {
-            dialog.style.maxWidth = `${width}px`;
-            if (height > 0) {
-                dialog.style.height = "100%";
-                dialog.style.maxHeight = `${height}px`;
-            }
-        }
-
-        if (!showAnimation) {
-            dialog.classList.add("no-animation");
-        }
-
-        // toolbar
-        const toolbar = document.createElement("div");
-        toolbar.className = "toolbar";
-
-        if (!toolbarOverlay) {
-            toolbar.classList.add("no-overlay");
-        }
-
-        const left = document.createElement("div");
-        left.className = "toolbar-left";
-        left.innerHTML = toolbarLeft;
-
-        const center = document.createElement("div");
-        center.className = "toolbar-center";
-        center.innerHTML = toolbarCenter;
-
-        const right = document.createElement("div");
-        right.className = "toolbar-right";
-        right.innerHTML = toolbarRight;
-
-        const closeButton = document.createElement("button");
-        closeButton.textContent = "close";
-        closeButton.className = "icon-button dialog-window-control";
-        closeButton.setAttribute("translate", "no");
-
-        if (showCloseButton) {
-            right.appendChild(closeButton);
-        }
-
-        toolbar.append(left, center, right);
-
-        // content
-        const content = document.createElement("div");
-        content.className = "dialog-content";
-        content.append(...doc.body.childNodes);
-
-        if (!useBigDialog) {
-            content.style.maxWidth = `${width}px`;
-            if (height > 0) {
-                content.style.height = "100%";
-                if (!toolbarOverlay) {
-                    content.style.maxWidth = `calc(${width}px - 48px)`;
-                } else {
-                    content.style.maxHeight = `${height}px`;
-                }
-            }
-        }
-
-        dialog.append(toolbar, content);
-        document.body.appendChild(dialog);
-
-        translateWithin(dialog);
-
-        return await new Promise((resolve) => {
-            const cleanup = () => {
-                const idx = dialogControllerStack.indexOf(controller);
-                if (idx >= 0) {
-                    dialogControllerStack.splice(idx, 1);
-                }
-
-                injectedStyles.forEach((el) => el.remove());
-                dialog.removeEventListener("close", onClose);
-                dialog.remove();
-
-                if (previousFocusedElement) {
-                    previousFocusedElement.focus();
-                }
-            };
-
-            const controller = {
-                args: dialogArgs,
-                return(value) {
-                    dialog.__dialogResult = value;
-                    if (dialog.open) {
-                        dialog.close("return");
-                    }
-                },
-                cancel(value = null) {
-                    dialog.__dialogResult = value;
-                    if (dialog.open) {
-                        dialog.close("cancel");
-                    }
-                },
-                close() {
-                    if (dialog.open) {
-                        dialog.close("close");
-                    }
-                }
-            };
-
-            const onClose = () => {
-                const hasDialogResult = Object.prototype.hasOwnProperty.call(dialog, "__dialogResult");
-                const result = hasDialogResult
-                    ? dialog.__dialogResult
-                    : dialog.returnValue && !["close", "cancel"].includes(dialog.returnValue)
-                        ? dialog.returnValue
-                        : null;
-
-                cleanup();
-                resolve(result);
-            };
-
-            dialogControllerStack.push(controller);
-
-            // Execute embedded dialog scripts only after the controller exists,
-            // so dialogArgs() can read this dialog initialization data.
-            content.querySelectorAll("script").forEach((oldScript) => {
-                const newScript = document.createElement("script");
-
-                if (oldScript.src) {
-                    const src = oldScript.getAttribute("src");
-                    newScript.src = src ? new URL(src, sourceUrl).toString() : "";
-                } else {
-                    newScript.textContent = oldScript.textContent;
-                }
-
-                [...oldScript.attributes].forEach((attr) =>
-                    newScript.setAttribute(attr.name, attr.value)
-                );
-
-                oldScript.replaceWith(newScript);
-            });
-
-            closeButton.addEventListener("click", () => controller.close());
-            dialog.addEventListener("close", onClose, { once: true });
-
-            if (typeof dialog.showModal === "function") {
-                dialog.showModal();
-            } else {
-                dialog.setAttribute("open", "open");
-            }
-
-            const focusable = dialog.querySelector(
-                "[autofocus], [href], input, select, textarea, [tabindex]:not([tabindex='-1'])"
-            );
-
-            if (focusable instanceof HTMLElement) {
-                focusable.focus();
-                console.log("Focused element in dialog:", focusable);
-            }
-        });
+        return await showDialog(htmlContent, args, sourceUrl);
     } catch (error) {
         console.error(error);
         throw error;

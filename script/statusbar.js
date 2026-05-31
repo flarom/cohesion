@@ -1,3 +1,10 @@
+/*
+Cohesion Status Bar
+===================
+
+Provides a flexible status bar system for Cohesion, allowing extensions to register custom items with automatic updates.
+*/
+
 const StatusBar = {
     items: [],
 

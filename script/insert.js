@@ -1,3 +1,13 @@
+/*
+Insert API
+==========
+
+Provides functions to insert text at the cursor, start, or end of the document, as well as wrapping
+selected text and inserting snippets with variable support.
+
+Also includes functions to insert markdown items and date/time strings
+*/
+
 const SNIPPET_PLACEHOLDER_CLASS = "cm-snippet-placeholder";
 
 const insert = {

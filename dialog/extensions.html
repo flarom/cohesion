@@ -258,9 +258,9 @@
                             hideAllMenus();
                             const result = await Extensions.upgradeFromLink(index);
                             if (result.updated) {
-                                Toast.show(`Updated to v${result.newVersion}`, "check");
+                                toast.show(`Updated to v${result.newVersion}`, "check");
                             } else {
-                                Toast.show(result.reason || result.error || "Update failed", "error");
+                                toast.show(result.reason || result.error || "Update failed", "error");
                             }
                             await loadExtensions();
                         });
@@ -331,14 +331,14 @@
                     try {
                         if (index !== undefined) {
                             await Extensions.update(index, codeString);
-                            Toast.show("Extension updated", "check");
+                            toast.show("Extension updated", "check");
                         } else {
                             await Extensions.import(codeString);
-                            Toast.show("Extension created", "check");
+                            toast.show("Extension created", "check");
                         }
                         await loadExtensions();
                     } catch (err) {
-                        Toast.show(err.message || "Error saving extension", "error");
+                        toast.show(err.message || "Error saving extension", "error");
                     }
                 }
             };
@@ -348,7 +348,7 @@
                 if (code) {
                     await Extensions.import(code);
                     await loadExtensions();
-                    Toast.show("Extension imported", "check");
+                    toast.show("Extension imported", "check");
                 }
             });
 
@@ -364,9 +364,9 @@
                 }
 
                 if (updated === 0) {
-                    Toast.show("All extensions are up to date", "info");
+                    toast.show("All extensions are up to date", "info");
                 } else {
-                    Toast.show(`${updated} extension(s) updated`, "check");
+                    toast.show(`${updated} extension(s) updated`, "check");
                 }
 
                 await loadExtensions();

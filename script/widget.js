@@ -1,3 +1,14 @@
+/*
+Editor Widget API
+=================
+
+Provides an API for extensions to create custom widgets that can be attached to specific lines in
+the editor based on patterns. Extensions can define patterns with scan and render functions, and
+the API will handle rendering and updating widgets as the editor content changes.
+
+This API is not used on the actual Cohesion codebase, it was especially designed for extensions
+*/
+
 const EditorWidgetAPI = (() => {
 	const DEFAULT_DEBOUNCE_MS = 140;
 

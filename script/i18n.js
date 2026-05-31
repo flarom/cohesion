@@ -1,3 +1,10 @@
+/*
+i18n System
+===========
+
+Adaptation of the i18n system, tailored for Cohesion
+*/
+
 // Global language state
 const Language = {
     current: Settings.getSetting('language', 'en'),
